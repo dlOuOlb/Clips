@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(OuOClip)
+project(Clips)
 
 set(CMAKE_CONFIGURATION_TYPES "Release")
 set(CMAKE_BUILD_TYPE "Release")
