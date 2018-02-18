@@ -159,7 +159,9 @@ union _g_ptr_v
 	_G_ inte_08 *I08;
 	_G_ inte_16 *I16;
 	_G_ inte_32 *I32;
+#if(_ABLE_I64_)
 	_G_ inte_64 *I64;
+#endif
 #if(_ABLE_R16_)
 	_G_ real_16 *R16;
 #endif
@@ -183,7 +185,9 @@ union _g_ptr_c
 	_G_ INTE_08 *I08;
 	_G_ INTE_16 *I16;
 	_G_ INTE_32 *I32;
+#if(_ABLE_I64_)
 	_G_ INTE_64 *I64;
+#endif
 #if(_ABLE_R16_)
 	_G_ REAL_16 *R16;
 #endif
@@ -207,7 +211,9 @@ union _l_ptr_v
 	_L_ inte_08 *I08;
 	_L_ inte_16 *I16;
 	_L_ inte_32 *I32;
+#if(_ABLE_I64_)
 	_L_ inte_64 *I64;
+#endif
 #if(_ABLE_R16_)
 	_L_ real_16 *R16;
 #endif
@@ -231,7 +237,9 @@ union _l_ptr_c
 	_L_ INTE_08 *I08;
 	_L_ INTE_16 *I16;
 	_L_ INTE_32 *I32;
+#if(_ABLE_I64_)
 	_L_ INTE_64 *I64;
+#endif
 #if(_ABLE_R16_)
 	_L_ REAL_16 *R16;
 #endif
@@ -255,7 +263,9 @@ union _p_ptr_v
 	_P_ inte_08 *I08;
 	_P_ inte_16 *I16;
 	_P_ inte_32 *I32;
+#if(_ABLE_I64_)
 	_P_ inte_64 *I64;
+#endif
 #if(_ABLE_R16_)
 	_P_ real_16 *R16;
 #endif
@@ -279,7 +289,9 @@ union _p_ptr_c
 	_P_ INTE_08 *I08;
 	_P_ INTE_16 *I16;
 	_P_ INTE_32 *I32;
+#if(_ABLE_I64_)
 	_P_ INTE_64 *I64;
+#endif
 #if(_ABLE_R16_)
 	_P_ REAL_16 *R16;
 #endif
