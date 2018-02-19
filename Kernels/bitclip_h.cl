@@ -105,32 +105,45 @@
 
 #if(Fold_(Definition:Types))
 typedef unsigned char data_08;
-typedef unsigned short data_16;
-typedef unsigned int data_32;
-typedef unsigned long data_64;
-
 typedef const data_08 DATA_08;
+
+typedef unsigned short data_16;
 typedef const data_16 DATA_16;
+
+typedef unsigned int data_32;
 typedef const data_32 DATA_32;
+
+#if(_ABLE_I64_)
+typedef unsigned long data_64;
 typedef const data_64 DATA_64;
+#endif
 
 typedef signed char inte_08;
-typedef signed short inte_16;
-typedef signed int inte_32;
-typedef signed long inte_64;
-
 typedef const inte_08 INTE_08;
+
+typedef signed short inte_16;
 typedef const inte_16 INTE_16;
+
+typedef signed int inte_32;
 typedef const inte_32 INTE_32;
+
+#if(_ABLE_I64_)
+typedef signed long inte_64;
 typedef const inte_64 INTE_64;
+#endif
 
+#if(_ABLE_R16_)
 typedef half real_16;
-typedef float real_32;
-typedef double real_64;
-
 typedef const real_16 REAL_16;
+#endif
+
+typedef float real_32;
 typedef const real_32 REAL_32;
+
+#if(_ABLE_R64_)
+typedef double real_64;
 typedef const real_64 REAL_64;
+#endif
 
 typedef void general;
 typedef const general GENERAL;
@@ -142,9 +155,9 @@ typedef bool boolean;
 typedef const boolean BOOLEAN;
 
 typedef intptr_t sintptr;
-typedef uintptr_t uintptr;
-
 typedef const sintptr SINTPTR;
+
+typedef uintptr_t uintptr;
 typedef const uintptr UINTPTR;
 
 union _g_ptr_v
@@ -155,7 +168,9 @@ union _g_ptr_v
 	_G_ data_08 *D08;
 	_G_ data_16 *D16;
 	_G_ data_32 *D32;
+#if(_ABLE_I64_)
 	_G_ data_64 *D64;
+#endif
 	_G_ inte_08 *I08;
 	_G_ inte_16 *I16;
 	_G_ inte_32 *I32;
@@ -181,7 +196,9 @@ union _g_ptr_c
 	_G_ DATA_08 *D08;
 	_G_ DATA_16 *D16;
 	_G_ DATA_32 *D32;
+#if(_ABLE_I64_)
 	_G_ DATA_64 *D64;
+#endif
 	_G_ INTE_08 *I08;
 	_G_ INTE_16 *I16;
 	_G_ INTE_32 *I32;
@@ -207,7 +224,9 @@ union _l_ptr_v
 	_L_ data_08 *D08;
 	_L_ data_16 *D16;
 	_L_ data_32 *D32;
+#if(_ABLE_I64_)
 	_L_ data_64 *D64;
+#endif
 	_L_ inte_08 *I08;
 	_L_ inte_16 *I16;
 	_L_ inte_32 *I32;
@@ -233,7 +252,9 @@ union _l_ptr_c
 	_L_ DATA_08 *D08;
 	_L_ DATA_16 *D16;
 	_L_ DATA_32 *D32;
+#if(_ABLE_I64_)
 	_L_ DATA_64 *D64;
+#endif
 	_L_ INTE_08 *I08;
 	_L_ INTE_16 *I16;
 	_L_ INTE_32 *I32;
@@ -259,7 +280,9 @@ union _p_ptr_v
 	_P_ data_08 *D08;
 	_P_ data_16 *D16;
 	_P_ data_32 *D32;
+#if(_ABLE_I64_)
 	_P_ data_64 *D64;
+#endif
 	_P_ inte_08 *I08;
 	_P_ inte_16 *I16;
 	_P_ inte_32 *I32;
@@ -285,7 +308,9 @@ union _p_ptr_c
 	_P_ DATA_08 *D08;
 	_P_ DATA_16 *D16;
 	_P_ DATA_32 *D32;
+#if(_ABLE_I64_)
 	_P_ DATA_64 *D64;
+#endif
 	_P_ INTE_08 *I08;
 	_P_ INTE_16 *I16;
 	_P_ INTE_32 *I32;
