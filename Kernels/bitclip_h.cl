@@ -2,7 +2,7 @@
 /*	BitClip's OpenCL Header and Source Parts.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/BitClip/					2018.02.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.02.14	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
