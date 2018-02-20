@@ -1,8 +1,8 @@
 ﻿/*------------------------------------------------------------------*/
 /*	PenClip is a file I/O header.									*/
 /*																	*/
-/*	Written by Aggroid									Version		*/
-/*	http://memclip.codeplex.com/releases				2018.02.12	*/
+/*	Written by Ranny Clover								Date		*/
+/*	http://github.com/dlOuOlb/Clips						2018.02.12	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
