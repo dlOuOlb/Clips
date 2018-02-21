@@ -168,6 +168,9 @@ typedef const union _bitclip BITCLIP;	//BitClip : Pointer Constant
 
 #define Real_Lim_32_Negative_(Output,Input) {*(inte_32*)&(Output)=(*(inte_32*)&(Input))>>31;*(inte_32*)&(Output)&=(*(inte_32*)&(Input));}												//BitClip : Negative Clipping of 32-bit Real
 #define Real_Lim_64_Negative_(Output,Input) {*(inte_64*)&(Output)=(*(inte_64*)&(Input))>>63;*(inte_64*)&(Output)&=(*(inte_64*)&(Input));}												//BitClip : Negative Clipping of 64-bit Real
+
+#define Func_Declare_(Return,Func_,...) Return (*Func_)(__VA_ARGS__)																													//BitClip : Function Pointer Declaration
+#define Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)																													//BitClip : Function Pointer Casting
 #endif
 
 #if(MemC_Fold_(Declaration:Constants and Variables))
