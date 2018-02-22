@@ -2,16 +2,10 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.02.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.02.22	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
-/*------------------------------------------------------------------*/
-/*	Opener : File Open												*/
-/*	Closer : File Close												*/
-/*																	*/
-/*	Writer : File Write												*/
-/*	Reader : File Read												*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
@@ -24,6 +18,7 @@
 #endif
 #include <memclip.h>
 
+#if(MemC_Fold_(Definition:Types))
 typedef char name_08;			//PenClip : 8-bit Name Variable
 typedef const name_08 NAME_08;	//PenClip : 8-bit Name Constant
 
@@ -45,7 +40,9 @@ struct _penc_cl						//PenC_CL : OpenCL Supported Program Resource Structure
 typedef struct _penc_cl penc_cl;		//PenC_CL : Program Resource Variable
 typedef const struct _penc_cl PENC_CL;	//PenC_CL : Program Resource Constant
 #endif
+#endif
 
+#if(MemC_Fold_(Definition:Macros))
 #define File_Opener_(FilePointer,FileName,Mode) fopen_s(&(FilePointer),FileName,Mode)												//PenClip : File Open
 #define File_Closer_(FilePointer) if(!fclose(FilePointer)){(FilePointer)=NULL;}														//PenClip : File Close
 #define File_Remove_(FileName) remove(FileName)																						//PenClip : File Delete
@@ -85,7 +82,9 @@ typedef const struct _penc_cl PENC_CL;	//PenC_CL : Program Resource Constant
 
 #define Printer_Buffer_ sprintf_s																									//PenClip : Buffer Stream Print
 #define Scanner_Buffer_ sscanf_s																									//PenClip : Buffer Stream Scan
+#endif
 
+#if(MemC_Fold_(Declaration:Global Constants))
 //PenClip : Library Version
 extern NAME_08 _PL_ PenClip;
 
@@ -95,10 +94,9 @@ extern NAME_08 _PL_ PenClip;
 //　[2] : "rt" (Read Text)
 //　[3] : "wt" (Write Text)
 extern NAME_08 _PL_ _PL_ PenCOpen;
+#endif
 
-//PenClip : 1KB Buffer
-extern name_08 _PL_ PenCBuffer;
-
+#if(MemC_Fold_(Declaration:Functions))
 //PenClip : File Byte Size
 size_t File_Length_(NAME_08 _PL_ FileName);
 
@@ -135,4 +133,5 @@ void PenC_Delete_CL_(penc_cl*_PL_);
 
 int _Line_Reader_(void _PL_,NAME_08 _PL_,const size_t,const size_t);
 int _Line_Writer_(const void _PL_,NAME_08 _PL_,const size_t,const size_t);
+#endif
 #endif

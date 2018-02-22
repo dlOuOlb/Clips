@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.02.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.02.22	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -173,7 +173,7 @@ typedef const union _bitclip BITCLIP;	//BitClip : Pointer Constant
 #define Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)																													//BitClip : Function Pointer Casting
 #endif
 
-#if(MemC_Fold_(Declaration:Constants and Variables))
+#if(MemC_Fold_(Declaration:Global Constants))
 //BitClip : Library Version
 extern DATA_08 _PL_ BitClip;
 
@@ -211,9 +211,6 @@ extern REAL_64 _PL_ BitCPi64;
 //BitC_CL : Kernel Indicator Set
 extern DATA_08 _PL_ _PL_ BitCKernel;
 #endif
-
-//BitClip : 256 byte Buffer
-extern inte_32 _PL_ BitCBuffer;
 #endif
 
 #if(MemC_Fold_(Declaration:KM Functions))

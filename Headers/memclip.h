@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.02.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.02.22	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -18,13 +18,16 @@
 #endif
 
 #ifndef NULL
-#define NULL 0		//MemClip : Null Pointer Definition
+#define NULL 0					//MemClip : Null Pointer Definition
 #endif
 
 #ifndef _PL_
-#define _PL_ *const	//MemClip : Pointer Lock Definition
+#define _PL_ *const				//MemClip : Pointer Lock Definition
 #endif
 
+#define MemC_Fold_(Comment) (1)	//MemClip : Code Folding with #if Pre-processor.
+
+#if(MemC_Fold_(Definition:Types))
 #ifdef __OPENCL_H
 enum _devi_cp		//MemC_CL : Device Memory Copy Function Flag
 {
@@ -64,7 +67,9 @@ struct _devi_km							//MemC_CL : Kernel Manager
 typedef struct _devi_km devi_km;		//MemC_CL : Kernel Manager Variable
 typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 #endif
+#endif
 
+#if(MemC_Fold_(Definition:Macros))
 #define MemC_Deloc_(Memory) if(Memory){free(Memory);(Memory)=NULL;}														//MemClip : Memory Deallocation
 
 #define Unit_Alloc_(type) (type*)Byte_Alloc_(sizeof(type))																//MemClip : Unit Memory Allocation
@@ -74,7 +79,6 @@ typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 #define Tess_Alloc_(W,X,Y,Z,type) (type****)_Tess_Alloc_(W,X,Y,Z,sizeof(type))											//MemClip : 4D Array Memory Allocation
 
 #define MemC_Mute_(Argument) ((void)(Argument))																			//MemClip : Unused Argument Warning Mute
-#define MemC_Fold_(Comment) (1)																							//MemClip : Code Folding with #if Pre-processor.
 
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))																//MemClip : Byte Size of Elements
 #define MemC_Acs_(type,Data) (*((type*)(&(Data))))																		//MemClip : Indirect Memory Access
@@ -129,7 +133,7 @@ typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 #define Devi_Info_Work_(Devi,Krnl,List,Num,type,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Kernel Work Group Information Get
 #define Devi_Size_Info_Work_(Devi,Krnl,Size,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,0,NULL,Size)						//MemC_CL : Kernel Work Group Information Size Get
 
-#define Devi_Create_Queue_(Context,Device,Error) clCreateCommandQueue(Context,Device,0,Error)							//MemC_CL : Command Queue Memory Allocation
+#define Devi_Create_Queue_(Context,Device,Error) clCreateCommandQueueWithProperties(Context,Device,NULL,Error)			//MemC_CL : Command Queue Memory Allocation
 #define Devi_Delete_Queue_(Queue) if(Queue){clReleaseCommandQueue(Queue);(Queue)=NULL;}									//MemC_CL : Command Queue Memory Deallocation
 #define Devi_Info_Queue_(Queue,List,Num,type,Flag) clGetCommandQueueInfo(Queue,Flag,(Num)*sizeof(type),List,NULL)		//MemC_CL : Command Queue Information Get
 #define Devi_Size_Info_Queue_(Queue,Size,Flag) clGetCommandQueueInfo(Queue,Flag,0,NULL,Size)							//MemC_CL : Command Queue Information Size Get
@@ -169,12 +173,14 @@ typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 #ifdef __OPENCL_H
 #define Devi_Copy_Max_Dimension 3	//MemC_CL : Maximum Copy Dimension of "Devi_Copy_"
 #endif
+#endif
 
+#if(MemC_Fold_(Declaration:Global Constants))
 //MemClip : Library Version
 extern const char _PL_ MemClip;
-//MemClip : Address Buffer [64]
-extern void *_PL_ MemCBuffer;
+#endif
 
+#if(MemC_Fold_(Declaration:Functions))
 //MemClip : Memory Allocation Check
 //＊Return value is 0 for failure, 1 for success.
 int MemC_Check_(const void _PL_*MemorySet,const size_t Count);
@@ -252,5 +258,6 @@ cl_int _Devi_Copy_(cl_command_queue const,void _PL_,void _PL_,const size_t _PL_,
 cl_int _Devi_Copy_1D_(cl_command_queue const,void _PL_,void _PL_,const size_t,const size_t,const size_t,const size_t,DEVI_CP);
 
 cl_int _Devi_KM_Type_(DEVI_KM _PL_,const cl_uint,const size_t,const int);
+#endif
 #endif
 #endif
