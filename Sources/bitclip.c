@@ -11,8 +11,8 @@
 #endif
 #endif
 
-#if(MemC_Fold_(Definition:Constants and Variables))
-static DATA_08 IdiomVersion[16]="Date:2018.02.14";
+#if(MemC_Fold_(Definition:Global Constants))
+static DATA_08 IdiomVersion[16]="Date:2018.02.22";
 
 #ifdef BitC_64_
 static volatile DATA_64 ConstantUnique=0x0000000000000001;
@@ -25,8 +25,6 @@ static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A
 
 static INTE_32 ConstantInvalid32[4]={0x7F800000,0xFF800000,0x7FFFFFFF,0xFFFFFFFF};
 static INTE_32 ConstantPi32[4]={0x40490FDB,0x3EA2F983,0x402DF854,0x3EBC5AB2};
-
-static data_32 BufferMask[64]={0};
 
 #ifdef __OPENCL_H
 static DATA_08 IdiomKernelNull[_BitC_Kernel_Name_Length]="";
@@ -131,7 +129,6 @@ REAL_32 _PL_ BitCInvalid32=(real_32*)ConstantInvalid32;
 REAL_64 _PL_ BitCInvalid64=(real_64*)ConstantInvalid64;
 REAL_32 _PL_ BitCPi32=(real_32*)ConstantPi32;
 REAL_64 _PL_ BitCPi64=(real_64*)ConstantPi64;
-inte_32 _PL_ BitCBuffer=(inte_32*)BufferMask;
 #endif
 
 #if(MemC_Fold_(Definition:KM Functions))
@@ -257,7 +254,7 @@ general BitC_Worker_KM_Op_M_2_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const 
 }
 devi_km *BitC_Create_KM_(cl_kernel const Kernel)
 {
-	data_08 *BufferName=Line_Clear_(BufferMask,_BitC_Kernel_Name_Length,data_08);
+	data_08 BufferName[_BitC_Kernel_Name_Length];
 	devi_km *KM;
 
 	if(Devi_Info_Kernel_(Kernel,BufferName,_BitC_Kernel_Name_Length,data_08,CL_KERNEL_FUNCTION_NAME)==CL_SUCCESS)

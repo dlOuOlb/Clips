@@ -1,6 +1,7 @@
 ﻿#include "penclip.h"
 
-static NAME_08 IdiomVersion[16]="Date:2018.02.12";
+#if(MemC_Fold_(Definition:Global Constants))
+static NAME_08 IdiomVersion[16]="Date:2018.02.22";
 static NAME_08 IdiomOpen[16]={'r','b','\0','w','b','\0','r','t','\0','w','t','\0','s','\0','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+3,IdiomOpen+6,IdiomOpen+9};
 #ifdef __OPENCL_H
@@ -12,10 +13,9 @@ static NAME_08 _PL_ AddressInfo[12]={IdiomInfo+0,IdiomInfo+9,IdiomInfo+16,IdiomI
 static NAME_08 _PL_ AddressMessage[8]={IdiomMessage+0,IdiomMessage+7,IdiomMessage+26,IdiomMessage+36,IdiomMessage+45,IdiomMessage+57,IdiomMessage+60,IdiomMessage+66};
 #endif
 static NAME_08 TableNumeric[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
-static name_08 BufferLocal[1024]={0};
 NAME_08 _PL_ PenClip=IdiomVersion;
 NAME_08 _PL_ _PL_ PenCOpen=AddressOpen;
-name_08 _PL_ PenCBuffer=BufferLocal;
+#endif
 
 int _Line_Reader_(void _PL_ Line,NAME_08 _PL_ Name,const size_t Size,const size_t Count)
 {
@@ -84,14 +84,15 @@ size_t File_Length_(NAME_08 _PL_ Name)
 
 int PenC_Command_(NAME_08 _PL_ Command)
 {
+	name_08 Buffer[1024];
 	FILE *ProgramPointer=NULL;
 	int Return=-1;
 
 	Program_Opener_(ProgramPointer,Command,AddressOpen[0]);
 	if(ProgramPointer)
-		while(Scanner_Text_(PenCBuffer,1024,ProgramPointer))
+		while(Scanner_Text_(Buffer,1024,ProgramPointer))
 		{
-			Printer_Console_(PenCBuffer);
+			Printer_Console_(Buffer);
 			File_Washer_(ProgramPointer);
 		}
 	Program_Closer_(ProgramPointer,Return);
@@ -463,46 +464,47 @@ static cl_uint _PenC_Select_Key_CL_(void)
 
 	return Key;
 }
-static void _PenC_Show_Platform_CL_(cl_platform_id const Platform)
+static void _PenC_Show_Platform_CL_(cl_platform_id const Platform,name_08 *Buffer)
 {
-	if(Devi_Info_Platform_(Platform,PenCBuffer,1024,name_08,CL_PLATFORM_NAME)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[4],PenCBuffer);
-	if(Devi_Info_Platform_(Platform,PenCBuffer,1024,name_08,CL_PLATFORM_VENDOR)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[2],PenCBuffer);
-	if(Devi_Info_Platform_(Platform,PenCBuffer,1024,name_08,CL_PLATFORM_VERSION)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[5],PenCBuffer);
-	if(Devi_Info_Platform_(Platform,PenCBuffer,1024,name_08,CL_PLATFORM_PROFILE)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[6],PenCBuffer);
-	if(Devi_Info_Platform_(Platform,PenCBuffer,1024,name_08,CL_PLATFORM_EXTENSIONS)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[7],PenCBuffer);
-	if(Devi_Info_Platform_(Platform,PenCBuffer,1024,name_08,CL_PLATFORM_ICD_SUFFIX_KHR)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[8],PenCBuffer);
+	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_NAME)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[4],Buffer);
+	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_VENDOR)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[2],Buffer);
+	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_VERSION)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[5],Buffer);
+	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_PROFILE)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[6],Buffer);
+	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_EXTENSIONS)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[7],Buffer);
+	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_ICD_SUFFIX_KHR)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[8],Buffer);
 	Printer_Console_(AddressMessage[7]);
 }
-static void _PenC_Show_Device_CL_(cl_device_id const Device)
+static void _PenC_Show_Device_CL_(cl_device_id const Device,name_08 *Buffer)
 {
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_NAME)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[4],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_VENDOR)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[2],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_VERSION)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[5],AddressInfo[1],AddressInfo[5],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DRIVER_VERSION)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[5],AddressInfo[3],AddressInfo[5],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_OPENCL_C_VERSION)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[5],AddressInfo[4],AddressInfo[5],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_PROFILE)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[6],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_EXTENSIONS)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[7],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_SPIR_VERSIONS)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[9],PenCBuffer);
-	if(Devi_Info_Device_(Device,PenCBuffer,1024,name_08,CL_DEVICE_BUILT_IN_KERNELS)==CL_SUCCESS)
-		Printer_Console_(AddressMessage[6],AddressInfo[10],PenCBuffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_NAME)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[4],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_VENDOR)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[2],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_VERSION)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[5],AddressInfo[1],AddressInfo[5],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DRIVER_VERSION)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[5],AddressInfo[3],AddressInfo[5],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_OPENCL_C_VERSION)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[5],AddressInfo[4],AddressInfo[5],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_PROFILE)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[6],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_EXTENSIONS)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[7],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_SPIR_VERSIONS)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[9],Buffer);
+	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_BUILT_IN_KERNELS)==CL_SUCCESS)
+		Printer_Console_(AddressMessage[6],AddressInfo[10],Buffer);
 	Printer_Console_(AddressMessage[7]);
 }
 cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 {
+	name_08 Buffer[1024];
 	cl_uint Platforms;
 	cl_int ErrorCode=Devi_Numb_Platforms_(&Platforms);
 
@@ -523,9 +525,9 @@ cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 						Printer_Console_(AddressMessage[2],Platforms,AddressInfo[0],Plural);
 						for(Index=0;Index<Platforms;Index++)
 						{
-							ErrorCode=Devi_Info_Platform_(Platform[Index],PenCBuffer,1024,name_08,CL_PLATFORM_NAME);
+							ErrorCode=Devi_Info_Platform_(Platform[Index],Buffer,1024,name_08,CL_PLATFORM_NAME);
 							if(ErrorCode==CL_SUCCESS)
-								Printer_Console_(AddressMessage[3],Index,PenCBuffer);
+								Printer_Console_(AddressMessage[3],Index,Buffer);
 							else
 								break;
 						}
@@ -537,7 +539,7 @@ cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 								cl_uint Devices;
 
 								(*SelectPlatform)=Index;
-								_PenC_Show_Platform_CL_(Platform[*SelectPlatform]);
+								_PenC_Show_Platform_CL_(Platform[*SelectPlatform],Buffer);
 								ErrorCode=Devi_Numb_Devices_(Platform[*SelectPlatform],&Devices);
 								if(ErrorCode==CL_SUCCESS)
 									if(Devices)
@@ -554,9 +556,9 @@ cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 													Printer_Console_(AddressMessage[2],Devices,AddressInfo[1],Plural);
 													for(Index=0;Index<Devices;Index++)
 													{
-														ErrorCode=Devi_Info_Device_(Device[Index],PenCBuffer,1024,name_08,CL_DEVICE_NAME);
+														ErrorCode=Devi_Info_Device_(Device[Index],Buffer,1024,name_08,CL_DEVICE_NAME);
 														if(ErrorCode==CL_SUCCESS)
-															Printer_Console_(AddressMessage[3],Index,PenCBuffer);
+															Printer_Console_(AddressMessage[3],Index,Buffer);
 														else
 															break;
 													}
@@ -566,7 +568,7 @@ cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 														if(Index<Devices)
 														{
 															(*SelectDevice)=Index;
-															_PenC_Show_Device_CL_(Device[*SelectDevice]);
+															_PenC_Show_Device_CL_(Device[*SelectDevice],Buffer);
 														}
 														else
 														{

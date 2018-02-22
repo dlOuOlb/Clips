@@ -1,15 +1,13 @@
 ﻿#include "memclip.h"
 
-static const char IdiomVersion[16]="Date:2018.02.12";
+#if(MemC_Fold_(Definition:Global Constants))
+static const char IdiomVersion[16]="Date:2018.02.22";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
 static const char ConstantArgType[8]={'G','L','H','F'};
 #endif
-static size_t BufferSize[MemC_Copy_Max_Dimension<<1]={0};
-static void *BufferMemory[MemC_Buffer_Elements]={NULL};
-
 const char _PL_ MemClip=IdiomVersion;
-void *_PL_ MemCBuffer=BufferMemory;
+#endif
 
 int MemC_Check_(const void _PL_ *Memory,const size_t Sets)
 {
@@ -129,12 +127,16 @@ void *Byte_Alloc_(const size_t S)
 }
 void *_Line_Alloc_(const size_t Z,const size_t SizeElement)
 {
+	size_t BufferSize[1];
+
 	BufferSize[0]=Z;
 
 	return MemC_Alloc_(BufferSize,1,SizeElement);
 }
 void *_Rect_Alloc_(const size_t Y,const size_t Z,const size_t SizeElement)
 {
+	size_t BufferSize[2];
+
 	BufferSize[0]=Y;
 	BufferSize[1]=Z;
 
@@ -142,6 +144,8 @@ void *_Rect_Alloc_(const size_t Y,const size_t Z,const size_t SizeElement)
 }
 void *_Cube_Alloc_(const size_t X,const size_t Y,const size_t Z,const size_t SizeElement)
 {
+	size_t BufferSize[3];
+
 	BufferSize[0]=X;
 	BufferSize[1]=Y;
 	BufferSize[2]=Z;
@@ -150,6 +154,8 @@ void *_Cube_Alloc_(const size_t X,const size_t Y,const size_t Z,const size_t Siz
 }
 void *_Tess_Alloc_(const size_t W,const size_t X,const size_t Y,const size_t Z,const size_t SizeElement)
 {
+	size_t BufferSize[4];
+
 	BufferSize[0]=W;
 	BufferSize[1]=X;
 	BufferSize[2]=Y;
@@ -267,8 +273,8 @@ errno_t _MemC_Copy_(const void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ 
 	default:
 		if(Dimensions<=MemC_Copy_Max_Dimension)
 		{
-			size_t *JumpS=BufferSize;
-			size_t *JumpT=JumpS+MemC_Copy_Max_Dimension;
+			size_t JumpS[MemC_Copy_Max_Dimension];
+			size_t JumpT[MemC_Copy_Max_Dimension];
 
 			if(ShapeS)
 				_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
@@ -426,7 +432,7 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ Memo
 	{
 	case 1:
 		{
-			size_t _PL_ BufferB=BufferSize;
+			size_t BufferB[4];
 
 			if(OriginS)
 				BufferB[0]=Bytes*OriginS[0];
@@ -456,9 +462,9 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ Memo
 		break;
 	case 2:
 		{
-			size_t _PL_ BufferS=BufferSize;
-			size_t _PL_ BufferT=BufferS+4;
-			size_t _PL_ Region=BufferT+4;
+			size_t BufferS[4];
+			size_t BufferT[4];
+			size_t Region[4];
 
 			if(OriginS)
 			{
@@ -509,9 +515,9 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ Memo
 		break;
 	case 3:
 		{
-			size_t _PL_ BufferS=BufferSize;
-			size_t _PL_ BufferT=BufferS+4;
-			size_t _PL_ Region=BufferT+4;
+			size_t BufferS[4];
+			size_t BufferT[4];
+			size_t Region[4];
 
 			if(OriginS)
 			{
@@ -571,9 +577,9 @@ cl_int Devi_Kenq_(cl_command_queue const Queue,cl_kernel const Kernel,const size
 {
 	cl_int ErrorCode=CL_INVALID_WORK_DIMENSION;
 
-	if(Dimensions<=3)
+	if(Dimensions<=Devi_Copy_Max_Dimension)
 	{
-		size_t _PL_ Total=BufferSize;
+		size_t Total[Devi_Copy_Max_Dimension];
 
 		Devi_Work_Global_(Total,WorkGroups,LocalWorkers,Dimensions);
 		ErrorCode=clEnqueueNDRangeKernel(Queue,Kernel,Dimensions,GlobalOffset,Total,LocalWorkers,0,NULL,NULL);
