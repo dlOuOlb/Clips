@@ -12,7 +12,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.02.22";
+static DATA_08 IdiomVersion[16]="Date:2018.02.23";
 
 #ifdef BitC_64_
 static volatile DATA_64 ConstantUnique=0x0000000000000001;
@@ -25,6 +25,11 @@ static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A
 
 static INTE_32 ConstantInvalid32[4]={0x7F800000,0xFF800000,0x7FFFFFFF,0xFFFFFFFF};
 static INTE_32 ConstantPi32[4]={0x40490FDB,0x3EA2F983,0x402DF854,0x3EBC5AB2};
+
+static DATA_64 TableShrink64[8]={0x0000000000000001,0x0000000000000002,0x0000000000000004,0x0000000000000008,0x0000000000000010,0x0000000000000020,0x0000000000000040,0x0000000000000080};
+static DATA_32 TableShrink32[8]={0x00000001,0x00000002,0x00000004,0x00000008,0x00000010,0x00000020,0x00000040,0x00000080};
+static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080};
+static DATA_08 TableShrink08[8]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 #ifdef __OPENCL_H
 static DATA_08 IdiomKernelNull[_BitC_Kernel_Name_Length]="";
@@ -1858,6 +1863,2767 @@ general BitC_BO_X_2_D08_(data_08 _PL_ DataC,DATA_08 _PL_ DataA,DATA_08 _PL_ Data
 		PtrC.V.D64[0]=PtrA.C.D64[0]^PtrB.C.D64[0];
 	for(End.C.D08+=(Length&0x00000007);PtrA.C.G<End.C.G;PtrA.C.D08++,PtrB.C.D08++,PtrC.C.D08++)
 		PtrC.V.D08[0]=PtrA.C.D08[0]^PtrB.C.D08[0];
+}
+#endif
+
+#if(MemC_Fold_(Definition:Relational Operation Functions))
+__inline static data_08 _BitC_RO_Loop_A_(bitclip M)
+{
+	M.V.D08[1]<<=1;
+	M.V.D08[2]<<=2;
+	M.V.D08[3]<<=3;
+	M.V.D08[4]<<=4;
+	M.V.D08[5]<<=5;
+	M.V.D08[6]<<=6;
+	M.V.D08[7]<<=7;
+
+	M.V.D32[0]|=M.C.D32[1];
+	M.V.D16[0]|=M.C.D16[1];
+	M.V.D08[0]|=M.C.D08[1];
+
+	return M.C.D08[0];
+}
+__inline static general _BitC_RO_Loop_B_(bitclip M,DATA_32 R)
+{
+	M.V.D32[0]|=M.C.D32[1];
+	M.V.D16[0]|=M.C.D16[1];
+	M.V.D08[0]|=M.C.D08[1];
+
+	M.V.D08[1]=0xFF;
+	M.V.D08[1]<<=R;
+}
+
+general BitC_Expand_D08_(DATA_08 *MemC_Rst_ DataI,data_08 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	DATA_08 *End=DataO+Safe;
+	inte_08 TempA;
+	inte_08 TempB;
+
+	for(;DataO<End;DataI++,DataO+=8)
+	{
+		TempA=(inte_08)(DataI[0]);
+
+		TempB=TempA<<7;
+		TempB>>=7;
+		DataO[0]=TempB;
+		TempB=TempA<<6;
+		TempB>>=7;
+		DataO[1]=TempB;
+		TempB=TempA<<5;
+		TempB>>=7;
+		DataO[2]=TempB;
+		TempB=TempA<<4;
+		TempB>>=7;
+		DataO[3]=TempB;
+		TempB=TempA<<3;
+		TempB>>=7;
+		DataO[4]=TempB;
+		TempB=TempA<<2;
+		TempB>>=7;
+		DataO[5]=TempB;
+		TempB=TempA<<1;
+		TempB>>=7;
+		DataO[6]=TempB;
+		TempB=TempA>>7;
+		DataO[7]=TempB;
+	}
+	if(Rest)
+	{
+		data_32 Shift=7;
+
+		for(End+=Rest,TempA=(inte_08)(DataI[0]);DataO<End;DataO++,Shift--)
+		{
+			TempB=TempA<<Shift;
+			TempB>>=7;
+			DataO[0]=TempB;
+		}
+	}
+}
+general BitC_Expand_D16_(DATA_08 *MemC_Rst_ DataI,data_16 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	DATA_16 *End=DataO+Safe;
+	inte_16 TempA;
+	inte_16 TempB;
+
+	for(;DataO<End;DataI++,DataO+=8)
+	{
+		TempA=(inte_16)(DataI[0]);
+
+		TempB=TempA<<15;
+		TempB>>=15;
+		DataO[0]=TempB;
+		TempB=TempA<<14;
+		TempB>>=15;
+		DataO[1]=TempB;
+		TempB=TempA<<13;
+		TempB>>=15;
+		DataO[2]=TempB;
+		TempB=TempA<<12;
+		TempB>>=15;
+		DataO[3]=TempB;
+		TempB=TempA<<11;
+		TempB>>=15;
+		DataO[4]=TempB;
+		TempB=TempA<<10;
+		TempB>>=15;
+		DataO[5]=TempB;
+		TempB=TempA<<9;
+		TempB>>=15;
+		DataO[6]=TempB;
+		TempB=TempA<<8;
+		TempB>>=15;
+		DataO[7]=TempB;
+	}
+	if(Rest)
+	{
+		data_32 Shift=15;
+
+		for(End+=Rest,TempA=(inte_16)(DataI[0]);DataO<End;DataO++,Shift--)
+		{
+			TempB=TempA<<Shift;
+			TempB>>=15;
+			DataO[0]=TempB;
+		}
+	}
+}
+general BitC_Expand_D32_(DATA_08 *MemC_Rst_ DataI,data_32 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	DATA_32 *End=DataO+Safe;
+	inte_32 TempA;
+	inte_32 TempB;
+
+	for(;DataO<End;DataI++,DataO+=8)
+	{
+		TempA=(inte_32)(DataI[0]);
+
+		TempB=TempA<<31;
+		TempB>>=31;
+		DataO[0]=TempB;
+		TempB=TempA<<30;
+		TempB>>=31;
+		DataO[1]=TempB;
+		TempB=TempA<<29;
+		TempB>>=31;
+		DataO[2]=TempB;
+		TempB=TempA<<28;
+		TempB>>=31;
+		DataO[3]=TempB;
+		TempB=TempA<<27;
+		TempB>>=31;
+		DataO[4]=TempB;
+		TempB=TempA<<26;
+		TempB>>=31;
+		DataO[5]=TempB;
+		TempB=TempA<<25;
+		TempB>>=31;
+		DataO[6]=TempB;
+		TempB=TempA<<24;
+		TempB>>=31;
+		DataO[7]=TempB;
+	}
+	if(Rest)
+	{
+		data_32 Shift=31;
+
+		for(End+=Rest,TempA=(inte_32)(DataI[0]);DataO<End;DataO++,Shift--)
+		{
+			TempB=TempA<<Shift;
+			TempB>>=31;
+			DataO[0]=TempB;
+		}
+	}
+}
+general BitC_Expand_D64_(DATA_08 *MemC_Rst_ DataI,data_64 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	DATA_64 *End=DataO+Safe;
+	inte_64 TempA;
+	inte_64 TempB;
+
+	for(;DataO<End;DataI++,DataO+=8)
+	{
+		TempA=(inte_64)(DataI[0]);
+
+		TempB=TempA<<63;
+		TempB>>=63;
+		DataO[0]=TempB;
+		TempB=TempA<<62;
+		TempB>>=63;
+		DataO[1]=TempB;
+		TempB=TempA<<61;
+		TempB>>=63;
+		DataO[2]=TempB;
+		TempB=TempA<<60;
+		TempB>>=63;
+		DataO[3]=TempB;
+		TempB=TempA<<59;
+		TempB>>=63;
+		DataO[4]=TempB;
+		TempB=TempA<<58;
+		TempB>>=63;
+		DataO[5]=TempB;
+		TempB=TempA<<57;
+		TempB>>=63;
+		DataO[6]=TempB;
+		TempB=TempA<<56;
+		TempB>>=63;
+		DataO[7]=TempB;
+	}
+	if(Rest)
+	{
+		data_32 Shift=63;
+
+		for(End+=Rest,TempA=(inte_64)(DataI[0]);DataO<End;DataO++,Shift--)
+		{
+			TempB=TempA<<Shift;
+			TempB>>=63;
+			DataO[0]=TempB;
+		}
+	}
+}
+
+general BitC_Shrink_D08_(DATA_08 *MemC_Rst_ DataI,data_08 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_08 _PL_ Table=TableShrink08;
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ Peek=(data_64*)Table;
+		DATA_08 _PL_ End=DataI+Safe;
+
+		for(;DataI<End;DataI+=8,DataO++)
+		{
+			Mask.V.D64[0]=(((data_64*)DataI)[0])&(Peek[0]);
+			Mask.V.D32[0]|=Mask.C.D32[1];
+			Mask.V.D16[0]|=Mask.C.D16[1];
+			Mask.V.D08[0]|=Mask.C.D08[1];
+
+			DataO[0]=Mask.C.D08[0];
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+			Mask.V.D08[Index]=DataI[Index]&Table[Index];
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataO[0]&=Mask.C.D08[1];
+			DataO[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_Shrink_D16_(DATA_16 *MemC_Rst_ DataI,data_08 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_16 _PL_ Table=TableShrink16;
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer[2];
+	bitclip Mask;
+
+	Mask.C.D64=Buffer;
+	{
+		DATA_64 _PL_ Peek=(data_64*)Table;
+		DATA_16 _PL_ End=DataI+Safe;
+
+		for(;DataI<End;DataI+=8,DataO++)
+		{
+			Mask.V.D64[0]=(((data_64*)DataI)[0])&(Peek[0]);
+			Mask.V.D64[1]=(((data_64*)DataI)[1])&(Peek[1]);
+			Mask.V.D64[0]|=Mask.C.D64[1];
+			Mask.V.D32[0]|=Mask.C.D32[1];
+			Mask.V.D16[0]|=Mask.C.D16[1];
+			Mask.V.D08[0]|=Mask.C.D08[1];
+
+			DataO[0]=Mask.C.D08[0];
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+			Mask.V.D16[Index]=DataI[Index]&Table[Index];
+		{
+			Mask.V.D64[0]|=Mask.C.D64[1];
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataO[0]&=Mask.C.D08[1];
+			DataO[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_Shrink_D32_(DATA_32 *MemC_Rst_ DataI,data_08 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_32 _PL_ Table=TableShrink32;
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer[4];
+	bitclip Mask;
+
+	Mask.C.D64=Buffer;
+	{
+		DATA_64 _PL_ Peek=(data_64*)Table;
+		DATA_32 _PL_ End=DataI+Safe;
+
+		for(;DataI<End;DataI+=8,DataO++)
+		{
+			Mask.V.D64[0]=(((data_64*)DataI)[0])&(Peek[0]);
+			Mask.V.D64[1]=(((data_64*)DataI)[1])&(Peek[1]);
+			Mask.V.D64[2]=(((data_64*)DataI)[2])&(Peek[2]);
+			Mask.V.D64[3]=(((data_64*)DataI)[3])&(Peek[3]);
+			Mask.V.D64[0]|=Mask.C.D64[2];
+			Mask.V.D64[1]|=Mask.C.D64[3];
+			Mask.V.D64[0]|=Mask.C.D64[1];
+			Mask.V.D32[0]|=Mask.C.D32[1];
+			Mask.V.D16[0]|=Mask.C.D16[1];
+			Mask.V.D08[0]|=Mask.C.D08[1];
+
+			DataO[0]=Mask.C.D08[0];
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+			Mask.V.D32[Index]=DataI[Index]&Table[Index];
+		{
+			Mask.V.D64[0]|=Mask.C.D64[2];
+			Mask.V.D64[1]|=Mask.C.D64[3];
+			Mask.V.D64[0]|=Mask.C.D64[1];
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataO[0]&=Mask.C.D08[1];
+			DataO[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_Shrink_D64_(DATA_64 *MemC_Rst_ DataI,data_08 *MemC_Rst_ DataO,DATA_32 Length)
+{
+	DATA_64 _PL_ Table=TableShrink64;
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer[8];
+	bitclip Mask;
+
+	Mask.C.D64=Buffer;
+	{
+		DATA_64 _PL_ End=DataI+Safe;
+
+		for(;DataI<End;DataI+=8,DataO++)
+		{
+			Mask.V.D64[0]=(DataI[0])&(Table[0]);
+			Mask.V.D64[1]=(DataI[1])&(Table[1]);
+			Mask.V.D64[2]=(DataI[2])&(Table[2]);
+			Mask.V.D64[3]=(DataI[3])&(Table[3]);
+			Mask.V.D64[4]=(DataI[0])&(Table[0]);
+			Mask.V.D64[5]=(DataI[1])&(Table[1]);
+			Mask.V.D64[6]=(DataI[2])&(Table[2]);
+			Mask.V.D64[7]=(DataI[3])&(Table[3]);
+			Mask.V.D64[0]|=Mask.C.D64[4];
+			Mask.V.D64[1]|=Mask.C.D64[5];
+			Mask.V.D64[2]|=Mask.C.D64[6];
+			Mask.V.D64[3]|=Mask.C.D64[7];
+			Mask.V.D64[0]|=Mask.C.D64[2];
+			Mask.V.D64[1]|=Mask.C.D64[3];
+			Mask.V.D64[0]|=Mask.C.D64[1];
+			Mask.V.D32[0]|=Mask.C.D32[1];
+			Mask.V.D16[0]|=Mask.C.D16[1];
+			Mask.V.D08[0]|=Mask.C.D08[1];
+
+			DataO[0]=Mask.C.D08[0];
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+			Mask.V.D64[Index]=DataI[Index]&Table[Index];
+		{
+			Mask.V.D64[0]|=Mask.C.D64[4];
+			Mask.V.D64[1]|=Mask.C.D64[5];
+			Mask.V.D64[2]|=Mask.C.D64[6];
+			Mask.V.D64[3]|=Mask.C.D64[7];
+			Mask.V.D64[0]|=Mask.C.D64[2];
+			Mask.V.D64[1]|=Mask.C.D64[3];
+			Mask.V.D64[0]|=Mask.C.D64[1];
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataO[0]&=Mask.C.D08[1];
+			DataO[0]|=Mask.C.D08[0];
+		}
+	}
+}
+
+general BitC_RO_E_1_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]==Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]==Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]==Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]==Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]==Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]==Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]==Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_E_1_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]==Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]==Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]==Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]==Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]==Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]==Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]==Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_E_1_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]==Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]==Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]==Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]==Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]==Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]==Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]==Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_E_1_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]==Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]==Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]==Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]==Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]==Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]==Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]==Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_E_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]==DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]==DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]==DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]==DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]==DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]==DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]==DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_E_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]==DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]==DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]==DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]==DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]==DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]==DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]==DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_E_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]==DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]==DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]==DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]==DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]==DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]==DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]==DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_E_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]==DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]==DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]==DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]==DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]==DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]==DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]==DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]==DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]==DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+
+general BitC_RO_N_1_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_N_1_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_N_1_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_N_1_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_N_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_N_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_N_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_N_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]!=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]!=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]!=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]!=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]!=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]!=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]!=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]!=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]!=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+
+general BitC_RO_G_1_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *MemC_Rst_ DataA,INTE_08 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *MemC_Rst_ DataA,INTE_16 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *MemC_Rst_ DataA,INTE_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *MemC_Rst_ DataA,INTE_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *MemC_Rst_ DataA,REAL_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_1_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *DataA,INTE_08 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *DataA,INTE_16 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *DataA,INTE_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *DataA,INTE_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *DataA,REAL_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_G_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *DataA,REAL_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]>=DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]>=DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]>=DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]>=DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]>=DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]>=DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]>=DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]>=DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]>=DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+
+general BitC_RO_L_1_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *MemC_Rst_ DataA,INTE_08 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *MemC_Rst_ DataA,INTE_16 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *MemC_Rst_ DataA,INTE_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *MemC_Rst_ DataA,INTE_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *MemC_Rst_ DataA,REAL_32 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_1_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_64 Value,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<Value);
+			Mask.V.D08[1]=(data_08)(DataA[1]<Value);
+			Mask.V.D08[2]=(data_08)(DataA[2]<Value);
+			Mask.V.D08[3]=(data_08)(DataA[3]<Value);
+			Mask.V.D08[4]=(data_08)(DataA[4]<Value);
+			Mask.V.D08[5]=(data_08)(DataA[5]<Value);
+			Mask.V.D08[6]=(data_08)(DataA[6]<Value);
+			Mask.V.D08[7]=(data_08)(DataA[7]<Value);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<Value);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		DATA_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *DataA,INTE_08 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_08 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *DataA,INTE_16 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_16 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *DataA,INTE_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *DataA,INTE_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		INTE_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *DataA,REAL_32 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_32 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
+}
+general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *DataA,REAL_64 *DataB,DATA_32 Length)
+{
+	DATA_32 Safe=Length&0xFFFFFFF8;
+	DATA_32 Rest=Length&0x00000007;
+	data_64 Buffer;
+	bitclip Mask;
+
+	Mask.C.D64=&Buffer;
+	{
+		REAL_64 _PL_ End=DataA+Safe;
+
+		for(;DataA<End;DataA+=8,DataB+=8,DataC++)
+		{
+			Mask.V.D08[0]=(data_08)(DataA[0]<DataB[0]);
+			Mask.V.D08[1]=(data_08)(DataA[1]<DataB[1]);
+			Mask.V.D08[2]=(data_08)(DataA[2]<DataB[2]);
+			Mask.V.D08[3]=(data_08)(DataA[3]<DataB[3]);
+			Mask.V.D08[4]=(data_08)(DataA[4]<DataB[4]);
+			Mask.V.D08[5]=(data_08)(DataA[5]<DataB[5]);
+			Mask.V.D08[6]=(data_08)(DataA[6]<DataB[6]);
+			Mask.V.D08[7]=(data_08)(DataA[7]<DataB[7]);
+
+			DataC[0]=_BitC_RO_Loop_A_(Mask);
+		}
+	}
+	if(Rest)
+	{
+		data_32 Index=0;
+
+		for(Mask.V.D64[0]=0;Index<Rest;Index++)
+		{
+			Mask.V.D08[Index]=(data_08)(DataA[Index]<DataB[Index]);
+			Mask.V.D08[Index]<<=Index;
+		}
+		{
+			_BitC_RO_Loop_B_(Mask,Rest);
+
+			DataC[0]&=Mask.C.D08[1];
+			DataC[0]|=Mask.C.D08[0];
+		}
+	}
 }
 #endif
 
