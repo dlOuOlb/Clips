@@ -1,14 +1,16 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.02.22";
+static const char IdiomVersion[16]="Date:2018.03.13";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
 static const char ConstantArgType[8]={'G','L','H','F'};
 #endif
 const char _PL_ MemClip=IdiomVersion;
+const void _PL_ MemCrux=&MemCrux;
 #endif
 
+#if(MemC_Fold_(Definition:Memory Functions))
 int MemC_Check_(const void _PL_ *Memory,const size_t Sets)
 {
 	int Success;
@@ -164,6 +166,56 @@ void *_Tess_Alloc_(const size_t W,const size_t X,const size_t Y,const size_t Z,c
 	return MemC_Alloc_(BufferSize,4,SizeElement);
 }
 
+static size_t _MemC_Safe_2_(size_t Num)
+{
+	Num|=(Num>>1);
+	Num|=(Num>>2);
+	Num|=(Num>>4);
+	Num|=(Num>>8);
+	Num|=(Num>>16);
+#ifdef MemC_64_
+	Num|=(Num>>32);
+#endif
+	Num++;
+	Num>>=1;
+
+	return Num;
+}
+errno_t _Line_Init_(void _PL_ Memory,const void _PL_ Tile,const size_t NumberElement,const size_t SizeElement)
+{
+	errno_t ErrorCode;
+
+	if(_MemC_Origin_(NumberElement,SizeElement))
+	{
+		const size_t Safe=_MemC_Safe_2_(NumberElement);
+		const char _PL_ End=((char*)Memory)+(Safe*SizeElement);
+		char *Ptr=(char*)Memory;
+		size_t Copy=SizeElement;
+
+		ErrorCode=Line_Copy_(Tile,Ptr,Copy,char);
+		if(!ErrorCode)
+		{
+			for(Ptr+=Copy;Ptr<End;Copy<<=1)
+			{
+				ErrorCode=Line_Copy_(Memory,Ptr,Copy,char);
+				if(ErrorCode)
+					break;
+				else
+					Ptr+=Copy;
+			}
+			if(!ErrorCode)
+			{
+				Copy=Safe^NumberElement;
+				Copy*=SizeElement;
+				ErrorCode=Line_Copy_(Memory,Ptr,Copy,char);
+			}
+		}
+	}
+	else
+		ErrorCode=EINVAL;
+
+	return ErrorCode;
+}
 errno_t _Line_Pick_(const void _PL_ Input,void _PL_ Output,const size_t NumberChannel,const size_t NumberElement,const size_t SizeElement)
 {
 	const size_t Step=NumberChannel*SizeElement;
@@ -360,7 +412,9 @@ size_t _MemC_Switch_(const void _PL_ Key,const void _PL_ _PL_ ReferTable,const s
 
 	return Index;
 }
+#endif
 
+#if(MemC_Fold_(Definition:OpenCL Functions))
 #ifdef __OPENCL_H
 cl_mem _Devi_Create_Buffer_(cl_context const Context,const size_t Elements,const size_t SizeElement)
 {
@@ -573,6 +627,14 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ Memo
 
 	return ErrorCode;
 }
+
+static void _Devi_Work_Global_(size_t *MemC_Rst_ GlobalWorkers,const size_t *MemC_Rst_ WorkGroups,const size_t *MemC_Rst_ LocalWorkers,const cl_uint Dimensions)
+{
+	const size_t _PL_ End=LocalWorkers+Dimensions;
+
+	for(;LocalWorkers<End;LocalWorkers++,WorkGroups++,GlobalWorkers++)
+		GlobalWorkers[0]=LocalWorkers[0]*WorkGroups[0];
+}
 cl_int Devi_Kenq_(cl_command_queue const Queue,cl_kernel const Kernel,const size_t _PL_ WorkGroups,const size_t _PL_ LocalWorkers,const size_t _PL_ GlobalOffset,const cl_uint Dimensions)
 {
 	cl_int ErrorCode=CL_INVALID_WORK_DIMENSION;
@@ -581,123 +643,11 @@ cl_int Devi_Kenq_(cl_command_queue const Queue,cl_kernel const Kernel,const size
 	{
 		size_t Total[Devi_Copy_Max_Dimension];
 
-		Devi_Work_Global_(Total,WorkGroups,LocalWorkers,Dimensions);
+		_Devi_Work_Global_(Total,WorkGroups,LocalWorkers,Dimensions);
 		ErrorCode=clEnqueueNDRangeKernel(Queue,Kernel,Dimensions,GlobalOffset,Total,LocalWorkers,0,NULL,NULL);
 	}
 
 	return ErrorCode;
-}
-
-void Devi_Work_Groups_(size_t *MemC_Rst_ WorkGroups,const size_t *MemC_Rst_ WorkLength,const size_t *MemC_Rst_ LocalWorkers,const cl_uint Dimensions)
-{
-	const size_t _PL_ End=LocalWorkers+Dimensions;
-
-	for(;LocalWorkers<End;LocalWorkers++,WorkLength++,WorkGroups++)
-		if(LocalWorkers[0])
-			WorkGroups[0]=(LocalWorkers[0]+WorkLength[0]-1)/LocalWorkers[0];
-		else
-			WorkGroups[0]=0;
-}
-void Devi_Work_Global_(size_t *MemC_Rst_ GlobalWorkers,const size_t *MemC_Rst_ WorkGroups,const size_t *MemC_Rst_ LocalWorkers,const cl_uint Dimensions)
-{
-	const size_t _PL_ End=LocalWorkers+Dimensions;
-
-	for(;LocalWorkers<End;LocalWorkers++,WorkGroups++,GlobalWorkers++)
-		GlobalWorkers[0]=LocalWorkers[0]*WorkGroups[0];
-}
-void Devi_Work_Safe_2_(size_t *MemC_Rst_ LocalWorkersSafe,const size_t *MemC_Rst_ LocalWorkers,const cl_uint Dimensions)
-{
-	const size_t _PL_ End=LocalWorkers+Dimensions;
-
-	for(;LocalWorkers<End;LocalWorkers++,LocalWorkersSafe++)
-	{
-		LocalWorkersSafe[0]=LocalWorkers[0]>>1;
-		LocalWorkersSafe[0]|=(LocalWorkersSafe[0]>>1);
-		LocalWorkersSafe[0]|=(LocalWorkersSafe[0]>>2);
-		LocalWorkersSafe[0]|=(LocalWorkersSafe[0]>>4);
-		LocalWorkersSafe[0]|=(LocalWorkersSafe[0]>>8);
-		LocalWorkersSafe[0]|=(LocalWorkersSafe[0]>>16);
-#ifdef _WIN64
-		LocalWorkersSafe[0]|=(LocalWorkersSafe[0]>>32);
-#endif
-		LocalWorkersSafe[0]++;
-	}
-}
-void Devi_Work_Local_Default_(size_t _PL_ Local,const size_t _PL_ Length,const size_t _PL_ Max,const size_t Total,const cl_uint Dims)
-{
-	switch(Dims)
-	{
-	case 1:
-		Local[0]=Max[0];
-		break;
-	case 2:
-		{
-			size_t Temp=Max[0]*Max[1];
-
-			{
-				Local[0]=Max[0];
-				Local[1]=Max[1];
-			}
-			while(Temp>Total)
-			{
-				if(Local[0]>Length[0])
-					if(Local[1]>Length[1])
-						if(Local[0]>Local[1])
-							Local[0]>>=1;
-						else
-							Local[1]>>=1;
-					else
-						Local[0]>>=1;
-				else
-					if(Local[1]>Length[1])
-						Local[1]>>=1;
-					else
-						if(Local[0]>Local[1])
-							Local[0]>>=1;
-						else
-							Local[1]>>=1;
-
-				Temp=Local[0]*Local[1];
-			}
-		}
-		break;
-	case 3:
-		{
-			size_t Temp=Max[0]*Max[1]*Max[2];
-
-			{
-				Local[0]=Max[0];
-				Local[1]=Max[1];
-				Local[2]=Max[2];
-			}
-			while(Temp>Total)
-			{
-				if(Local[2]>Length[2])
-					Local[2]>>=1;
-				else
-					if(Local[0]>Length[0])
-						if(Local[1]>Length[1])
-							if(Local[0]>Local[1])
-								Local[0]>>=1;
-							else
-								Local[1]>>=1;
-						else
-							Local[0]>>=1;
-					else
-						if(Local[1]>Length[1])
-							Local[1]>>=1;
-						else
-							if(Local[0]>Local[1])
-								Local[0]>>=1;
-							else
-								Local[1]>>=1;
-
-				Temp=Local[0]*Local[1]*Local[2];
-			}
-		}
-		break;
-	default:;
-	}
 }
 
 static cl_platform_id *_Devi_QC_Alloc_List_Platform_(cl_uint _PL_ Platforms)
@@ -931,7 +881,9 @@ cl_int Devi_KM_Init_(devi_km _PL_ KM)
 
 	if(KM)
 		if(KM->KArgs)
-			if(!(KM->Memory))
+			if(KM->Memory)
+				ErrorCode=CL_INVALID_HOST_PTR;
+			else
 			{
 				const char *PointerF=KM->Flag;
 				const size_t *PointerS=KM->TypeSize;
@@ -977,8 +929,6 @@ ESCAPE:
 						ErrorCode=CL_OUT_OF_HOST_MEMORY;
 				}
 			}
-			else
-				ErrorCode=CL_INVALID_HOST_PTR;
 		else
 			ErrorCode=CL_SUCCESS;
 	else
@@ -987,44 +937,77 @@ ESCAPE:
 	return ErrorCode;
 }
 
-void Devi_KM_Save_G_(DEVI_KM _PL_ KM,const cl_uint Order,const void _PL_ Value)
+cl_int Devi_KM_Save_G_(DEVI_KM _PL_ KM,const cl_uint Order,const void _PL_ Value)
 {
-	if(KM)
-		if(Order<KM->KArgs)
-		{
-			((size_t*)(KM->ArgSize))[Order]=KM->TypeSize[Order];
-			Line_Copy_(Value,((void**)(KM->ArgAddress))[Order],KM->TypeSize[Order],char);
-		}
-}
-void Devi_KM_Save_L_(DEVI_KM _PL_ KM,const cl_uint Order,const size_t Elements)
-{
-	if(KM)
-		if(Order<KM->KArgs)
-		{
-			((size_t*)(KM->ArgSize))[Order]=KM->TypeSize[Order]*Elements;
-			MemC_Acs_(void**,KM->ArgAddress)[Order]=NULL;
-		}
-}
-void Devi_KM_Work_Groups_(DEVI_KM _PL_ KM)
-{
-	if(KM)
-		Devi_Work_Groups_(KM->WGroups,KM->WLength,KM->WLocals,KM->WDims);
-}
+	cl_int ErrorCode;
 
-cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KM)
-{
-	cl_int ErrorCode=CL_SUCCESS;
-	cl_uint Index=0;
+	if(KM)
+		if(KM->Memory)
+			if(Order<KM->KArgs)
+			{
+				((size_t*)(KM->ArgSize))[Order]=KM->TypeSize[Order];
+				Line_Copy_(Value,((void**)(KM->ArgAddress))[Order],KM->TypeSize[Order],char);
 
-	for(;Index<KM->KArgs;Index++)
-	{
-		ErrorCode=Devi_Karg_(KM->Kernel,Index,KM->ArgAddress[Index],KM->ArgSize[Index]);
-		if(ErrorCode!=CL_SUCCESS)
-			break;
-	}
-	if(ErrorCode==CL_SUCCESS)
-		ErrorCode=Devi_Kenq_(Queue,KM->Kernel,KM->WGroups,KM->WLocals,KM->WOffset,KM->WDims);
+				ErrorCode=CL_SUCCESS;
+			}
+			else
+				ErrorCode=CL_INVALID_VALUE;
+		else
+			ErrorCode=CL_INVALID_HOST_PTR;
+	else
+		ErrorCode=CL_INVALID_HOST_PTR;
 
 	return ErrorCode;
 }
+cl_int Devi_KM_Save_L_(DEVI_KM _PL_ KM,const cl_uint Order,const size_t Elements)
+{
+	cl_int ErrorCode;
+
+	if(KM)
+		if(KM->Memory)
+			if(Order<KM->KArgs)
+			{
+				((size_t*)(KM->ArgSize))[Order]=KM->TypeSize[Order]*Elements;
+				MemC_Acs_(void**,KM->ArgAddress)[Order]=NULL;
+
+				ErrorCode=CL_SUCCESS;
+			}
+			else
+				ErrorCode=CL_INVALID_VALUE;
+		else
+			ErrorCode=CL_INVALID_HOST_PTR;
+	else
+		ErrorCode=CL_INVALID_HOST_PTR;
+
+	return ErrorCode;
+}
+cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KM)
+{
+	cl_int ErrorCode;
+
+	if(KM)
+		if(KM->KArgs)
+			if(KM->Memory)
+			{
+				cl_uint Index=0;
+
+				for(ErrorCode=CL_SUCCESS;Index<KM->KArgs;Index++)
+				{
+					ErrorCode=Devi_Karg_(KM->Kernel,Index,KM->ArgAddress[Index],KM->ArgSize[Index]);
+					if(ErrorCode!=CL_SUCCESS)
+						break;
+				}
+				if(ErrorCode==CL_SUCCESS)
+					ErrorCode=Devi_Kenq_(Queue,KM->Kernel,KM->WGroups,KM->WLocals,KM->WOffset,KM->WDims);
+			}
+			else
+				ErrorCode=CL_INVALID_HOST_PTR;
+		else
+			ErrorCode=Devi_Kenq_(Queue,KM->Kernel,KM->WGroups,KM->WLocals,KM->WOffset,KM->WDims);
+	else
+		ErrorCode=CL_INVALID_HOST_PTR;
+
+	return ErrorCode;
+}
+#endif
 #endif
