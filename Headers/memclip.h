@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.02.22	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.03.13	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -17,15 +17,19 @@
 #include <CL\opencl.h>
 #endif
 
+#ifdef _WIN64
+#define MemC_64_	//MemClip : 64-bit Memory Address
+#endif
+
 #ifndef NULL
-#define NULL 0					//MemClip : Null Pointer Definition
+#define NULL 0	//MemClip : Null Pointer Definition
 #endif
 
 #ifndef _PL_
-#define _PL_ *const				//MemClip : Pointer Lock Definition
+#define _PL_ *const	//MemClip : Pointer Lock Definition
 #endif
 
-#define MemC_Fold_(Comment) (1)	//MemClip : Code Folding with #if Pre-processor.
+#define MemC_Fold_(Comment) (1)	//MemClip : Code Folding with #if and #endif Pre-processor.
 
 #if(MemC_Fold_(Definition:Types))
 #ifdef __OPENCL_H
@@ -91,6 +95,7 @@ typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 #define Line_Copy_(Source,Target,Elements,type) memcpy_s(Target,(Elements)*sizeof(type),Source,(Elements)*sizeof(type))	//MemClip : 1D Array Data Copy
 #define Line_Compare_(LineA,LineB,Elements,type) memcmp(LineA,LineB,(Elements)*sizeof(type))							//MemClip : 1D Array Data Compare
 
+#define Line_Init_(Memory,Tile,Elements,type) _Line_Init_(Memory,Tile,Elements,sizeof(type))							//MemClip : 1D Array Data Preset
 #define Line_Pick_(Source,Target,Channels,Elements,type) _Line_Pick_(Source,Target,Channels,Elements,sizeof(type))		//MemClip : 1D Array Channel Pick
 #define Line_Fill_(Source,Target,Channels,Elements,type) _Line_Fill_(Source,Target,Channels,Elements,sizeof(type))		//MemClip : 1D Array Channel Fill
 
@@ -178,9 +183,11 @@ typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 #if(MemC_Fold_(Declaration:Global Constants))
 //MemClip : Library Version
 extern const char _PL_ MemClip;
+//MemClip : Self Reference
+extern const void _PL_ MemCrux;
 #endif
 
-#if(MemC_Fold_(Declaration:Functions))
+#if(MemC_Fold_(Declaration:Memory Functions))
 //MemClip : Memory Allocation Check
 //＊Return value is 0 for failure, 1 for success.
 int MemC_Check_(const void _PL_*MemorySet,const size_t Count);
@@ -191,22 +198,10 @@ void *Byte_Alloc_(const size_t ByteSize);
 void *MemC_Alloc_(const size_t _PL_ ArraySize,const size_t DimensionsNumber,const size_t ElementSize);
 //MemClip : Batch Memory Deallocation
 void MemC_Deloc_Set_(void **MemorySet,const size_t Count);
+#endif
 
+#if(MemC_Fold_(Declaration:OpenCL Functions))
 #ifdef __OPENCL_H
-//MemC_CL : Default Number of Local Workers
-//＊(local workers)[n]≤(maximum workers)[n]
-//　∏(local workers)[n]≤(total workers)
-void Devi_Work_Local_Default_(size_t _PL_ LocalWorkers,const size_t _PL_ WorkLength,const size_t _PL_ MaximumWorkers,const size_t TotalWorkers,const cl_uint Dimensions);
-//MemC_CL : The Number of Work Groups Calculation
-//＊(work groups)[n]＝ceil((work length)[n]÷(local workers)[n])
-void Devi_Work_Groups_(size_t *MemC_Rst_ WorkGroups,const size_t *MemC_Rst_ WorkLength,const size_t *MemC_Rst_ LocalWorkers,const cl_uint Dimensions);
-//MemC_CL : The Number of Global Workers Calculation
-//＊(global workers)[n]＝(work groups)[n]×(local workers)[n]
-void Devi_Work_Global_(size_t *MemC_Rst_ GlobalWorkers,const size_t *MemC_Rst_ WorkGroups,const size_t *MemC_Rst_ LocalWorkers,const cl_uint Dimensions);
-//MemC_CL : Two's Power Calculation
-//＊(bounded local workers)[n]＝exp₂(floor(log₂((local workers)[n])))
-void Devi_Work_Safe_2_(size_t *MemC_Rst_ BoundedLocalWorkers,const size_t *MemC_Rst_ LocalWorkers,const cl_uint Dimensions);
-
 //MemC_CL : Kernel Enqueue
 //＊Maximum dimension is 3.
 cl_int Devi_Kenq_(cl_command_queue const,cl_kernel const,const size_t _PL_ WorkGroups,const size_t _PL_ LocalWorkers,const size_t _PL_ GlobalOffset,const cl_uint Dimensions);
@@ -214,33 +209,33 @@ cl_int Devi_Kenq_(cl_command_queue const,cl_kernel const,const size_t _PL_ WorkG
 //MemC_CL : Queue Container Memory Allocation
 devi_qc *Devi_QC_Create_(const cl_uint PlatformSelect,const cl_uint DeviceSelect);
 //MemC_CL : Queue Container Memory Deallocation
-void Devi_QC_Delete_(devi_qc*_PL_);
+void Devi_QC_Delete_(devi_qc *_PL_ QueueContainer);
 
 //MemC_CL : Kernel Manager Memory Allocation
 devi_km *Devi_KM_Create_(cl_kernel const,const cl_uint KernelArguments,const cl_uint WorkDimension);
 //MemC_CL : Kernel Manager Initialization
 //＊Execute only one time for one karg manager.
-cl_int Devi_KM_Init_(devi_km _PL_);
+cl_int Devi_KM_Init_(devi_km _PL_ KernelManager);
 //MemC_CL : Kernel Manager Memory Deallocation
-void Devi_KM_Delete_(devi_km*_PL_);
+void Devi_KM_Delete_(devi_km *_PL_ KernelManager);
 
 //MemC_CL : Kernel Manager Argument Save (Global)
-void Devi_KM_Save_G_(DEVI_KM _PL_,const cl_uint Index,const void _PL_ Value);
+cl_int Devi_KM_Save_G_(DEVI_KM _PL_ KernelManager,const cl_uint Index,const void _PL_ Value);
 //MemC_CL : Kernel Manager Argument Save (Local)
-void Devi_KM_Save_L_(DEVI_KM _PL_,const cl_uint Index,const size_t Elements);
-//MemC_CL : Kernel Manager Group Size Set
-//＊WGroups[n]＝ceil(WLength[n]÷WLocals[n])
-void Devi_KM_Work_Groups_(DEVI_KM _PL_);
+cl_int Devi_KM_Save_L_(DEVI_KM _PL_ KernelManager,const cl_uint Index,const size_t Elements);
 
 //MemC_CL : Kernel Enqueue with Kernel Manager
-cl_int Devi_KM_Enqueue_(cl_command_queue const,DEVI_KM _PL_);
+cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager);
+#endif
 #endif
 
+#if(MemC_Fold_(Declaration:Redefined Functions))
 void *_Line_Alloc_(const size_t,const size_t);
 void *_Rect_Alloc_(const size_t,const size_t,const size_t);
 void *_Cube_Alloc_(const size_t,const size_t,const size_t,const size_t);
 void *_Tess_Alloc_(const size_t,const size_t,const size_t,const size_t,const size_t);
 
+errno_t _Line_Init_(void _PL_,const void _PL_,const size_t,const size_t);
 errno_t _Line_Pick_(const void _PL_,void _PL_,const size_t,const size_t,const size_t);
 errno_t _Line_Fill_(const void _PL_,void _PL_,const size_t,const size_t,const size_t);
 
