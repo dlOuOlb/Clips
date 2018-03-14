@@ -2,7 +2,7 @@
 /*	BitClip's OpenCL Header and Source Parts.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.02.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.03.14	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -65,6 +65,8 @@
 
 #if(Fold_(Definitions:Macros))
 #define _K_ __kernel void
+#define _I_ inline static
+#define _C_ __constant
 #define _G_ __global
 #define _L_ __local
 #define _P_ __private
@@ -100,10 +102,24 @@
 #define Work_ILZ_ get_local_id(2)
 
 #define _PL_ *const
-#define Acs_(scope,type,Data) (*((scope type*)&(Data)))
+#define Acs_(scope,type,Data) (*((_##scope##_ type*)&(Data)))
+#define Vect_(scope,num,type) _##scope##_ _##num##_##type
+
+#define Vect_Load_(num,Address) _Vect_Load_##num##_(Address)
+#define Vect_Save_(num,Address) _Vect_Save_##num##_(Address)
+
+#define _Vect_Load_02_(Address) vload2(0,Address)
+#define _Vect_Load_04_(Address) vload4(0,Address)
+#define _Vect_Load_08_(Address) vload8(0,Address)
+#define _Vect_Load_16_(Address) vload16(0,Address)
+
+#define _Vect_Save_02_(Vector,Address) vstore2(Vector,0,Address)
+#define _Vect_Save_04_(Vector,Address) vstore4(Vector,0,Address)
+#define _Vect_Save_08_(Vector,Address) vstore8(Vector,0,Address)
+#define _Vect_Save_16_(Vector,Address) vstore16(Vector,0,Address)
 #endif
 
-#if(Fold_(Definition:Types))
+#if(Fold_(Definition:Scalar Types))
 typedef unsigned char data_08;
 typedef const data_08 DATA_08;
 
@@ -159,6 +175,288 @@ typedef const sintptr SINTPTR;
 
 typedef uintptr_t uintptr;
 typedef const uintptr UINTPTR;
+#endif
+
+#if(Fold_(Definition:Vector Types))
+typedef uchar2 _02_data_08;
+typedef uchar4 _04_data_08;
+typedef uchar8 _08_data_08;
+typedef uchar16 _16_data_08;
+
+typedef const _02_data_08 _02_DATA_08;
+typedef const _04_data_08 _04_DATA_08;
+typedef const _08_data_08 _08_DATA_08;
+typedef const _16_data_08 _16_DATA_08;
+
+typedef ushort2 _02_data_16;
+typedef ushort4 _04_data_16;
+typedef ushort8 _08_data_16;
+typedef ushort16 _16_data_16;
+
+typedef const _02_data_16 _02_DATA_16;
+typedef const _04_data_16 _04_DATA_16;
+typedef const _08_data_16 _08_DATA_16;
+typedef const _16_data_16 _16_DATA_16;
+
+typedef uint2 _02_data_32;
+typedef uint4 _04_data_32;
+typedef uint8 _08_data_32;
+typedef uint16 _16_data_32;
+
+typedef const _02_data_32 _02_DATA_32;
+typedef const _04_data_32 _04_DATA_32;
+typedef const _08_data_32 _08_DATA_32;
+typedef const _16_data_32 _16_DATA_32;
+
+#if(_ABLE_I64_)
+typedef ulong2 _02_data_64;
+typedef ulong4 _04_data_64;
+typedef ulong8 _08_data_64;
+typedef ulong16 _16_data_64;
+
+typedef const _02_data_64 _02_DATA_64;
+typedef const _04_data_64 _04_DATA_64;
+typedef const _08_data_64 _08_DATA_64;
+typedef const _16_data_64 _16_DATA_64;
+#endif
+
+typedef char2 _02_inte_08;
+typedef char4 _04_inte_08;
+typedef char8 _08_inte_08;
+typedef char16 _16_inte_08;
+
+typedef const _02_inte_08 _02_INTE_08;
+typedef const _04_inte_08 _04_INTE_08;
+typedef const _08_inte_08 _08_INTE_08;
+typedef const _16_inte_08 _16_INTE_08;
+
+typedef short2 _02_inte_16;
+typedef short4 _04_inte_16;
+typedef short8 _08_inte_16;
+typedef short16 _16_inte_16;
+
+typedef const _02_inte_16 _02_INTE_16;
+typedef const _04_inte_16 _04_INTE_16;
+typedef const _08_inte_16 _08_INTE_16;
+typedef const _16_inte_16 _16_INTE_16;
+
+typedef int2 _02_inte_32;
+typedef int4 _04_inte_32;
+typedef int8 _08_inte_32;
+typedef int16 _16_inte_32;
+
+typedef const _02_inte_32 _02_INTE_32;
+typedef const _04_inte_32 _04_INTE_32;
+typedef const _08_inte_32 _08_INTE_32;
+typedef const _16_inte_32 _16_INTE_32;
+
+#if(_ABLE_I64_)
+typedef long2 _02_inte_64;
+typedef long4 _04_inte_64;
+typedef long8 _08_inte_64;
+typedef long16 _16_inte_64;
+
+typedef const _02_inte_64 _02_INTE_64;
+typedef const _04_inte_64 _04_INTE_64;
+typedef const _08_inte_64 _08_INTE_64;
+typedef const _16_inte_64 _16_INTE_64;
+#endif
+
+#if(_ABLE_R16_)
+typedef half2 _02_real_16;
+typedef half4 _04_real_16;
+typedef half8 _08_real_16;
+typedef half16 _16_real_16;
+
+typedef const _02_real_16 _02_REAL_16;
+typedef const _04_real_16 _04_REAL_16;
+typedef const _08_real_16 _08_REAL_16;
+typedef const _16_real_16 _16_REAL_16;
+#endif
+
+typedef float2 _02_real_32;
+typedef float4 _04_real_32;
+typedef float8 _08_real_32;
+typedef float16 _16_real_32;
+
+typedef const _02_real_32 _02_REAL_32;
+typedef const _04_real_32 _04_REAL_32;
+typedef const _08_real_32 _08_REAL_32;
+typedef const _16_real_32 _16_REAL_32;
+
+#if(_ABLE_R64_)
+typedef double2 _02_real_64;
+typedef double4 _04_real_64;
+typedef double8 _08_real_64;
+typedef double16 _16_real_64;
+
+typedef const _02_real_64 _02_REAL_64;
+typedef const _04_real_64 _04_REAL_64;
+typedef const _08_real_64 _08_REAL_64;
+typedef const _16_real_64 _16_REAL_64;
+#endif
+#endif
+
+#if(Fold_(Definition:Pointer Unions))
+union _c_ptr_v
+{
+	_C_ general *G;
+	_C_ general **GG;
+	_C_ address *AA;
+	_C_ data_08 *D08;
+	_C_ data_16 *D16;
+	_C_ data_32 *D32;
+#if(_ABLE_I64_)
+	_C_ data_64 *D64;
+#endif
+	_C_ inte_08 *I08;
+	_C_ inte_16 *I16;
+	_C_ inte_32 *I32;
+#if(_ABLE_I64_)
+	_C_ inte_64 *I64;
+#endif
+#if(_ABLE_R16_)
+	_C_ real_16 *R16;
+#endif
+	_C_ real_32 *R32;
+#if(_ABLE_R64_)
+	_C_ real_64 *R64;
+#endif
+	_C_ _02_data_08 *_02_D08;
+	_C_ _04_data_08 *_04_D08;
+	_C_ _08_data_08 *_08_D08;
+	_C_ _16_data_08 *_16_D08;
+	_C_ _02_data_16 *_02_D16;
+	_C_ _04_data_16 *_04_D16;
+	_C_ _08_data_16 *_08_D16;
+	_C_ _16_data_16 *_16_D16;
+	_C_ _02_data_32 *_02_D32;
+	_C_ _04_data_32 *_04_D32;
+	_C_ _08_data_32 *_08_D32;
+	_C_ _16_data_32 *_16_D32;
+#if(_ABLE_I64_)
+	_C_ _02_data_64 *_02_D64;
+	_C_ _04_data_64 *_04_D64;
+	_C_ _08_data_64 *_08_D64;
+	_C_ _16_data_64 *_16_D64;
+#endif
+	_C_ _02_inte_08 *_02_I08;
+	_C_ _04_inte_08 *_04_I08;
+	_C_ _08_inte_08 *_08_I08;
+	_C_ _16_inte_08 *_16_I08;
+	_C_ _02_inte_16 *_02_I16;
+	_C_ _04_inte_16 *_04_I16;
+	_C_ _08_inte_16 *_08_I16;
+	_C_ _16_inte_16 *_16_I16;
+	_C_ _02_inte_32 *_02_I32;
+	_C_ _04_inte_32 *_04_I32;
+	_C_ _08_inte_32 *_08_I32;
+	_C_ _16_inte_32 *_16_I32;
+#if(_ABLE_I64_)
+	_C_ _02_inte_64 *_02_I64;
+	_C_ _04_inte_64 *_04_I64;
+	_C_ _08_inte_64 *_08_I64;
+	_C_ _16_inte_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_C_ _02_real_16 *_02_R16;
+	_C_ _04_real_16 *_04_R16;
+	_C_ _08_real_16 *_08_R16;
+	_C_ _16_real_16 *_16_R16;
+#endif
+	_C_ _02_real_32 *_02_R32;
+	_C_ _04_real_32 *_04_R32;
+	_C_ _08_real_32 *_08_R32;
+	_C_ _16_real_32 *_16_R32;
+#if(_ABLE_R64_)
+	_C_ _02_real_64 *_02_R64;
+	_C_ _04_real_64 *_04_R64;
+	_C_ _08_real_64 *_08_R64;
+	_C_ _16_real_64 *_16_R64;
+#endif
+};
+typedef union _c_ptr_v c_ptr_v;
+typedef const union _c_ptr_v C_PTR_V;
+
+union _c_ptr_c
+{
+	_C_ GENERAL *G;
+	_C_ GENERAL **GG;
+	_C_ ADDRESS *AA;
+	_C_ DATA_08 *D08;
+	_C_ DATA_16 *D16;
+	_C_ DATA_32 *D32;
+#if(_ABLE_I64_)
+	_C_ DATA_64 *D64;
+#endif
+	_C_ INTE_08 *I08;
+	_C_ INTE_16 *I16;
+	_C_ INTE_32 *I32;
+#if(_ABLE_I64_)
+	_C_ INTE_64 *I64;
+#endif
+#if(_ABLE_R16_)
+	_C_ REAL_16 *R16;
+#endif
+	_C_ REAL_32 *R32;
+#if(_ABLE_R64_)
+	_C_ REAL_64 *R64;
+#endif
+	_C_ _02_DATA_08 *_02_D08;
+	_C_ _04_DATA_08 *_04_D08;
+	_C_ _08_DATA_08 *_08_D08;
+	_C_ _16_DATA_08 *_16_D08;
+	_C_ _02_DATA_16 *_02_D16;
+	_C_ _04_DATA_16 *_04_D16;
+	_C_ _08_DATA_16 *_08_D16;
+	_C_ _16_DATA_16 *_16_D16;
+	_C_ _02_DATA_32 *_02_D32;
+	_C_ _04_DATA_32 *_04_D32;
+	_C_ _08_DATA_32 *_08_D32;
+	_C_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+	_C_ _02_DATA_64 *_02_D64;
+	_C_ _04_DATA_64 *_04_D64;
+	_C_ _08_DATA_64 *_08_D64;
+	_C_ _16_DATA_64 *_16_D64;
+#endif
+	_C_ _02_INTE_08 *_02_I08;
+	_C_ _04_INTE_08 *_04_I08;
+	_C_ _08_INTE_08 *_08_I08;
+	_C_ _16_INTE_08 *_16_I08;
+	_C_ _02_INTE_16 *_02_I16;
+	_C_ _04_INTE_16 *_04_I16;
+	_C_ _08_INTE_16 *_08_I16;
+	_C_ _16_INTE_16 *_16_I16;
+	_C_ _02_INTE_32 *_02_I32;
+	_C_ _04_INTE_32 *_04_I32;
+	_C_ _08_INTE_32 *_08_I32;
+	_C_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+	_C_ _02_INTE_64 *_02_I64;
+	_C_ _04_INTE_64 *_04_I64;
+	_C_ _08_INTE_64 *_08_I64;
+	_C_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_C_ _02_REAL_16 *_02_R16;
+	_C_ _04_REAL_16 *_04_R16;
+	_C_ _08_REAL_16 *_08_R16;
+	_C_ _16_REAL_16 *_16_R16;
+#endif
+	_C_ _02_REAL_32 *_02_R32;
+	_C_ _04_REAL_32 *_04_R32;
+	_C_ _08_REAL_32 *_08_R32;
+	_C_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+	_C_ _02_REAL_64 *_02_R64;
+	_C_ _04_REAL_64 *_04_R64;
+	_C_ _08_REAL_64 *_08_R64;
+	_C_ _16_REAL_64 *_16_R64;
+#endif
+};
+typedef union _c_ptr_c c_ptr_c;
+typedef const union _c_ptr_c C_PTR_C;
 
 union _g_ptr_v
 {
@@ -183,6 +481,58 @@ union _g_ptr_v
 	_G_ real_32 *R32;
 #if(_ABLE_R64_)
 	_G_ real_64 *R64;
+#endif
+	_G_ _02_data_08 *_02_D08;
+	_G_ _04_data_08 *_04_D08;
+	_G_ _08_data_08 *_08_D08;
+	_G_ _16_data_08 *_16_D08;
+	_G_ _02_data_16 *_02_D16;
+	_G_ _04_data_16 *_04_D16;
+	_G_ _08_data_16 *_08_D16;
+	_G_ _16_data_16 *_16_D16;
+	_G_ _02_data_32 *_02_D32;
+	_G_ _04_data_32 *_04_D32;
+	_G_ _08_data_32 *_08_D32;
+	_G_ _16_data_32 *_16_D32;
+#if(_ABLE_I64_)
+	_G_ _02_data_64 *_02_D64;
+	_G_ _04_data_64 *_04_D64;
+	_G_ _08_data_64 *_08_D64;
+	_G_ _16_data_64 *_16_D64;
+#endif
+	_G_ _02_inte_08 *_02_I08;
+	_G_ _04_inte_08 *_04_I08;
+	_G_ _08_inte_08 *_08_I08;
+	_G_ _16_inte_08 *_16_I08;
+	_G_ _02_inte_16 *_02_I16;
+	_G_ _04_inte_16 *_04_I16;
+	_G_ _08_inte_16 *_08_I16;
+	_G_ _16_inte_16 *_16_I16;
+	_G_ _02_inte_32 *_02_I32;
+	_G_ _04_inte_32 *_04_I32;
+	_G_ _08_inte_32 *_08_I32;
+	_G_ _16_inte_32 *_16_I32;
+#if(_ABLE_I64_)
+	_G_ _02_inte_64 *_02_I64;
+	_G_ _04_inte_64 *_04_I64;
+	_G_ _08_inte_64 *_08_I64;
+	_G_ _16_inte_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_G_ _02_real_16 *_02_R16;
+	_G_ _04_real_16 *_04_R16;
+	_G_ _08_real_16 *_08_R16;
+	_G_ _16_real_16 *_16_R16;
+#endif
+	_G_ _02_real_32 *_02_R32;
+	_G_ _04_real_32 *_04_R32;
+	_G_ _08_real_32 *_08_R32;
+	_G_ _16_real_32 *_16_R32;
+#if(_ABLE_R64_)
+	_G_ _02_real_64 *_02_R64;
+	_G_ _04_real_64 *_04_R64;
+	_G_ _08_real_64 *_08_R64;
+	_G_ _16_real_64 *_16_R64;
 #endif
 };
 typedef union _g_ptr_v g_ptr_v;
@@ -212,6 +562,58 @@ union _g_ptr_c
 #if(_ABLE_R64_)
 	_G_ REAL_64 *R64;
 #endif
+	_G_ _02_DATA_08 *_02_D08;
+	_G_ _04_DATA_08 *_04_D08;
+	_G_ _08_DATA_08 *_08_D08;
+	_G_ _16_DATA_08 *_16_D08;
+	_G_ _02_DATA_16 *_02_D16;
+	_G_ _04_DATA_16 *_04_D16;
+	_G_ _08_DATA_16 *_08_D16;
+	_G_ _16_DATA_16 *_16_D16;
+	_G_ _02_DATA_32 *_02_D32;
+	_G_ _04_DATA_32 *_04_D32;
+	_G_ _08_DATA_32 *_08_D32;
+	_G_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+	_G_ _02_DATA_64 *_02_D64;
+	_G_ _04_DATA_64 *_04_D64;
+	_G_ _08_DATA_64 *_08_D64;
+	_G_ _16_DATA_64 *_16_D64;
+#endif
+	_G_ _02_INTE_08 *_02_I08;
+	_G_ _04_INTE_08 *_04_I08;
+	_G_ _08_INTE_08 *_08_I08;
+	_G_ _16_INTE_08 *_16_I08;
+	_G_ _02_INTE_16 *_02_I16;
+	_G_ _04_INTE_16 *_04_I16;
+	_G_ _08_INTE_16 *_08_I16;
+	_G_ _16_INTE_16 *_16_I16;
+	_G_ _02_INTE_32 *_02_I32;
+	_G_ _04_INTE_32 *_04_I32;
+	_G_ _08_INTE_32 *_08_I32;
+	_G_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+	_G_ _02_INTE_64 *_02_I64;
+	_G_ _04_INTE_64 *_04_I64;
+	_G_ _08_INTE_64 *_08_I64;
+	_G_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_G_ _02_REAL_16 *_02_R16;
+	_G_ _04_REAL_16 *_04_R16;
+	_G_ _08_REAL_16 *_08_R16;
+	_G_ _16_REAL_16 *_16_R16;
+#endif
+	_G_ _02_REAL_32 *_02_R32;
+	_G_ _04_REAL_32 *_04_R32;
+	_G_ _08_REAL_32 *_08_R32;
+	_G_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+	_G_ _02_REAL_64 *_02_R64;
+	_G_ _04_REAL_64 *_04_R64;
+	_G_ _08_REAL_64 *_08_R64;
+	_G_ _16_REAL_64 *_16_R64;
+#endif
 };
 typedef union _g_ptr_c g_ptr_c;
 typedef const union _g_ptr_c G_PTR_C;
@@ -239,6 +641,58 @@ union _l_ptr_v
 	_L_ real_32 *R32;
 #if(_ABLE_R64_)
 	_L_ real_64 *R64;
+#endif
+	_L_ _02_data_08 *_02_D08;
+	_L_ _04_data_08 *_04_D08;
+	_L_ _08_data_08 *_08_D08;
+	_L_ _16_data_08 *_16_D08;
+	_L_ _02_data_16 *_02_D16;
+	_L_ _04_data_16 *_04_D16;
+	_L_ _08_data_16 *_08_D16;
+	_L_ _16_data_16 *_16_D16;
+	_L_ _02_data_32 *_02_D32;
+	_L_ _04_data_32 *_04_D32;
+	_L_ _08_data_32 *_08_D32;
+	_L_ _16_data_32 *_16_D32;
+#if(_ABLE_I64_)
+	_L_ _02_data_64 *_02_D64;
+	_L_ _04_data_64 *_04_D64;
+	_L_ _08_data_64 *_08_D64;
+	_L_ _16_data_64 *_16_D64;
+#endif
+	_L_ _02_inte_08 *_02_I08;
+	_L_ _04_inte_08 *_04_I08;
+	_L_ _08_inte_08 *_08_I08;
+	_L_ _16_inte_08 *_16_I08;
+	_L_ _02_inte_16 *_02_I16;
+	_L_ _04_inte_16 *_04_I16;
+	_L_ _08_inte_16 *_08_I16;
+	_L_ _16_inte_16 *_16_I16;
+	_L_ _02_inte_32 *_02_I32;
+	_L_ _04_inte_32 *_04_I32;
+	_L_ _08_inte_32 *_08_I32;
+	_L_ _16_inte_32 *_16_I32;
+#if(_ABLE_I64_)
+	_L_ _02_inte_64 *_02_I64;
+	_L_ _04_inte_64 *_04_I64;
+	_L_ _08_inte_64 *_08_I64;
+	_L_ _16_inte_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_L_ _02_real_16 *_02_R16;
+	_L_ _04_real_16 *_04_R16;
+	_L_ _08_real_16 *_08_R16;
+	_L_ _16_real_16 *_16_R16;
+#endif
+	_L_ _02_real_32 *_02_R32;
+	_L_ _04_real_32 *_04_R32;
+	_L_ _08_real_32 *_08_R32;
+	_L_ _16_real_32 *_16_R32;
+#if(_ABLE_R64_)
+	_L_ _02_real_64 *_02_R64;
+	_L_ _04_real_64 *_04_R64;
+	_L_ _08_real_64 *_08_R64;
+	_L_ _16_real_64 *_16_R64;
 #endif
 };
 typedef union _l_ptr_v l_ptr_v;
@@ -268,6 +722,58 @@ union _l_ptr_c
 #if(_ABLE_R64_)
 	_L_ REAL_64 *R64;
 #endif
+	_L_ _02_DATA_08 *_02_D08;
+	_L_ _04_DATA_08 *_04_D08;
+	_L_ _08_DATA_08 *_08_D08;
+	_L_ _16_DATA_08 *_16_D08;
+	_L_ _02_DATA_16 *_02_D16;
+	_L_ _04_DATA_16 *_04_D16;
+	_L_ _08_DATA_16 *_08_D16;
+	_L_ _16_DATA_16 *_16_D16;
+	_L_ _02_DATA_32 *_02_D32;
+	_L_ _04_DATA_32 *_04_D32;
+	_L_ _08_DATA_32 *_08_D32;
+	_L_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+	_L_ _02_DATA_64 *_02_D64;
+	_L_ _04_DATA_64 *_04_D64;
+	_L_ _08_DATA_64 *_08_D64;
+	_L_ _16_DATA_64 *_16_D64;
+#endif
+	_L_ _02_INTE_08 *_02_I08;
+	_L_ _04_INTE_08 *_04_I08;
+	_L_ _08_INTE_08 *_08_I08;
+	_L_ _16_INTE_08 *_16_I08;
+	_L_ _02_INTE_16 *_02_I16;
+	_L_ _04_INTE_16 *_04_I16;
+	_L_ _08_INTE_16 *_08_I16;
+	_L_ _16_INTE_16 *_16_I16;
+	_L_ _02_INTE_32 *_02_I32;
+	_L_ _04_INTE_32 *_04_I32;
+	_L_ _08_INTE_32 *_08_I32;
+	_L_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+	_L_ _02_INTE_64 *_02_I64;
+	_L_ _04_INTE_64 *_04_I64;
+	_L_ _08_INTE_64 *_08_I64;
+	_L_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_L_ _02_REAL_16 *_02_R16;
+	_L_ _04_REAL_16 *_04_R16;
+	_L_ _08_REAL_16 *_08_R16;
+	_L_ _16_REAL_16 *_16_R16;
+#endif
+	_L_ _02_REAL_32 *_02_R32;
+	_L_ _04_REAL_32 *_04_R32;
+	_L_ _08_REAL_32 *_08_R32;
+	_L_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+	_L_ _02_REAL_64 *_02_R64;
+	_L_ _04_REAL_64 *_04_R64;
+	_L_ _08_REAL_64 *_08_R64;
+	_L_ _16_REAL_64 *_16_R64;
+#endif
 };
 typedef union _l_ptr_c l_ptr_c;
 typedef const union _l_ptr_c L_PTR_C;
@@ -296,6 +802,58 @@ union _p_ptr_v
 #if(_ABLE_R64_)
 	_P_ real_64 *R64;
 #endif
+	_P_ _02_data_08 *_02_D08;
+	_P_ _04_data_08 *_04_D08;
+	_P_ _08_data_08 *_08_D08;
+	_P_ _16_data_08 *_16_D08;
+	_P_ _02_data_16 *_02_D16;
+	_P_ _04_data_16 *_04_D16;
+	_P_ _08_data_16 *_08_D16;
+	_P_ _16_data_16 *_16_D16;
+	_P_ _02_data_32 *_02_D32;
+	_P_ _04_data_32 *_04_D32;
+	_P_ _08_data_32 *_08_D32;
+	_P_ _16_data_32 *_16_D32;
+#if(_ABLE_I64_)
+	_P_ _02_data_64 *_02_D64;
+	_P_ _04_data_64 *_04_D64;
+	_P_ _08_data_64 *_08_D64;
+	_P_ _16_data_64 *_16_D64;
+#endif
+	_P_ _02_inte_08 *_02_I08;
+	_P_ _04_inte_08 *_04_I08;
+	_P_ _08_inte_08 *_08_I08;
+	_P_ _16_inte_08 *_16_I08;
+	_P_ _02_inte_16 *_02_I16;
+	_P_ _04_inte_16 *_04_I16;
+	_P_ _08_inte_16 *_08_I16;
+	_P_ _16_inte_16 *_16_I16;
+	_P_ _02_inte_32 *_02_I32;
+	_P_ _04_inte_32 *_04_I32;
+	_P_ _08_inte_32 *_08_I32;
+	_P_ _16_inte_32 *_16_I32;
+#if(_ABLE_I64_)
+	_P_ _02_inte_64 *_02_I64;
+	_P_ _04_inte_64 *_04_I64;
+	_P_ _08_inte_64 *_08_I64;
+	_P_ _16_inte_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_P_ _02_real_16 *_02_R16;
+	_P_ _04_real_16 *_04_R16;
+	_P_ _08_real_16 *_08_R16;
+	_P_ _16_real_16 *_16_R16;
+#endif
+	_P_ _02_real_32 *_02_R32;
+	_P_ _04_real_32 *_04_R32;
+	_P_ _08_real_32 *_08_R32;
+	_P_ _16_real_32 *_16_R32;
+#if(_ABLE_R64_)
+	_P_ _02_real_64 *_02_R64;
+	_P_ _04_real_64 *_04_R64;
+	_P_ _08_real_64 *_08_R64;
+	_P_ _16_real_64 *_16_R64;
+#endif
 };
 typedef union _p_ptr_v p_ptr_v;
 typedef const union _p_ptr_v P_PTR_V;
@@ -323,6 +881,58 @@ union _p_ptr_c
 	_P_ REAL_32 *R32;
 #if(_ABLE_R64_)
 	_P_ REAL_64 *R64;
+#endif
+	_P_ _02_DATA_08 *_02_D08;
+	_P_ _04_DATA_08 *_04_D08;
+	_P_ _08_DATA_08 *_08_D08;
+	_P_ _16_DATA_08 *_16_D08;
+	_P_ _02_DATA_16 *_02_D16;
+	_P_ _04_DATA_16 *_04_D16;
+	_P_ _08_DATA_16 *_08_D16;
+	_P_ _16_DATA_16 *_16_D16;
+	_P_ _02_DATA_32 *_02_D32;
+	_P_ _04_DATA_32 *_04_D32;
+	_P_ _08_DATA_32 *_08_D32;
+	_P_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+	_P_ _02_DATA_64 *_02_D64;
+	_P_ _04_DATA_64 *_04_D64;
+	_P_ _08_DATA_64 *_08_D64;
+	_P_ _16_DATA_64 *_16_D64;
+#endif
+	_P_ _02_INTE_08 *_02_I08;
+	_P_ _04_INTE_08 *_04_I08;
+	_P_ _08_INTE_08 *_08_I08;
+	_P_ _16_INTE_08 *_16_I08;
+	_P_ _02_INTE_16 *_02_I16;
+	_P_ _04_INTE_16 *_04_I16;
+	_P_ _08_INTE_16 *_08_I16;
+	_P_ _16_INTE_16 *_16_I16;
+	_P_ _02_INTE_32 *_02_I32;
+	_P_ _04_INTE_32 *_04_I32;
+	_P_ _08_INTE_32 *_08_I32;
+	_P_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+	_P_ _02_INTE_64 *_02_I64;
+	_P_ _04_INTE_64 *_04_I64;
+	_P_ _08_INTE_64 *_08_I64;
+	_P_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+	_P_ _02_REAL_16 *_02_R16;
+	_P_ _04_REAL_16 *_04_R16;
+	_P_ _08_REAL_16 *_08_R16;
+	_P_ _16_REAL_16 *_16_R16;
+#endif
+	_P_ _02_REAL_32 *_02_R32;
+	_P_ _04_REAL_32 *_04_R32;
+	_P_ _08_REAL_32 *_08_R32;
+	_P_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+	_P_ _02_REAL_64 *_02_R64;
+	_P_ _04_REAL_64 *_04_R64;
+	_P_ _08_REAL_64 *_08_R64;
+	_P_ _16_REAL_64 *_16_R64;
 #endif
 };
 typedef union _p_ptr_c p_ptr_c;
