@@ -6,23 +6,19 @@
 #define _BitC_Clamp_(Data,Min,Max) (((Data)<(Min))?(Min):(((Data)>(Max))?(Max):(Data)))
 
 #ifdef __OPENCL_H
-#define _BitC_Total_Kernels 172
+#define _BitC_Total_Files 2
+#define _BitC_File_Name_Length 16
+
+#define _BitC_Total_Kernels 244
 #define _BitC_Kernel_Name_Length 24
 #endif
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.02.23";
-
-#ifdef BitC_64_
-static volatile DATA_64 ConstantUnique=0x0000000000000001;
-#else
-static volatile DATA_32 ConstantUnique=0x00000001;
-#endif
+static DATA_08 IdiomVersion[16]="Date:2018.03.14";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
-
 static INTE_32 ConstantInvalid32[4]={0x7F800000,0xFF800000,0x7FFFFFFF,0xFFFFFFFF};
 static INTE_32 ConstantPi32[4]={0x40490FDB,0x3EA2F983,0x402DF854,0x3EBC5AB2};
 
@@ -32,8 +28,8 @@ static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x004
 static DATA_08 TableShrink08[8]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 #ifdef __OPENCL_H
-static DATA_08 IdiomKernelNull[_BitC_Kernel_Name_Length]="";
-static DATA_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
+static NAME_08 IdiomFileName[_BitC_Total_Files][_BitC_File_Name_Length]={"bitclip_h.cl","bitclip_c.cl"};
+static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 {
 	"",						"BitC_Endian_D16_",		"BitC_Endian_D32_",		"BitC_Endian_D64_",
 	"",						"BitC_Caster_D08_D16_",	"BitC_Caster_D08_D32_",	"BitC_Caster_D08_D64_",
@@ -77,9 +73,29 @@ static DATA_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 	"BitC_BO_O_1_D08_",		"BitC_BO_O_1_D16_",		"BitC_BO_O_1_D32_",		"BitC_BO_O_1_D64_",
 	"BitC_BO_X_1_D08_",		"BitC_BO_X_1_D16_",		"BitC_BO_X_1_D32_",		"BitC_BO_X_1_D64_",
 	"BitC_BO_S_1_D08_",		"BitC_BO_S_1_D16_",		"BitC_BO_S_1_D32_",		"BitC_BO_S_1_D64_",
-	"BitC_BO_S_1_I08_",		"BitC_BO_S_1_I16_",		"BitC_BO_S_1_I32_",		"BitC_BO_S_1_I64_"
+	"BitC_BO_S_1_I08_",		"BitC_BO_S_1_I16_",		"BitC_BO_S_1_I32_",		"BitC_BO_S_1_I64_",
+	"BitC_Expand_D08_",		"BitC_Expand_D16_",		"BitC_Expand_D32_",		"BitC_Expand_D64_",
+	"BitC_Shrink_D08_",		"BitC_Shrink_D16_",		"BitC_Shrink_D32_",		"BitC_Shrink_D64_",
+	"BitC_RO_E_1_D08_",		"BitC_RO_E_1_D16_",		"BitC_RO_E_1_D32_",		"BitC_RO_E_1_D64_",
+	"BitC_RO_N_1_D08_",		"BitC_RO_N_1_D16_",		"BitC_RO_N_1_D32_",		"BitC_RO_N_1_D64_",
+	"BitC_RO_G_1_D08_",		"BitC_RO_G_1_D16_",		"BitC_RO_G_1_D32_",		"BitC_RO_G_1_D64_",
+	"BitC_RO_G_1_I08_",		"BitC_RO_G_1_I16_",		"BitC_RO_G_1_I32_",		"BitC_RO_G_1_I64_",
+	"",						"BitC_RO_G_1_R16_",		"BitC_RO_G_1_R32_",		"BitC_RO_G_1_R64_",
+	"BitC_RO_L_1_D08_",		"BitC_RO_L_1_D16_",		"BitC_RO_L_1_D32_",		"BitC_RO_L_1_D64_",
+	"BitC_RO_L_1_I08_",		"BitC_RO_L_1_I16_",		"BitC_RO_L_1_I32_",		"BitC_RO_L_1_I64_",
+	"",						"BitC_RO_L_1_R16_",		"BitC_RO_L_1_R32_",		"BitC_RO_L_1_R64_",
+	"BitC_RO_E_2_D08_",		"BitC_RO_E_2_D16_",		"BitC_RO_E_2_D32_",		"BitC_RO_E_2_D64_",
+	"BitC_RO_N_2_D08_",		"BitC_RO_N_2_D16_",		"BitC_RO_N_2_D32_",		"BitC_RO_N_2_D64_",
+	"BitC_RO_G_2_D08_",		"BitC_RO_G_2_D16_",		"BitC_RO_G_2_D32_",		"BitC_RO_G_2_D64_",
+	"BitC_RO_G_2_I08_",		"BitC_RO_G_2_I16_",		"BitC_RO_G_2_I32_",		"BitC_RO_G_2_I64_",
+	"",						"BitC_RO_G_2_R16_",		"BitC_RO_G_2_R32_",		"BitC_RO_G_2_R64_",
+	"BitC_RO_L_2_D08_",		"BitC_RO_L_2_D16_",		"BitC_RO_L_2_D32_",		"BitC_RO_L_2_D64_",
+	"BitC_RO_L_2_I08_",		"BitC_RO_L_2_I16_",		"BitC_RO_L_2_I32_",		"BitC_RO_L_2_I64_",
+	"",						"BitC_RO_L_2_R16_",		"BitC_RO_L_2_R32_",		"BitC_RO_L_2_R64_"
 };
-static DATA_08 _PL_ AddressKernelName[_BitC_Total_Kernels]=
+
+static NAME_08 _PL_ AddressFileName[_BitC_Total_Files]={IdiomFileName[0],IdiomFileName[1]};
+static NAME_08 _PL_ AddressKernelName[_BitC_Total_Kernels]=
 {
 	IdiomKernelName[0],IdiomKernelName[1],IdiomKernelName[2],IdiomKernelName[3],
 	IdiomKernelName[4],IdiomKernelName[5],IdiomKernelName[6],IdiomKernelName[7],
@@ -123,13 +139,36 @@ static DATA_08 _PL_ AddressKernelName[_BitC_Total_Kernels]=
 	IdiomKernelName[156],IdiomKernelName[157],IdiomKernelName[158],IdiomKernelName[159],
 	IdiomKernelName[160],IdiomKernelName[161],IdiomKernelName[162],IdiomKernelName[163],
 	IdiomKernelName[164],IdiomKernelName[165],IdiomKernelName[166],IdiomKernelName[167],
-	IdiomKernelName[168],IdiomKernelName[169],IdiomKernelName[170],IdiomKernelName[171]
+	IdiomKernelName[168],IdiomKernelName[169],IdiomKernelName[170],IdiomKernelName[171],
+	IdiomKernelName[172],IdiomKernelName[173],IdiomKernelName[174],IdiomKernelName[175],
+	IdiomKernelName[176],IdiomKernelName[177],IdiomKernelName[178],IdiomKernelName[179],
+	IdiomKernelName[180],IdiomKernelName[181],IdiomKernelName[182],IdiomKernelName[183],
+	IdiomKernelName[184],IdiomKernelName[185],IdiomKernelName[186],IdiomKernelName[187],
+	IdiomKernelName[188],IdiomKernelName[189],IdiomKernelName[190],IdiomKernelName[191],
+	IdiomKernelName[192],IdiomKernelName[193],IdiomKernelName[194],IdiomKernelName[195],
+	IdiomKernelName[196],IdiomKernelName[197],IdiomKernelName[198],IdiomKernelName[199],
+	IdiomKernelName[200],IdiomKernelName[201],IdiomKernelName[202],IdiomKernelName[203],
+	IdiomKernelName[204],IdiomKernelName[205],IdiomKernelName[206],IdiomKernelName[207],
+	IdiomKernelName[208],IdiomKernelName[209],IdiomKernelName[210],IdiomKernelName[211],
+	IdiomKernelName[212],IdiomKernelName[213],IdiomKernelName[214],IdiomKernelName[215],
+	IdiomKernelName[216],IdiomKernelName[217],IdiomKernelName[218],IdiomKernelName[219],
+	IdiomKernelName[220],IdiomKernelName[221],IdiomKernelName[222],IdiomKernelName[223],
+	IdiomKernelName[224],IdiomKernelName[225],IdiomKernelName[226],IdiomKernelName[227],
+	IdiomKernelName[228],IdiomKernelName[229],IdiomKernelName[230],IdiomKernelName[231],
+	IdiomKernelName[232],IdiomKernelName[233],IdiomKernelName[234],IdiomKernelName[235],
+	IdiomKernelName[236],IdiomKernelName[237],IdiomKernelName[238],IdiomKernelName[239],
+	IdiomKernelName[240],IdiomKernelName[241],IdiomKernelName[242],IdiomKernelName[243]
 };
-DATA_08 _PL_ _PL_ BitCKernel=AddressKernelName;
+
+NAME_08 _PL_ _PL_ BitCFile=AddressFileName;
+NAME_08 _PL_ _PL_ BitCKernel=AddressKernelName;
 #endif
 
 DATA_08 _PL_ BitClip=IdiomVersion;
+
+static volatile ADDRESS ConstantUnique=1;
 volatile DATA_08 _PL_ BitCEndian=(data_08*)&ConstantUnique;
+
 REAL_32 _PL_ BitCInvalid32=(real_32*)ConstantInvalid32;
 REAL_64 _PL_ BitCInvalid64=(real_64*)ConstantInvalid64;
 REAL_32 _PL_ BitCPi32=(real_32*)ConstantPi32;
@@ -167,7 +206,7 @@ static devi_km *_BitC_Create_KM_Caster_(cl_kernel const Kernel)
 
 	return KM;
 }
-static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,const size_t TypeSize)
+static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,ADDRESS TypeSize)
 {
 	devi_km *KM=Devi_KM_Create_(Kernel,4,1);
 
@@ -206,7 +245,7 @@ general BitC_Worker_KM_Caster_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const 
 		Devi_KM_Save_G_(KM,2,&Length);
 	}
 }
-general BitC_Worker_KM_Op_N_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,DATA_32 Length)
+general BitC_Worker_KM_BO_N_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,DATA_32 Length)
 {
 	{
 		KM->WGroups[0]=Helper->Cores;
@@ -218,7 +257,7 @@ general BitC_Worker_KM_Op_N_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const 
 		Devi_KM_Save_G_(KM,2,&Length);
 	}
 }
-general BitC_Worker_KM_Op_S_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,INTE_32 Shift,DATA_32 Length)
+general BitC_Worker_KM_BO_S_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,INTE_32 Shift,DATA_32 Length)
 {
 	{
 		KM->WGroups[0]=Helper->Cores;
@@ -259,53 +298,31 @@ general BitC_Worker_KM_Op_M_2_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const 
 }
 devi_km *BitC_Create_KM_(cl_kernel const Kernel)
 {
-	data_08 BufferName[_BitC_Kernel_Name_Length];
+	data_08 BufferName[_BitC_Kernel_Name_Length]="";
 	devi_km *KM;
 
 	if(Devi_Info_Kernel_(Kernel,BufferName,_BitC_Kernel_Name_Length,data_08,CL_KERNEL_FUNCTION_NAME)==CL_SUCCESS)
 	{
-		ADDRESS Switch=MemC_Switch_(BufferName,(general**)BitCKernel,NULL,_BitC_Kernel_Name_Length,_BitC_Total_Kernels,data_08);
+		INTEGER Switch=(integer)MemC_Switch_(BufferName,(general**)BitCKernel,NULL,_BitC_Kernel_Name_Length,_BitC_Total_Kernels,data_08);
 		
-		if(Switch<4)
+		if(Switch<0)
+			KM=NULL;
+		else if(Switch<4)
 			KM=_BitC_Create_KM_Endian_(Kernel);
-		else if(Switch<148)
+		else if(Switch<=148)
 			KM=_BitC_Create_KM_Caster_(Kernel);
+		else if(Switch<152)
+			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
 		else if(Switch<164)
-			switch(Switch)
-			{
-			case 148:
-				KM=_BitC_Create_KM_Caster_(Kernel);
-				break;
-			case 149:
-			case 150:
-			case 151:
-				KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
-				break;
-			case 152:
-			case 156:
-			case 160:
-				KM=_BitC_Create_KM_Op_(Kernel,sizeof(data_08));
-				break;
-			case 153:
-			case 157:
-			case 161:
-				KM=_BitC_Create_KM_Op_(Kernel,sizeof(data_16));
-				break;
-			case 154:
-			case 158:
-			case 162:
-				KM=_BitC_Create_KM_Op_(Kernel,sizeof(data_32));
-				break;
-			case 155:
-			case 159:
-			case 163:
-				KM=_BitC_Create_KM_Op_(Kernel,sizeof(data_64));
-				break;
-			default:
-				KM=NULL;
-			}
+			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
 		else if(Switch<172)
 			KM=_BitC_Create_KM_Op_(Kernel,sizeof(inte_32));
+		else if(Switch<180)
+			KM=_BitC_Create_KM_Caster_(Kernel);
+		else if(Switch<212)
+			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
+		else if(Switch<244)
+			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
 		else
 			KM=NULL;
 	}
@@ -2438,7 +2455,7 @@ general BitC_RO_E_1_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_
 		}
 	}
 }
-general BitC_RO_E_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+general BitC_RO_E_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -2480,7 +2497,7 @@ general BitC_RO_E_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,
 		}
 	}
 }
-general BitC_RO_E_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+general BitC_RO_E_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -2522,7 +2539,7 @@ general BitC_RO_E_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,
 		}
 	}
 }
-general BitC_RO_E_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+general BitC_RO_E_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -2564,7 +2581,7 @@ general BitC_RO_E_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,
 		}
 	}
 }
-general BitC_RO_E_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+general BitC_RO_E_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -2775,7 +2792,7 @@ general BitC_RO_N_1_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_
 		}
 	}
 }
-general BitC_RO_N_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+general BitC_RO_N_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -2817,7 +2834,7 @@ general BitC_RO_N_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,
 		}
 	}
 }
-general BitC_RO_N_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+general BitC_RO_N_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -2859,7 +2876,7 @@ general BitC_RO_N_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,
 		}
 	}
 }
-general BitC_RO_N_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+general BitC_RO_N_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -2901,7 +2918,7 @@ general BitC_RO_N_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,
 		}
 	}
 }
-general BitC_RO_N_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+general BitC_RO_N_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3364,7 +3381,7 @@ general BitC_RO_G_1_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_
 		}
 	}
 }
-general BitC_RO_G_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+general BitC_RO_G_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3406,7 +3423,7 @@ general BitC_RO_G_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+general BitC_RO_G_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3448,7 +3465,7 @@ general BitC_RO_G_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+general BitC_RO_G_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3490,7 +3507,7 @@ general BitC_RO_G_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+general BitC_RO_G_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3532,7 +3549,7 @@ general BitC_RO_G_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *DataA,INTE_08 *DataB,DATA_32 Length)
+general BitC_RO_G_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *MemC_Rst_ DataA,INTE_08 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3574,7 +3591,7 @@ general BitC_RO_G_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *DataA,INTE_08 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *DataA,INTE_16 *DataB,DATA_32 Length)
+general BitC_RO_G_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *MemC_Rst_ DataA,INTE_16 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3616,7 +3633,7 @@ general BitC_RO_G_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *DataA,INTE_16 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *DataA,INTE_32 *DataB,DATA_32 Length)
+general BitC_RO_G_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *MemC_Rst_ DataA,INTE_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3658,7 +3675,7 @@ general BitC_RO_G_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *DataA,INTE_32 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *DataA,INTE_64 *DataB,DATA_32 Length)
+general BitC_RO_G_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *MemC_Rst_ DataA,INTE_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3700,7 +3717,7 @@ general BitC_RO_G_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *DataA,INTE_64 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *DataA,REAL_32 *DataB,DATA_32 Length)
+general BitC_RO_G_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *MemC_Rst_ DataA,REAL_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -3742,7 +3759,7 @@ general BitC_RO_G_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *DataA,REAL_32 *DataB,
 		}
 	}
 }
-general BitC_RO_G_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *DataA,REAL_64 *DataB,DATA_32 Length)
+general BitC_RO_G_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4205,7 +4222,7 @@ general BitC_RO_L_1_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_
 		}
 	}
 }
-general BitC_RO_L_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,DATA_32 Length)
+general BitC_RO_L_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *MemC_Rst_ DataA,DATA_08 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4247,7 +4264,7 @@ general BitC_RO_L_2_D08_(data_08 *MemC_Rst_ DataC,DATA_08 *DataA,DATA_08 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,DATA_32 Length)
+general BitC_RO_L_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *MemC_Rst_ DataA,DATA_16 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4289,7 +4306,7 @@ general BitC_RO_L_2_D16_(data_08 *MemC_Rst_ DataC,DATA_16 *DataA,DATA_16 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,DATA_32 Length)
+general BitC_RO_L_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *MemC_Rst_ DataA,DATA_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4331,7 +4348,7 @@ general BitC_RO_L_2_D32_(data_08 *MemC_Rst_ DataC,DATA_32 *DataA,DATA_32 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,DATA_32 Length)
+general BitC_RO_L_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *MemC_Rst_ DataA,DATA_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4373,7 +4390,7 @@ general BitC_RO_L_2_D64_(data_08 *MemC_Rst_ DataC,DATA_64 *DataA,DATA_64 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *DataA,INTE_08 *DataB,DATA_32 Length)
+general BitC_RO_L_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *MemC_Rst_ DataA,INTE_08 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4415,7 +4432,7 @@ general BitC_RO_L_2_I08_(data_08 *MemC_Rst_ DataC,INTE_08 *DataA,INTE_08 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *DataA,INTE_16 *DataB,DATA_32 Length)
+general BitC_RO_L_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *MemC_Rst_ DataA,INTE_16 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4457,7 +4474,7 @@ general BitC_RO_L_2_I16_(data_08 *MemC_Rst_ DataC,INTE_16 *DataA,INTE_16 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *DataA,INTE_32 *DataB,DATA_32 Length)
+general BitC_RO_L_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *MemC_Rst_ DataA,INTE_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4499,7 +4516,7 @@ general BitC_RO_L_2_I32_(data_08 *MemC_Rst_ DataC,INTE_32 *DataA,INTE_32 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *DataA,INTE_64 *DataB,DATA_32 Length)
+general BitC_RO_L_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *MemC_Rst_ DataA,INTE_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4541,7 +4558,7 @@ general BitC_RO_L_2_I64_(data_08 *MemC_Rst_ DataC,INTE_64 *DataA,INTE_64 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *DataA,REAL_32 *DataB,DATA_32 Length)
+general BitC_RO_L_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *MemC_Rst_ DataA,REAL_32 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4583,7 +4600,7 @@ general BitC_RO_L_2_R32_(data_08 *MemC_Rst_ DataC,REAL_32 *DataA,REAL_32 *DataB,
 		}
 	}
 }
-general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *DataA,REAL_64 *DataB,DATA_32 Length)
+general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_64 *MemC_Rst_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -4628,8 +4645,12 @@ general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *DataA,REAL_64 *DataB,
 #endif
 
 #if(MemC_Fold_(Undefinition:Macros))
-#undef _BitC_Total_Kernels
+#ifdef __OPENCL_H
 #undef _BitC_Kernel_Name_Length
+#undef _BitC_Total_Kernels
+#undef _BitC_File_Name_Length
+#undef _BitC_Total_Files
+#endif
 #undef _BitC_Clamp_
 #undef _BitC_Max_
 #undef _BitC_Min_
