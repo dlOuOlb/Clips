@@ -2,7 +2,7 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.02.22	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.03.16	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -11,6 +11,7 @@
 #ifndef _INC_PENCLIP
 #define _INC_PENCLIP	//PenClip : Header Declaration
 
+#include <uchar.h>
 #include <stdio.h>
 #include <time.h>
 #ifdef _CL
@@ -21,6 +22,12 @@
 #if(MemC_Fold_(Definition:Types))
 typedef char name_08;			//PenClip : 8-bit Name Variable
 typedef const name_08 NAME_08;	//PenClip : 8-bit Name Constant
+
+typedef char16_t name_16;		//PenClip : 16-bit Name Variable
+typedef const name_16 NAME_16;	//PenClip : 16-bit Name Constant
+
+typedef char32_t name_32;		//PenClip : 32-bit Name Variable
+typedef const name_32 NAME_32;	//PenClip : 32-bit Name Constant
 
 #ifdef __OPENCL_H
 struct _penc_cl						//PenC_CL : OpenCL Supported Program Resource Structure
@@ -70,6 +77,10 @@ typedef const struct _penc_cl PENC_CL;	//PenC_CL : Program Resource Constant
 
 #define PenC_Clocks_ clock()																										//PenClip : Current Clocks
 #define PenC_Elapse_(Start) (PenC_Clocks_-(Start))																					//PenClip : Clock Measure from Start
+
+#define PenC_Prefix_N08_(String) u8##String																							//PenClip : 8-bit String Literal Prefix
+#define PenC_Prefix_N16_(String) u##String																							//PenClip : 16-bit String Literal Prefix
+#define PenC_Prefix_N32_(String) U##String																							//PenClip : 32-bit String Literal Prefix
 
 #define Printer_Console_ printf_s																									//PenClip : Console Stream Print
 #define Scanner_Console_ scanf_s																									//PenClip : Console Stream Scan
