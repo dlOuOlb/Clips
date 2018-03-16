@@ -1,9 +1,9 @@
 ﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.02.22";
-static NAME_08 IdiomOpen[16]={'r','b','\0','w','b','\0','r','t','\0','w','t','\0','s','\0','\0','\0'};
-static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+3,IdiomOpen+6,IdiomOpen+9};
+static NAME_08 IdiomVersion[16]="Date:2018.03.16";
+static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
+static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
 static NAME_08 IdiomBuild[104]="Build was successful.\n\0Build was not performed.\n\0Build generated an error.\n\0Build was not finished.\n";
 static NAME_08 IdiomInfo[104]="Platform\0Device\0Vendor\0Driver\0OpenCL\0Version\0Profile\0Extensions\0cl_khr_icd\0cl_khr_spir\0Built-in Kernels";
@@ -17,6 +17,7 @@ NAME_08 _PL_ PenClip=IdiomVersion;
 NAME_08 _PL_ _PL_ PenCOpen=AddressOpen;
 #endif
 
+#if(MemC_Fold_(Definition:I/O Functions))
 int _Line_Reader_(void _PL_ Line,NAME_08 _PL_ Name,const size_t Size,const size_t Count)
 {
 	int Success;
@@ -174,7 +175,9 @@ size_t PenC_Extend_(NAME_08 _PL_ Line,const size_t Length)
 
 	return Offset;
 }
+#endif
 
+#if(MemC_Fold_(Definition:OpenCL Functions))
 #ifdef __OPENCL_H
 static size_t _PenC_File_Length_S_(size_t *FileSize,NAME_08 _PL_*FileName,const size_t Files)
 {
@@ -519,7 +522,7 @@ cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 				if(ErrorCode==CL_SUCCESS)
 					if(Platforms)
 					{
-						NAME_08 *Plural=(Platforms>1)?(IdiomOpen+12):(IdiomOpen+13);
+						NAME_08 *Plural=(Platforms>1)?(IdiomInfo+102):(IdiomInfo+103);
 						cl_uint Index;
 
 						Printer_Console_(AddressMessage[2],Platforms,AddressInfo[0],Plural);
@@ -552,7 +555,7 @@ cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 											if(ErrorCode==CL_SUCCESS)
 												if(Devices)
 												{
-													Plural=(Devices>1)?(IdiomOpen+12):(IdiomOpen+13);
+													Plural=(Devices>1)?(IdiomInfo+102):(IdiomInfo+103);
 													Printer_Console_(AddressMessage[2],Devices,AddressInfo[1],Plural);
 													for(Index=0;Index<Devices;Index++)
 													{
@@ -620,4 +623,5 @@ cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 	
 	return ErrorCode;
 }
+#endif
 #endif
