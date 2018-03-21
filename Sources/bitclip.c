@@ -15,7 +15,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.03.14";
+static DATA_08 IdiomVersion[16]="Date:2018.03.21";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -28,7 +28,7 @@ static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x004
 static DATA_08 TableShrink08[8]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
 #ifdef __OPENCL_H
-static NAME_08 IdiomFileName[_BitC_Total_Files][_BitC_File_Name_Length]={"bitclip_h.cl","bitclip_c.cl"};
+static NAME_08 IdiomFileName[_BitC_Total_Files][_BitC_File_Name_Length]={"ouoclip.cl","bitclip.cl"};
 static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 {
 	"",						"BitC_Endian_D16_",		"BitC_Endian_D32_",		"BitC_Endian_D64_",
