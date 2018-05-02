@@ -106,7 +106,7 @@
 #define Vect_(scope,num,type) _##scope##_ _##num##_##type
 
 #define Vect_Load_(num,Address) _Vect_Load_##num##_(Address)
-#define Vect_Save_(num,Address) _Vect_Save_##num##_(Address)
+#define Vect_Save_(num,Address,Vector) _Vect_Save_##num##_(Vector,Address)
 
 #define _Vect_Load_02_(Address) vload2(0,Address)
 #define _Vect_Load_04_(Address) vload4(0,Address)
