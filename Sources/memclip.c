@@ -1,7 +1,8 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.03.13";
+static const char IdiomVersion[16]="Date:2018.05.21";
+static const char IdiomUnknown[8]="Unknown";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
 static const char ConstantArgType[8]={'G','L','H','F'};
@@ -11,6 +12,8 @@ const void _PL_ MemCrux=&MemCrux;
 #endif
 
 #if(MemC_Fold_(Definition:Memory Functions))
+void MemC_Void_(void)
+{}
 int MemC_Check_(const void _PL_ *Memory,const size_t Sets)
 {
 	int Success;
@@ -23,10 +26,7 @@ int MemC_Check_(const void _PL_ *Memory,const size_t Sets)
 			if(!(*Memory))
 				break;
 
-		if(Memory==End)
-			Success=1;
-		else
-			Success=0;
+		Success=(Memory==End);
 	}
 	else
 		Success=0;
@@ -71,15 +71,30 @@ static size_t _MemC_Bigger_(const size_t Number,const size_t Old)
 
 	return New;
 }
-static const void **_MemC_Assign_(const void **High,const size_t NumberHigh,const size_t SizeStep)
+static void **_MemC_Assign_(void **High,const size_t NumberHigh,const size_t SizeStep)
 {
-	const void **End=High+NumberHigh;
-	const char *PtrL=(char*)End;
+	void **End=High+NumberHigh;
+	char *PtrL=(char*)End;
 
 	for(;High<End;High++,PtrL+=SizeStep)
 		(*High)=PtrL;
 
 	return End;
+}
+static void *_MemC_Assign_Loop_(void **PtrM,const size_t _PL_ Size,const size_t NumberDimension,const size_t SizeElement)
+{
+	const size_t _PL_ End=Size+(NumberDimension-1);
+	const size_t *MemC_Rst_ PtrS=Size;
+	size_t Temp=PtrS[0];
+
+	for(PtrS++;PtrS<End;PtrS++)
+	{
+		PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*sizeof(size_t));
+		Temp*=(*PtrS);
+	}
+	PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*SizeElement);
+
+	return PtrM;
 }
 void *MemC_Alloc_(const size_t _PL_ Size,const size_t NumberDimension,const size_t SizeElement)
 {
@@ -102,30 +117,46 @@ void *MemC_Alloc_(const size_t _PL_ Size,const size_t NumberDimension,const size
 			{
 				Memory=Byte_Alloc_(Temporary);
 				if(Memory)
-				{
-					const void **PointerM=Memory;
-
-					Temporary=Size[0];
-					for(PtrS=Size+1;PtrS<End;PtrS++)
-					{
-						PointerM=_MemC_Assign_(PointerM,Temporary,(*PtrS)*sizeof(void*));
-						Temporary*=(*PtrS);
-					}
-					if(PtrS==End)
-						PointerM=_MemC_Assign_(PointerM,Temporary,(*PtrS)*SizeElement);
-				}
+					_MemC_Assign_Loop_(Memory,Size,NumberDimension,SizeElement);
 			}
 		}
 
 	return Memory;
 }
 
+static size_t _MemC_Overflow_Add_(const size_t A,const size_t B)
+{
+	size_t C=A+B;
+
+	if(C<A)
+		C=0;
+	else
+		if(C<B)
+			C=0;
+
+	return C;
+}
+static size_t _MemC_Overflow_Mul_(const size_t A,const size_t B)
+{
+	size_t C[2];
+
+	C[0]=A*B;
+	if(C[0])
+	{
+		C[1]=C[0]/B;
+		if(C[1]!=A)
+			C[0]=0;
+	}
+
+	return C[0];
+}
 void *Byte_Alloc_(const size_t S)
 {
 	const size_t T=sizeof(size_t);
-	const size_t N=(S+T-1)/T;
+	const size_t N=_MemC_Overflow_Mul_((S+T-1)/T,T);
+	void _PL_ Memory=(N)?(malloc(N)):(NULL);
 
-	return malloc(N*T);
+	return Memory;
 }
 void *_Line_Alloc_(const size_t Z,const size_t SizeElement)
 {
@@ -305,40 +336,61 @@ static errno_t _MemC_Copy_Recursive_(const char _PL_ MemoryS,char _PL_ MemoryT,c
 
 	return ErrorCode;
 }
+static int _MemC_Copy_Check_Bound_(const size_t _PL_ Shape,const size_t _PL_ Offset,const size_t _PL_ Length,const size_t Dimensions)
+{
+	size_t Index;
+	size_t Temp;
+
+	for(Index=0;Index<Dimensions;Index++)
+	{
+		Temp=Offset[Index]+Length[Index];
+		if((Shape[Index]<=Temp)||(Temp<Offset[Index]))
+			break;
+	}
+
+	return (Index==Dimensions);
+}
 errno_t _MemC_Copy_(const void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ OriginS,const size_t _PL_ OriginT,const size_t _PL_ Length,const size_t _PL_ ShapeS,const size_t _PL_ ShapeT,const size_t Dimensions,const size_t Bytes)
 {
 	const size_t _PL_ OffsetS=(OriginS)?(OriginS):(ConstantZero);
 	const size_t _PL_ OffsetT=(OriginT)?(OriginT):(ConstantZero);
-	errno_t ErrorCode=EINVAL;
+	errno_t ErrorCode;
 
-	switch(Dimensions)
-	{
-	case 0:
-		break;
-	case 1:
+	if(_MemC_Copy_Check_Bound_(ShapeS,OffsetS,Length,Dimensions)&&_MemC_Copy_Check_Bound_(ShapeT,OffsetT,Length,Dimensions))
+		switch(Dimensions)
 		{
-			const size_t Copy=Length[0]*Bytes;
+		case 0:
+			ErrorCode=0;
+			break;
+		case 1:
+			{
+				const size_t Copy=Length[0]*Bytes;
 
-			ErrorCode=memcpy_s(((char*)MemoryT)+(OffsetT[0]*Bytes),Copy,((char*)MemoryS)+(OffsetS[0]*Bytes),Copy);
-		}
-		break;
-	default:
-		if(Dimensions<=MemC_Copy_Max_Dimension)
-		{
-			size_t JumpS[MemC_Copy_Max_Dimension];
-			size_t JumpT[MemC_Copy_Max_Dimension];
+				ErrorCode=memcpy_s(((char*)MemoryT)+(OffsetT[0]*Bytes),Copy,((char*)MemoryS)+(OffsetS[0]*Bytes),Copy);
+			}
+			break;
+		default:
+			if(Dimensions<=MemC_Copy_Max_Dimension)
+			{
+				size_t JumpS[MemC_Copy_Max_Dimension];
+				size_t JumpT[MemC_Copy_Max_Dimension];
 
-			if(ShapeS)
-				_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
+				if(ShapeS)
+					_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
+				else
+					_MemC_Jump_Offset_(JumpS,Length,Dimensions,Bytes);
+				if(ShapeT)
+					_MemC_Jump_Offset_(JumpT,ShapeT,Dimensions,Bytes);
+				else
+					_MemC_Jump_Offset_(JumpT,Length,Dimensions,Bytes);
+
+				ErrorCode=_MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
+			}
 			else
-				_MemC_Jump_Offset_(JumpS,Length,Dimensions,Bytes);
-			if(ShapeT)
-				_MemC_Jump_Offset_(JumpT,ShapeT,Dimensions,Bytes);
-			else
-				_MemC_Jump_Offset_(JumpT,Length,Dimensions,Bytes);
-			ErrorCode=_MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
+				ErrorCode=EINVAL;
 		}
-	}
+	else
+		ErrorCode=EINVAL;
 
 	return ErrorCode;
 }
@@ -411,6 +463,243 @@ size_t _MemC_Switch_(const void _PL_ Key,const void _PL_ _PL_ ReferTable,const s
 	}
 
 	return Index;
+}
+#endif
+
+#if(MemC_Fold_(Definition:MemClip Structure Functions))
+static int _MemC_Shape_Non_Zero_(const size_t _PL_ Shape,const size_t Dims)
+{
+	const size_t _PL_ End=Shape+Dims;
+	const size_t *MemC_Rst_ Ptr=Shape;
+
+	for(;Ptr<End;Ptr++)
+		if(!(*Ptr))
+			break;
+
+	return (Ptr==End);
+}
+static size_t _MemC_Shape_Overflow_(const size_t _PL_ Shape,const size_t Dims)
+{
+	const size_t _PL_ End=Shape+Dims;
+	const size_t *MemC_Rst_ Ptr=Shape;
+	size_t Total=1;
+
+	for(;Ptr<End;Ptr++)
+		Total=_MemC_Overflow_Mul_(Total,*Ptr);
+
+	return Total;
+}
+static size_t _MemC_Space_Required_(const size_t _PL_ Shape,const size_t Dims,const size_t SizeType)
+{
+	size_t Size[2];
+	const size_t _PL_ Last=Shape+(Dims-1);
+	const size_t *MemC_Rst_ Ptr=Shape;
+
+	for(Size[0]=1,Size[1]=0;Ptr<Last;Ptr++)
+	{
+		Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
+		Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
+		if(!(Size[1]))
+			break;
+	}
+	if(Ptr==Last)
+	{
+		Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
+		Size[0]=_MemC_Overflow_Mul_(Size[0],SizeType);
+		if(Size[0])
+		{
+			Size[1]=_MemC_Overflow_Mul_(Size[1],sizeof(size_t));
+			if(Size[1])
+				Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
+			else
+				Size[1]=0;
+		}
+		else
+			Size[1]=0;
+	}
+	else
+		Size[1]=0;
+
+	return Size[1];
+}
+memc_mc *_MemC_MC_Create_(const size_t _PL_ Shape,const size_t Dimensions,const size_t SizeType)
+{
+	memc_mc *MC;
+	
+	if(Dimensions)
+		if(Shape)
+		{
+			size_t Lng1D;
+			int Flag=(SizeType)?(1):(0);
+
+			if(_MemC_Shape_Non_Zero_(Shape,Dimensions))
+			{
+				Lng1D=_MemC_Shape_Overflow_(Shape,Dimensions);
+				if(Lng1D)
+					Flag|=6;
+				else
+					Flag|=2;
+			}
+			else
+				Lng1D=0;
+			
+			switch(Flag)
+			{
+			case 0:
+			case 1:
+			case 6:
+				{
+					size_t Size=_MemC_Overflow_Mul_(Dimensions,sizeof(size_t));
+
+					if(Size)
+					{
+						Size=_MemC_Overflow_Add_(Size,sizeof(memc_mc));
+						MC=Byte_Alloc_(Size);
+						if(MC)
+						{
+							MC->ID=MC;
+							MC->Type=IdiomUnknown;
+							MemC_Acs_(size_t,MC->Dims)=Dimensions;
+							MemC_Acs_(size_t,MC->Unit)=SizeType;
+							MemC_Acs_(size_t*,MC->LngND)=(size_t*)(MC+1);
+							MemC_Acs_(size_t,MC->Lng1D)=Lng1D;
+							MemC_Acs_(void*,MC->AcsND)=NULL;
+							MemC_Acs_(void*,MC->Acs1D)=NULL;
+
+							if(Line_Copy_(Shape,(size_t*)(MC->LngND),Dimensions,size_t))
+								MemC_Deloc_(MC);
+						}
+					}
+					else
+						MC=NULL;
+				}
+				break;
+			case 7:
+				{
+					size_t Size[2];
+
+					Size[0]=_MemC_Overflow_Mul_(Dimensions,sizeof(size_t));
+					if(!(Size[0]))
+						goto WRONG;
+
+					Size[0]=_MemC_Overflow_Add_(Size[0],sizeof(memc_mc));
+					if(!(Size[0]))
+						goto WRONG;
+
+					Size[1]=_MemC_Space_Required_(Shape,Dimensions,SizeType);
+					if(!(Size[1]))
+						goto WRONG;
+
+					Size[0]=_MemC_Overflow_Add_(Size[0],Size[1]);
+					MC=Byte_Alloc_(Size[0]);
+					if(MC)
+					{
+						MC->ID=MC;
+						MC->Type=IdiomUnknown;
+						MemC_Acs_(size_t,MC->Dims)=Dimensions;
+						MemC_Acs_(size_t,MC->Unit)=SizeType;
+						MemC_Acs_(size_t*,MC->LngND)=(size_t*)(MC+1);
+						MemC_Acs_(size_t,MC->Lng1D)=Lng1D;
+						MemC_Acs_(void*,MC->AcsND)=(void*)(MC->LngND+Dimensions);
+						MemC_Acs_(void*,MC->Acs1D)=_MemC_Assign_Loop_(MC->AcsND,Shape,Dimensions,SizeType);
+
+						if(Line_Copy_(Shape,(size_t*)(MC->LngND),Dimensions,size_t))
+							MemC_Deloc_(MC);
+					}
+				}
+				break;
+WRONG:
+			default:
+				MC=NULL;
+			}
+		}
+		else
+			MC=NULL;
+	else
+	{
+		MC=Unit_Alloc_(memc_mc);
+		if(MC)
+		{
+			MC->ID=MC;
+			MC->Type=IdiomUnknown;
+			MemC_Acs_(size_t,MC->Dims)=Dimensions;
+			MemC_Acs_(size_t,MC->Unit)=SizeType;
+			MemC_Acs_(size_t*,MC->LngND)=NULL;
+			MemC_Acs_(size_t,MC->Lng1D)=0;
+			MemC_Acs_(void*,MC->AcsND)=NULL;
+			MemC_Acs_(void*,MC->Acs1D)=NULL;
+		}
+	}
+
+	return MC;
+}
+void *MemC_MC_Access_(MEMC_MC _PL_ MC,const size_t _PL_ Access)
+{
+	void *Return;
+
+	if(MC)
+		if(MC->AcsND)
+			if(Access)
+			{
+				const size_t Stop=MC->Dims-1;
+				size_t Idx=0;
+
+				for(Return=MC->AcsND;Idx<Stop;Idx++)
+					Return=((void**)Return)[(Access[Idx])%(MC->LngND[Idx])];
+
+				MemC_Acs_(size_t,Return)+=((Access[Idx])*(MC->Unit));
+			}
+			else
+				Return=MC->Acs1D;
+		else
+			Return=NULL;
+	else
+		Return=NULL;
+
+	return Return;
+}
+
+memc_ms *MemC_MS_Create_(const size_t Slots)
+{
+	memc_ms *MS;
+
+	if(Slots)
+	{
+		size_t Size=_MemC_Overflow_Mul_(Slots,sizeof(void*));
+
+		if(Size)
+		{
+			Size=_MemC_Overflow_Add_(Size,sizeof(memc_ms));
+			if(Size)
+			{
+				MS=Byte_Alloc_(Size);
+				if(MS)
+				{
+					MS->ID=MS;
+					MS->Type=IdiomUnknown;
+					MemC_Acs_(size_t,MS->Nums)=Slots;
+					MemC_Acs_(size_t*,MS->Slot.V)=Line_Clear_(MS+1,Slots,size_t);
+				}
+			}
+			else
+				MS=NULL;
+		}
+		else
+			MS=NULL;
+	}
+	else
+	{
+		MS=Unit_Alloc_(memc_ms);
+		if(MS)
+		{
+			MS->ID=MS;
+			MS->Type=IdiomUnknown;
+			MemC_Acs_(size_t,MS->Nums)=0;
+			MemC_Acs_(size_t*,MS->Slot.V)=NULL;
+		}
+	}
+
+	return MS;
 }
 #endif
 
@@ -1008,6 +1297,331 @@ cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KM)
 		ErrorCode=CL_INVALID_HOST_PTR;
 
 	return ErrorCode;
+}
+
+static size_t _Devi_BC_Length_Non_Zero_(const size_t *MemC_Rst_ Lng,const size_t Nums)
+{
+	const size_t _PL_ End=Lng+Nums;
+	size_t Return=0;
+
+	for(;Lng<End;Lng++)
+		Return|=(*Lng);
+
+	return Return;
+}
+static size_t _Devi_BC_Length_Total_(const size_t *MemC_Rst_ Lng,const size_t Nums)
+{
+	const size_t _PL_ End=Lng+Nums;
+	size_t Return=1;
+
+	for(;Lng<End;Lng++)
+	{
+		Return=_MemC_Overflow_Add_(Return,*Lng);
+		if(!Return)
+			goto ESCAPE;
+	}
+	Return--;
+ESCAPE:
+	return Return;
+}
+devi_bc *_Devi_BC_Create_(const cl_context Context,const size_t Length,const size_t Slices,const size_t SizeType,const int Mode)
+{
+	devi_bc *BC;
+	int Flag=0;
+
+	if(Mode)
+		Flag|=1;
+	if(SizeType)
+		Flag|=2;
+	if(Slices)
+		Flag|=4;
+	if(Length)
+		Flag|=8;
+	if(Context)
+		Flag|=16;
+
+	switch(Flag)
+	{
+	case 0:
+	case 1:
+	case 2:
+	case 3:
+	case 8:
+	case 9:
+	case 10:
+	case 11:
+	case 16:
+	case 17:
+	case 18:
+	case 19:
+	case 24:
+	case 25:
+	case 26:
+	case 27:
+		BC=Unit_Alloc_(devi_bc);
+		if(BC)
+		{
+			BC->ID=BC;
+			BC->Type=IdiomUnknown;
+			MemC_Acs_(size_t,BC->Unit)=SizeType;
+			MemC_Acs_(size_t,BC->LngT)=0;
+			MemC_Acs_(cl_mem,BC->BufT)=NULL;
+			MemC_Acs_(size_t,BC->Nums)=0;
+			MemC_Acs_(size_t*,BC->LngS)=NULL;
+			MemC_Acs_(cl_mem*,BC->BufS)=NULL;
+		}
+		break;
+ZERO_LENGTH:
+	case 4:
+	case 6:
+	case 20:
+	case 22:
+		{
+			size_t Temp=_MemC_Overflow_Mul_(Slices,sizeof(size_t)<<1);
+
+			if(Temp)
+			{
+				Temp=_MemC_Overflow_Add_(Temp,sizeof(devi_bc));
+				BC=Byte_Alloc_(Temp);
+				if(BC)
+				{
+					BC->ID=BC;
+					BC->Type=IdiomUnknown;
+					MemC_Acs_(size_t,BC->Unit)=SizeType;
+					MemC_Acs_(size_t,BC->LngT)=0;
+					MemC_Acs_(cl_mem,BC->BufT)=NULL;
+					MemC_Acs_(size_t,BC->Nums)=Slices;
+					MemC_Acs_(size_t*,BC->LngS)=Line_Clear_(BC+1,Slices<<1,size_t);
+					MemC_Acs_(cl_mem*,BC->BufS)=(cl_mem*)(BC->LngS+Slices);
+				}
+			}
+			else
+				goto WRONG;
+		}
+		break;
+	case 12:
+	case 28:
+		{
+			const size_t Total=_MemC_Overflow_Mul_(Slices,Length);
+
+			if(Total)
+			{
+				size_t Temp=_MemC_Overflow_Mul_(Slices,sizeof(size_t)<<1);
+
+				if(Temp)
+				{
+					Temp=_MemC_Overflow_Add_(Temp,sizeof(devi_bc));
+					BC=Byte_Alloc_(Temp);
+					if(BC)
+					{
+						BC->ID=BC;
+						BC->Type=IdiomUnknown;
+						MemC_Acs_(size_t,BC->Unit)=0;
+						MemC_Acs_(size_t,BC->LngT)=Total;
+						MemC_Acs_(cl_mem,BC->BufT)=NULL;
+						MemC_Acs_(size_t,BC->Nums)=Slices;
+						MemC_Acs_(size_t*,BC->LngS)=(size_t*)(BC+1);
+						MemC_Acs_(cl_mem*,BC->BufS)=Line_Clear_((cl_mem*)(BC->LngS+Slices),Slices,cl_mem);
+						for(Temp=0;Temp<Slices;Temp++)
+							((size_t*)(BC->LngS))[Temp]=Length;
+					}
+				}
+				else
+					goto WRONG;
+			}
+			else
+				goto WRONG;
+		}
+		break;
+	case 13:
+	case 29:
+		if(_Devi_BC_Length_Non_Zero_((size_t*)Length,Slices))
+		{
+			const size_t Total=_Devi_BC_Length_Total_((size_t*)Length,Slices);
+
+			if(Total)
+			{
+				size_t Temp=_MemC_Overflow_Mul_(Slices,sizeof(size_t)<<1);
+
+				if(Temp)
+				{
+					Temp=_MemC_Overflow_Add_(Temp,sizeof(devi_bc));
+					BC=Byte_Alloc_(Temp);
+					if(BC)
+					{
+						BC->ID=BC;
+						BC->Type=IdiomUnknown;
+						MemC_Acs_(size_t,BC->Unit)=0;
+						MemC_Acs_(size_t,BC->LngT)=Total;
+						MemC_Acs_(cl_mem,BC->BufT)=NULL;
+						MemC_Acs_(size_t,BC->Nums)=Slices;
+						MemC_Acs_(size_t*,BC->LngS)=(size_t*)(BC+1);
+						MemC_Acs_(cl_mem*,BC->BufS)=Line_Clear_((cl_mem*)(BC->LngS+Slices),Slices,cl_mem);
+						if(Line_Copy_((void*)Length,BC->BufS,Slices,cl_mem))
+							MemC_Deloc_(BC);
+					}
+				}
+				else
+					goto WRONG;
+			}
+			else
+				goto WRONG;
+		}
+		else
+			goto ZERO_LENGTH;
+		break;
+	case 30:
+		{
+			const size_t Total=_MemC_Overflow_Mul_(Slices,Length);
+
+			if(Total)
+				if(_MemC_Overflow_Mul_(Total,SizeType))
+				{
+					size_t Temp=_MemC_Overflow_Mul_(Slices,sizeof(size_t)<<1);
+
+					if(Temp)
+					{
+						Temp=_MemC_Overflow_Add_(Temp,sizeof(devi_bc));
+						BC=Byte_Alloc_(Temp);
+						if(BC)
+						{
+							MemC_Acs_(size_t*,BC->LngS)=(size_t*)(BC+1);
+							MemC_Acs_(cl_mem*,BC->BufS)=(cl_mem*)(BC->LngS+Slices);
+							MemC_Acs_(cl_mem,BC->BufT)=_Devi_Create_Buffer_(Context,Total,SizeType);
+							if(BC->BufT)
+							{
+								const cl_mem _PL_ End=BC->BufS+Slices;
+								cl_mem *MemC_Rst_ Ptr=(cl_mem*)(BC->BufS);
+
+								for(Temp=0;Ptr<End;Ptr++)
+								{
+									(*Ptr)=_Devi_Create_Buffer_Sub_(BC->BufT,Temp,Length,SizeType);
+									if(*Ptr)
+										Temp+=Length;
+									else
+										break;
+								}
+								if(Ptr==End)
+								{
+									BC->ID=BC;
+									BC->Type=IdiomUnknown;
+									MemC_Acs_(size_t,BC->Unit)=SizeType;
+									MemC_Acs_(size_t,BC->LngT)=Total;
+									MemC_Acs_(size_t,BC->Nums)=Slices;
+									for(Temp=0;Temp<Slices;Temp++)
+										((size_t*)(BC->LngS))[Temp]=Length;
+								}
+								else
+								{
+									for(Ptr--;Ptr>=BC->BufS;Ptr--)
+										Devi_Delete_Buffer_(*Ptr);
+									Devi_Delete_Buffer_(MemC_Acs_(cl_mem,BC->BufT));
+									MemC_Deloc_(BC);
+								}
+							}
+							else
+								MemC_Deloc_(BC);
+						}
+					}
+					else
+						goto WRONG;
+				}
+				else
+					goto WRONG;
+			else
+				goto WRONG;
+		}
+		break;
+	case 31:
+		if(_Devi_BC_Length_Non_Zero_((size_t*)Length,Slices))
+		{
+			const size_t Total=_Devi_BC_Length_Total_((size_t*)Length,Slices);
+
+			if(Total)
+				if(_MemC_Overflow_Mul_(Total,SizeType))
+				{
+					size_t Temp=_MemC_Overflow_Mul_(Slices,sizeof(size_t)<<1);
+
+					if(Temp)
+					{
+						Temp=_MemC_Overflow_Add_(Temp,sizeof(devi_bc));
+						BC=Byte_Alloc_(Temp);
+						if(BC)
+						{
+							MemC_Acs_(size_t*,BC->LngS)=(size_t*)(BC+1);
+							MemC_Acs_(cl_mem*,BC->BufS)=(cl_mem*)(BC->LngS+Slices);
+							if(Line_Copy_((size_t*)Length,(size_t*)(BC->LngS),Slices,size_t))
+								MemC_Deloc_(BC);
+							else
+							{
+								MemC_Acs_(cl_mem,BC->BufT)=_Devi_Create_Buffer_(Context,Total,SizeType);
+								if(BC->BufT)
+								{
+									const size_t _PL_ End=((size_t*)Length)+Slices;
+									const size_t *MemC_Rst_ Lng=(size_t*)Length;
+									cl_mem *MemC_Rst_ Buf=(cl_mem*)(BC->BufS);
+
+									for(Temp=0;Lng<End;Lng++,Buf++)
+									{
+										(*Buf)=_Devi_Create_Buffer_Sub_(BC->BufT,Temp,*Lng,SizeType);
+										if(*Buf)
+											Temp+=(*Lng);
+										else
+											break;
+									}
+									if(Lng==End)
+									{
+										BC->ID=BC;
+										BC->Type=IdiomUnknown;
+										MemC_Acs_(size_t,BC->Unit)=SizeType;
+										MemC_Acs_(size_t,BC->LngT)=Total;
+										MemC_Acs_(size_t,BC->Nums)=Slices;
+									}
+									else
+									{
+										for(Buf--;Buf>=BC->BufS;Buf--)
+											Devi_Delete_Buffer_(*Buf);
+										Devi_Delete_Buffer_(MemC_Acs_(cl_mem,BC->BufT));
+										MemC_Deloc_(BC);
+									}
+								}
+								else
+									MemC_Deloc_(BC);
+							}
+						}
+					}
+					else
+						goto WRONG;
+				}
+				else
+					goto WRONG;
+			else
+				goto WRONG;
+		}
+		else
+			goto ZERO_LENGTH;
+		break;
+WRONG:
+	default:
+		BC=NULL;
+	}
+
+	return BC;
+}
+void Devi_BC_Delete_(devi_bc *_PL_ BC)
+{
+	if(*BC)
+	{
+		if((*BC)->BufT)
+		{
+			cl_mem *Ptr=(cl_mem*)((*BC)->BufS+(*BC)->Nums);
+
+			for(Ptr--;Ptr>=(*BC)->BufS;Ptr--)
+				Devi_Delete_Buffer_(*Ptr);
+			Devi_Delete_Buffer_(MemC_Acs_(cl_mem,(*BC)->BufT));
+		}
+		MemC_Deloc_(*BC);
+	}
 }
 #endif
 #endif
