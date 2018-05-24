@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.03.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.05.24	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -11,9 +11,7 @@
 #ifndef _INC_BITCLIP
 #define _INC_BITCLIP	//BitClip : Header Declaration
 
-#if((-1)!=((-1)>>1))
-#error The bit shift right operation of a signed integer does not preserve the sign bit in this implementation.
-#endif
+static_assert((-1)==((-1)>>1),"The bit-shift-right operation of a signed integer must preserve the sign bit.");
 
 #include <stdint.h>
 #ifdef _CL
@@ -72,50 +70,44 @@ enum _boolean	//BitClip : Boolean Enumeration
 typedef enum _boolean boolean;			//BitClip : Boolean Variable
 typedef const enum _boolean BOOLEAN;	//BitClip : Boolean Constant
 
-union _point_v		//BitClip : Variable Pointer Union
+union _bitclip			//BitClip : Pointer Union
 {
-	general *G;		//BitClip : General Container
-	address A;		//BitClip : Address Container
-	general **GG;	//BitClip : General Access
-	address *AA;	//BitClip : Address Access
-	data_08 *D08;	//BitClip : 8-Bit Natural Access
-	data_16 *D16;	//BitClip : 16-Bit Natural Access
-	data_32 *D32;	//BitClip : 32-Bit Natural Access
-	data_64 *D64;	//BitClip : 64-Bit Natural Access
-	inte_08 *I08;	//BitClip : 8-Bit Integer Access
-	inte_16 *I16;	//BitClip : 16-Bit Integer Access
-	inte_32 *I32;	//BitClip : 32-Bit Integer Access
-	inte_64 *I64;	//BitClip : 64-Bit Integer Access
-	real_32 *R32;	//BitClip : 32-Bit Floating Point Access
-	real_64 *R64;	//BitClip : 64-Bit Floating Point Access
-};
-typedef union _point_v point_v;			//BitClip : Variable Pointer Variable
-typedef const union _point_v POINT_V;	//BitClip : Variable Pointer Constant
-
-union _point_c		//BitClip : Constant Pointer Union
-{
-	GENERAL *G;		//BitClip : General Container
-	address A;		//BitClip : Address Container
-	GENERAL **GG;	//BitClip : General Access
-	ADDRESS *AA;	//BitClip : Address Access
-	DATA_08 *D08;	//BitClip : 8-Bit Natural Access
-	DATA_16 *D16;	//BitClip : 16-Bit Natural Access
-	DATA_32 *D32;	//BitClip : 32-Bit Natural Access
-	DATA_64 *D64;	//BitClip : 64-Bit Natural Access
-	INTE_08 *I08;	//BitClip : 8-Bit Integer Access
-	INTE_16 *I16;	//BitClip : 16-Bit Integer Access
-	INTE_32 *I32;	//BitClip : 32-Bit Integer Access
-	INTE_64 *I64;	//BitClip : 64-Bit Integer Access
-	REAL_32 *R32;	//BitClip : 32-Bit Floating Point Access
-	REAL_64 *R64;	//BitClip : 64-Bit Floating Point Access
-};
-typedef union _point_c point_c;			//BitClip : Constant Pointer Variable
-typedef const union _point_c POINT_C;	//BitClip : Constant Pointer Constant
-
-union _bitclip	//BitClip : Pointer Union
-{
-	point_v V;	//BitClip : Read or Write Access
-	point_c C;	//BitClip : Read Only Access
+	union _point_v		//BitClip : Variable Pointer Union
+	{
+		general *G;		//BitClip : General Container
+		address A;		//BitClip : Address Container
+		general **GG;	//BitClip : General Access
+		address *AA;	//BitClip : Address Access
+		data_08 *D08;	//BitClip : 8-Bit Natural Access
+		data_16 *D16;	//BitClip : 16-Bit Natural Access
+		data_32 *D32;	//BitClip : 32-Bit Natural Access
+		data_64 *D64;	//BitClip : 64-Bit Natural Access
+		inte_08 *I08;	//BitClip : 8-Bit Integer Access
+		inte_16 *I16;	//BitClip : 16-Bit Integer Access
+		inte_32 *I32;	//BitClip : 32-Bit Integer Access
+		inte_64 *I64;	//BitClip : 64-Bit Integer Access
+		real_32 *R32;	//BitClip : 32-Bit Floating Point Access
+		real_64 *R64;	//BitClip : 64-Bit Floating Point Access
+	}
+	V;					//BitClip : Access as Variable
+	union _point_c		//BitClip : Constant Pointer Union
+	{
+		GENERAL *G;		//BitClip : General Container
+		address A;		//BitClip : Address Container
+		GENERAL **GG;	//BitClip : General Access
+		ADDRESS *AA;	//BitClip : Address Access
+		DATA_08 *D08;	//BitClip : 8-Bit Natural Access
+		DATA_16 *D16;	//BitClip : 16-Bit Natural Access
+		DATA_32 *D32;	//BitClip : 32-Bit Natural Access
+		DATA_64 *D64;	//BitClip : 64-Bit Natural Access
+		INTE_08 *I08;	//BitClip : 8-Bit Integer Access
+		INTE_16 *I16;	//BitClip : 16-Bit Integer Access
+		INTE_32 *I32;	//BitClip : 32-Bit Integer Access
+		INTE_64 *I64;	//BitClip : 64-Bit Integer Access
+		REAL_32 *R32;	//BitClip : 32-Bit Floating Point Access
+		REAL_64 *R64;	//BitClip : 64-Bit Floating Point Access
+	}
+	C;					//BitClip : Access as Constant
 };
 typedef union _bitclip bitclip;			//BitClip : Pointer Variable
 typedef const union _bitclip BITCLIP;	//BitClip : Pointer Constant
