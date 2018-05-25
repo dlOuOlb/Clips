@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.05.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.05.25	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -30,17 +30,33 @@ static_assert(((size_t)(NULL))==((size_t)(0)),"\"NULL\" must be equal to zero.")
 static_assert((sizeof(void*)==sizeof(size_t)),"The sizes of \"void*\" and \"size_t\" must be equal.");
 static_assert((sizeof(char)==1),"The size of \"char\" must be one byte.");
 
-#ifndef _PL_
+#ifdef _PL_
+#error The macro "_PL_" is already defined.
+#else
 #define _PL_ *const	//MemClip : Pointer Lock Definition
 #endif
 
 #define MemC_Fold_(Comment) (1)	//MemClip : Code Folding with #if and #endif Pre-processor.
+#define MemC_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;	//MemClip : Macro for Type Declaration
 
 #if(MemC_Fold_(Definition:Types))
+struct _memc_dt					//MemClip : Data Type Structure
+{
+	const void _PL_ Scope;		//MemClip : ID Scope
+	const size_t ID;			//MemClip : Identification
+	const size_t Flag;			//MemClip : Property Flag
+	const size_t SizeType;		//MemClip : Type's Byte Size
+	const size_t SizeName;		//MemClip : Name's Byte Size
+	const char _PL_ Name;		//MemClip : Type Name
+	const void _PL_ Link;		//MemClip : External Link
+	const void _PL_ Meta;		//MemClip : Meta Data
+};
+MemC_Declare_(struct,memc_dt,MEMC_DT);
+
 struct _memc_ms				//MemClip : Memory Slot Structure
 {
 	void *ID;				//MemClip : Identification
-	const void *Type;		//MemClip : Memory Type
+	MEMC_DT _PL_ Type;		//MemClip : Data Type
 	const size_t Nums;		//MemClip : Number of Slots
 	const union _memc_pv	//MemClip : Pointer and Value Union
 	{
@@ -49,13 +65,12 @@ struct _memc_ms				//MemClip : Memory Slot Structure
 	}
 	Slot;					//MemClip : Slot Access
 };
-typedef struct _memc_ms memc_ms;		//MemClip : Memory Slot Variable
-typedef const struct _memc_ms MEMC_MS;	//MemClip : Memory Slot Constant
+MemC_Declare_(struct,memc_ms,MEMC_MS);
 
 struct _memc_mc					//MemClip : Memory Container Structure
 {
 	void *ID;					//MemClip : Identification
-	const void *Type;			//MemClip : Data Type
+	MEMC_DT _PL_ Type;			//MemClip : Data Type
 	const size_t Unit;			//MemClip : Type Size
 	const size_t Dims;			//MemClip : Dimension (N)
 	const size_t Lng1D;			//MemClip : Total Number of Elements
@@ -63,8 +78,7 @@ struct _memc_mc					//MemClip : Memory Container Structure
 	void _PL_ Acs1D;			//MemClip : 1-Dimensional Data Access
 	void _PL_ AcsND;			//MemClip : N-Dimensional Data Access
 };
-typedef struct _memc_mc memc_mc;		//MemClip : Memory Container Variable
-typedef const struct _memc_mc MEMC_MC;	//MemClip : Memory Container Constant
+MemC_Declare_(struct,memc_mc,MEMC_MC);
 
 #ifdef __OPENCL_H
 enum _devi_cp		//MemC_CL : Device Memory Copy Function Flag Enumeration
@@ -73,23 +87,21 @@ enum _devi_cp		//MemC_CL : Device Memory Copy Function Flag Enumeration
 	DeviCopyDtoH=2, //MemC_CL : Device to Host Copy
 	DeviCopyDtoD=3	//MemC_CL : Device to Device Copy
 };
-typedef enum _devi_cp devi_cp;			//MemC_CL : Copy Flag Variable
-typedef const enum _devi_cp DEVI_CP;	//MemC_CL : Copy Flag Constant
+MemC_Declare_(enum,devi_cp,DEVI_CP);
 
 struct _devi_qc						//MemC_CL : Queue Container Structure
 {
-	cl_platform_id const Platform;	//MemC_CL : Platform ID
-	cl_device_id const Device;		//MemC_CL : Device ID
-	cl_context const Context;		//MemC_CL : Context
-	cl_command_queue const Queue;	//MemC_CL : Command Queue
+	const cl_platform_id Platform;	//MemC_CL : Platform ID
+	const cl_device_id Device;		//MemC_CL : Device ID
+	const cl_context Context;		//MemC_CL : Context
+	const cl_command_queue Queue;	//MemC_CL : Command Queue
 };
-typedef struct _devi_qc devi_qc;		//MemC_CL : Queue Container Variable
-typedef const struct _devi_qc DEVI_QC;	//MemC_CL : Queue Container Constant
+MemC_Declare_(struct,devi_qc,DEVI_QC);
 
 struct _devi_bc				//MemC_CL : Buffer Container Structure
 {
 	void *ID;				//MemC_CL : Identification
-	const void *Type;		//MemC_CL : Data Type
+	MEMC_DT _PL_ Type;		//MemC_CL : Data Type
 	const size_t Unit;		//MemC_CL : Type Size
 	const size_t LngT;		//MemC_CL : Total Length
 	const cl_mem BufT;		//MemC_CL : Main Buffer
@@ -97,12 +109,11 @@ struct _devi_bc				//MemC_CL : Buffer Container Structure
 	const size_t _PL_ LngS;	//MemC_CL : Lengths of Sub-Buffers
 	const cl_mem _PL_ BufS;	//MemC_CL : Sub-Buffer Address Array
 };
-typedef struct _devi_bc devi_bc;		//MemC_CL : Buffer Container Variable
-typedef const struct _devi_bc DEVI_BC;	//MemC_CL : Buffer Container Constant
+MemC_Declare_(struct,devi_bc,DEVI_BC);
 
 struct _devi_km							//MemC_CL : Kernel Manager Structure
 {
-	cl_kernel const Kernel;				//MemC_CL : Linked Kernel
+	const cl_kernel Kernel;				//MemC_CL : Linked Kernel
 	const char _PL_ Flag;				//MemC_CL : Argument Type Indicator
 	const void _PL_ Memory;				//MemC_CL : Argument Data Storage
 	const void _PL_ _PL_ ArgAddress;	//MemC_CL : Argument Address Set
@@ -116,8 +127,7 @@ struct _devi_km							//MemC_CL : Kernel Manager Structure
 	const cl_uint KArgs;				//MemC_CL : The Number of Kernel Arguments
 	const cl_uint WDims;				//MemC_CL : Work Dimensions
 };
-typedef struct _devi_km devi_km;		//MemC_CL : Kernel Manager Variable
-typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
+MemC_Declare_(struct,devi_km,DEVI_KM);
 #endif
 #endif
 
@@ -153,9 +163,6 @@ typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 
 #define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,type) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(type))	//MemClip : Key Finding for Switch Operation
 #define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))	//MemClip : Array Data Copy
-#endif
-#if(MemC_Fold_(Part:MemClip Structure))
-#define MemC_MC_Create_(Shape,Dims,type) _MemC_MC_Create_(Shape,Dims,sizeof(type))										//MemClip : Memory Container Memory Allocation - Deallocate with "MemC_Deloc_"
 #endif
 #if(MemC_Fold_(Part:OpenCL))
 #ifdef __OPENCL_H
@@ -224,9 +231,6 @@ typedef const struct _devi_km DEVI_KM;	//MemC_CL : Kernel Manager Constant
 
 #define Devi_KM_Type_G_(Karg,Order,type) _Devi_KM_Type_(Karg,Order,sizeof(type),0)										//MemC_CL : Kernel Manager Argument Type Set (Global Parameter)
 #define Devi_KM_Type_L_(Karg,Order,type) _Devi_KM_Type_(Karg,Order,sizeof(type),1)										//MemC_CL : Kernel Manager Argument Type Set (Local Parameter)
-
-#define Devi_BC_Create_U_(Cntx,Lng,Nums,type) _Devi_BC_Create_(Cntx,Lng,Nums,sizeof(type),0);							//MemC_CL : Buffer Container Uniform Memory Allocation - Deallocate with "Devi_BC_Delete_"
-#define Devi_BC_Create_N_(Cntx,Lng,Nums,type) _Devi_BC_Create_(Cntx,(size_t)(Lng),Nums,sizeof(type),1);					//MemC_CL : Buffer Container Non-Uniform Memory Allocation - Deallocate with "Devi_BC_Delete_"
 #endif
 #endif
 #if(MemC_Fold_(Part:Literals))
@@ -262,9 +266,11 @@ void MemC_Deloc_Set_(void **MemorySet,const size_t Count);
 #if(MemC_Fold_(Declaration:MemClip Structure Functions))
 //MemClip : Memory Slot Memory Allocation - Deallocate with "MemC_Deloc_"
 memc_ms *MemC_MS_Create_(const size_t SlotsNumber);
+//MemClip : Memory Container Memory Allocation - Deallocate with "MemC_Deloc_"
+memc_mc *MemC_MC_Create_(MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo);
 
 //MemClip : Memory Container Array Access
-void *MemC_MC_Access_(MEMC_MC _PL_ MemoryContainer,const size_t _PL_ Offset);
+void *MemC_MC_Access_(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ OffsetInfo);
 #endif
 
 #if(MemC_Fold_(Declaration:OpenCL Functions))
@@ -294,6 +300,8 @@ cl_int Devi_KM_Save_L_(DEVI_KM _PL_ KernelManager,const cl_uint Index,const size
 //MemC_CL : Kernel Enqueue with Kernel Manager
 cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager);
 
+//MemC_CL : Buffer Container Memory Allocation - Deallocate with "Devi_BC_Delete_"
+devi_bc *Devi_BC_Create_(const cl_context Context,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT,const int Mode);
 //MemC_CL : Buffer Container Memory Deallocation
 void Devi_BC_Delete_(devi_bc *_PL_ BC);
 #endif
@@ -314,8 +322,6 @@ errno_t _MemC_Copy_(const void _PL_ S,void _PL_ T,const size_t _PL_ OfsS,const s
 size_t _Line_Assign_(void _PL_ Indexer,const void _PL_ Indexed,const size_t Interval,const size_t Indices,const size_t TypeSize,const int Mode);
 size_t _MemC_Switch_(const void _PL_ Key,const void _PL_ _PL_ TblRf,const size_t* LngRf,const size_t LngKey,const size_t NumRf,const size_t TypeSize);
 
-memc_mc *_MemC_MC_Create_(const size_t _PL_ ArrayShape,const size_t DimensionsNumber,const size_t ElementSize);
-
 #ifdef __OPENCL_H
 cl_mem _Devi_Create_Buffer_(cl_context const,const size_t,const size_t);
 cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,const size_t,const size_t,const size_t);
@@ -325,8 +331,6 @@ cl_int _Devi_Copy_(cl_command_queue const Q,void _PL_ S,void _PL_ T,const size_t
 cl_int _Devi_Copy_1D_(cl_command_queue const Q,void _PL_ S,void _PL_ T,const size_t OfsS,const size_t OfsT,const size_t Lng,const size_t TypeSize,DEVI_CP Mode);
 
 cl_int _Devi_KM_Type_(DEVI_KM _PL_ KM,const cl_uint,const size_t,const int);
-
-devi_bc *_Devi_BC_Create_(const cl_context,const size_t,const size_t,const size_t,const int);
 #endif
 #endif
 #endif
