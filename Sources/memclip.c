@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.05.25";
+static const char IdiomVersion[16]="Date:2018.06.06";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -346,7 +346,9 @@ static int _MemC_Copy_Check_Bound_(const size_t _PL_ Shape,const size_t _PL_ Off
 	for(Index=0;Index<Dimensions;Index++)
 	{
 		Temp=Offset[Index]+Length[Index];
-		if((Shape[Index]<=Temp)||(Temp<Offset[Index]))
+		if(Temp<Offset[Index])
+			break;
+		if(Temp>Shape[Index])
 			break;
 	}
 
@@ -365,31 +367,37 @@ errno_t _MemC_Copy_(const void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ 
 			ErrorCode=0;
 			break;
 		case 1:
+			if(Bytes)
 			{
 				const size_t Copy=Length[0]*Bytes;
 
 				ErrorCode=memcpy_s(((char*)MemoryT)+(OffsetT[0]*Bytes),Copy,((char*)MemoryS)+(OffsetS[0]*Bytes),Copy);
 			}
+			else
+				ErrorCode=0;
 			break;
 		default:
-			if(Dimensions<=MemC_Copy_Max_Dimension)
-			{
-				size_t JumpS[MemC_Copy_Max_Dimension];
-				size_t JumpT[MemC_Copy_Max_Dimension];
-
-				if(ShapeS)
-					_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
+			if(Bytes)
+				if(Dimensions>MemC_Copy_Max_Dimension)
+					ErrorCode=EINVAL;
 				else
-					_MemC_Jump_Offset_(JumpS,Length,Dimensions,Bytes);
-				if(ShapeT)
-					_MemC_Jump_Offset_(JumpT,ShapeT,Dimensions,Bytes);
-				else
-					_MemC_Jump_Offset_(JumpT,Length,Dimensions,Bytes);
+				{
+					size_t JumpS[MemC_Copy_Max_Dimension];
+					size_t JumpT[MemC_Copy_Max_Dimension];
 
-				ErrorCode=_MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
-			}
+					if(ShapeS)
+						_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
+					else
+						_MemC_Jump_Offset_(JumpS,Length,Dimensions,Bytes);
+					if(ShapeT)
+						_MemC_Jump_Offset_(JumpT,ShapeT,Dimensions,Bytes);
+					else
+						_MemC_Jump_Offset_(JumpT,Length,Dimensions,Bytes);
+
+					ErrorCode=_MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
+				}
 			else
-				ErrorCode=EINVAL;
+				ErrorCode=0;
 		}
 	else
 		ErrorCode=EINVAL;
@@ -511,6 +519,10 @@ memc_ms *MemC_MS_Create_(const size_t Slots)
 
 	return MS;
 }
+void MemC_MS_Delete_(memc_ms *_PL_ MS)
+{
+	MemC_Deloc_(*MS);
+}
 
 static int _MemC_Shape_Non_Zero_(const size_t _PL_ Shape,const size_t Dims)
 {
@@ -580,24 +592,24 @@ memc_mc *MemC_MC_Create_(MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 						const size_t Dimensions=MS->Slot.V[0];
 						const size_t _PL_ Shape=MS->Slot.V+1;
 						size_t Lng1D;
-						int Flag=(DT->SizeType)?(1):(0);
+						int Flag=(DT->SizeType)?(0x1):(0x0);
 
 						if(_MemC_Shape_Non_Zero_(Shape,Dimensions))
 						{
 							Lng1D=_MemC_Shape_Overflow_(Shape,Dimensions);
 							if(Lng1D)
-								Flag|=6;
+								Flag|=0x6;
 							else
-								Flag|=2;
+								Flag|=0x2;
 						}
 						else
 							Lng1D=0;
 
 						switch(Flag)
 						{
-						case 0:
-						case 1:
-						case 6:
+						case 0x0:
+						case 0x1:
+						case 0x6:
 							{
 								size_t Size=_MemC_Overflow_Mul_(Dimensions,sizeof(size_t));
 
@@ -624,7 +636,7 @@ memc_mc *MemC_MC_Create_(MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 									goto ESCAPE;
 							}
 							break;
-						case 7:
+						case 0x7:
 							{
 								size_t Size[2];
 
@@ -691,26 +703,33 @@ ESCAPE:
 
 	return MC;
 }
+void MemC_MC_Delete_(memc_mc *_PL_ MC)
+{
+	MemC_Deloc_(*MC);
+}
 void *MemC_MC_Access_(MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
 {
 	void *Return;
 
 	if(MC)
 		if(MS)
-			if(MS->Nums<MC->Dims)
-				Return=NULL;
+			if(MC->AcsND)
+				if(MS->Nums<MC->Dims)
+					Return=NULL;
+				else
+				{
+					const size_t Stop=MC->Dims-1;
+					size_t Idx=0;
+
+					for(Return=MC->AcsND;Idx<Stop;Idx++)
+						Return=((void**)Return)[(MS->Slot.V[Idx])%(MC->LngND[Idx])];
+
+					MemC_Acs_(size_t,Return)+=((MS->Slot.V[Idx])*(MC->Unit));
+				}
 			else
-			{
-				const size_t Stop=MC->Dims-1;
-				size_t Idx=0;
-
-				for(Return=MC->AcsND;Idx<Stop;Idx++)
-					Return=((void**)Return)[(MS->Slot.V[Idx])%(MC->LngND[Idx])];
-
-				MemC_Acs_(size_t,Return)+=((MS->Slot.V[Idx])*(MC->Unit));
-			}
+				Return=NULL;
 		else
-			Return=MC->Acs1D;
+			Return=NULL;
 	else
 		Return=NULL;
 
@@ -759,7 +778,7 @@ cl_int _Devi_Delete_Event_(cl_event const Event)
 	return Error;
 }
 
-cl_int _Devi_Copy_1D_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ MemoryT,const size_t OriginS,const size_t OriginT,const size_t Length,const size_t Bytes,DEVI_CP Mode)
+cl_int _Devi_Copy_1D_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ MemoryT,const size_t OriginS,const size_t OriginT,const size_t Length,const size_t Bytes,DEVI_CF Mode)
 {
 	cl_int ErrorCode;
 
@@ -780,7 +799,7 @@ cl_int _Devi_Copy_1D_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ M
 
 	return ErrorCode;
 }
-cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ OriginS,const size_t _PL_ OriginT,const size_t _PL_ Length,const size_t _PL_ ShapeS,const size_t _PL_ ShapeT,const cl_uint Dimensions,const size_t Bytes,DEVI_CP Mode)
+cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ OriginS,const size_t _PL_ OriginT,const size_t _PL_ Length,const size_t _PL_ ShapeS,const size_t _PL_ ShapeT,const cl_uint Dimensions,const size_t Bytes,DEVI_CF Mode)
 {
 	const size_t _PL_ ShapeSValid=(ShapeS)?(ShapeS):(Length);
 	const size_t _PL_ ShapeTValid=(ShapeT)?(ShapeT):(Length);
@@ -788,6 +807,9 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ Memo
 	
 	switch(Dimensions)
 	{
+	case 0:
+		ErrorCode=CL_SUCCESS;
+		break;
 	case 1:
 		{
 			size_t BufferB[4];
@@ -1472,16 +1494,19 @@ devi_bc *Devi_BC_Create_(const cl_context Context,MEMC_MS _PL_ MS,MEMC_DT _PL_ D
 									{
 										if(!Line_Copy_(MS->Slot.V+1,Lng,MS->Slot.V[0],size_t))
 											for(Temp=0;Ptr<End;Ptr++,Lng++)
-											{
-												(*Ptr)=_Devi_Create_Buffer_Sub_(BC->BufT,Temp,*Lng,DT->SizeType);
-												if(*Ptr)
-													Temp+=(*Lng);
+												if(*Lng)
+												{
+													(*Ptr)=_Devi_Create_Buffer_Sub_(BC->BufT,Temp,*Lng,DT->SizeType);
+													if(*Ptr)
+														Temp+=(*Lng);
+													else
+														break;
+												}
 												else
-													break;
-											}
+													(*Ptr)=NULL;
 									}
 									else
-										for(Temp=0;Ptr<End;Ptr++,Temp+=MS->Slot.V[1])
+										for(Temp=0;Ptr<End;Ptr++,Lng++,Temp+=MS->Slot.V[1])
 										{
 											(*Ptr)=_Devi_Create_Buffer_Sub_(BC->BufT,Temp,MS->Slot.V[1],DT->SizeType);
 											if(*Ptr)
@@ -1546,4 +1571,586 @@ void Devi_BC_Delete_(devi_bc *_PL_ BC)
 	}
 }
 #endif
+#endif
+
+#if(MemC_Fold_(Definition:Fused Functions))
+int _MemC_VC_Check_Bound_(const size_t *MemC_Rst_ Access,const size_t *MemC_Rst_ Bound,const size_t Count)
+{
+	const size_t _PL_ End=Access+Count;
+
+	for(;Access<End;Access++,Bound++)
+		if((*Access)>=(*Bound))
+			break;
+
+	return (Access==End);
+}
+size_t _MemC_VC_Total_Length_(const size_t *MemC_Rst_ Ptr,const size_t Count)
+{
+	const size_t _PL_ End=Ptr+Count;
+	size_t Length=1;
+
+	for(;Ptr<End;Ptr++)
+		Length*=(*Ptr);
+
+	return Length;
+}
+void *_MemC_VC_Access_(void *MemC_Rst_ Jumper,const size_t *MemC_Rst_ Access,const size_t Count)
+{
+	const size_t _PL_ End=Access+Count;
+
+	for(;Access<End;Access++)
+		Jumper=((void**)Jumper)[*Access];
+
+	return Jumper;
+}
+memc_vc *MemC_VC_Create_(MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
+{
+	memc_vc *VC;
+
+	if(MC)
+	{
+		if(MS)
+			if(MS->Slot.V)
+				if(MS->Slot.V[0]<MS->Nums)
+					if(MS->Slot.V[0]>MC->Dims)
+						goto ESCAPE;
+					else
+						if(_MemC_VC_Check_Bound_(MS->Slot.V+1,MC->LngND,MS->Slot.V[0]))
+							VC=Unit_Alloc_(memc_vc);
+						else
+							goto ESCAPE;
+				else
+					goto ESCAPE;
+			else
+				goto ESCAPE;
+		else
+			goto ESCAPE;
+
+		if(VC)
+		{
+			VC->ID=VC;
+			MemC_Acs_(MEMC_DT*,VC->Type)=MC->Type;
+			MemC_Acs_(size_t,VC->Unit)=MC->Unit;
+			MemC_Acs_(size_t,VC->Dims)=MC->Dims-MS->Slot.V[0];
+			if(VC->Dims)
+			{
+				MemC_Acs_(const size_t*,VC->LngND)=MC->LngND+MS->Slot.V[0];
+				MemC_Acs_(size_t,VC->Lng1D)=_MemC_VC_Total_Length_(VC->LngND,VC->Dims);
+				if(MC->AcsND)
+					MemC_Acs_(void*,VC->Hidden)=_MemC_VC_Access_(MC->AcsND,MS->Slot.V+1,MS->Slot.V[0]);
+				else
+					MemC_Acs_(void*,VC->Hidden)=NULL;
+			}
+			else
+			{
+				MemC_Acs_(size_t,VC->Lng1D)=0;
+				MemC_Acs_(size_t*,VC->LngND)=NULL;
+				MemC_Acs_(void*,VC->Hidden)=NULL;
+			}
+			MemC_Acs_(memc_df,VC->Domain.E)=MemCDomainHost;
+		}
+	}
+	else
+	{
+ESCAPE:
+		VC=NULL;
+	}
+
+	return VC;
+}
+#ifdef __OPENCL_H
+memc_vc *Devi_VC_Create_(DEVI_BC _PL_ BC,MEMC_MS _PL_ MS)
+{
+	memc_vc *VC;
+
+	if(BC)
+	{
+		if(MS)
+			if(MS->Nums<2)
+				goto ESCAPE;
+			else
+			{
+				const size_t Index=MS->Slot.V[0];
+				const size_t Dims=MS->Slot.V[1];
+				const size_t _PL_ Shape=(MS->Nums>2)?(MS->Slot.V+2):(NULL);
+				const void *Buffer;
+				int Flag;
+
+				if(Index<BC->Nums)
+				{
+					const size_t Temp=Dims+1;
+
+					if(Temp<Dims)
+						goto ESCAPE;
+					else
+						if(Temp<MS->Nums)
+							Buffer=BC->BufS[Index];
+						else
+							goto ESCAPE;
+				}
+				else
+					goto ESCAPE;
+
+				if(Dims)
+					if(BC->LngS[Index])
+						if(_MemC_Shape_Non_Zero_(Shape,Dims))
+							if(_MemC_Shape_Overflow_(Shape,Dims)==BC->LngS[Index])
+								Flag=0x2;
+							else
+								goto ESCAPE;
+						else
+							goto ESCAPE;
+					else
+						if(_MemC_Shape_Non_Zero_(Shape,Dims))
+							goto ESCAPE;
+						else
+							Flag=0x0;
+				else
+					if(BC->LngS[Index])
+						goto ESCAPE;
+					else
+						Flag=0x0;
+
+				if(BC->Unit)
+					Flag|=0x1;
+
+				switch(Flag)
+				{
+				case 0x0:
+				case 0x1:
+				case 0x2:
+					if(Buffer)
+						goto ESCAPE;
+					else
+						if(Dims)
+						{
+							size_t Temp=_MemC_Overflow_Mul_(Dims,sizeof(size_t));
+
+							if(Temp)
+							{
+								Temp=_MemC_Overflow_Add_(Temp,sizeof(memc_vc));
+								VC=Byte_Alloc_(Temp);
+							}
+							else
+								goto ESCAPE;
+						}
+						else
+							VC=Unit_Alloc_(memc_vc);
+					if(VC)
+					{
+						VC->ID=VC;
+						MemC_Acs_(MEMC_DT*,VC->Type)=BC->Type;
+						MemC_Acs_(size_t,VC->Unit)=BC->Unit;
+						MemC_Acs_(size_t,VC->Dims)=Dims;
+						MemC_Acs_(size_t,VC->Lng1D)=BC->LngS[Index];
+						MemC_Acs_(memc_df,VC->Domain.E)=MemCDomainDevice;
+						MemC_Acs_(void*,VC->Hidden)=NULL;
+						if(Dims)
+						{
+							MemC_Acs_(size_t*,VC->LngND)=(size_t*)(VC+1);
+							if(Line_Copy_(Shape,(size_t*)(VC->LngND),Dims,size_t))
+								MemC_Deloc_(VC);
+						}
+						else
+							MemC_Acs_(size_t*,VC->LngND)=NULL;
+					}
+					break;
+				case 0x3:
+					if(Buffer)
+					{
+						size_t Temp=_MemC_Overflow_Mul_(Dims,sizeof(size_t));
+
+						if(Temp)
+						{
+							Temp=_MemC_Overflow_Add_(Temp,sizeof(memc_vc));
+							VC=Byte_Alloc_(Temp);
+						}
+						else
+							goto ESCAPE;
+					}
+					else
+						goto ESCAPE;
+					if(VC)
+					{
+						VC->ID=VC;
+						MemC_Acs_(MEMC_DT*,VC->Type)=BC->Type;
+						MemC_Acs_(size_t,VC->Unit)=BC->Unit;
+						MemC_Acs_(size_t,VC->Dims)=Dims;
+						MemC_Acs_(size_t,VC->Lng1D)=BC->LngS[Index];
+						MemC_Acs_(size_t*,VC->LngND)=(size_t*)(VC+1);
+						MemC_Acs_(memc_df,VC->Domain.E)=MemCDomainDevice;
+						MemC_Acs_(const void*,VC->Hidden)=Buffer;
+						if(Line_Copy_(Shape,(size_t*)(VC->LngND),Dims,size_t))
+							MemC_Deloc_(VC);
+					}
+					break;
+				default:
+					goto ESCAPE;
+				}
+			}
+		else
+			goto ESCAPE;
+	}
+	else
+	{
+ESCAPE:
+		VC=NULL;
+	}
+
+	return VC;
+}
+#endif
+void MemC_VC_Delete_(memc_vc *_PL_ VC)
+{
+	MemC_Deloc_(*VC);
+}
+
+static void *_MemC_VC_Direct_(void *Ptr,size_t Dig)
+{
+	while(Dig--)
+		Ptr=*((void**)Ptr);
+
+	return Ptr;
+}
+void *MemC_VC_Member_AcsND_(MEMC_VC _PL_ VC)
+{
+	return ((VC)?((VC->Domain.E==MemCDomainHost)?((void*)(VC->Hidden)):(NULL)):(NULL));
+}
+void *MemC_VC_Member_Acs1D_(MEMC_VC _PL_ VC)
+{
+	void *Return;
+	
+	if(VC)
+		if(VC->Domain.E==MemCDomainHost)
+			if(VC->Hidden)
+				Return=_MemC_VC_Direct_((void*)(VC->Hidden),VC->Dims-1);
+			else
+				Return=NULL;
+		else
+			Return=NULL;
+	else
+		Return=NULL;
+
+	return Return;
+}
+#ifdef __OPENCL_H
+cl_mem Devi_VC_Member_Buf_(MEMC_VC _PL_ VC)
+{
+	return ((VC)?((VC->Domain.E==MemCDomainDevice)?((cl_mem)(VC->Hidden)):(NULL)):(NULL));
+}
+#endif
+
+static int _MemC_VC_Copy_Bound_(const size_t *MemC_Rst_ Copy,const size_t *MemC_Rst_ Offset,const size_t *MemC_Rst_ Bound,const size_t Dims)
+{
+	const size_t _PL_ End=Copy+Dims;
+	size_t Temp;
+
+	for(;Copy<End;Copy++,Offset++,Bound++)
+	{
+		Temp=(*Copy)+(*Offset);
+		if(Temp<(*Copy))
+			break;
+		if(Temp>(*Bound))
+			break;
+	}
+
+	return (Copy==End);
+}
+static int _MemC_VC_Copy_Check_(const size_t _PL_ OffsetData,const size_t _PL_ LengthData,const size_t _PL_ LengthCopy,const size_t JumpData,const size_t DimsData,const size_t DimsCopy)
+{
+	int Return;
+
+	if(DimsCopy>DimsData)
+		Return=0;
+	else
+		if(_MemC_VC_Check_Bound_(OffsetData,LengthData,JumpData))
+			if(_MemC_VC_Copy_Bound_(LengthCopy,OffsetData+JumpData,LengthData+JumpData,DimsCopy))
+				Return=1;
+			else
+				Return=0;
+		else
+			Return=0;
+
+	return Return;
+}
+static void _MemC_VC_Copy_New_Size_(size_t _PL_ LengthNew,size_t _PL_ OffsetNew,const size_t *OffsetData,const size_t *LengthData,const size_t JumpData,const size_t DimsCopy)
+{
+	{
+		const size_t _PL_ End=OffsetData+JumpData;
+
+		{
+			LengthNew[0]=LengthData[0];
+			OffsetNew[0]=OffsetData[0];
+		}
+		for(;OffsetData<End;OffsetData++,LengthData++)
+		{
+			LengthNew[0]*=LengthData[1];
+			OffsetNew[0]*=LengthData[1];
+			OffsetNew[0]+=OffsetData[1];
+		}
+	}
+	{
+		const size_t Rest=DimsCopy-1;
+
+		Line_Copy_(LengthData+1,LengthNew+1,Rest,size_t);
+		Line_Copy_(OffsetData+1,OffsetNew+1,Rest,size_t);
+	}
+}
+
+int MemC_VC_Init_(void _PL_ Queue,MEMC_VC _PL_ VC)
+{
+	if(VC)
+		if(VC->Hidden)
+			switch(VC->Domain.E)
+			{
+			case MemCDomainHost:
+				Line_Clear_(_MemC_VC_Direct_((void*)(VC->Hidden),VC->Dims-1),(VC->Lng1D)*(VC->Unit),char);
+				goto SUCCESS;
+#ifdef __OPENCL_H
+			case MemCDomainDevice:
+				if(Devi_Init_(Queue,(cl_mem)(VC->Hidden),ConstantZero,0,(VC->Lng1D)*(VC->Unit),char)==CL_SUCCESS)
+					goto SUCCESS;
+				else
+					goto FAILURE;
+#else
+				MemC_Mute_(Queue);
+#endif
+			default:
+				goto FAILURE;
+			}
+		else
+			goto SUCCESS;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
+int MemC_VC_Copy_(void _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target,MEMC_MS _PL_ Copy,int(_PL_ Checker_)(MEMC_DT _PL_,MEMC_DT _PL_))
+{
+	if(Source)
+		if(Target)
+			if(Source->Unit==Target->Unit)
+			{
+				if(Checker_)
+					if(!Checker_(Source->Type,Target->Type))
+						goto FAILURE;
+			}
+			else
+				goto FAILURE;
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+
+	if(Copy)
+		if(Copy->Slot.V)
+		{
+			const size_t DimC=Copy->Slot.V[0];
+			const size_t _PL_ LngC=Copy->Slot.V+1;
+			const size_t *OfsS=LngC+DimC;
+			const size_t *OfsT=OfsS+Source->Dims;
+
+			{
+				const size_t _PL_ End=Copy->Slot.V+Copy->Nums;
+				const size_t _PL_ Temp=OfsT+Target->Dims;
+
+				if(LngC<Copy->Slot.V)
+					goto FAILURE;
+				if(OfsS<LngC)
+					goto FAILURE;
+				if(OfsT<OfsS)
+					goto FAILURE;
+				if(Temp<OfsT)
+					goto FAILURE;
+				if(Temp>End)
+					goto FAILURE;
+			}
+			if(DimC)
+			{
+				const size_t PreS=Source->Dims-DimC;
+				const size_t PreT=Target->Dims-DimC;
+				const size_t *LngS=Source->LngND;
+				const size_t *LngT=Target->LngND;
+
+				if(!_MemC_VC_Copy_Check_(OfsS,LngS,LngC,PreS,Source->Dims,DimC))
+					goto FAILURE;
+				if(!_MemC_VC_Copy_Check_(OfsT,LngT,LngC,PreT,Target->Dims,DimC))
+					goto FAILURE;
+				if(!_MemC_Shape_Non_Zero_(LngC,DimC))
+					goto SUCCESS;
+				if(Source->Hidden)
+					if(Target->Hidden)
+					{
+						void *MemS;
+						void *MemT;
+#ifdef __OPENCL_H
+						int Flag=0x0;
+#else
+						MemC_Mute_(Queue);
+#endif
+						switch(Source->Domain.E)
+						{
+						case MemCDomainHost:
+							MemS=_MemC_VC_Access_((void*)(Source->Hidden),OfsS,PreS);
+							MemS=_MemC_VC_Direct_(MemS,DimC-1);
+							break;
+#ifdef __OPENCL_H
+						case MemCDomainDevice:
+							MemS=(void*)(Source->Hidden);
+							Flag|=0x2;
+							break;
+#endif
+						default:
+							goto FAILURE;
+						}
+						switch(Target->Domain.E)
+						{
+						case MemCDomainHost:
+							MemT=_MemC_VC_Access_((void*)(Target->Hidden),OfsT,PreT);
+							MemT=_MemC_VC_Direct_(MemT,DimC-1);
+							break;
+#ifdef __OPENCL_H
+						case MemCDomainDevice:
+							MemT=(void*)(Target->Hidden);
+							Flag|=0x1;
+							break;
+#endif
+						default:
+							goto FAILURE;
+						}
+#ifdef __OPENCL_H
+						if(Flag)
+							if(DimC>Devi_Copy_Max_Dimension)
+								goto FAILURE;
+							else
+							{
+								size_t SizeNew[Devi_Copy_Max_Dimension<<2];
+
+								if(Flag&0x2)
+									if(PreS)
+									{
+										size_t _PL_ LngSNew=SizeNew;
+										size_t _PL_ OfsSNew=LngSNew+Devi_Copy_Max_Dimension;
+
+										_MemC_VC_Copy_New_Size_(LngSNew,OfsSNew,OfsS,LngS,PreS,DimC);
+										OfsS=OfsSNew;
+										LngS=LngSNew;
+									}
+								if(Flag&0x1)
+									if(PreT)
+									{
+										size_t _PL_ LngTNew=SizeNew+(Devi_Copy_Max_Dimension<<1);
+										size_t _PL_ OfsTNew=LngTNew+Devi_Copy_Max_Dimension;
+
+										_MemC_VC_Copy_New_Size_(LngTNew,OfsTNew,OfsT,LngT,PreT,DimC);
+										OfsT=OfsTNew;
+										LngT=LngTNew;
+									}
+								if(_Devi_Copy_(Queue,MemS,MemT,OfsS,OfsT,LngC,LngS,LngT,(cl_uint)DimC,Source->Unit,(devi_cf)Flag)==CL_SUCCESS)
+									goto SUCCESS;
+								else
+									goto FAILURE;
+							}
+						else
+#endif
+						{
+							if(_MemC_Copy_(MemS,MemT,OfsS+PreS,OfsT+PreT,LngC,LngS+PreS,LngT+PreT,DimC,Source->Unit))
+								goto FAILURE;
+							else
+								goto SUCCESS;
+						}
+					}
+					else
+						goto FAILURE;
+				else
+					if(Target->Hidden)
+						goto FAILURE;
+					else
+						goto SUCCESS;
+			}
+			else
+				goto SUCCESS;
+		}
+		else
+			goto FAILURE;
+	else
+		if(Source->Dims==Target->Dims)
+			if(Source->Dims)
+				if(Line_Compare_(Source->LngND,Target->LngND,Source->Dims,size_t))
+					goto FAILURE;
+				else
+					if(Source->Hidden)
+						if(Target->Hidden)
+						{
+							const size_t Dig=Source->Dims-1;
+							void *MemoryS;
+							void *MemoryT;
+#ifdef __OPENCL_H
+							int Flag=0x0;
+#else
+							MemC_Mute_(Queue);
+#endif
+							switch(Source->Domain.E)
+							{
+							case MemCDomainHost:
+								MemoryS=_MemC_VC_Direct_((void*)(Source->Hidden),Dig);
+								break;
+#ifdef __OPENCL_H
+							case MemCDomainDevice:
+								MemoryS=(void*)(Source->Hidden);
+								Flag|=0x2;
+								break;
+#endif
+							default:
+								goto FAILURE;
+							}
+							switch(Target->Domain.E)
+							{
+							case MemCDomainHost:
+								MemoryT=_MemC_VC_Direct_((void*)(Target->Hidden),Dig);
+								break;
+#ifdef __OPENCL_H
+							case MemCDomainDevice:
+								MemoryT=(void*)(Target->Hidden);
+								Flag|=0x1;
+								break;
+#endif
+							default:
+								goto FAILURE;
+							}
+#ifdef __OPENCL_H
+							if(Flag)
+								if(_Devi_Copy_1D_(Queue,MemoryS,MemoryT,0,0,Source->Lng1D,Source->Unit,(devi_cf)Flag)==CL_SUCCESS)
+									goto SUCCESS;
+								else
+									goto FAILURE;
+							else
+#endif
+							{
+								const size_t Bytes=(Source->Lng1D)*(Source->Unit);
+
+								if(Line_Copy_(MemoryS,MemoryT,Bytes,char))
+									goto FAILURE;
+								else
+									goto SUCCESS;
+							}
+						}
+						else
+							goto FAILURE;
+					else
+						if(Target->Hidden)
+							goto FAILURE;
+						else
+							goto SUCCESS;
+			else
+				goto SUCCESS;
+		else
+			goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
 #endif
