@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.06	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.07	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -38,14 +38,14 @@ static_assert((sizeof(char)==1),"sizeof(char) != 1");
 #define _PL_ *const	//MemClip : Pointer Lock Definition
 #endif
 
-#define MemC_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;	//MemClip : Macro for Type Declaration
+#define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;	//MemClip : Macro for Type Declaration
 #endif
 
 #if(MemC_Fold_(Definition:Types))
 struct _memc_dt					//MemClip : Data Type Structure
 {
-	const void _PL_ Scope;		//MemClip : ID Scope
-	const size_t ID;			//MemClip : Identification
+	const void _PL_ Scope;		//MemClip : Type Scope
+	const size_t Index;			//MemClip : Index in Scope
 	const size_t Flag;			//MemClip : Property Flag
 	const size_t SizeType;		//MemClip : Type's Byte Size
 	const size_t SizeName;		//MemClip : Name's Byte Size
@@ -53,11 +53,11 @@ struct _memc_dt					//MemClip : Data Type Structure
 	const void _PL_ Link;		//MemClip : External Link
 	const void _PL_ Meta;		//MemClip : Meta Data
 };
-MemC_Declare_(struct,memc_dt,MEMC_DT);	//MemClip : Data Type Structure
+MemC_Type_Declare_(struct,memc_dt,MEMC_DT);	//MemClip : Data Type Structure
 
 struct _memc_ms				//MemClip : Memory Slot Structure
 {
-	void *ID;				//MemClip : Identification
+	const void _PL_ ID;		//MemClip : Identification
 	MEMC_DT _PL_ Type;		//MemClip : Data Type
 	const size_t Nums;		//MemClip : Number of Slots
 	const union _memc_pv	//MemClip : Pointer and Value Union
@@ -67,32 +67,32 @@ struct _memc_ms				//MemClip : Memory Slot Structure
 	}
 	Slot;					//MemClip : Slot Access
 };
-MemC_Declare_(struct,memc_ms,MEMC_MS);	//MemClip : Memory Slot Structure
+MemC_Type_Declare_(struct,memc_ms,MEMC_MS);	//MemClip : Memory Slot Structure
 
 struct _memc_mc					//MemClip : Memory Container Structure
 {
-	void *ID;					//MemClip : Identification
+	const void _PL_ ID;			//MemClip : Identification
 	MEMC_DT _PL_ Type;			//MemClip : Data Type
 	const size_t Unit;			//MemClip : Type Size
 	const size_t Dims;			//MemClip : Dimension (N)
 	const size_t Lng1D;			//MemClip : Total Number of Elements
 	const size_t _PL_ LngND;	//MemClip : Data Shape
 	void _PL_ Acs1D;			//MemClip : 1-Dimensional Data Access
-	void _PL_ AcsND;			//MemClip : N-Dimensional Data Access
+	const void _PL_ AcsND;		//MemClip : N-Dimensional Data Access
 };
-MemC_Declare_(struct,memc_mc,MEMC_MC);	//MemClip : Memory Container Structure
+MemC_Type_Declare_(struct,memc_mc,MEMC_MC);	//MemClip : Memory Container Structure
 
 enum _memc_df				//MemClip : Memory Domain Flag Enumeration
 {
 	MemCDomainHost=0x48,	//MemClip : Memory in Host Domain
 	MemCDomainDevice=0x44	//MemClip : Memory in Device Domain
 };
-MemC_Declare_(enum,memc_df,MEMC_DF);	//MemClip : Memory Domain Flag Enumeration
+MemC_Type_Declare_(enum,memc_df,MEMC_DF);	//MemClip : Memory Domain Flag Enumeration
 static_assert(sizeof(memc_df)<=sizeof(size_t),"sizeof(enum) > sizeof(size_t)");
 
 struct _memc_vc					//MemClip : Virtual Container Structure
 {
-	void *ID;					//MemClip : Identification
+	const void _PL_ ID;			//MemClip : Identification
 	MEMC_DT _PL_ Type;			//MemClip : Data Type
 	const size_t Unit;			//MemClip : Type Size
 	const size_t Dims;			//MemClip : Dimensions (N)
@@ -106,7 +106,7 @@ struct _memc_vc					//MemClip : Virtual Container Structure
 	Domain;						//MemClip : Memory Domain Flag
 	const void _PL_ Hidden;		//MemClip : Hidden Linkage
 };
-MemC_Declare_(struct,memc_vc,MEMC_VC);	//MemClip : Virtual Container Structure
+MemC_Type_Declare_(struct,memc_vc,MEMC_VC);	//MemClip : Virtual Container Structure
 
 #ifdef __OPENCL_H
 struct _devi_qc						//MemC_CL : Queue Container Structure
@@ -116,11 +116,11 @@ struct _devi_qc						//MemC_CL : Queue Container Structure
 	const cl_context Context;		//MemC_CL : Context
 	const cl_command_queue Queue;	//MemC_CL : Command Queue
 };
-MemC_Declare_(struct,devi_qc,DEVI_QC);	//MemC_CL : Queue Container Structure
+MemC_Type_Declare_(struct,devi_qc,DEVI_QC);	//MemC_CL : Queue Container Structure
 
 struct _devi_bc				//MemC_CL : Buffer Container Structure
 {
-	void *ID;				//MemC_CL : Identification
+	const void _PL_ ID;		//MemC_CL : Identification
 	MEMC_DT _PL_ Type;		//MemC_CL : Data Type
 	const size_t Unit;		//MemC_CL : Type Size
 	const size_t LngT;		//MemC_CL : Total Length
@@ -129,7 +129,7 @@ struct _devi_bc				//MemC_CL : Buffer Container Structure
 	const size_t _PL_ LngS;	//MemC_CL : Lengths of Sub-Buffers
 	const cl_mem _PL_ BufS;	//MemC_CL : Sub-Buffer Address Array
 };
-MemC_Declare_(struct,devi_bc,DEVI_BC);	//MemC_CL : Buffer Container Structure
+MemC_Type_Declare_(struct,devi_bc,DEVI_BC);	//MemC_CL : Buffer Container Structure
 
 struct _devi_km							//MemC_CL : Kernel Manager Structure
 {
@@ -147,7 +147,7 @@ struct _devi_km							//MemC_CL : Kernel Manager Structure
 	const cl_uint KArgs;				//MemC_CL : The Number of Kernel Arguments
 	const cl_uint WDims;				//MemC_CL : Work Dimensions
 };
-MemC_Declare_(struct,devi_km,DEVI_KM);	//MemC_CL : Kernel Manager Structure
+MemC_Type_Declare_(struct,devi_km,DEVI_KM);	//MemC_CL : Kernel Manager Structure
 
 enum _devi_cf		//MemC_CL : Device Memory Copy Function Flag Enumeration
 {
@@ -155,7 +155,7 @@ enum _devi_cf		//MemC_CL : Device Memory Copy Function Flag Enumeration
 	DeviCopyDtoH=2, //MemC_CL : Device to Host Copy
 	DeviCopyDtoD=3	//MemC_CL : Device to Device Copy
 };
-MemC_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Function Flag Enumeration
+MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Function Flag Enumeration
 #endif
 #endif
 
@@ -189,6 +189,8 @@ MemC_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Function Fla
 
 #define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,type) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(type))	//MemClip : Key Finding for Switch Operation
 #define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))	//MemClip : Array Data Copy
+
+#define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
 #endif
 #if(MemC_Fold_(Part:OpenCL))
 #ifdef __OPENCL_H
@@ -272,6 +274,8 @@ MemC_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Function Fla
 extern const char _PL_ MemClip;
 //MemClip : Self Reference
 extern const void _PL_ MemCrux;
+//MemClip : Address Type Descriptor
+extern MEMC_DT _PL_ MemCTypeAddress;
 #endif
 
 #if(MemC_Fold_(Declaration:Memory Functions))
@@ -292,21 +296,26 @@ void MemC_Deloc_Set_(void **MemorySet,const size_t Count);
 #if(MemC_Fold_(Declaration:MemClip Structure Functions))
 //MemClip : Memory Slot Memory Allocation - Deallocate with "MemC_MS_Delete_"
 //＊Nums = SlotsNumber
-memc_ms *MemC_MS_Create_(const size_t SlotsNumber);
+memc_ms *MemC_MS_Create_(const void _PL_ Identification,const size_t SlotsNumber);
 //MemClip : Memory Slot Memory Deallocation
 void MemC_MS_Delete_(memc_ms *_PL_ MemorySlot);
+
+//MemClip : Memory Slot Data Reset
+int MemC_MS_Init_(MEMC_MS _PL_ MemorySlot);
+//MemClip : Memory Slot NULL Check
+//＊Count = MemorySlot -> Slot.V[0]
+//　MemorySet = { P[1], P[2], ..., P[Count] | P = MemorySlot -> Slot.P }
+//＊Mode 0 : Return value is 1 for all NULLs, otherwise 0.
+//＊Mode 1 : Return value is 0 for any NULLs, otherwise 1.
+int MemC_MS_Null_(MEMC_MS _PL_ MemorySlot,const int CheckMode);
 
 //MemClip : Memory Container Memory Allocation - Deallocate with "MemC_MC_Delete_"
 //＊Unit = TypeInfo -> SizeType
 //　Dims = ShapeInfo -> Slot.V[0]
-//　LngND = { V[1], V[2], ..., V[Dims] }
-memc_mc *MemC_MC_Create_(MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo);
+//　LngND = { V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V }
+memc_mc *MemC_MC_Create_(const void _PL_ Identification,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo);
 //MemClip : Memory Container Memory Deallocation
 void MemC_MC_Delete_(memc_mc *_PL_ MemoryContainer);
-
-//MemClip : Memory Container Array Access
-//＊Return = &(MemoryContainer -> AcsND[V[0]][V[1]][...][V[Dims-1]])
-void *MemC_MC_Access_(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ OffsetInfo);
 #endif
 
 #if(MemC_Fold_(Declaration:OpenCL Functions))
@@ -323,10 +332,10 @@ void Devi_QC_Delete_(devi_qc *_PL_ QueueContainer);
 //MemC_CL : Buffer Container Memory Allocation - Deallocate with "Devi_BC_Delete_"
 //＊Nums = ShapeInfo -> Slot.V[0]
 //＊Mode 0 : Uniform Length
-//　LngS[n] = { V[1], V[1], ..., V[1] }
+//　LngS = { V[1], V[1], ..., V[1] | V = ShapeInfo -> Slot.V }
 //＊Mode 1 : Ununiform Length
-//　LngS[n] = { V[1], V[2], ..., V[Nums] }
-devi_bc *Devi_BC_Create_(const cl_context Context,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo,const int Mode);
+//　LngS = { V[1], V[2], ..., V[Nums] | V = ShapeInfo -> Slot.V }
+devi_bc *Devi_BC_Create_(const void _PL_ Identification,const cl_context Context,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo,const int Mode);
 //MemC_CL : Buffer Container Memory Deallocation
 void Devi_BC_Delete_(devi_bc *_PL_ BufferContainer);
 
@@ -350,40 +359,53 @@ cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager)
 
 #if(MemC_Fold_(Declaration:Fused Functions))
 //MemClip : Virtual Container Memory Allocation - Deallocate with "MemC_VC_Delete_"
-//＊Dims = ( MC -> Dims ) - ( EntryInfo -> Slot.V[0] )
-//　LngND = ( MC -> LngND ) + ( EntryInfo -> Slot.V[0] )
+//＊V = EntryInfo -> Slot.V
+//　Dims = ( MC -> Dims ) - V[0]
+//　LngND = ( MC -> LngND ) + V[0]
 //　Hidden = MC -> AcsND[V[1]][V[2]][...][V[V[0]]]
-memc_vc *MemC_VC_Create_(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ EntryInfo);
+memc_vc *MemC_VC_Create_(const void _PL_ Identification,MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ EntryInfo);
 #ifdef __OPENCL_H
 //MemC_CL : Virtual Container Memory Allocation - Deallocate with "MemC_VC_Delete_"
 //＊Dims = EntryInfo -> Slot.V[1]
-//　LngND = { V[2], V[3], ..., V[Dims+1] }
+//　LngND = { V[2], V[3], ..., V[Dims+1] | V = EntryInfo -> Slot.V }
 //　Hidden = BC -> BufS[V[0]]
-memc_vc *Devi_VC_Create_(DEVI_BC _PL_ BufferContainer,MEMC_MS _PL_ ShapeInfo);
+memc_vc *Devi_VC_Create_(const void _PL_ Identification,DEVI_BC _PL_ BufferContainer,MEMC_MS _PL_ ShapeInfo);
 #endif
 //MemClip : Virtual Container Memory Deallocation
 void MemC_VC_Delete_(memc_vc *_PL_ VirtualContainer);
 
-//MemClip : Virtual Container Member Get :: VC->AcsND
+//MemClip : Virtual Container's Virtual Member :: VC->AcsND
+//＊Host Domain Only
 void *MemC_VC_Member_AcsND_(MEMC_VC _PL_ VirtualContainer);
-//MemClip : Virtual Container Member Get :: VC->Acs1D
+//MemClip : Virtual Container's Virtual Member :: VC->Acs1D
+//＊Host Domain Only
 void *MemC_VC_Member_Acs1D_(MEMC_VC _PL_ VirtualContainer);
 #ifdef __OPENCL_H
-//MemC_CL : Virtual Container Member Get :: VC->Buf
+//MemC_CL : Virtual Container's Virtual Member :: VC->Buf
+//＊Device Domain Only
 cl_mem Devi_VC_Member_Buf_(MEMC_VC _PL_ VirtualContainer);
 #endif
+//MemClip : Virtual Container Memory Access
+//＊V = AccessInfo -> Slot.V
+//＊Host Domain :
+//　V[0] = &( VC -> AcsND[V[1]][V[2]]...[V[Dims]] )
+//＊Device Domain :
+//　V[0] = &( VC -> AcsND[V[1]][V[2]]...[V[Dims]] ) - &( VC -> Acs1D[0] )
+//　Note that the returned offset V[0] is not in byte unit.
+//＊Return value is 1 for success, 0 for failure.
+int MemC_VC_Access_(MEMC_VC _PL_ VirtualContainer,MEMC_MS _PL_ AccessInfo);
 
 //MemClip : Virtual Container Data Reset
 //＊Return value is 1 for success, 0 for failure.
 int MemC_VC_Init_(void _PL_ Queue,MEMC_VC _PL_ VirtualContainer);
 //MemClip : Virtual Container Data Copy
 //＊CopyDims = CopyInfo -> Slot.V[0] ≤ min { SourceDims, TargetDims }
-//　CopyLngND = { V[1], V[2], ..., V[CopyDims] }
+//　CopyLngND = { V[1], V[2], ..., V[CopyDims] | V = CopyInfo -> Slot.V }
 //　SourceOffset = { E[1], E[2], ..., E[SourceDims] | E = V + CopyDims }
 //　TargetOffset = { F[1], F[2], ..., F[TargetDims] | F = E + SourceDims }
 //＊Type checker should return 1 for compatible types, 0 for incompatible types.
 //＊Return value is 1 for success, 0 for failure.
-int MemC_VC_Copy_(const void _PL_ Queue,MEMC_VC _PL_ SourceContainer,MEMC_VC _PL_ TargetContainer,MEMC_MS _PL_ CopyInfo,int(_PL_ Type_Checker_)(MEMC_DT _PL_ SourceType,MEMC_DT _PL_ TargetType));
+int MemC_VC_Copy_(const void _PL_ Queue,MEMC_VC _PL_ SourceContainer,MEMC_VC _PL_ TargetContainer,MEMC_MS _PL_ CopyInfo);
 #endif
 
 #if(MemC_Fold_(Declaration:Redefined Functions))
