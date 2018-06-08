@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.08	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -299,6 +299,8 @@ void MemC_Deloc_Set_(void **MemorySet,const size_t Count);
 memc_ms *MemC_MS_Create_(const void _PL_ Identification,const size_t SlotsNumber);
 //MemClip : Memory Slot Memory Deallocation
 void MemC_MS_Delete_(memc_ms *_PL_ MemorySlot);
+//MemClip : Memory Slot Memory Type Change
+int MemC_MS_Change_(MEMC_MS _PL_ MemorySlot,MEMC_DT _PL_ MemoryType);
 
 //MemClip : Memory Slot Data Reset
 int MemC_MS_Init_(MEMC_MS _PL_ MemorySlot);
@@ -316,6 +318,8 @@ int MemC_MS_Null_(MEMC_MS _PL_ MemorySlot,const int CheckMode);
 memc_mc *MemC_MC_Create_(const void _PL_ Identification,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo);
 //MemClip : Memory Container Memory Deallocation
 void MemC_MC_Delete_(memc_mc *_PL_ MemoryContainer);
+//MemClip : Memory Container Data Type Change
+int MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 #endif
 
 #if(MemC_Fold_(Declaration:OpenCL Functions))
@@ -357,7 +361,7 @@ cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager)
 #endif
 #endif
 
-#if(MemC_Fold_(Declaration:Fused Functions))
+#if(MemC_Fold_(Declaration:MemClip Fused Functions))
 //MemClip : Virtual Container Memory Allocation - Deallocate with "MemC_VC_Delete_"
 //＊V = EntryInfo -> Slot.V
 //　Dims = ( MC -> Dims ) - V[0]
@@ -373,6 +377,8 @@ memc_vc *Devi_VC_Create_(const void _PL_ Identification,DEVI_BC _PL_ BufferConta
 #endif
 //MemClip : Virtual Container Memory Deallocation
 void MemC_VC_Delete_(memc_vc *_PL_ VirtualContainer);
+//MemClip : Virtual Container Data Type Change
+int MemC_VC_Change_(MEMC_VC _PL_ VirtualContainer,MEMC_DT _PL_ DataType);
 
 //MemClip : Virtual Container's Virtual Member :: VC->AcsND
 //＊Host Domain Only
