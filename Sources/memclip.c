@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.06.07";
+static const char IdiomVersion[16]="Date:2018.06.08";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -554,6 +554,26 @@ void MemC_MS_Delete_(memc_ms *_PL_ MS)
 {
 	MemC_Deloc_(*MS);
 }
+int MemC_MS_Change_(MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
+{
+	if(MS)
+		if(DT)
+			if(DT->SizeType==sizeof(size_t))
+			{
+				MemC_Acs_(MEMC_DT*,MS->Type)=DT;
+				goto SUCCESS;
+			}
+			else
+				goto FAILURE;
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
 int MemC_MS_Init_(MEMC_MS _PL_ MS)
 {
 	if(MS)
@@ -767,6 +787,26 @@ ESCAPE:
 void MemC_MC_Delete_(memc_mc *_PL_ MC)
 {
 	MemC_Deloc_(*MC);
+}
+int MemC_MC_Change_(MEMC_MC _PL_ MC,MEMC_DT _PL_ DT)
+{
+	if(MC)
+		if(DT)
+			if(DT->SizeType==MC->Unit)
+			{
+				MemC_Acs_(MEMC_DT*,MC->Type)=DT;
+				goto SUCCESS;
+			}
+			else
+				goto FAILURE;
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 #endif
 
@@ -1598,7 +1638,7 @@ void Devi_BC_Delete_(devi_bc *_PL_ BC)
 #endif
 #endif
 
-#if(MemC_Fold_(Definition:Fused Functions))
+#if(MemC_Fold_(Definition:MemClip Fused Functions))
 static size_t _MemC_VC_Total_Length_(const size_t *MemC_Rst_ Ptr,const size_t Count)
 {
 	const size_t _PL_ End=Ptr+Count;
@@ -1818,6 +1858,26 @@ ESCAPE:
 void MemC_VC_Delete_(memc_vc *_PL_ VC)
 {
 	MemC_Deloc_(*VC);
+}
+int MemC_VC_Change_(MEMC_VC _PL_ VC,MEMC_DT _PL_ DT)
+{
+	if(VC)
+		if(DT)
+			if(DT->SizeType==VC->Unit)
+			{
+				MemC_Acs_(MEMC_DT*,VC->Type)=DT;
+				goto SUCCESS;
+			}
+			else
+				goto FAILURE;
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 
 static void *_MemC_VC_Direct_(void *Ptr,size_t Dig)
