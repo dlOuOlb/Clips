@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.06.08";
+static const char IdiomVersion[16]="Date:2018.06.11";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -116,16 +116,19 @@ static void **_MemC_Assign_(void **High,const size_t NumberHigh,const size_t Siz
 }
 static void *_MemC_Assign_Loop_(void **PtrM,const size_t _PL_ Size,const size_t NumberDimension,const size_t SizeElement)
 {
-	const size_t _PL_ End=Size+(NumberDimension-1);
-	const size_t *MemC_Rst_ PtrS=Size;
-	size_t Temp=PtrS[0];
-
-	for(PtrS++;PtrS<End;PtrS++)
+	if(NumberDimension>1)
 	{
-		PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*sizeof(size_t));
-		Temp*=(*PtrS);
+		const size_t _PL_ End=Size+(NumberDimension-1);
+		const size_t *MemC_Rst_ PtrS=Size;
+		size_t Temp=PtrS[0];
+
+		for(PtrS++;PtrS<End;PtrS++)
+		{
+			PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*sizeof(size_t));
+			Temp*=(*PtrS);
+		}
+		PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*SizeElement);
 	}
-	PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*SizeElement);
 
 	return PtrM;
 }
@@ -134,25 +137,26 @@ void *MemC_Alloc_(const size_t _PL_ Size,const size_t NumberDimension,const size
 	void *Memory=NULL;
 
 	if(Size)
-		if(NumberDimension*SizeElement)
-		{
-			const size_t _PL_ End=Size+(NumberDimension-1);
-			const size_t *PtrS=End;
-			size_t Temporary=_MemC_Origin_(*PtrS,SizeElement);
-
-			for(PtrS--;PtrS>=Size;PtrS--)
-				if(Temporary)
-					Temporary=_MemC_Bigger_(*PtrS,Temporary);
-				else
-					break;
-
-			if(Temporary)
+		if(NumberDimension)
+			if(SizeElement)
 			{
-				Memory=Byte_Alloc_(Temporary);
-				if(Memory)
-					_MemC_Assign_Loop_(Memory,Size,NumberDimension,SizeElement);
+				const size_t _PL_ End=Size+(NumberDimension-1);
+				const size_t *PtrS=End;
+				size_t Temporary=_MemC_Origin_(*PtrS,SizeElement);
+
+				for(PtrS--;PtrS>=Size;PtrS--)
+					if(Temporary)
+						Temporary=_MemC_Bigger_(*PtrS,Temporary);
+					else
+						break;
+
+				if(Temporary)
+				{
+					Memory=Byte_Alloc_(Temporary);
+					if(Memory)
+						_MemC_Assign_Loop_(Memory,Size,NumberDimension,SizeElement);
+				}
 			}
-		}
 
 	return Memory;
 }
@@ -630,25 +634,31 @@ static size_t _MemC_Shape_Overflow_(const size_t _PL_ Shape,const size_t Dims)
 static size_t _MemC_Space_Required_(const size_t _PL_ Shape,const size_t Dims,const size_t SizeType)
 {
 	size_t Size[2];
-	const size_t _PL_ Last=Shape+(Dims-1);
-	const size_t *MemC_Rst_ Ptr=Shape;
 
-	for(Size[0]=1,Size[1]=0;Ptr<Last;Ptr++)
+	if(Dims>1)
 	{
-		Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
-		Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
-		if(!(Size[1]))
-			break;
-	}
-	if(Ptr==Last)
-	{
-		Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
-		Size[0]=_MemC_Overflow_Mul_(Size[0],SizeType);
-		if(Size[0])
+		const size_t _PL_ Last=Shape+(Dims-1);
+		const size_t *MemC_Rst_ Ptr=Shape;
+
+		for(Size[0]=1,Size[1]=0;Ptr<Last;Ptr++)
 		{
-			Size[1]=_MemC_Overflow_Mul_(Size[1],sizeof(size_t));
-			if(Size[1])
-				Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
+			Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
+			Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
+			if(!(Size[1]))
+				break;
+		}
+		if(Ptr==Last)
+		{
+			Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
+			Size[0]=_MemC_Overflow_Mul_(Size[0],SizeType);
+			if(Size[0])
+			{
+				Size[1]=_MemC_Overflow_Mul_(Size[1],sizeof(size_t));
+				if(Size[1])
+					Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
+				else
+					Size[1]=0;
+			}
 			else
 				Size[1]=0;
 		}
@@ -656,7 +666,7 @@ static size_t _MemC_Space_Required_(const size_t _PL_ Shape,const size_t Dims,co
 			Size[1]=0;
 	}
 	else
-		Size[1]=0;
+		Size[1]=_MemC_Overflow_Mul_(Shape[0],SizeType);
 
 	return Size[1];
 }
