@@ -1,4 +1,14 @@
-﻿#if(Fold_(Endian))
+﻿/*------------------------------------------------------------------*/
+/*	BitClip's OpenCL Source Parts.									*/
+/*																	*/
+/*	Written by Ranny Clover								Date		*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.12	*/
+/*------------------------------------------------------------------*/
+/*	OpenCL Support													*/
+/*	http://www.khronos.org/opencl/									*/
+/*------------------------------------------------------------------*/
+
+#if(Fold_(Endian))
 _K_ BitC_Endian_D16_(_G_ data_16 *_R_ Data,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1794,7 +1804,7 @@ _I_ general _BitC_RO_S_M_D32_(_P_ P_PTR_V M)
 	M.D32[0]|=M.D32[1];
 }
 #if(_ABLE_I64_)
-_I_ general _BitC_RO_S_M_D32_(_P_ P_PTR_V M)
+_I_ general _BitC_RO_S_M_D64_(_P_ P_PTR_V M)
 {
 	M.D64[1]<<=1;
 	M.D64[2]<<=2;
@@ -3682,12 +3692,13 @@ _K_ BitC_RO_G_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		Mask.D08=Buff;
 	}
 	{
-		_G_ DATA_08 _PL_ End=DataA+Safe;
+		_G_ INTE_08 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]>=Value);
@@ -3718,7 +3729,8 @@ _K_ BitC_RO_G_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		else
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]>=Value);
@@ -3754,7 +3766,7 @@ _K_ BitC_RO_G_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ INTE_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -3826,7 +3838,7 @@ _K_ BitC_RO_G_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ INTE_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -3899,7 +3911,7 @@ _K_ BitC_RO_G_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ INTE_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -3973,7 +3985,7 @@ _K_ BitC_RO_G_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ REAL_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -4046,7 +4058,7 @@ _K_ BitC_RO_G_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ REAL_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -4119,7 +4131,7 @@ _K_ BitC_RO_G_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ REAL_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -4495,13 +4507,15 @@ _K_ BitC_RO_G_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		Mask.D08=Buff;
 	}
 	{
-		_G_ DATA_08 _PL_ End=DataA+Safe;
+		_G_ INTE_08 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
-			Mask._08_I08[1]=Vect_Load_(08,DataB);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]>=Mask._08_I08[1]);
@@ -4533,8 +4547,10 @@ _K_ BitC_RO_G_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		else
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
-			Mask._08_I08[1]=Vect_Load_(08,DataB);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]>=Mask._08_I08[1]);
@@ -4570,7 +4586,7 @@ _K_ BitC_RO_G_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ INTE_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -4645,7 +4661,7 @@ _K_ BitC_RO_G_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ INTE_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -4721,7 +4737,7 @@ _K_ BitC_RO_G_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ INTE_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -4798,7 +4814,7 @@ _K_ BitC_RO_G_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ REAL_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -4874,7 +4890,7 @@ _K_ BitC_RO_G_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ REAL_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -4950,7 +4966,7 @@ _K_ BitC_RO_G_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ REAL_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -5317,12 +5333,13 @@ _K_ BitC_RO_L_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		Mask.D08=Buff;
 	}
 	{
-		_G_ DATA_08 _PL_ End=DataA+Safe;
+		_G_ INTE_08 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]<Value);
@@ -5353,7 +5370,8 @@ _K_ BitC_RO_L_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		else
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]<Value);
@@ -5389,7 +5407,7 @@ _K_ BitC_RO_L_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ INTE_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -5461,7 +5479,7 @@ _K_ BitC_RO_L_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ INTE_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -5534,7 +5552,7 @@ _K_ BitC_RO_L_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ INTE_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -5608,7 +5626,7 @@ _K_ BitC_RO_L_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ REAL_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -5681,7 +5699,7 @@ _K_ BitC_RO_L_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ REAL_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -5754,7 +5772,7 @@ _K_ BitC_RO_L_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ REAL_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
@@ -5833,8 +5851,10 @@ _K_ BitC_RO_L_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			//Mask._08_D08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask._08_D08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_D08[0]<Mask._08_D08[1]);
@@ -5866,8 +5886,10 @@ _K_ BitC_RO_L_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			//Mask._08_D08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask._08_D08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_D08[0]<Mask._08_D08[1]);
@@ -6130,13 +6152,15 @@ _K_ BitC_RO_L_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		Mask.D08=Buff;
 	}
 	{
-		_G_ DATA_08 _PL_ End=DataA+Safe;
+		_G_ INTE_08 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
-			Mask._08_I08[1]=Vect_Load_(08,DataB);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]<Mask._08_I08[1]);
@@ -6168,8 +6192,10 @@ _K_ BitC_RO_L_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		else
 		{
 			Wait_L_;
-			Mask._08_I08[0]=Vect_Load_(08,DataA);
-			Mask._08_I08[1]=Vect_Load_(08,DataB);
+			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
 			Mask._08_I08[0]=(Mask._08_I08[0]<Mask._08_I08[1]);
@@ -6205,7 +6231,7 @@ _K_ BitC_RO_L_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ INTE_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -6280,7 +6306,7 @@ _K_ BitC_RO_L_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ INTE_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -6356,7 +6382,7 @@ _K_ BitC_RO_L_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ INTE_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -6433,7 +6459,7 @@ _K_ BitC_RO_L_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 		Mask.D16=Buff;
 	}
 	{
-		_G_ DATA_16 _PL_ End=DataA+Safe;
+		_G_ REAL_16 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -6509,7 +6535,7 @@ _K_ BitC_RO_L_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 		Mask.D32=Buff;
 	}
 	{
-		_G_ DATA_32 _PL_ End=DataA+Safe;
+		_G_ REAL_32 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
@@ -6585,7 +6611,7 @@ _K_ BitC_RO_L_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 		Mask.D64=Buff;
 	}
 	{
-		_G_ DATA_64 _PL_ End=DataA+Safe;
+		_G_ REAL_64 _PL_ End=DataA+Safe;
 
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
