@@ -5,6 +5,8 @@
 #define _BitC_Max_(A,B) (((A)>(B))?(A):(B))
 #define _BitC_Clamp_(Data,Min,Max) (((Data)<(Min))?(Min):(((Data)>(Max))?(Max):(Data)))
 
+#define _BitC_Total_Types 12
+#define _BitC_Type_Name_Length 8
 #ifdef __OPENCL_H
 #define _BitC_Total_Files 2
 #define _BitC_File_Name_Length 16
@@ -12,10 +14,13 @@
 #define _BitC_Total_Kernels 244
 #define _BitC_Kernel_Name_Length 24
 #endif
+#define _BitC_DT_Define_(IType,type,IFlag) MemC_DT_Define_(IdiomVersion,IType,IdiomTypeName[IType],IFlag,NULL,NULL,type)
+#define _BitC_DT_Flag_Real_(Bool) ((Bool)<<0)
+#define _BitC_DT_Flag_Sign_(Bool) ((Bool)<<1)
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.05.24";
+static DATA_08 IdiomVersion[16]="Date:2018.06.12";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -26,6 +31,28 @@ static DATA_64 TableShrink64[8]={0x0000000000000001,0x0000000000000002,0x0000000
 static DATA_32 TableShrink32[8]={0x00000001,0x00000002,0x00000004,0x00000008,0x00000010,0x00000020,0x00000040,0x00000080};
 static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080};
 static DATA_08 TableShrink08[8]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
+static BOOLEAN TableBool[4]={!1,!0,BitCNull,BitCFull};
+
+#if(MemC_Fold_(Type Descriptors))
+static INTE_08 IdiomTypeName[_BitC_Total_Types][_BitC_Type_Name_Length]=
+{
+	"data_08","data_16","data_32","data_64",
+	"inte_08","inte_16","inte_32","inte_64",
+	"real_08","real_16","real_32","real_64",
+};
+static MEMC_DT TypeData08=_BitC_DT_Define_(BitCTypeD08,data_08,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeData16=_BitC_DT_Define_(BitCTypeD16,data_16,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeData32=_BitC_DT_Define_(BitCTypeD32,data_32,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeData64=_BitC_DT_Define_(BitCTypeD64,data_64,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeInte08=_BitC_DT_Define_(BitCTypeI08,inte_08,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeInte16=_BitC_DT_Define_(BitCTypeI16,inte_16,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeInte32=_BitC_DT_Define_(BitCTypeI32,inte_32,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeInte64=_BitC_DT_Define_(BitCTypeI64,inte_64,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal08=_BitC_DT_Define_(BitCTypeR08,data_08,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal16=_BitC_DT_Define_(BitCTypeR16,data_16,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal32=_BitC_DT_Define_(BitCTypeR32,real_32,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal64=_BitC_DT_Define_(BitCTypeR64,real_64,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+#endif
 
 #ifdef __OPENCL_H
 static NAME_08 IdiomFileName[_BitC_Total_Files][_BitC_File_Name_Length]={"ouoclip.cl","bitclip.cl"};
@@ -159,178 +186,33 @@ static NAME_08 _PL_ AddressKernelName[_BitC_Total_Kernels]=
 	IdiomKernelName[236],IdiomKernelName[237],IdiomKernelName[238],IdiomKernelName[239],
 	IdiomKernelName[240],IdiomKernelName[241],IdiomKernelName[242],IdiomKernelName[243]
 };
-
-NAME_08 _PL_ _PL_ BitCFile=AddressFileName;
-NAME_08 _PL_ _PL_ BitCKernel=AddressKernelName;
 #endif
+static ADDRESS ConstantUnique=1;
 
 DATA_08 _PL_ BitClip=IdiomVersion;
-
-static volatile ADDRESS ConstantUnique=1;
-volatile DATA_08 _PL_ BitCEndian=(data_08*)&ConstantUnique;
-
+DATA_08 _PL_ BitCEndian=(data_08*)&ConstantUnique;
 REAL_32 _PL_ BitCInvalid32=(real_32*)ConstantInvalid32;
 REAL_64 _PL_ BitCInvalid64=(real_64*)ConstantInvalid64;
 REAL_32 _PL_ BitCPi32=(real_32*)ConstantPi32;
 REAL_64 _PL_ BitCPi64=(real_64*)ConstantPi64;
+BOOLEAN _PL_ BitCBool=TableBool+2;
+#if(MemC_Fold_(Type Descriptors))
+MEMC_DT _PL_ BitCTypeData08=&TypeData08;
+MEMC_DT _PL_ BitCTypeData16=&TypeData16;
+MEMC_DT _PL_ BitCTypeData32=&TypeData32;
+MEMC_DT _PL_ BitCTypeData64=&TypeData64;
+MEMC_DT _PL_ BitCTypeInte08=&TypeInte08;
+MEMC_DT _PL_ BitCTypeInte16=&TypeInte16;
+MEMC_DT _PL_ BitCTypeInte32=&TypeInte32;
+MEMC_DT _PL_ BitCTypeInte64=&TypeInte64;
+MEMC_DT _PL_ BitCTypeReal08=&TypeReal08;
+MEMC_DT _PL_ BitCTypeReal16=&TypeReal16;
+MEMC_DT _PL_ BitCTypeReal32=&TypeReal32;
+MEMC_DT _PL_ BitCTypeReal64=&TypeReal64;
 #endif
-
-#if(MemC_Fold_(Definition:KM Functions))
 #ifdef __OPENCL_H
-static devi_km *_BitC_Create_KM_Endian_(cl_kernel const Kernel)
-{
-	devi_km *KM=Devi_KM_Create_(Kernel,2,1);
-
-	if(KM)
-	{
-		Devi_KM_Type_G_(KM,0,cl_mem);
-		Devi_KM_Type_G_(KM,1,data_32);
-		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
-			Devi_KM_Delete_(&KM);
-	}
-
-	return KM;
-}
-static devi_km *_BitC_Create_KM_Caster_(cl_kernel const Kernel)
-{
-	devi_km *KM=Devi_KM_Create_(Kernel,3,1);
-
-	if(KM)
-	{
-		Devi_KM_Type_G_(KM,0,cl_mem);
-		Devi_KM_Type_G_(KM,1,cl_mem);
-		Devi_KM_Type_G_(KM,2,data_32);
-		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
-			Devi_KM_Delete_(&KM);
-	}
-
-	return KM;
-}
-static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,ADDRESS TypeSize)
-{
-	devi_km *KM=Devi_KM_Create_(Kernel,4,1);
-
-	if(KM)
-	{
-		Devi_KM_Type_G_(KM,0,cl_mem);
-		Devi_KM_Type_G_(KM,1,cl_mem);
-		_Devi_KM_Type_(KM,2,TypeSize,0);
-		Devi_KM_Type_G_(KM,3,data_32);
-		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
-			Devi_KM_Delete_(&KM);
-	}
-
-	return KM;
-}
-general BitC_Worker_KM_Endian_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const Data,DATA_32 Length)
-{
-	{
-		KM->WGroups[0]=Helper->Cores;
-		KM->WLocals[0]=Helper->SizeWorker[0];
-	}
-	{
-		Devi_KM_Save_G_(KM,0,&Data);
-		Devi_KM_Save_G_(KM,1,&Length);
-	}
-}
-general BitC_Worker_KM_Caster_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const Input,cl_mem const Output,DATA_32 Length)
-{
-	{
-		KM->WGroups[0]=Helper->Cores;
-		KM->WLocals[0]=Helper->SizeWorker[0];
-	}
-	{
-		Devi_KM_Save_G_(KM,0,&Input);
-		Devi_KM_Save_G_(KM,1,&Output);
-		Devi_KM_Save_G_(KM,2,&Length);
-	}
-}
-general BitC_Worker_KM_BO_N_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,DATA_32 Length)
-{
-	{
-		KM->WGroups[0]=Helper->Cores;
-		KM->WLocals[0]=Helper->SizeWorker[0];
-	}
-	{
-		Devi_KM_Save_G_(KM,0,&DataC);
-		Devi_KM_Save_G_(KM,1,&DataA);
-		Devi_KM_Save_G_(KM,2,&Length);
-	}
-}
-general BitC_Worker_KM_BO_S_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,INTE_32 Shift,DATA_32 Length)
-{
-	{
-		KM->WGroups[0]=Helper->Cores;
-		KM->WLocals[0]=Helper->SizeWorker[0];
-	}
-	{
-		Devi_KM_Save_G_(KM,0,&DataC);
-		Devi_KM_Save_G_(KM,1,&DataA);
-		Devi_KM_Save_G_(KM,2,&Shift);
-		Devi_KM_Save_G_(KM,3,&Length);
-	}
-}
-general BitC_Worker_KM_Op_M_1_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,GENERAL *Mask,DATA_32 Length)
-{
-	{
-		KM->WGroups[0]=Helper->Cores;
-		KM->WLocals[0]=Helper->SizeWorker[0];
-	}
-	{
-		Devi_KM_Save_G_(KM,0,&DataC);
-		Devi_KM_Save_G_(KM,1,&DataA);
-		Devi_KM_Save_G_(KM,2,Mask);
-		Devi_KM_Save_G_(KM,3,&Length);
-	}
-}
-general BitC_Worker_KM_Op_M_2_(PENC_CL _PL_ Helper,devi_km _PL_ KM,cl_mem const DataC,cl_mem const DataA,cl_mem const DataB,DATA_32 Length)
-{
-	{
-		KM->WGroups[0]=Helper->Cores;
-		KM->WLocals[0]=Helper->SizeWorker[0];
-	}
-	{
-		Devi_KM_Save_G_(KM,0,&DataC);
-		Devi_KM_Save_G_(KM,1,&DataA);
-		Devi_KM_Save_G_(KM,2,&DataB);
-		Devi_KM_Save_G_(KM,3,&Length);
-	}
-}
-devi_km *BitC_Create_KM_(cl_kernel const Kernel)
-{
-	data_08 BufferName[_BitC_Kernel_Name_Length]="";
-	devi_km *KM;
-
-	if(Devi_Info_Kernel_(Kernel,BufferName,_BitC_Kernel_Name_Length,data_08,CL_KERNEL_FUNCTION_NAME)==CL_SUCCESS)
-	{
-		INTEGER Switch=(integer)MemC_Switch_(BufferName,(general**)BitCKernel,NULL,_BitC_Kernel_Name_Length,_BitC_Total_Kernels,data_08);
-		
-		if(Switch<0)
-			KM=NULL;
-		else if(Switch<4)
-			KM=_BitC_Create_KM_Endian_(Kernel);
-		else if(Switch<=148)
-			KM=_BitC_Create_KM_Caster_(Kernel);
-		else if(Switch<152)
-			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
-		else if(Switch<164)
-			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
-		else if(Switch<172)
-			KM=_BitC_Create_KM_Op_(Kernel,sizeof(inte_32));
-		else if(Switch<180)
-			KM=_BitC_Create_KM_Caster_(Kernel);
-		else if(Switch<212)
-			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
-		else if(Switch<244)
-			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
-		else
-			KM=NULL;
-	}
-	else
-		KM=NULL;
-
-	return KM;
-}
+NAME_08 _PL_ _PL_ BitCFile=AddressFileName;
+NAME_08 _PL_ _PL_ BitCKernel=AddressKernelName;
 #endif
 #endif
 
@@ -4644,13 +4526,296 @@ general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_
 }
 #endif
 
+#if(MemC_Fold_(Definition:BitClip Managed Functions))
+#ifdef __OPENCL_H
+static devi_km *_BitC_Create_KM_Endian_(cl_kernel const Kernel)
+{
+	devi_km *KM=Devi_KM_Create_(Kernel,2,1);
+
+	if(KM)
+	{
+		Devi_KM_Type_G_(KM,0,cl_mem);
+		Devi_KM_Type_G_(KM,1,data_32);
+		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
+			Devi_KM_Delete_(&KM);
+	}
+
+	return KM;
+}
+static devi_km *_BitC_Create_KM_Caster_(cl_kernel const Kernel)
+{
+	devi_km *KM=Devi_KM_Create_(Kernel,3,1);
+
+	if(KM)
+	{
+		Devi_KM_Type_G_(KM,0,cl_mem);
+		Devi_KM_Type_G_(KM,1,cl_mem);
+		Devi_KM_Type_G_(KM,2,data_32);
+		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
+			Devi_KM_Delete_(&KM);
+	}
+
+	return KM;
+}
+static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,ADDRESS TypeSize)
+{
+	devi_km *KM=Devi_KM_Create_(Kernel,4,1);
+
+	if(KM)
+	{
+		Devi_KM_Type_G_(KM,0,cl_mem);
+		Devi_KM_Type_G_(KM,1,cl_mem);
+		_Devi_KM_Type_(KM,2,TypeSize,0);
+		Devi_KM_Type_G_(KM,3,data_32);
+		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
+			Devi_KM_Delete_(&KM);
+	}
+
+	return KM;
+}
+static devi_km *_BitC_Create_KM_(cl_kernel const Kernel)
+{
+	data_08 BufferName[_BitC_Kernel_Name_Length]="";
+	devi_km *KM;
+
+	if(Devi_Info_Kernel_(Kernel,BufferName,_BitC_Kernel_Name_Length,data_08,CL_KERNEL_FUNCTION_NAME)==CL_SUCCESS)
+	{
+		BITC_KI Switch=(bitc_ki)MemC_Switch_(BufferName,(general**)BitCKernel,NULL,_BitC_Kernel_Name_Length,_BitC_Total_Kernels,data_08);
+
+		if(Switch<0)
+			KM=NULL;
+		else if(Switch<4)
+			KM=_BitC_Create_KM_Endian_(Kernel);
+		else if(Switch<=148)
+			KM=_BitC_Create_KM_Caster_(Kernel);
+		else if(Switch<152)
+			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
+		else if(Switch<164)
+			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
+		else if(Switch<172)
+			KM=_BitC_Create_KM_Op_(Kernel,sizeof(inte_32));
+		else if(Switch<180)
+			KM=_BitC_Create_KM_Caster_(Kernel);
+		else if(Switch<212)
+			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
+		else if(Switch<244)
+			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
+		else
+			KM=NULL;
+	}
+	else
+		KM=NULL;
+
+	return KM;
+}
+
+bitc_cl *BitC_CL_Create_(general)
+{
+	bitc_cl *Manager=Byte_Alloc_(sizeof(bitc_cl)+MemC_Size_(devi_km*,_BitC_Total_Kernels));
+
+	if(Manager)
+	{
+		MemC_Acs_(GENERAL*,Manager->Helper)=NULL;
+		MemC_Acs_(devi_km**,Manager->KMSet)=Line_Clear_(Manager+1,_BitC_Total_Kernels,devi_km*);
+	}
+
+	return Manager;
+}
+cl_int BitC_CL_Toggle_(BITC_CL _PL_ Manager,BITC_KI Indicator)
+{
+	cl_int Error;
+
+	if(Manager)
+		if(Manager->Helper)
+			Error=CL_INVALID_HOST_PTR;
+		else
+			if(Indicator<0)
+				Error=CL_INVALID_KERNEL_NAME;
+			else
+				if(Indicator<_BitC_Total_Kernels)
+				{
+					if(Manager->KMSet[Indicator])
+						((GENERAL**)(Manager->KMSet))[Indicator]=NULL;
+					else
+						((GENERAL**)(Manager->KMSet))[Indicator]=MemCrux;
+
+					Error=CL_SUCCESS;
+				}
+				else
+					Error=CL_INVALID_KERNEL_NAME;
+	else
+		Error=CL_INVALID_HOST_PTR;
+
+	return Error;
+}
+cl_int BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ Option)
+{
+	cl_int Error;
+
+	if(Manager)
+		if(Manager->Helper)
+			Error=CL_INVALID_HOST_PTR;
+		else
+		{
+			GENERAL *Slot[_BitC_Total_Kernels];
+			bitc_ki Link[_BitC_Total_Kernels];
+			cl_uint Count=0;
+
+			{
+				bitc_ki Index;
+
+				for(Index=0;Index<_BitC_Total_Kernels;Index++)
+					if(Manager->KMSet[Index])
+					{
+						Slot[Count]=BitCKernel[Index];
+						Link[Count]=Index;
+						Count++;
+					}
+			}
+			if(Count)
+			{
+				penc_cl *Helper=PenC_CL_Create_(Queue,BitCFile,(name_08**)Slot,Option,_BitC_Total_Files,Count,&Error);
+
+				if(Helper)
+				{
+					cl_uint Index=0;
+
+					while(Index<Count)
+					{
+						Slot[Index]=_BitC_Create_KM_(Helper->SetKernel[Index]);
+						if(Slot[Index])
+							Index++;
+						else
+							break;
+					}
+					if(Index==Count)
+					{
+						for(Index=0;Index<Count;Index++)
+							((DEVI_KM**)(Manager->KMSet))[Link[Index]]=Slot[Index];
+
+						MemC_Acs_(penc_cl*,Manager->Helper)=Helper;
+					}
+					else
+					{
+						cl_int Down;
+
+						for(Down=Index-1;Down>=0;Down--)
+							Devi_KM_Delete_((devi_km**)(Slot+Down));
+						PenC_CL_Delete_(&Helper);
+
+						Error=CL_BUILD_PROGRAM_FAILURE;
+					}
+				}
+			}
+			else
+				Error=CL_INVALID_VALUE;
+		}
+	else
+		Error=CL_INVALID_HOST_PTR;
+
+	return Error;
+}
+general BitC_CL_Delete_(bitc_cl *_PL_ Manager)
+{
+	if(*Manager)
+	{
+		if((*Manager)->Helper!=MemCrux)
+		{
+			devi_km **Ptr=(devi_km**)((*Manager)->KMSet+_BitC_Total_Kernels);
+
+			for(Ptr--;Ptr>=(*Manager)->KMSet;Ptr--)
+				Devi_KM_Delete_(Ptr);
+			PenC_CL_Delete_((penc_cl**)&((*Manager)->Helper));
+		}
+		MemC_Deloc_(*Manager);
+	}
+}
+
+cl_int BitC_CL_Worker_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indicator)
+{
+	cl_int Error;
+
+	if(Manager)
+		if(Argument)
+			if(Manager->Helper)
+				if(Indicator<0)
+					Error=CL_INVALID_KERNEL_NAME;
+				else
+					if(Indicator<_BitC_Total_Kernels)
+						if(Manager->KMSet[Indicator])
+							if((Argument->Nums)<((address)(Manager->KMSet[Indicator]->KArgs)))
+								Error=CL_INVALID_KERNEL_ARGS;
+							else
+							{
+								DEVI_KM _PL_ KM=Manager->KMSet[Indicator];
+								cl_uint Index=0;
+
+								Error=CL_SUCCESS;
+								while(Index<KM->KArgs)
+								{
+									Error=Devi_KM_Save_G_(KM,Index,Argument->Slot.P[Index]);
+									if(Error==CL_SUCCESS)
+										Index++;
+									else
+										break;
+								}
+								if(Error==CL_SUCCESS)
+								{
+									KM->WGroups[0]=Manager->Helper->Cores;
+									KM->WLocals[0]=Manager->Helper->SizeWorker[0];
+								}
+							}
+						else
+							Error=CL_INVALID_KERNEL_NAME;
+					else
+						Error=CL_INVALID_KERNEL_NAME;
+			else
+				Error=CL_INVALID_HOST_PTR;
+		else
+			Error=CL_INVALID_HOST_PTR;
+	else
+		Error=CL_INVALID_HOST_PTR;
+
+	return Error;
+}
+cl_int BitC_CL_Action_(BITC_CL _PL_ Manager,BITC_KI Indicator)
+{
+	cl_int Error;
+
+	if(Manager)
+		if(Manager->Helper)
+			if(Indicator<0)
+				Error=CL_INVALID_KERNEL_NAME;
+			else
+				if(Indicator<_BitC_Total_Kernels)
+					if(Manager->KMSet[Indicator])
+						Error=Devi_KM_Enqueue_(Manager->Helper->Queue,Manager->KMSet[Indicator]);
+					else
+						Error=CL_INVALID_KERNEL_NAME;
+				else
+					Error=CL_INVALID_KERNEL_NAME;
+		else
+			Error=CL_INVALID_HOST_PTR;
+	else
+		Error=CL_INVALID_HOST_PTR;
+
+	return Error;
+}
+#endif
+#endif
+
 #if(MemC_Fold_(Undefinition:Macros))
+#undef _BitC_DT_Flag_Sign_
+#undef _BitC_DT_Flag_Real_
+#undef _BitC_DT_Define_
 #ifdef __OPENCL_H
 #undef _BitC_Kernel_Name_Length
 #undef _BitC_Total_Kernels
 #undef _BitC_File_Name_Length
 #undef _BitC_Total_Files
 #endif
+#undef _BitC_Total_Types
+#undef _BitC_Type_Name_Length
 #undef _BitC_Clamp_
 #undef _BitC_Max_
 #undef _BitC_Min_

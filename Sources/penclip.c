@@ -1,7 +1,7 @@
 ﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.03.16";
+static NAME_08 IdiomVersion[16]="Date:2018.06.12";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -177,6 +177,211 @@ size_t PenC_Extend_(NAME_08 _PL_ Line,const size_t Length)
 }
 #endif
 
+#if(MemC_Fold_(Definition:PenClip Managed Functions))
+static size_t _PenC_Overflow_Add_(const size_t A,const size_t B)
+{
+	const size_t Return=A+B;
+
+	return ((Return<A)?(0):(Return));
+}
+static size_t _PenC_Overflow_Mul_(const size_t A,const size_t B)
+{
+	const size_t Return=A*B;
+
+	return (((Return/B)==A)?(Return):(0));
+}
+penc_sc *PenC_SC_Create_(const size_t Capacity)
+{
+	penc_sc *SC;
+
+	if(Capacity)
+	{
+		SC=Byte_Alloc_(_PenC_Overflow_Add_(Capacity,sizeof(penc_sc)));
+		if(SC)
+		{
+			MemC_Acs_(size_t,SC->Capacity)=Capacity;
+			MemC_Acs_(name_08*,SC->String.N08)=Line_Clear_(SC+1,Capacity,name_08);
+		}
+	}
+	else
+	{
+		SC=Unit_Alloc_(penc_sc);
+		if(SC)
+			Unit_Clear_(SC,penc_sc);
+	}
+
+	return SC;
+}
+penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ Root,const size_t Offset,const size_t Length)
+{
+	penc_sc *SC;
+
+	if(Root)
+		if(Length)
+		{
+			const size_t Bound=_PenC_Overflow_Add_(Offset,Length);
+
+			if(Bound)
+				if(Bound>Root->Capacity)
+					SC=NULL;
+				else
+				{
+					SC=Unit_Alloc_(penc_sc);
+					if(SC)
+					{
+						MemC_Acs_(size_t,SC->Capacity)=Length;
+						MemC_Acs_(name_08*,SC->String.N08)=Root->String.N08+Offset;
+					}
+				}
+			else
+				SC=NULL;
+		}
+		else
+			if(Offset>Root->Capacity)
+				SC=NULL;
+			else
+			{
+				SC=Unit_Alloc_(penc_sc);
+				if(SC)
+					Unit_Clear_(SC,penc_sc);
+			}
+	else
+		SC=NULL;
+
+	return SC;
+}
+void PenC_SC_Delete_(penc_sc *_PL_ SC)
+{
+	MemC_Deloc_(*SC);
+}
+int PenC_SC_Init_(PENC_SC _PL_ SC)
+{
+	if(SC)
+	{
+		Line_Clear_(SC->String.N08,SC->Capacity,name_08);
+		goto SUCCESS;
+	}
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
+
+penc_ss *PenC_SS_Create_(const size_t Parts,const size_t Total)
+{
+	penc_ss *SS;
+
+	if(Parts)
+		if(Total)
+		{
+			size_t Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
+
+			if(Size)
+			{
+				Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
+				if(Size)
+				{
+					Size=_PenC_Overflow_Add_(Size,Total);
+					SS=Byte_Alloc_(Size);
+					if(SS)
+					{
+						MemC_Acs_(size_t,SS->Root.Capacity)=Total;
+						MemC_Acs_(size_t,SS->Nums)=Parts;
+						MemC_Acs_(penc_sc*,SS->Part)=Line_Clear_(SS+1,Parts,penc_sc);
+						MemC_Acs_(name_08*,SS->Root.String.N08)=Line_Clear_((name_08*)(SS->Part+Parts),Total,name_08);
+					}
+				}
+				else
+					SS=NULL;
+			}
+			else
+				SS=NULL;
+		}
+		else
+		{
+			size_t Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
+
+			if(Size)
+			{
+				Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
+				SS=Byte_Alloc_(Size);
+				if(SS)
+				{
+					MemC_Acs_(size_t,SS->Root.Capacity)=0;
+					MemC_Acs_(name_08*,SS->Root.String.N08)=NULL;
+					MemC_Acs_(size_t,SS->Nums)=Parts;
+					MemC_Acs_(penc_sc*,SS->Part)=Line_Clear_(SS+1,Parts,penc_sc);
+				}
+			}
+			else
+				SS=NULL;
+		}
+	else
+		if(Total)
+		{
+			SS=Byte_Alloc_(_PenC_Overflow_Add_(Total,sizeof(penc_ss)));
+			if(SS)
+			{
+				MemC_Acs_(size_t,SS->Root.Capacity)=Total;
+				MemC_Acs_(name_08*,SS->Root.String.N08)=Line_Clear_(SS+1,Total,name_08);
+				MemC_Acs_(size_t,SS->Nums)=0;
+				MemC_Acs_(penc_sc*,SS->Part)=NULL;
+			}
+		}
+		else
+		{
+			SS=Unit_Alloc_(penc_ss);
+			if(SS)
+				Unit_Clear_(SS,penc_ss);
+		}
+
+	return SS;
+}
+void PenC_SS_Delete_(penc_ss *_PL_ SS)
+{
+	MemC_Deloc_(*SS);
+}
+int PenC_SS_Assign_(PENC_SS _PL_ SS,const size_t Index,const size_t Offset,const size_t Length)
+{
+	if(SS)
+		if(Index<SS->Nums)
+			if(Offset>SS->Root.Capacity)
+				goto FAILURE;
+			else
+				if(Length)
+				{
+					const size_t Bound=_PenC_Overflow_Add_(Offset,Length);
+
+					if(Bound>SS->Root.Capacity)
+						goto FAILURE;
+					else
+					{
+						MemC_Acs_(size_t,SS->Part[Index].Capacity)=Length;
+						MemC_Acs_(name_08*,SS->Part[Index].String.N08)=SS->Root.String.N08+Offset;
+
+						goto SUCCESS;
+					}
+				}
+				else
+				{
+					MemC_Acs_(size_t,SS->Part[Index].Capacity)=0;
+					MemC_Acs_(name_08*,SS->Part[Index].String.N08)=NULL;
+
+					goto SUCCESS;
+				}
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
+#endif
+
 #if(MemC_Fold_(Definition:OpenCL Functions))
 #ifdef __OPENCL_H
 static size_t _PenC_File_Length_S_(size_t *FileSize,NAME_08 _PL_*FileName,const size_t Files)
@@ -254,7 +459,7 @@ static void _PenC_Build_Log_CL_(cl_device_id const Device,cl_program const Progr
 		}
 	}
 }
-penc_cl *PenC_Create_CL_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName,NAME_08 _PL_ _PL_ SetIndicator,NAME_08 _PL_ Option,const size_t Files,const cl_uint Kernels,cl_int _PL_ Error)
+penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName,NAME_08 _PL_ _PL_ SetIndicator,NAME_08 _PL_ Option,const size_t Files,const cl_uint Kernels,cl_int _PL_ Error)
 {
 	penc_cl *Helper=NULL;
 	
@@ -442,7 +647,7 @@ penc_cl *PenC_Create_CL_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName
 
 	return Helper;
 }
-void PenC_Delete_CL_(penc_cl *_PL_ Helper)
+void PenC_CL_Delete_(penc_cl *_PL_ Helper)
 {
 	if(*Helper)
 	{
@@ -505,7 +710,7 @@ static void _PenC_Show_Device_CL_(cl_device_id const Device,name_08 *Buffer)
 		Printer_Console_(AddressMessage[6],AddressInfo[10],Buffer);
 	Printer_Console_(AddressMessage[7]);
 }
-cl_int PenC_Identify_CL_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
+cl_int PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 {
 	name_08 Buffer[1024];
 	cl_uint Platforms;
