@@ -26,7 +26,13 @@
 #ifdef NULL
 static_assert(((size_t)(NULL))==((size_t)(0)),"NULL != 0");
 #else
-#define NULL (0)	//MemClip : Null Pointer Definition
+#define NULL ((void*)(0))	//MemClip : Null Pointer Definition
+#endif
+
+#ifdef FULL
+static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
+#else
+#define FULL ((void*)(~((size_t)(0))))	//MemClip : Full Pointer Definition
 #endif
 
 static_assert((sizeof(void*)==sizeof(size_t)),"sizeof(void*) != sizeof(size_t)");
