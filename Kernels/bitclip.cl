@@ -2,7 +2,7 @@
 /*	BitClip's OpenCL Source Parts.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.15	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -1299,27 +1299,27 @@ _K_ BitC_BO_N_1_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_P_ DATA_32 L
 	_P_ DATA_32 Step=Work_SGX_;
 	_P_ data_32 RestOld;
 	_P_ data_32 RestNew;
-	_P_ g_ptr_c End;
-	_P_ g_ptr_c PtrA;
-	_P_ g_ptr_v PtrC;
+	_P_ point_g End;
+	_P_ point_g PtrA;
+	_P_ point_g PtrC;
 
 	{
 		RestOld=Length;
 		RestNew=Length%(Step<<2);
-		End.D08=DataA+(RestOld-RestNew);
+		End.C.D08=DataA+(RestOld-RestNew);
 	}
-	for(PtrA.D08=DataA,PtrC.D08=DataC;PtrA.G<End.G;PtrA.D32+=Step,PtrC.D32+=Step)
-		PtrC.D32[Start]=~(PtrA.D32[Start]);
+	for(PtrA.C.D08=DataA,PtrC.C.D08=DataC;PtrA.C.G<End.C.G;PtrA.C.D32+=Step,PtrC.C.D32+=Step)
+		PtrC.V.D32[Start]=~(PtrA.C.D32[Start]);
 	{
 		RestOld=RestNew;
 		RestNew%=(Step<<1);
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D16[Start]=~(PtrA.D16[Start]);
+		PtrC.V.D16[Start]=~(PtrA.C.D16[Start]);
 
-		PtrA.D16+=Step;
-		PtrC.D16+=Step;
+		PtrA.C.D16+=Step;
+		PtrC.C.D16+=Step;
 	}
 	{
 		RestOld=RestNew;
@@ -1327,13 +1327,13 @@ _K_ BitC_BO_N_1_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_P_ DATA_32 L
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D08[Start]=~(PtrA.D08[Start]);
+		PtrC.V.D08[Start]=~(PtrA.C.D08[Start]);
 
-		PtrA.D08+=Step;
-		PtrC.D08+=Step;
+		PtrA.C.D08+=Step;
+		PtrC.C.D08+=Step;
 	}
 	if(Start<RestNew)
-		PtrC.D08[Start]=~(PtrA.D08[Start]);
+		PtrC.V.D08[Start]=~(PtrA.C.D08[Start]);
 }
 
 _K_ BitC_BO_S_1_D08_(_G_ data_08 *DataC,_G_ DATA_08 *DataA,_P_ inte_32 Shift,_P_ DATA_32 Length)
@@ -1489,29 +1489,29 @@ _K_ BitC_BO_A_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _
 	_P_ DATA_32 Step=Work_SGX_;
 	_P_ data_32 RestOld;
 	_P_ data_32 RestNew;
-	_P_ g_ptr_c End;
-	_P_ g_ptr_c PtrA;
-	_P_ g_ptr_c PtrB;
-	_P_ g_ptr_v PtrC;
+	_P_ point_g End;
+	_P_ point_g PtrA;
+	_P_ point_g PtrB;
+	_P_ point_g PtrC;
 
 	{
 		RestOld=Length;
 		RestNew=Length%(Step<<2);
-		End.D08=DataA+(RestOld-RestNew);
+		End.C.D08=DataA+(RestOld-RestNew);
 	}
-	for(PtrA.D08=DataA,PtrB.D08=DataB,PtrC.D08=DataC;PtrA.G<End.G;PtrA.D32+=Step,PtrB.D32+=Step,PtrC.D32+=Step)
-		PtrC.D32[Start]=PtrA.D32[Start]&PtrB.D32[Start];
+	for(PtrA.C.D08=DataA,PtrB.C.D08=DataB,PtrC.C.D08=DataC;PtrA.C.G<End.C.G;PtrA.C.D32+=Step,PtrB.C.D32+=Step,PtrC.C.D32+=Step)
+		PtrC.V.D32[Start]=PtrA.C.D32[Start]&PtrB.C.D32[Start];
 	{
 		RestOld=RestNew;
 		RestNew%=(Step<<1);
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D16[Start]=PtrA.D16[Start]&PtrB.D16[Start];
+		PtrC.V.D16[Start]=PtrA.C.D16[Start]&PtrB.C.D16[Start];
 
-		PtrA.D16+=Step;
-		PtrB.D16+=Step;
-		PtrC.D16+=Step;
+		PtrA.C.D16+=Step;
+		PtrB.C.D16+=Step;
+		PtrC.C.D16+=Step;
 	}
 	{
 		RestOld=RestNew;
@@ -1519,14 +1519,14 @@ _K_ BitC_BO_A_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D08[Start]=PtrA.D08[Start]&PtrB.D08[Start];
+		PtrC.V.D08[Start]=PtrA.C.D08[Start]&PtrB.C.D08[Start];
 
-		PtrA.D08+=Step;
-		PtrB.D08+=Step;
-		PtrC.D08+=Step;
+		PtrA.C.D08+=Step;
+		PtrB.C.D08+=Step;
+		PtrC.C.D08+=Step;
 	}
 	if(Start<RestNew)
-		PtrC.D08[Start]=PtrA.D08[Start]&PtrB.D08[Start];
+		PtrC.V.D08[Start]=PtrA.C.D08[Start]&PtrB.C.D08[Start];
 }
 
 _K_ BitC_BO_O_1_D08_(_G_ data_08* DataC,_G_ DATA_08* DataA,_P_ DATA_08 Mask,_P_ DATA_32 Length)
@@ -1573,29 +1573,29 @@ _K_ BitC_BO_O_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _
 	_P_ DATA_32 Step=Work_SGX_;
 	_P_ data_32 RestOld;
 	_P_ data_32 RestNew;
-	_P_ g_ptr_c End;
-	_P_ g_ptr_c PtrA;
-	_P_ g_ptr_c PtrB;
-	_P_ g_ptr_v PtrC;
+	_P_ point_g End;
+	_P_ point_g PtrA;
+	_P_ point_g PtrB;
+	_P_ point_g PtrC;
 
 	{
 		RestOld=Length;
 		RestNew=Length%(Step<<2);
-		End.D08=DataA+(RestOld-RestNew);
+		End.C.D08=DataA+(RestOld-RestNew);
 	}
-	for(PtrA.D08=DataA,PtrB.D08=DataB,PtrC.D08=DataC;PtrA.G<End.G;PtrA.D32+=Step,PtrB.D32+=Step,PtrC.D32+=Step)
-		PtrC.D32[Start]=PtrA.D32[Start]|PtrB.D32[Start];
+	for(PtrA.C.D08=DataA,PtrB.C.D08=DataB,PtrC.C.D08=DataC;PtrA.C.G<End.C.G;PtrA.C.D32+=Step,PtrB.C.D32+=Step,PtrC.C.D32+=Step)
+		PtrC.V.D32[Start]=PtrA.C.D32[Start]|PtrB.C.D32[Start];
 	{
 		RestOld=RestNew;
 		RestNew%=(Step<<1);
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D16[Start]=PtrA.D16[Start]|PtrB.D16[Start];
+		PtrC.V.D16[Start]=PtrA.C.D16[Start]|PtrB.C.D16[Start];
 
-		PtrA.D16+=Step;
-		PtrB.D16+=Step;
-		PtrC.D16+=Step;
+		PtrA.C.D16+=Step;
+		PtrB.C.D16+=Step;
+		PtrC.C.D16+=Step;
 	}
 	{
 		RestOld=RestNew;
@@ -1603,14 +1603,14 @@ _K_ BitC_BO_O_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D08[Start]=PtrA.D08[Start]|PtrB.D08[Start];
+		PtrC.V.D08[Start]=PtrA.C.D08[Start]|PtrB.C.D08[Start];
 
-		PtrA.D08+=Step;
-		PtrB.D08+=Step;
-		PtrC.D08+=Step;
+		PtrA.C.D08+=Step;
+		PtrB.C.D08+=Step;
+		PtrC.C.D08+=Step;
 	}
 	if(Start<RestNew)
-		PtrC.D08[Start]=PtrA.D08[Start]|PtrB.D08[Start];
+		PtrC.V.D08[Start]=PtrA.C.D08[Start]|PtrB.C.D08[Start];
 }
 
 _K_ BitC_BO_X_1_D08_(_G_ data_08* DataC,_G_ DATA_08* DataA,_P_ DATA_08 Mask,_P_ DATA_32 Length)
@@ -1657,29 +1657,29 @@ _K_ BitC_BO_X_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _
 	_P_ DATA_32 Step=Work_SGX_;
 	_P_ data_32 RestOld;
 	_P_ data_32 RestNew;
-	_P_ g_ptr_c End;
-	_P_ g_ptr_c PtrA;
-	_P_ g_ptr_c PtrB;
-	_P_ g_ptr_v PtrC;
+	_P_ point_g End;
+	_P_ point_g PtrA;
+	_P_ point_g PtrB;
+	_P_ point_g PtrC;
 
 	{
 		RestOld=Length;
 		RestNew=Length%(Step<<2);
-		End.D08=DataA+(RestOld-RestNew);
+		End.C.D08=DataA+(RestOld-RestNew);
 	}
-	for(PtrA.D08=DataA,PtrB.D08=DataB,PtrC.D08=DataC;PtrA.G<End.G;PtrA.D32+=Step,PtrB.D32+=Step,PtrC.D32+=Step)
-		PtrC.D32[Start]=PtrA.D32[Start]^PtrB.D32[Start];
+	for(PtrA.C.D08=DataA,PtrB.C.D08=DataB,PtrC.C.D08=DataC;PtrA.C.G<End.C.G;PtrA.C.D32+=Step,PtrB.C.D32+=Step,PtrC.C.D32+=Step)
+		PtrC.V.D32[Start]=PtrA.C.D32[Start]^PtrB.C.D32[Start];
 	{
 		RestOld=RestNew;
 		RestNew%=(Step<<1);
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D16[Start]=PtrA.D16[Start]^PtrB.D16[Start];
+		PtrC.V.D16[Start]=PtrA.C.D16[Start]^PtrB.C.D16[Start];
 
-		PtrA.D16+=Step;
-		PtrB.D16+=Step;
-		PtrC.D16+=Step;
+		PtrA.C.D16+=Step;
+		PtrB.C.D16+=Step;
+		PtrC.C.D16+=Step;
 	}
 	{
 		RestOld=RestNew;
@@ -1687,136 +1687,224 @@ _K_ BitC_BO_X_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _
 	}
 	if(RestNew<RestOld)
 	{
-		PtrC.D08[Start]=PtrA.D08[Start]^PtrB.D08[Start];
+		PtrC.V.D08[Start]=PtrA.C.D08[Start]^PtrB.C.D08[Start];
 
-		PtrA.D08+=Step;
-		PtrB.D08+=Step;
-		PtrC.D08+=Step;
+		PtrA.C.D08+=Step;
+		PtrB.C.D08+=Step;
+		PtrC.C.D08+=Step;
 	}
 	if(Start<RestNew)
-		PtrC.D08[Start]=PtrA.D08[Start]^PtrB.D08[Start];
+		PtrC.V.D08[Start]=PtrA.C.D08[Start]^PtrB.C.D08[Start];
 }
 #endif
 
 #if(Fold_(Relational Operation))
-_I_ general _BitC_Taking_D08_(_P_ data_08 _PL_ _R_ T,_G_ DATA_08 _PL_ _R_ S,INTE_32 L)
+_I_ general _BitC_Taking_D08_(_P_ data_08 _PL_ _R_ T,_G_ DATA_08 _PL_ _R_ S,_P_ INTE_32 L)
 {
-	inte_32 I;
+	inte_32 I=0;
 
-	for(I=0;I<L;I++)
+	switch(L)
+	{
+	case 0x00000007:
 		T[I]=S[I];
+		I++;
+	case 0x00000006:
+		T[I]=S[I];
+		I++;
+	case 0x00000005:
+		T[I]=S[I];
+		I++;
+	case 0x00000004:
+		T[I]=S[I];
+		I++;
+	case 0x00000003:
+		T[I]=S[I];
+		I++;
+	case 0x00000002:
+		T[I]=S[I];
+		I++;
+	case 0x00000001:
+		T[I]=S[I];
+	default:;
+	}
 }
-_I_ general _BitC_Taking_D16_(_P_ data_16 _PL_ _R_ T,_G_ DATA_16 _PL_ _R_ S,INTE_32 L)
+_I_ general _BitC_Taking_D16_(_P_ data_16 _PL_ _R_ T,_G_ DATA_16 _PL_ _R_ S,_P_ INTE_32 L)
 {
-	inte_32 I;
+	inte_32 I=0;
 
-	for(I=0;I<L;I++)
+	switch(L)
+	{
+	case 0x00000007:
 		T[I]=S[I];
+		I++;
+	case 0x00000006:
+		T[I]=S[I];
+		I++;
+	case 0x00000005:
+		T[I]=S[I];
+		I++;
+	case 0x00000004:
+		T[I]=S[I];
+		I++;
+	case 0x00000003:
+		T[I]=S[I];
+		I++;
+	case 0x00000002:
+		T[I]=S[I];
+		I++;
+	case 0x00000001:
+		T[I]=S[I];
+	default:;
+	}
 }
-_I_ general _BitC_Taking_D32_(_P_ data_32 _PL_ _R_ T,_G_ DATA_32 _PL_ _R_ S,INTE_32 L)
+_I_ general _BitC_Taking_D32_(_P_ data_32 _PL_ _R_ T,_G_ DATA_32 _PL_ _R_ S,_P_ INTE_32 L)
 {
-	inte_32 I;
+	inte_32 I=0;
 
-	for(I=0;I<L;I++)
+	switch(L)
+	{
+	case 0x00000007:
 		T[I]=S[I];
+		I++;
+	case 0x00000006:
+		T[I]=S[I];
+		I++;
+	case 0x00000005:
+		T[I]=S[I];
+		I++;
+	case 0x00000004:
+		T[I]=S[I];
+		I++;
+	case 0x00000003:
+		T[I]=S[I];
+		I++;
+	case 0x00000002:
+		T[I]=S[I];
+		I++;
+	case 0x00000001:
+		T[I]=S[I];
+	default:;
+	}
 }
 #if(_ABLE_I64_)
-_I_ general _BitC_Taking_D64_(_P_ data_64 _PL_ _R_ T,_G_ DATA_64 _PL_ _R_ S,INTE_32 L)
+_I_ general _BitC_Taking_D64_(_P_ data_64 _PL_ _R_ T,_G_ DATA_64 _PL_ _R_ S,_P_ INTE_32 L)
 {
-	inte_32 I;
+	inte_32 I=0;
 
-	for(I=0;I<L;I++)
+	switch(L)
+	{
+	case 0x00000007:
 		T[I]=S[I];
+		I++;
+	case 0x00000006:
+		T[I]=S[I];
+		I++;
+	case 0x00000005:
+		T[I]=S[I];
+		I++;
+	case 0x00000004:
+		T[I]=S[I];
+		I++;
+	case 0x00000003:
+		T[I]=S[I];
+		I++;
+	case 0x00000002:
+		T[I]=S[I];
+		I++;
+	case 0x00000001:
+		T[I]=S[I];
+	default:;
+	}
 }
 #endif
 
-_I_ general _BitC_Choose_D08_(_P_ P_PTR_V M,_P_ P_PTR_C P)
+_I_ general _BitC_Choose_D08_(_P_ point_p M,_P_ POINT_P P)
 {
-	M._02_D32[0]&=P._02_D32[0];
-	M.D32[0]|=M.D32[1];
-	M.D16[0]|=M.D16[1];
-	M.D08[0]|=M.D08[1];
+	M.V._02_D32[0]&=P.C._02_D32[0];
+	M.V.D32[0]|=M.C.D32[1];
+	M.V.D16[0]|=M.C.D16[1];
+	M.V.D08[0]|=M.C.D08[1];
 }
-_I_ general _BitC_Choose_D16_(_P_ P_PTR_V M,_P_ P_PTR_C P)
+_I_ general _BitC_Choose_D16_(_P_ point_p M,_P_ POINT_P P)
 {
-	M._04_D32[0]&=P._04_D32[0];
-	M._02_D32[0]|=M._02_D32[1];
-	M.D32[0]|=M.D32[1];
-	M.D16[0]|=M.D16[1];
+	M.V._04_D32[0]&=P.C._04_D32[0];
+	M.V._02_D32[0]|=M.C._02_D32[1];
+	M.V.D32[0]|=M.C.D32[1];
+	M.V.D16[0]|=M.C.D16[1];
 }
-_I_ general _BitC_Choose_D32_(_P_ P_PTR_V M,_P_ P_PTR_C P)
+_I_ general _BitC_Choose_D32_(_P_ point_p M,_P_ POINT_P P)
 {
-	M._08_D32[0]&=P._08_D32[0];
-	M._04_D32[0]|=M._04_D32[1];
-	M._02_D32[0]|=M._02_D32[1];
-	M.D32[0]|=M.D32[1];
+	M.V._08_D32[0]&=P.C._08_D32[0];
+	M.V._04_D32[0]|=M.C._04_D32[1];
+	M.V._02_D32[0]|=M.C._02_D32[1];
+	M.V.D32[0]|=M.C.D32[1];
 }
 #if(_ABLE_I64_)
-_I_ general _BitC_Choose_D64_(_P_ P_PTR_V M,_P_ P_PTR_C P)
+_I_ general _BitC_Choose_D64_(_P_ point_p M,_P_ POINT_P P)
 {
-	M._08_D64[0]&=P._08_D64[0];
-	M._04_D64[0]|=M._04_D64[1];
-	M._02_D64[0]|=M._02_D64[1];
-	M.D64[0]|=M.D64[1];
+	M.V._08_D64[0]&=P.C._08_D64[0];
+	M.V._04_D64[0]|=M.C._04_D64[1];
+	M.V._02_D64[0]|=M.C._02_D64[1];
+	M.V.D64[0]|=M.C.D64[1];
 }
 #endif
 
-_I_ general _BitC_RO_S_M_D08_(_P_ P_PTR_V M)
+_I_ general _BitC_RO_S_M_D08_(_P_ point_p M)
 {
-	M.D08[1]<<=1;
-	M.D08[2]<<=2;
-	M.D08[3]<<=3;
-	M.D08[4]<<=4;
-	M.D08[5]<<=5;
-	M.D08[6]<<=6;
-	M.D08[7]<<=7;
+	M.V.D08[1]<<=1;
+	M.V.D08[2]<<=2;
+	M.V.D08[3]<<=3;
+	M.V.D08[4]<<=4;
+	M.V.D08[5]<<=5;
+	M.V.D08[6]<<=6;
+	M.V.D08[7]<<=7;
 
-	M.D32[0]|=M.D32[1];
-	M.D16[0]|=M.D16[1];
-	M.D08[0]|=M.D08[1];
+	M.V.D32[0]|=M.C.D32[1];
+	M.V.D16[0]|=M.C.D16[1];
+	M.V.D08[0]|=M.C.D08[1];
 }
-_I_ general _BitC_RO_S_M_D16_(_P_ P_PTR_V M)
+_I_ general _BitC_RO_S_M_D16_(_P_ point_p M)
 {
-	M.D16[1]<<=1;
-	M.D16[2]<<=2;
-	M.D16[3]<<=3;
-	M.D16[4]<<=4;
-	M.D16[5]<<=5;
-	M.D16[6]<<=6;
-	M.D16[7]<<=7;
+	M.V.D16[1]<<=1;
+	M.V.D16[2]<<=2;
+	M.V.D16[3]<<=3;
+	M.V.D16[4]<<=4;
+	M.V.D16[5]<<=5;
+	M.V.D16[6]<<=6;
+	M.V.D16[7]<<=7;
 
-	M._02_D32[0]|=M._02_D32[1];
-	M.D32[0]|=M.D32[1];
-	M.D16[0]|=M.D16[1];
+	M.V._02_D32[0]|=M.C._02_D32[1];
+	M.V.D32[0]|=M.C.D32[1];
+	M.V.D16[0]|=M.C.D16[1];
 }
-_I_ general _BitC_RO_S_M_D32_(_P_ P_PTR_V M)
+_I_ general _BitC_RO_S_M_D32_(_P_ point_p M)
 {
-	M.D32[1]<<=1;
-	M.D32[2]<<=2;
-	M.D32[3]<<=3;
-	M.D32[4]<<=4;
-	M.D32[5]<<=5;
-	M.D32[6]<<=6;
-	M.D32[7]<<=7;
+	M.V.D32[1]<<=1;
+	M.V.D32[2]<<=2;
+	M.V.D32[3]<<=3;
+	M.V.D32[4]<<=4;
+	M.V.D32[5]<<=5;
+	M.V.D32[6]<<=6;
+	M.V.D32[7]<<=7;
 
-	M._04_D32[0]|=M._04_D32[1];
-	M._02_D32[0]|=M._02_D32[1];
-	M.D32[0]|=M.D32[1];
+	M.V._04_D32[0]|=M.C._04_D32[1];
+	M.V._02_D32[0]|=M.C._02_D32[1];
+	M.V.D32[0]|=M.C.D32[1];
 }
 #if(_ABLE_I64_)
-_I_ general _BitC_RO_S_M_D64_(_P_ P_PTR_V M)
+_I_ general _BitC_RO_S_M_D64_(_P_ point_p M)
 {
-	M.D64[1]<<=1;
-	M.D64[2]<<=2;
-	M.D64[3]<<=3;
-	M.D64[4]<<=4;
-	M.D64[5]<<=5;
-	M.D64[6]<<=6;
-	M.D64[7]<<=7;
+	M.V.D64[1]<<=1;
+	M.V.D64[2]<<=2;
+	M.V.D64[3]<<=3;
+	M.V.D64[4]<<=4;
+	M.V.D64[5]<<=5;
+	M.V.D64[6]<<=6;
+	M.V.D64[7]<<=7;
 
-	M._04_D64[0]|=M._04_D64[1];
-	M._02_D64[0]|=M._02_D64[1];
-	M.D64[0]|=M.D64[1];
+	M.V._04_D64[0]|=M.C._04_D64[1];
+	M.V._02_D64[0]|=M.C._02_D64[1];
+	M.V.D64[0]|=M.C.D64[1];
 }
 #endif
 
@@ -1940,12 +2028,12 @@ _K_ BitC_Shrink_D08_(_G_ DATA_08 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[8];
-	_P_ p_ptr_c Peek;
-	_P_ p_ptr_v Mask;
+	_P_ point_p Peek;
+	_P_ point_p Mask;
 
 	{
-		Peek.D08=Table;
-		Mask.D08=Buff;
+		Peek.C.D08=Table;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataI+Safe;
@@ -1953,13 +2041,13 @@ _K_ BitC_Shrink_D08_(_G_ DATA_08 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		for(DataI+=Start8,DataO+=Start;DataI<End;DataI+=Step8,DataO+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataI);
 			
 			Wait_L_;
 			_BitC_Choose_D08_(Mask,Peek);
 
 			Wait_L_;
-			DataO[0]=Mask.D08[0];
+			DataO[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -1969,23 +2057,23 @@ _K_ BitC_Shrink_D08_(_G_ DATA_08 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08,DataI,Margin);
+			_BitC_Taking_D08_(Mask.V.D08,DataI,Margin);
 
 			Wait_L_;
 			_BitC_Choose_D08_(Mask,Peek);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataO[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataO[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataI);
 			
 			Wait_L_;
 			_BitC_Choose_D08_(Mask,Peek);
 		}
 		{
 			Wait_L_;
-			DataO[0]=Mask.D08[0];
+			DataO[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -2005,12 +2093,12 @@ _K_ BitC_Shrink_D16_(_G_ DATA_16 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_c Peek;
-	_P_ p_ptr_v Mask;
+	_P_ point_p Peek;
+	_P_ point_p Mask;
 
 	{
-		Peek.D16=Table;
-		Mask.D16=Buff;
+		Peek.C.D16=Table;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataI+Safe;
@@ -2018,13 +2106,13 @@ _K_ BitC_Shrink_D16_(_G_ DATA_16 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		for(DataI+=Start8,DataO+=Start;DataI<End;DataI+=Step8,DataO+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataI);
 			
 			Wait_L_;
 			_BitC_Choose_D16_(Mask,Peek);
 
 			Wait_L_;
-			DataO[0]=(data_08)(Mask.D16[0]);
+			DataO[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2034,23 +2122,23 @@ _K_ BitC_Shrink_D16_(_G_ DATA_16 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,DataI,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,DataI,Margin);
 
 			Wait_L_;
 			_BitC_Choose_D16_(Mask,Peek);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataO[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataO[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataI);
 
 			Wait_L_;
 			_BitC_Choose_D16_(Mask,Peek);
 		}
 		{
 			Wait_L_;
-			DataO[0]=(data_08)(Mask.D16[0]);
+			DataO[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -2070,12 +2158,12 @@ _K_ BitC_Shrink_D32_(_G_ DATA_32 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_c Peek;
-	_P_ p_ptr_v Mask;
+	_P_ point_p Peek;
+	_P_ point_p Mask;
 
 	{
-		Peek.D32=Table;
-		Mask.D32=Buff;
+		Peek.C.D32=Table;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataI+Safe;
@@ -2083,13 +2171,13 @@ _K_ BitC_Shrink_D32_(_G_ DATA_32 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		for(DataI+=Start8,DataO+=Start;DataI<End;DataI+=Step8,DataO+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataI);
 
 			Wait_L_;
 			_BitC_Choose_D32_(Mask,Peek);
 
 			Wait_L_;
-			DataO[0]=(data_08)(Mask.D32[0]);
+			DataO[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2101,23 +2189,23 @@ _K_ BitC_Shrink_D32_(_G_ DATA_32 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 			inte_32 Index;
 
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,DataI,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,DataI,Margin);
 
 			Wait_L_;
 			_BitC_Choose_D32_(Mask,Peek);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataO[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataO[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataI);
 
 			Wait_L_;
 			_BitC_Choose_D32_(Mask,Peek);
 		}
 		{
 			Wait_L_;
-			DataO[0]=(data_08)(Mask.D32[0]);
+			DataO[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -2138,12 +2226,12 @@ _K_ BitC_Shrink_D64_(_G_ DATA_64 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_c Peek;
-	_P_ p_ptr_v Mask;
+	_P_ point_p Peek;
+	_P_ point_p Mask;
 
 	{
-		Peek.D64=Table;
-		Mask.D64=Buff;
+		Peek.C.D64=Table;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataI+Safe;
@@ -2151,13 +2239,13 @@ _K_ BitC_Shrink_D64_(_G_ DATA_64 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		for(DataI+=Start8,DataO+=Start;DataI<End;DataI+=Step8,DataO+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataI);
 
 			Wait_L_;
 			_BitC_Choose_D64_(Mask,Peek);
 
 			Wait_L_;
-			DataO[0]=(data_08)(Mask.D64[0]);
+			DataO[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2169,25 +2257,25 @@ _K_ BitC_Shrink_D64_(_G_ DATA_64 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 			inte_32 Index;
 
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,DataI,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,DataI,Margin);
 			for(Index=0;Index<Margin;Index++)
-				Mask.D64[Index]=DataI[Index];
+				Mask.V.D64[Index]=DataI[Index];
 
 			Wait_L_;
 			_BitC_Choose_D64_(Mask,Peek);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataO[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataO[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataI);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataI);
 
 			Wait_L_;
 			_BitC_Choose_D64_(Mask,Peek);
 		}
 		{
 			Wait_L_;
-			DataO[0]=(data_08)(Mask.D64[0]);
+			DataO[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -2208,10 +2296,10 @@ _K_ BitC_RO_E_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -2219,16 +2307,16 @@ _K_ BitC_RO_E_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]==Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -2238,29 +2326,29 @@ _K_ BitC_RO_E_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]==Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]==Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -2280,10 +2368,10 @@ _K_ BitC_RO_E_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -2291,16 +2379,16 @@ _K_ BitC_RO_E_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]==Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2310,29 +2398,29 @@ _K_ BitC_RO_E_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]==Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]==Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -2352,10 +2440,10 @@ _K_ BitC_RO_E_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -2363,16 +2451,16 @@ _K_ BitC_RO_E_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]==Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2382,29 +2470,29 @@ _K_ BitC_RO_E_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]==Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]==Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -2425,10 +2513,10 @@ _K_ BitC_RO_E_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -2436,16 +2524,16 @@ _K_ BitC_RO_E_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]==Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2455,29 +2543,29 @@ _K_ BitC_RO_E_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]==Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]==Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]==Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -2499,10 +2587,10 @@ _K_ BitC_RO_E_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -2510,17 +2598,17 @@ _K_ BitC_RO_E_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]==Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]==Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -2530,31 +2618,31 @@ _K_ BitC_RO_E_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08+0,DataA,Margin);
-			_BitC_Taking_D08_(Mask.D08+8,DataB,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+0,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]==Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]==Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]==Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]==Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -2574,10 +2662,10 @@ _K_ BitC_RO_E_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -2585,17 +2673,17 @@ _K_ BitC_RO_E_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]==Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]==Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2605,31 +2693,31 @@ _K_ BitC_RO_E_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16+0,DataA,Margin);
-			_BitC_Taking_D16_(Mask.D16+8,DataB,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+0,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]==Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]==Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]==Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]==Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -2649,10 +2737,10 @@ _K_ BitC_RO_E_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -2660,17 +2748,17 @@ _K_ BitC_RO_E_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]==Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]==Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2680,31 +2768,31 @@ _K_ BitC_RO_E_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]==Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]==Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]==Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]==Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -2725,10 +2813,10 @@ _K_ BitC_RO_E_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -2736,17 +2824,17 @@ _K_ BitC_RO_E_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]==Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]==Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2756,31 +2844,31 @@ _K_ BitC_RO_E_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]==Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]==Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]==Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]==Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -2802,10 +2890,10 @@ _K_ BitC_RO_N_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -2813,16 +2901,16 @@ _K_ BitC_RO_N_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]!=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -2832,29 +2920,29 @@ _K_ BitC_RO_N_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]!=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]!=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -2874,10 +2962,10 @@ _K_ BitC_RO_N_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -2885,16 +2973,16 @@ _K_ BitC_RO_N_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]!=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2904,29 +2992,29 @@ _K_ BitC_RO_N_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]!=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]!=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -2946,10 +3034,10 @@ _K_ BitC_RO_N_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -2957,16 +3045,16 @@ _K_ BitC_RO_N_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]!=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -2976,29 +3064,29 @@ _K_ BitC_RO_N_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]!=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]!=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -3019,10 +3107,10 @@ _K_ BitC_RO_N_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -3030,16 +3118,16 @@ _K_ BitC_RO_N_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]!=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3049,29 +3137,29 @@ _K_ BitC_RO_N_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]!=Value);
+			Mask.C._08_I64[0]=(Mask.C._08_D64[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]!=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -3093,10 +3181,10 @@ _K_ BitC_RO_N_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -3104,17 +3192,17 @@ _K_ BitC_RO_N_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]!=Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]!=Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -3124,31 +3212,31 @@ _K_ BitC_RO_N_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08+0,DataA,Margin);
-			_BitC_Taking_D08_(Mask.D08+8,DataB,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+0,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]!=Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]!=Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]!=Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]!=Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -3168,10 +3256,10 @@ _K_ BitC_RO_N_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -3179,17 +3267,17 @@ _K_ BitC_RO_N_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]!=Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]!=Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3199,31 +3287,31 @@ _K_ BitC_RO_N_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16+0,DataA,Margin);
-			_BitC_Taking_D16_(Mask.D16+8,DataB,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+0,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]!=Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]!=Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]!=Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]!=Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -3243,10 +3331,10 @@ _K_ BitC_RO_N_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -3254,17 +3342,17 @@ _K_ BitC_RO_N_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]!=Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]!=Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3274,31 +3362,31 @@ _K_ BitC_RO_N_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]!=Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]!=Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]!=Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]!=Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -3319,10 +3407,10 @@ _K_ BitC_RO_N_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -3330,17 +3418,17 @@ _K_ BitC_RO_N_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]!=Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]!=Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3350,31 +3438,31 @@ _K_ BitC_RO_N_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]!=Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]!=Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]!=Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]!=Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -3396,10 +3484,10 @@ _K_ BitC_RO_G_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -3407,16 +3495,16 @@ _K_ BitC_RO_G_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]>=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -3426,29 +3514,29 @@ _K_ BitC_RO_G_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]>=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]>=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -3468,10 +3556,10 @@ _K_ BitC_RO_G_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -3479,16 +3567,16 @@ _K_ BitC_RO_G_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]>=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3498,29 +3586,29 @@ _K_ BitC_RO_G_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]>=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]>=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -3540,10 +3628,10 @@ _K_ BitC_RO_G_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -3551,16 +3639,16 @@ _K_ BitC_RO_G_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3570,29 +3658,29 @@ _K_ BitC_RO_G_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -3613,10 +3701,10 @@ _K_ BitC_RO_G_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -3624,16 +3712,16 @@ _K_ BitC_RO_G_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3643,29 +3731,29 @@ _K_ BitC_RO_G_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -3686,10 +3774,10 @@ _K_ BitC_RO_G_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ INTE_08 _PL_ End=DataA+Safe;
@@ -3697,17 +3785,17 @@ _K_ BitC_RO_G_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]>=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -3717,30 +3805,30 @@ _K_ BitC_RO_G_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08,(_G_ data_08*)DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08,(_G_ data_08*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]>=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]>=Value);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -3760,10 +3848,10 @@ _K_ BitC_RO_G_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ INTE_16 _PL_ End=DataA+Safe;
@@ -3771,16 +3859,16 @@ _K_ BitC_RO_G_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]>=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3790,29 +3878,29 @@ _K_ BitC_RO_G_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,(_G_ data_16*)DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,(_G_ data_16*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]>=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]>=Value);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -3832,10 +3920,10 @@ _K_ BitC_RO_G_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ INTE_32 _PL_ End=DataA+Safe;
@@ -3843,16 +3931,16 @@ _K_ BitC_RO_G_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3862,29 +3950,29 @@ _K_ BitC_RO_G_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,(_G_ data_32*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -3905,10 +3993,10 @@ _K_ BitC_RO_G_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ INTE_64 _PL_ End=DataA+Safe;
@@ -3916,16 +4004,16 @@ _K_ BitC_RO_G_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -3935,29 +4023,29 @@ _K_ BitC_RO_G_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,(_G_ data_64*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -3979,10 +4067,10 @@ _K_ BitC_RO_G_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ REAL_16 _PL_ End=DataA+Safe;
@@ -3990,16 +4078,16 @@ _K_ BitC_RO_G_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]>=Acs_(P,real_16,Value));
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]>=Acs_(P,real_16,Value));
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4009,29 +4097,29 @@ _K_ BitC_RO_G_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,(_G_ data_16*)DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,(_G_ data_16*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]>=Acs_(P,real_16,Value));
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]>=Acs_(P,real_16,Value));
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]>=Acs_(P,real_16,Value));
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]>=Acs_(P,real_16,Value));
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -4052,10 +4140,10 @@ _K_ BitC_RO_G_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ REAL_32 _PL_ End=DataA+Safe;
@@ -4063,16 +4151,16 @@ _K_ BitC_RO_G_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4082,29 +4170,29 @@ _K_ BitC_RO_G_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,(_G_ data_32*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]>=Value);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -4125,10 +4213,10 @@ _K_ BitC_RO_G_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ REAL_64 _PL_ End=DataA+Safe;
@@ -4136,16 +4224,16 @@ _K_ BitC_RO_G_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4155,29 +4243,29 @@ _K_ BitC_RO_G_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,(_G_ data_64*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]>=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]>=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -4199,10 +4287,10 @@ _K_ BitC_RO_G_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -4210,17 +4298,17 @@ _K_ BitC_RO_G_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]>=Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]>=Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -4230,31 +4318,31 @@ _K_ BitC_RO_G_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08+0,DataA,Margin);
-			_BitC_Taking_D08_(Mask.D08+8,DataB,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+0,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]>=Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]>=Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
-			Mask._08_D08[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]>=Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]>=Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -4274,10 +4362,10 @@ _K_ BitC_RO_G_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -4285,17 +4373,17 @@ _K_ BitC_RO_G_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]>=Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]>=Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4305,31 +4393,31 @@ _K_ BitC_RO_G_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16+0,DataA,Margin);
-			_BitC_Taking_D16_(Mask.D16+8,DataB,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+0,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]>=Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]>=Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]>=Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]>=Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -4349,10 +4437,10 @@ _K_ BitC_RO_G_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -4360,17 +4448,17 @@ _K_ BitC_RO_G_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]>=Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]>=Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4380,31 +4468,31 @@ _K_ BitC_RO_G_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]>=Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]>=Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]>=Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]>=Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -4425,10 +4513,10 @@ _K_ BitC_RO_G_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -4436,17 +4524,17 @@ _K_ BitC_RO_G_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]>=Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]>=Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4456,31 +4544,31 @@ _K_ BitC_RO_G_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]>=Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]>=Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]>=Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]>=Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -4501,10 +4589,10 @@ _K_ BitC_RO_G_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ INTE_08 _PL_ End=DataA+Safe;
@@ -4512,19 +4600,19 @@ _K_ BitC_RO_G_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
-			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask.V._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]>=Mask._08_I08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]>=Mask.C._08_I08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -4534,33 +4622,33 @@ _K_ BitC_RO_G_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08+0,(_G_ data_08*)DataA,Margin);
-			_BitC_Taking_D08_(Mask.D08+8,(_G_ data_08*)DataB,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+0,(_G_ data_08*)DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+8,(_G_ data_08*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]>=Mask._08_I08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]>=Mask.C._08_I08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
-			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask.V._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]>=Mask._08_I08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]>=Mask.C._08_I08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -4580,10 +4668,10 @@ _K_ BitC_RO_G_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ INTE_16 _PL_ End=DataA+Safe;
@@ -4591,17 +4679,17 @@ _K_ BitC_RO_G_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
-			Mask._08_I16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]>=Mask._08_I16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]>=Mask.C._08_I16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4611,31 +4699,31 @@ _K_ BitC_RO_G_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16+0,(_G_ data_16*)DataA,Margin);
-			_BitC_Taking_D16_(Mask.D16+8,(_G_ data_16*)DataB,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+0,(_G_ data_16*)DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+8,(_G_ data_16*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]>=Mask._08_I16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]>=Mask.C._08_I16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
-			Mask._08_I16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]>=Mask._08_I16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]>=Mask.C._08_I16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -4655,10 +4743,10 @@ _K_ BitC_RO_G_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ INTE_32 _PL_ End=DataA+Safe;
@@ -4666,17 +4754,17 @@ _K_ BitC_RO_G_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
-			Mask._08_I32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]>=Mask._08_I32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]>=Mask.C._08_I32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4686,31 +4774,31 @@ _K_ BitC_RO_G_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,(_G_ data_32*)DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,(_G_ data_32*)DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,(_G_ data_32*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]>=Mask._08_I32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]>=Mask.C._08_I32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
-			Mask._08_I32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]>=Mask._08_I32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]>=Mask.C._08_I32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -4731,10 +4819,10 @@ _K_ BitC_RO_G_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ INTE_64 _PL_ End=DataA+Safe;
@@ -4742,17 +4830,17 @@ _K_ BitC_RO_G_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
-			Mask._08_I64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]>=Mask._08_I64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]>=Mask.C._08_I64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4762,31 +4850,31 @@ _K_ BitC_RO_G_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,(_G_ data_64*)DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,(_G_ data_64*)DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,(_G_ data_64*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]>=Mask._08_I64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]>=Mask.C._08_I64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
-			Mask._08_I64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]>=Mask._08_I64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]>=Mask.C._08_I64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -4808,10 +4896,10 @@ _K_ BitC_RO_G_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ REAL_16 _PL_ End=DataA+Safe;
@@ -4819,17 +4907,17 @@ _K_ BitC_RO_G_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
-			Mask._08_R16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]>=Mask._08_R16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]>=Mask.C._08_R16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4839,31 +4927,31 @@ _K_ BitC_RO_G_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16+0,(_G_ data_16*)DataA,Margin);
-			_BitC_Taking_D16_(Mask.D16+8,(_G_ data_16*)DataB,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+0,(_G_ data_16*)DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+8,(_G_ data_16*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]>=Mask._08_R16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]>=Mask.C._08_R16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
-			Mask._08_R16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]>=Mask._08_R16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]>=Mask.C._08_R16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -4884,10 +4972,10 @@ _K_ BitC_RO_G_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ REAL_32 _PL_ End=DataA+Safe;
@@ -4895,17 +4983,17 @@ _K_ BitC_RO_G_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
-			Mask._08_R32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]>=Mask._08_R32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]>=Mask.C._08_R32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4915,31 +5003,31 @@ _K_ BitC_RO_G_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,(_G_ data_32*)DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,(_G_ data_32*)DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,(_G_ data_32*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]>=Mask._08_R32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]>=Mask.C._08_R32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
-			Mask._08_R32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]>=Mask._08_R32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]>=Mask.C._08_R32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -4960,10 +5048,10 @@ _K_ BitC_RO_G_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ REAL_64 _PL_ End=DataA+Safe;
@@ -4971,17 +5059,17 @@ _K_ BitC_RO_G_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
-			Mask._08_R64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]>=Mask._08_R64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]>=Mask.C._08_R64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -4991,31 +5079,31 @@ _K_ BitC_RO_G_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,(_G_ data_64*)DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,(_G_ data_64*)DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,(_G_ data_64*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]>=Mask._08_R64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]>=Mask.C._08_R64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
-			Mask._08_R64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]>=Mask._08_R64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]>=Mask.C._08_R64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -5037,10 +5125,10 @@ _K_ BitC_RO_L_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -5048,16 +5136,16 @@ _K_ BitC_RO_L_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]<Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -5067,29 +5155,29 @@ _K_ BitC_RO_L_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]<Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D08[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D08[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]<Value);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -5109,10 +5197,10 @@ _K_ BitC_RO_L_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -5120,16 +5208,16 @@ _K_ BitC_RO_L_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]<Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5139,29 +5227,29 @@ _K_ BitC_RO_L_1_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_P_ DATA_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]<Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]<Value);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -5181,10 +5269,10 @@ _K_ BitC_RO_L_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -5192,16 +5280,16 @@ _K_ BitC_RO_L_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5211,29 +5299,29 @@ _K_ BitC_RO_L_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -5254,10 +5342,10 @@ _K_ BitC_RO_L_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -5265,16 +5353,16 @@ _K_ BitC_RO_L_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5284,29 +5372,29 @@ _K_ BitC_RO_L_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -5327,10 +5415,10 @@ _K_ BitC_RO_L_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ INTE_08 _PL_ End=DataA+Safe;
@@ -5338,17 +5426,17 @@ _K_ BitC_RO_L_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]<Value);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -5358,30 +5446,30 @@ _K_ BitC_RO_L_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08,(_G_ data_08*)DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08,(_G_ data_08*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]<Value);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]<Value);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -5401,10 +5489,10 @@ _K_ BitC_RO_L_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ INTE_16 _PL_ End=DataA+Safe;
@@ -5412,16 +5500,16 @@ _K_ BitC_RO_L_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]<Value);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5431,29 +5519,29 @@ _K_ BitC_RO_L_1_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_P_ INTE_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,(_G_ data_16*)DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,(_G_ data_16*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]<Value);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]<Value);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -5473,10 +5561,10 @@ _K_ BitC_RO_L_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ INTE_32 _PL_ End=DataA+Safe;
@@ -5484,16 +5572,16 @@ _K_ BitC_RO_L_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5503,29 +5591,29 @@ _K_ BitC_RO_L_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,(_G_ data_32*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -5546,10 +5634,10 @@ _K_ BitC_RO_L_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ INTE_64 _PL_ End=DataA+Safe;
@@ -5557,16 +5645,16 @@ _K_ BitC_RO_L_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5576,29 +5664,29 @@ _K_ BitC_RO_L_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,(_G_ data_64*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -5623,7 +5711,7 @@ _K_ BitC_RO_L_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 	_P_ p_ptr_v Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ REAL_16 _PL_ End=DataA+Safe;
@@ -5631,16 +5719,16 @@ _K_ BitC_RO_L_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]<Acs_(P,real_16,Value));
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]<Acs_(P,real_16,Value));
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5650,29 +5738,29 @@ _K_ BitC_RO_L_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16,(_G_ data_16*)DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16,(_G_ data_16*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]<Acs_(P,real_16,Value));
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]<Acs_(P,real_16,Value));
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]<Acs_(P,real_16,Value));
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]<Acs_(P,real_16,Value));
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -5693,10 +5781,10 @@ _K_ BitC_RO_L_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ REAL_32 _PL_ End=DataA+Safe;
@@ -5704,16 +5792,16 @@ _K_ BitC_RO_L_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5723,29 +5811,29 @@ _K_ BitC_RO_L_1_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_P_ REAL_32 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32,(_G_ data_32*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]<Value);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -5766,10 +5854,10 @@ _K_ BitC_RO_L_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[8];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ REAL_64 _PL_ End=DataA+Safe;
@@ -5777,16 +5865,16 @@ _K_ BitC_RO_L_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 		for(DataA+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5796,29 +5884,29 @@ _K_ BitC_RO_L_1_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_P_ REAL_64 V
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64,(_G_ data_64*)DataA,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]<Value);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]<Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -5840,10 +5928,10 @@ _K_ BitC_RO_L_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ DATA_08 _PL_ End=DataA+Safe;
@@ -5851,19 +5939,19 @@ _K_ BitC_RO_L_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			//Mask._08_D08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			//Mask._08_D08[1]=Vect_Load_(08,DataB);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
-			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
+			//Mask.V._08_D08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask.V._08_D08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]<Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]<Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -5873,33 +5961,33 @@ _K_ BitC_RO_L_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08+0,DataA,Margin);
-			_BitC_Taking_D08_(Mask.D08+8,DataB,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+0,DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]<Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]<Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			//Mask._08_D08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			//Mask._08_D08[1]=Vect_Load_(08,DataB);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
-			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
+			//Mask.V._08_D08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask.V._08_D08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_D08[0]<Mask._08_D08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_D08[0]<Mask.C._08_D08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -5919,10 +6007,10 @@ _K_ BitC_RO_L_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ DATA_16 _PL_ End=DataA+Safe;
@@ -5930,17 +6018,17 @@ _K_ BitC_RO_L_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]<Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]<Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -5950,31 +6038,31 @@ _K_ BitC_RO_L_2_D16_(_G_ data_08 *_R_ DataC,_G_ DATA_16 *_R_ DataA,_G_ DATA_16 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16+0,DataA,Margin);
-			_BitC_Taking_D16_(Mask.D16+8,DataB,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+0,DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]<Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]<Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D16[0]=Vect_Load_(08,DataA);
-			Mask._08_D16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_D16[0]<Mask._08_D16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_D16[0]<Mask.C._08_D16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -5994,10 +6082,10 @@ _K_ BitC_RO_L_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ DATA_32 _PL_ End=DataA+Safe;
@@ -6005,17 +6093,17 @@ _K_ BitC_RO_L_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]<Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]<Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6025,31 +6113,31 @@ _K_ BitC_RO_L_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]<Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]<Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D32[0]=Vect_Load_(08,DataA);
-			Mask._08_D32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_D32[0]<Mask._08_D32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_D32[0]<Mask.C._08_D32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -6070,10 +6158,10 @@ _K_ BitC_RO_L_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ DATA_64 _PL_ End=DataA+Safe;
@@ -6081,17 +6169,17 @@ _K_ BitC_RO_L_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]<Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]<Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6101,31 +6189,31 @@ _K_ BitC_RO_L_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]<Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]<Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_D64[0]=Vect_Load_(08,DataA);
-			Mask._08_D64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_D64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_D64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_D64[0]<Mask._08_D64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]<Mask.C._08_D64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -6146,10 +6234,10 @@ _K_ BitC_RO_L_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_08 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D08=Buff;
+		Mask.C.D08=Buff;
 	}
 	{
 		_G_ INTE_08 _PL_ End=DataA+Safe;
@@ -6157,19 +6245,19 @@ _K_ BitC_RO_L_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
-			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask.V._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]<Mask._08_I08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]<Mask.C._08_I08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	if(Start8<Rest)
@@ -6179,33 +6267,33 @@ _K_ BitC_RO_L_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D08_(Mask.D08+0,(_G_ data_08*)DataA,Margin);
-			_BitC_Taking_D08_(Mask.D08+8,(_G_ data_08*)DataB,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+0,(_G_ data_08*)DataA,Margin);
+			_BitC_Taking_D08_(Mask.V.D08+8,(_G_ data_08*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]<Mask._08_I08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]<Mask.C._08_I08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
-			_BitC_RO_Rem_D08_(Mask.D08,Margin,(data_08)(DataC[0]));
+			_BitC_RO_Rem_D08_(Mask.V.D08,Margin,(data_08)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			//Mask._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
-			//Mask._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
-			Mask._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
-			Mask._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
+			//Mask.V._08_I08[0]=Vect_Load_(08,DataA);//Maybe a bug?
+			//Mask.V._08_I08[1]=Vect_Load_(08,DataB);//Maybe a bug?
+			Mask.V._08_D08[0]=Vect_Load_(08,(_G_ data_08*)DataA);
+			Mask.V._08_D08[1]=Vect_Load_(08,(_G_ data_08*)DataB);
 
 			Wait_L_;
-			Mask._08_I08[0]=(Mask._08_I08[0]<Mask._08_I08[1]);
+			Mask.V._08_I08[0]=(Mask.C._08_I08[0]<Mask.C._08_I08[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D08_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=Mask.D08[0];
+			DataC[0]=Mask.C.D08[0];
 		}
 	}
 	else
@@ -6225,10 +6313,10 @@ _K_ BitC_RO_L_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ INTE_16 _PL_ End=DataA+Safe;
@@ -6236,17 +6324,17 @@ _K_ BitC_RO_L_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
-			Mask._08_I16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]<Mask._08_I16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]<Mask.C._08_I16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6256,31 +6344,31 @@ _K_ BitC_RO_L_2_I16_(_G_ data_08 *_R_ DataC,_G_ INTE_16 *_R_ DataA,_G_ INTE_16 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D16_(Mask.D16+0,(_G_ data_16*)DataA,Margin);
-			_BitC_Taking_D16_(Mask.D16+8,(_G_ data_16*)DataB,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+0,(_G_ data_16*)DataA,Margin);
+			_BitC_Taking_D16_(Mask.V.D16+8,(_G_ data_16*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]<Mask._08_I16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]<Mask.C._08_I16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I16[0]=Vect_Load_(08,DataA);
-			Mask._08_I16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_I16[0]<Mask._08_I16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_I16[0]<Mask.C._08_I16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -6300,10 +6388,10 @@ _K_ BitC_RO_L_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ INTE_32 _PL_ End=DataA+Safe;
@@ -6311,17 +6399,17 @@ _K_ BitC_RO_L_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
-			Mask._08_I32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]<Mask._08_I32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]<Mask.C._08_I32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6331,31 +6419,31 @@ _K_ BitC_RO_L_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,(_G_ data_32*)DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,(_G_ data_32*)DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,(_G_ data_32*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]<Mask._08_I32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]<Mask.C._08_I32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I32[0]=Vect_Load_(08,DataA);
-			Mask._08_I32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_I32[0]<Mask._08_I32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_I32[0]<Mask.C._08_I32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -6376,10 +6464,10 @@ _K_ BitC_RO_L_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ INTE_64 _PL_ End=DataA+Safe;
@@ -6387,17 +6475,17 @@ _K_ BitC_RO_L_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
-			Mask._08_I64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]<Mask._08_I64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]<Mask.C._08_I64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6407,31 +6495,31 @@ _K_ BitC_RO_L_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,(_G_ data_64*)DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,(_G_ data_64*)DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,(_G_ data_64*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]<Mask._08_I64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]<Mask.C._08_I64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_I64[0]=Vect_Load_(08,DataA);
-			Mask._08_I64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_I64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_I64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_I64[0]<Mask._08_I64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_I64[0]<Mask.C._08_I64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else
@@ -6453,10 +6541,10 @@ _K_ BitC_RO_L_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_16 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D16=Buff;
+		Mask.C.D16=Buff;
 	}
 	{
 		_G_ REAL_16 _PL_ End=DataA+Safe;
@@ -6464,17 +6552,17 @@ _K_ BitC_RO_L_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
-			Mask._08_R16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]<Mask._08_R16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]<Mask.C._08_R16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6488,27 +6576,27 @@ _K_ BitC_RO_L_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *
 			_BitC_Taking_D16_(Mask.D16+8,(_G_ data_16*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]<Mask._08_R16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]<Mask.C._08_R16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
-			_BitC_RO_Rem_D16_(Mask.D16,Margin,(data_16)(DataC[0]));
+			_BitC_RO_Rem_D16_(Mask.V.D16,Margin,(data_16)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R16[0]=Vect_Load_(08,DataA);
-			Mask._08_R16[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R16[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R16[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I16[0]=(Mask._08_R16[0]<Mask._08_R16[1]);
+			Mask.V._08_I16[0]=(Mask.C._08_R16[0]<Mask.C._08_R16[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D16_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D16[0]);
+			DataC[0]=(data_08)(Mask.C.D16[0]);
 		}
 	}
 	else
@@ -6529,10 +6617,10 @@ _K_ BitC_RO_L_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_32 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D32=Buff;
+		Mask.C.D32=Buff;
 	}
 	{
 		_G_ REAL_32 _PL_ End=DataA+Safe;
@@ -6540,17 +6628,17 @@ _K_ BitC_RO_L_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
-			Mask._08_R32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]<Mask._08_R32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]<Mask.C._08_R32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6560,31 +6648,31 @@ _K_ BitC_RO_L_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D32_(Mask.D32+0,(_G_ data_32*)DataA,Margin);
-			_BitC_Taking_D32_(Mask.D32+8,(_G_ data_32*)DataB,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+0,(_G_ data_32*)DataA,Margin);
+			_BitC_Taking_D32_(Mask.V.D32+8,(_G_ data_32*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]<Mask._08_R32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]<Mask.C._08_R32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
-			_BitC_RO_Rem_D32_(Mask.D32,Margin,(data_32)(DataC[0]));
+			_BitC_RO_Rem_D32_(Mask.V.D32,Margin,(data_32)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R32[0]=Vect_Load_(08,DataA);
-			Mask._08_R32[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R32[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R32[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I32[0]=(Mask._08_R32[0]<Mask._08_R32[1]);
+			Mask.V._08_I32[0]=(Mask.C._08_R32[0]<Mask.C._08_R32[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D32_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D32[0]);
+			DataC[0]=(data_08)(Mask.C.D32[0]);
 		}
 	}
 	else
@@ -6605,10 +6693,10 @@ _K_ BitC_RO_L_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 	_P_ DATA_32 Rest=Length%Step8;
 	_P_ DATA_32 Safe=Length-Rest;
 	_P_ data_64 Buff[16];
-	_P_ p_ptr_v Mask;
+	_P_ point_p Mask;
 
 	{
-		Mask.D64=Buff;
+		Mask.C.D64=Buff;
 	}
 	{
 		_G_ REAL_64 _PL_ End=DataA+Safe;
@@ -6616,17 +6704,17 @@ _K_ BitC_RO_L_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 		for(DataA+=Start8,DataB+=Start8,DataC+=Start;DataA<End;DataA+=Step8,DataB+=Step8,DataC+=Step)
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
-			Mask._08_R64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]<Mask._08_R64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]<Mask.C._08_R64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	if(Start8<Rest)
@@ -6636,31 +6724,31 @@ _K_ BitC_RO_L_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 		if(Margin<8)
 		{
 			Wait_L_;
-			_BitC_Taking_D64_(Mask.D64+0,(_G_ data_64*)DataA,Margin);
-			_BitC_Taking_D64_(Mask.D64+8,(_G_ data_64*)DataB,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+0,(_G_ data_64*)DataA,Margin);
+			_BitC_Taking_D64_(Mask.V.D64+8,(_G_ data_64*)DataB,Margin);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]<Mask._08_R64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]<Mask.C._08_R64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
-			_BitC_RO_Rem_D64_(Mask.D64,Margin,(data_64)(DataC[0]));
+			_BitC_RO_Rem_D64_(Mask.V.D64,Margin,(data_64)(DataC[0]));
 		}
 		else
 		{
 			Wait_L_;
-			Mask._08_R64[0]=Vect_Load_(08,DataA);
-			Mask._08_R64[1]=Vect_Load_(08,DataB);
+			Mask.V._08_R64[0]=Vect_Load_(08,DataA);
+			Mask.V._08_R64[1]=Vect_Load_(08,DataB);
 
 			Wait_L_;
-			Mask._08_I64[0]=(Mask._08_R64[0]<Mask._08_R64[1]);
+			Mask.V._08_I64[0]=(Mask.C._08_R64[0]<Mask.C._08_R64[1]);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
 		}
 		{
 			Wait_L_;
-			DataC[0]=(data_08)(Mask.D64[0]);
+			DataC[0]=(data_08)(Mask.C.D64[0]);
 		}
 	}
 	else

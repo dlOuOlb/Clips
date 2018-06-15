@@ -2,11 +2,14 @@
 /*	BitClip's OpenCL Header Parts.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.15	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
 /*------------------------------------------------------------------*/
+
+#ifndef _INC_OUOCLIP
+#define _INC_OUOCLIP
 
 #define Fold_(Comment) (1)
 
@@ -117,6 +120,8 @@
 #define _Vect_Save_04_(Vector,Address) vstore4(Vector,0,Address)
 #define _Vect_Save_08_(Vector,Address) vstore8(Vector,0,Address)
 #define _Vect_Save_16_(Vector,Address) vstore16(Vector,0,Address)
+
+#define Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;
 #endif
 
 #if(Fold_(Definition:Scalar Types))
@@ -298,643 +303,648 @@ typedef const _16_real_64 _16_REAL_64;
 #endif
 
 #if(Fold_(Definition:Pointer Unions))
-union _c_ptr_v
+union _point_c
 {
-	_C_ general *G;
-	_C_ general **GG;
-	_C_ address *AA;
-	_C_ data_08 *D08;
-	_C_ data_16 *D16;
-	_C_ data_32 *D32;
+	union _c_ptr_v
+	{
+		_C_ general *G;
+		_C_ general **GG;
+		_C_ address *AA;
+		_C_ data_08 *D08;
+		_C_ data_16 *D16;
+		_C_ data_32 *D32;
 #if(_ABLE_I64_)
-	_C_ data_64 *D64;
+		_C_ data_64 *D64;
 #endif
-	_C_ inte_08 *I08;
-	_C_ inte_16 *I16;
-	_C_ inte_32 *I32;
+		_C_ inte_08 *I08;
+		_C_ inte_16 *I16;
+		_C_ inte_32 *I32;
 #if(_ABLE_I64_)
-	_C_ inte_64 *I64;
+		_C_ inte_64 *I64;
 #endif
 #if(_ABLE_R16_)
-	_C_ real_16 *R16;
+		_C_ real_16 *R16;
 #endif
-	_C_ real_32 *R32;
+		_C_ real_32 *R32;
 #if(_ABLE_R64_)
-	_C_ real_64 *R64;
+		_C_ real_64 *R64;
 #endif
-	_C_ _02_data_08 *_02_D08;
-	_C_ _04_data_08 *_04_D08;
-	_C_ _08_data_08 *_08_D08;
-	_C_ _16_data_08 *_16_D08;
-	_C_ _02_data_16 *_02_D16;
-	_C_ _04_data_16 *_04_D16;
-	_C_ _08_data_16 *_08_D16;
-	_C_ _16_data_16 *_16_D16;
-	_C_ _02_data_32 *_02_D32;
-	_C_ _04_data_32 *_04_D32;
-	_C_ _08_data_32 *_08_D32;
-	_C_ _16_data_32 *_16_D32;
+		_C_ _02_data_08 *_02_D08;
+		_C_ _04_data_08 *_04_D08;
+		_C_ _08_data_08 *_08_D08;
+		_C_ _16_data_08 *_16_D08;
+		_C_ _02_data_16 *_02_D16;
+		_C_ _04_data_16 *_04_D16;
+		_C_ _08_data_16 *_08_D16;
+		_C_ _16_data_16 *_16_D16;
+		_C_ _02_data_32 *_02_D32;
+		_C_ _04_data_32 *_04_D32;
+		_C_ _08_data_32 *_08_D32;
+		_C_ _16_data_32 *_16_D32;
 #if(_ABLE_I64_)
-	_C_ _02_data_64 *_02_D64;
-	_C_ _04_data_64 *_04_D64;
-	_C_ _08_data_64 *_08_D64;
-	_C_ _16_data_64 *_16_D64;
+		_C_ _02_data_64 *_02_D64;
+		_C_ _04_data_64 *_04_D64;
+		_C_ _08_data_64 *_08_D64;
+		_C_ _16_data_64 *_16_D64;
 #endif
-	_C_ _02_inte_08 *_02_I08;
-	_C_ _04_inte_08 *_04_I08;
-	_C_ _08_inte_08 *_08_I08;
-	_C_ _16_inte_08 *_16_I08;
-	_C_ _02_inte_16 *_02_I16;
-	_C_ _04_inte_16 *_04_I16;
-	_C_ _08_inte_16 *_08_I16;
-	_C_ _16_inte_16 *_16_I16;
-	_C_ _02_inte_32 *_02_I32;
-	_C_ _04_inte_32 *_04_I32;
-	_C_ _08_inte_32 *_08_I32;
-	_C_ _16_inte_32 *_16_I32;
+		_C_ _02_inte_08 *_02_I08;
+		_C_ _04_inte_08 *_04_I08;
+		_C_ _08_inte_08 *_08_I08;
+		_C_ _16_inte_08 *_16_I08;
+		_C_ _02_inte_16 *_02_I16;
+		_C_ _04_inte_16 *_04_I16;
+		_C_ _08_inte_16 *_08_I16;
+		_C_ _16_inte_16 *_16_I16;
+		_C_ _02_inte_32 *_02_I32;
+		_C_ _04_inte_32 *_04_I32;
+		_C_ _08_inte_32 *_08_I32;
+		_C_ _16_inte_32 *_16_I32;
 #if(_ABLE_I64_)
-	_C_ _02_inte_64 *_02_I64;
-	_C_ _04_inte_64 *_04_I64;
-	_C_ _08_inte_64 *_08_I64;
-	_C_ _16_inte_64 *_16_I64;
+		_C_ _02_inte_64 *_02_I64;
+		_C_ _04_inte_64 *_04_I64;
+		_C_ _08_inte_64 *_08_I64;
+		_C_ _16_inte_64 *_16_I64;
 #endif
 #if(_ABLE_R16_)
-	_C_ _02_real_16 *_02_R16;
-	_C_ _04_real_16 *_04_R16;
-	_C_ _08_real_16 *_08_R16;
-	_C_ _16_real_16 *_16_R16;
+		_C_ _02_real_16 *_02_R16;
+		_C_ _04_real_16 *_04_R16;
+		_C_ _08_real_16 *_08_R16;
+		_C_ _16_real_16 *_16_R16;
 #endif
-	_C_ _02_real_32 *_02_R32;
-	_C_ _04_real_32 *_04_R32;
-	_C_ _08_real_32 *_08_R32;
-	_C_ _16_real_32 *_16_R32;
+		_C_ _02_real_32 *_02_R32;
+		_C_ _04_real_32 *_04_R32;
+		_C_ _08_real_32 *_08_R32;
+		_C_ _16_real_32 *_16_R32;
 #if(_ABLE_R64_)
-	_C_ _02_real_64 *_02_R64;
-	_C_ _04_real_64 *_04_R64;
-	_C_ _08_real_64 *_08_R64;
-	_C_ _16_real_64 *_16_R64;
+		_C_ _02_real_64 *_02_R64;
+		_C_ _04_real_64 *_04_R64;
+		_C_ _08_real_64 *_08_R64;
+		_C_ _16_real_64 *_16_R64;
 #endif
+	}
+	V;
+	union _c_ptr_c
+	{
+		_C_ GENERAL *G;
+		_C_ GENERAL **GG;
+		_C_ ADDRESS *AA;
+		_C_ DATA_08 *D08;
+		_C_ DATA_16 *D16;
+		_C_ DATA_32 *D32;
+#if(_ABLE_I64_)
+		_C_ DATA_64 *D64;
+#endif
+		_C_ INTE_08 *I08;
+		_C_ INTE_16 *I16;
+		_C_ INTE_32 *I32;
+#if(_ABLE_I64_)
+		_C_ INTE_64 *I64;
+#endif
+#if(_ABLE_R16_)
+		_C_ REAL_16 *R16;
+#endif
+		_C_ REAL_32 *R32;
+#if(_ABLE_R64_)
+		_C_ REAL_64 *R64;
+#endif
+		_C_ _02_DATA_08 *_02_D08;
+		_C_ _04_DATA_08 *_04_D08;
+		_C_ _08_DATA_08 *_08_D08;
+		_C_ _16_DATA_08 *_16_D08;
+		_C_ _02_DATA_16 *_02_D16;
+		_C_ _04_DATA_16 *_04_D16;
+		_C_ _08_DATA_16 *_08_D16;
+		_C_ _16_DATA_16 *_16_D16;
+		_C_ _02_DATA_32 *_02_D32;
+		_C_ _04_DATA_32 *_04_D32;
+		_C_ _08_DATA_32 *_08_D32;
+		_C_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+		_C_ _02_DATA_64 *_02_D64;
+		_C_ _04_DATA_64 *_04_D64;
+		_C_ _08_DATA_64 *_08_D64;
+		_C_ _16_DATA_64 *_16_D64;
+#endif
+		_C_ _02_INTE_08 *_02_I08;
+		_C_ _04_INTE_08 *_04_I08;
+		_C_ _08_INTE_08 *_08_I08;
+		_C_ _16_INTE_08 *_16_I08;
+		_C_ _02_INTE_16 *_02_I16;
+		_C_ _04_INTE_16 *_04_I16;
+		_C_ _08_INTE_16 *_08_I16;
+		_C_ _16_INTE_16 *_16_I16;
+		_C_ _02_INTE_32 *_02_I32;
+		_C_ _04_INTE_32 *_04_I32;
+		_C_ _08_INTE_32 *_08_I32;
+		_C_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+		_C_ _02_INTE_64 *_02_I64;
+		_C_ _04_INTE_64 *_04_I64;
+		_C_ _08_INTE_64 *_08_I64;
+		_C_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+		_C_ _02_REAL_16 *_02_R16;
+		_C_ _04_REAL_16 *_04_R16;
+		_C_ _08_REAL_16 *_08_R16;
+		_C_ _16_REAL_16 *_16_R16;
+#endif
+		_C_ _02_REAL_32 *_02_R32;
+		_C_ _04_REAL_32 *_04_R32;
+		_C_ _08_REAL_32 *_08_R32;
+		_C_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+		_C_ _02_REAL_64 *_02_R64;
+		_C_ _04_REAL_64 *_04_R64;
+		_C_ _08_REAL_64 *_08_R64;
+		_C_ _16_REAL_64 *_16_R64;
+#endif
+	}
+	C;
 };
-typedef union _c_ptr_v c_ptr_v;
-typedef const union _c_ptr_v C_PTR_V;
+Type_Declare_(union,point_c,POINT_C);
 
-union _c_ptr_c
+union _point_g
 {
-	_C_ GENERAL *G;
-	_C_ GENERAL **GG;
-	_C_ ADDRESS *AA;
-	_C_ DATA_08 *D08;
-	_C_ DATA_16 *D16;
-	_C_ DATA_32 *D32;
+	union _g_ptr_v
+	{
+		_G_ general *G;
+		_G_ general **GG;
+		_G_ address *AA;
+		_G_ data_08 *D08;
+		_G_ data_16 *D16;
+		_G_ data_32 *D32;
 #if(_ABLE_I64_)
-	_C_ DATA_64 *D64;
+		_G_ data_64 *D64;
 #endif
-	_C_ INTE_08 *I08;
-	_C_ INTE_16 *I16;
-	_C_ INTE_32 *I32;
+		_G_ inte_08 *I08;
+		_G_ inte_16 *I16;
+		_G_ inte_32 *I32;
 #if(_ABLE_I64_)
-	_C_ INTE_64 *I64;
+		_G_ inte_64 *I64;
 #endif
 #if(_ABLE_R16_)
-	_C_ REAL_16 *R16;
+		_G_ real_16 *R16;
 #endif
-	_C_ REAL_32 *R32;
+		_G_ real_32 *R32;
 #if(_ABLE_R64_)
-	_C_ REAL_64 *R64;
+		_G_ real_64 *R64;
 #endif
-	_C_ _02_DATA_08 *_02_D08;
-	_C_ _04_DATA_08 *_04_D08;
-	_C_ _08_DATA_08 *_08_D08;
-	_C_ _16_DATA_08 *_16_D08;
-	_C_ _02_DATA_16 *_02_D16;
-	_C_ _04_DATA_16 *_04_D16;
-	_C_ _08_DATA_16 *_08_D16;
-	_C_ _16_DATA_16 *_16_D16;
-	_C_ _02_DATA_32 *_02_D32;
-	_C_ _04_DATA_32 *_04_D32;
-	_C_ _08_DATA_32 *_08_D32;
-	_C_ _16_DATA_32 *_16_D32;
+		_G_ _02_data_08 *_02_D08;
+		_G_ _04_data_08 *_04_D08;
+		_G_ _08_data_08 *_08_D08;
+		_G_ _16_data_08 *_16_D08;
+		_G_ _02_data_16 *_02_D16;
+		_G_ _04_data_16 *_04_D16;
+		_G_ _08_data_16 *_08_D16;
+		_G_ _16_data_16 *_16_D16;
+		_G_ _02_data_32 *_02_D32;
+		_G_ _04_data_32 *_04_D32;
+		_G_ _08_data_32 *_08_D32;
+		_G_ _16_data_32 *_16_D32;
 #if(_ABLE_I64_)
-	_C_ _02_DATA_64 *_02_D64;
-	_C_ _04_DATA_64 *_04_D64;
-	_C_ _08_DATA_64 *_08_D64;
-	_C_ _16_DATA_64 *_16_D64;
+		_G_ _02_data_64 *_02_D64;
+		_G_ _04_data_64 *_04_D64;
+		_G_ _08_data_64 *_08_D64;
+		_G_ _16_data_64 *_16_D64;
 #endif
-	_C_ _02_INTE_08 *_02_I08;
-	_C_ _04_INTE_08 *_04_I08;
-	_C_ _08_INTE_08 *_08_I08;
-	_C_ _16_INTE_08 *_16_I08;
-	_C_ _02_INTE_16 *_02_I16;
-	_C_ _04_INTE_16 *_04_I16;
-	_C_ _08_INTE_16 *_08_I16;
-	_C_ _16_INTE_16 *_16_I16;
-	_C_ _02_INTE_32 *_02_I32;
-	_C_ _04_INTE_32 *_04_I32;
-	_C_ _08_INTE_32 *_08_I32;
-	_C_ _16_INTE_32 *_16_I32;
+		_G_ _02_inte_08 *_02_I08;
+		_G_ _04_inte_08 *_04_I08;
+		_G_ _08_inte_08 *_08_I08;
+		_G_ _16_inte_08 *_16_I08;
+		_G_ _02_inte_16 *_02_I16;
+		_G_ _04_inte_16 *_04_I16;
+		_G_ _08_inte_16 *_08_I16;
+		_G_ _16_inte_16 *_16_I16;
+		_G_ _02_inte_32 *_02_I32;
+		_G_ _04_inte_32 *_04_I32;
+		_G_ _08_inte_32 *_08_I32;
+		_G_ _16_inte_32 *_16_I32;
 #if(_ABLE_I64_)
-	_C_ _02_INTE_64 *_02_I64;
-	_C_ _04_INTE_64 *_04_I64;
-	_C_ _08_INTE_64 *_08_I64;
-	_C_ _16_INTE_64 *_16_I64;
+		_G_ _02_inte_64 *_02_I64;
+		_G_ _04_inte_64 *_04_I64;
+		_G_ _08_inte_64 *_08_I64;
+		_G_ _16_inte_64 *_16_I64;
 #endif
 #if(_ABLE_R16_)
-	_C_ _02_REAL_16 *_02_R16;
-	_C_ _04_REAL_16 *_04_R16;
-	_C_ _08_REAL_16 *_08_R16;
-	_C_ _16_REAL_16 *_16_R16;
+		_G_ _02_real_16 *_02_R16;
+		_G_ _04_real_16 *_04_R16;
+		_G_ _08_real_16 *_08_R16;
+		_G_ _16_real_16 *_16_R16;
 #endif
-	_C_ _02_REAL_32 *_02_R32;
-	_C_ _04_REAL_32 *_04_R32;
-	_C_ _08_REAL_32 *_08_R32;
-	_C_ _16_REAL_32 *_16_R32;
+		_G_ _02_real_32 *_02_R32;
+		_G_ _04_real_32 *_04_R32;
+		_G_ _08_real_32 *_08_R32;
+		_G_ _16_real_32 *_16_R32;
 #if(_ABLE_R64_)
-	_C_ _02_REAL_64 *_02_R64;
-	_C_ _04_REAL_64 *_04_R64;
-	_C_ _08_REAL_64 *_08_R64;
-	_C_ _16_REAL_64 *_16_R64;
+		_G_ _02_real_64 *_02_R64;
+		_G_ _04_real_64 *_04_R64;
+		_G_ _08_real_64 *_08_R64;
+		_G_ _16_real_64 *_16_R64;
 #endif
+	}
+	V;
+	union _g_ptr_c
+	{
+		_G_ GENERAL *G;
+		_G_ GENERAL **GG;
+		_G_ ADDRESS *AA;
+		_G_ DATA_08 *D08;
+		_G_ DATA_16 *D16;
+		_G_ DATA_32 *D32;
+#if(_ABLE_I64_)
+		_G_ DATA_64 *D64;
+#endif
+		_G_ INTE_08 *I08;
+		_G_ INTE_16 *I16;
+		_G_ INTE_32 *I32;
+#if(_ABLE_I64_)
+		_G_ INTE_64 *I64;
+#endif
+#if(_ABLE_R16_)
+		_G_ REAL_16 *R16;
+#endif
+		_G_ REAL_32 *R32;
+#if(_ABLE_R64_)
+		_G_ REAL_64 *R64;
+#endif
+		_G_ _02_DATA_08 *_02_D08;
+		_G_ _04_DATA_08 *_04_D08;
+		_G_ _08_DATA_08 *_08_D08;
+		_G_ _16_DATA_08 *_16_D08;
+		_G_ _02_DATA_16 *_02_D16;
+		_G_ _04_DATA_16 *_04_D16;
+		_G_ _08_DATA_16 *_08_D16;
+		_G_ _16_DATA_16 *_16_D16;
+		_G_ _02_DATA_32 *_02_D32;
+		_G_ _04_DATA_32 *_04_D32;
+		_G_ _08_DATA_32 *_08_D32;
+		_G_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+		_G_ _02_DATA_64 *_02_D64;
+		_G_ _04_DATA_64 *_04_D64;
+		_G_ _08_DATA_64 *_08_D64;
+		_G_ _16_DATA_64 *_16_D64;
+#endif
+		_G_ _02_INTE_08 *_02_I08;
+		_G_ _04_INTE_08 *_04_I08;
+		_G_ _08_INTE_08 *_08_I08;
+		_G_ _16_INTE_08 *_16_I08;
+		_G_ _02_INTE_16 *_02_I16;
+		_G_ _04_INTE_16 *_04_I16;
+		_G_ _08_INTE_16 *_08_I16;
+		_G_ _16_INTE_16 *_16_I16;
+		_G_ _02_INTE_32 *_02_I32;
+		_G_ _04_INTE_32 *_04_I32;
+		_G_ _08_INTE_32 *_08_I32;
+		_G_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+		_G_ _02_INTE_64 *_02_I64;
+		_G_ _04_INTE_64 *_04_I64;
+		_G_ _08_INTE_64 *_08_I64;
+		_G_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+		_G_ _02_REAL_16 *_02_R16;
+		_G_ _04_REAL_16 *_04_R16;
+		_G_ _08_REAL_16 *_08_R16;
+		_G_ _16_REAL_16 *_16_R16;
+#endif
+		_G_ _02_REAL_32 *_02_R32;
+		_G_ _04_REAL_32 *_04_R32;
+		_G_ _08_REAL_32 *_08_R32;
+		_G_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+		_G_ _02_REAL_64 *_02_R64;
+		_G_ _04_REAL_64 *_04_R64;
+		_G_ _08_REAL_64 *_08_R64;
+		_G_ _16_REAL_64 *_16_R64;
+#endif
+	}
+	C;
 };
-typedef union _c_ptr_c c_ptr_c;
-typedef const union _c_ptr_c C_PTR_C;
+Type_Declare_(union,point_g,POINT_G);
 
-union _g_ptr_v
+union _point_l
 {
-	_G_ general *G;
-	_G_ general **GG;
-	_G_ address *AA;
-	_G_ data_08 *D08;
-	_G_ data_16 *D16;
-	_G_ data_32 *D32;
+	union _l_ptr_v
+	{
+		_L_ general *G;
+		_L_ general **GG;
+		_L_ address *AA;
+		_L_ data_08 *D08;
+		_L_ data_16 *D16;
+		_L_ data_32 *D32;
 #if(_ABLE_I64_)
-	_G_ data_64 *D64;
+		_L_ data_64 *D64;
 #endif
-	_G_ inte_08 *I08;
-	_G_ inte_16 *I16;
-	_G_ inte_32 *I32;
+		_L_ inte_08 *I08;
+		_L_ inte_16 *I16;
+		_L_ inte_32 *I32;
 #if(_ABLE_I64_)
-	_G_ inte_64 *I64;
+		_L_ inte_64 *I64;
 #endif
 #if(_ABLE_R16_)
-	_G_ real_16 *R16;
+		_L_ real_16 *R16;
 #endif
-	_G_ real_32 *R32;
+		_L_ real_32 *R32;
 #if(_ABLE_R64_)
-	_G_ real_64 *R64;
+		_L_ real_64 *R64;
 #endif
-	_G_ _02_data_08 *_02_D08;
-	_G_ _04_data_08 *_04_D08;
-	_G_ _08_data_08 *_08_D08;
-	_G_ _16_data_08 *_16_D08;
-	_G_ _02_data_16 *_02_D16;
-	_G_ _04_data_16 *_04_D16;
-	_G_ _08_data_16 *_08_D16;
-	_G_ _16_data_16 *_16_D16;
-	_G_ _02_data_32 *_02_D32;
-	_G_ _04_data_32 *_04_D32;
-	_G_ _08_data_32 *_08_D32;
-	_G_ _16_data_32 *_16_D32;
+		_L_ _02_data_08 *_02_D08;
+		_L_ _04_data_08 *_04_D08;
+		_L_ _08_data_08 *_08_D08;
+		_L_ _16_data_08 *_16_D08;
+		_L_ _02_data_16 *_02_D16;
+		_L_ _04_data_16 *_04_D16;
+		_L_ _08_data_16 *_08_D16;
+		_L_ _16_data_16 *_16_D16;
+		_L_ _02_data_32 *_02_D32;
+		_L_ _04_data_32 *_04_D32;
+		_L_ _08_data_32 *_08_D32;
+		_L_ _16_data_32 *_16_D32;
 #if(_ABLE_I64_)
-	_G_ _02_data_64 *_02_D64;
-	_G_ _04_data_64 *_04_D64;
-	_G_ _08_data_64 *_08_D64;
-	_G_ _16_data_64 *_16_D64;
+		_L_ _02_data_64 *_02_D64;
+		_L_ _04_data_64 *_04_D64;
+		_L_ _08_data_64 *_08_D64;
+		_L_ _16_data_64 *_16_D64;
 #endif
-	_G_ _02_inte_08 *_02_I08;
-	_G_ _04_inte_08 *_04_I08;
-	_G_ _08_inte_08 *_08_I08;
-	_G_ _16_inte_08 *_16_I08;
-	_G_ _02_inte_16 *_02_I16;
-	_G_ _04_inte_16 *_04_I16;
-	_G_ _08_inte_16 *_08_I16;
-	_G_ _16_inte_16 *_16_I16;
-	_G_ _02_inte_32 *_02_I32;
-	_G_ _04_inte_32 *_04_I32;
-	_G_ _08_inte_32 *_08_I32;
-	_G_ _16_inte_32 *_16_I32;
+		_L_ _02_inte_08 *_02_I08;
+		_L_ _04_inte_08 *_04_I08;
+		_L_ _08_inte_08 *_08_I08;
+		_L_ _16_inte_08 *_16_I08;
+		_L_ _02_inte_16 *_02_I16;
+		_L_ _04_inte_16 *_04_I16;
+		_L_ _08_inte_16 *_08_I16;
+		_L_ _16_inte_16 *_16_I16;
+		_L_ _02_inte_32 *_02_I32;
+		_L_ _04_inte_32 *_04_I32;
+		_L_ _08_inte_32 *_08_I32;
+		_L_ _16_inte_32 *_16_I32;
 #if(_ABLE_I64_)
-	_G_ _02_inte_64 *_02_I64;
-	_G_ _04_inte_64 *_04_I64;
-	_G_ _08_inte_64 *_08_I64;
-	_G_ _16_inte_64 *_16_I64;
+		_L_ _02_inte_64 *_02_I64;
+		_L_ _04_inte_64 *_04_I64;
+		_L_ _08_inte_64 *_08_I64;
+		_L_ _16_inte_64 *_16_I64;
 #endif
 #if(_ABLE_R16_)
-	_G_ _02_real_16 *_02_R16;
-	_G_ _04_real_16 *_04_R16;
-	_G_ _08_real_16 *_08_R16;
-	_G_ _16_real_16 *_16_R16;
+		_L_ _02_real_16 *_02_R16;
+		_L_ _04_real_16 *_04_R16;
+		_L_ _08_real_16 *_08_R16;
+		_L_ _16_real_16 *_16_R16;
 #endif
-	_G_ _02_real_32 *_02_R32;
-	_G_ _04_real_32 *_04_R32;
-	_G_ _08_real_32 *_08_R32;
-	_G_ _16_real_32 *_16_R32;
+		_L_ _02_real_32 *_02_R32;
+		_L_ _04_real_32 *_04_R32;
+		_L_ _08_real_32 *_08_R32;
+		_L_ _16_real_32 *_16_R32;
 #if(_ABLE_R64_)
-	_G_ _02_real_64 *_02_R64;
-	_G_ _04_real_64 *_04_R64;
-	_G_ _08_real_64 *_08_R64;
-	_G_ _16_real_64 *_16_R64;
+		_L_ _02_real_64 *_02_R64;
+		_L_ _04_real_64 *_04_R64;
+		_L_ _08_real_64 *_08_R64;
+		_L_ _16_real_64 *_16_R64;
 #endif
+	}
+	V;
+	union _l_ptr_c
+	{
+		_L_ GENERAL *G;
+		_L_ GENERAL **GG;
+		_L_ ADDRESS *AA;
+		_L_ DATA_08 *D08;
+		_L_ DATA_16 *D16;
+		_L_ DATA_32 *D32;
+#if(_ABLE_I64_)
+		_L_ DATA_64 *D64;
+#endif
+		_L_ INTE_08 *I08;
+		_L_ INTE_16 *I16;
+		_L_ INTE_32 *I32;
+#if(_ABLE_I64_)
+		_L_ INTE_64 *I64;
+#endif
+#if(_ABLE_R16_)
+		_L_ REAL_16 *R16;
+#endif
+		_L_ REAL_32 *R32;
+#if(_ABLE_R64_)
+		_L_ REAL_64 *R64;
+#endif
+		_L_ _02_DATA_08 *_02_D08;
+		_L_ _04_DATA_08 *_04_D08;
+		_L_ _08_DATA_08 *_08_D08;
+		_L_ _16_DATA_08 *_16_D08;
+		_L_ _02_DATA_16 *_02_D16;
+		_L_ _04_DATA_16 *_04_D16;
+		_L_ _08_DATA_16 *_08_D16;
+		_L_ _16_DATA_16 *_16_D16;
+		_L_ _02_DATA_32 *_02_D32;
+		_L_ _04_DATA_32 *_04_D32;
+		_L_ _08_DATA_32 *_08_D32;
+		_L_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+		_L_ _02_DATA_64 *_02_D64;
+		_L_ _04_DATA_64 *_04_D64;
+		_L_ _08_DATA_64 *_08_D64;
+		_L_ _16_DATA_64 *_16_D64;
+#endif
+		_L_ _02_INTE_08 *_02_I08;
+		_L_ _04_INTE_08 *_04_I08;
+		_L_ _08_INTE_08 *_08_I08;
+		_L_ _16_INTE_08 *_16_I08;
+		_L_ _02_INTE_16 *_02_I16;
+		_L_ _04_INTE_16 *_04_I16;
+		_L_ _08_INTE_16 *_08_I16;
+		_L_ _16_INTE_16 *_16_I16;
+		_L_ _02_INTE_32 *_02_I32;
+		_L_ _04_INTE_32 *_04_I32;
+		_L_ _08_INTE_32 *_08_I32;
+		_L_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+		_L_ _02_INTE_64 *_02_I64;
+		_L_ _04_INTE_64 *_04_I64;
+		_L_ _08_INTE_64 *_08_I64;
+		_L_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+		_L_ _02_REAL_16 *_02_R16;
+		_L_ _04_REAL_16 *_04_R16;
+		_L_ _08_REAL_16 *_08_R16;
+		_L_ _16_REAL_16 *_16_R16;
+#endif
+		_L_ _02_REAL_32 *_02_R32;
+		_L_ _04_REAL_32 *_04_R32;
+		_L_ _08_REAL_32 *_08_R32;
+		_L_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+		_L_ _02_REAL_64 *_02_R64;
+		_L_ _04_REAL_64 *_04_R64;
+		_L_ _08_REAL_64 *_08_R64;
+		_L_ _16_REAL_64 *_16_R64;
+#endif
+	}
+	C;
 };
-typedef union _g_ptr_v g_ptr_v;
-typedef const union _g_ptr_v G_PTR_V;
+Type_Declare_(union,point_l,POINT_L);
 
-union _g_ptr_c
+union _point_p
 {
-	_G_ GENERAL *G;
-	_G_ GENERAL **GG;
-	_G_ ADDRESS *AA;
-	_G_ DATA_08 *D08;
-	_G_ DATA_16 *D16;
-	_G_ DATA_32 *D32;
+	union _p_ptr_v
+	{
+		_P_ general *G;
+		_P_ general **GG;
+		_P_ address *AA;
+		_P_ data_08 *D08;
+		_P_ data_16 *D16;
+		_P_ data_32 *D32;
 #if(_ABLE_I64_)
-	_G_ DATA_64 *D64;
+		_P_ data_64 *D64;
 #endif
-	_G_ INTE_08 *I08;
-	_G_ INTE_16 *I16;
-	_G_ INTE_32 *I32;
+		_P_ inte_08 *I08;
+		_P_ inte_16 *I16;
+		_P_ inte_32 *I32;
 #if(_ABLE_I64_)
-	_G_ INTE_64 *I64;
+		_P_ inte_64 *I64;
 #endif
 #if(_ABLE_R16_)
-	_G_ REAL_16 *R16;
+		_P_ real_16 *R16;
 #endif
-	_G_ REAL_32 *R32;
+		_P_ real_32 *R32;
 #if(_ABLE_R64_)
-	_G_ REAL_64 *R64;
+		_P_ real_64 *R64;
 #endif
-	_G_ _02_DATA_08 *_02_D08;
-	_G_ _04_DATA_08 *_04_D08;
-	_G_ _08_DATA_08 *_08_D08;
-	_G_ _16_DATA_08 *_16_D08;
-	_G_ _02_DATA_16 *_02_D16;
-	_G_ _04_DATA_16 *_04_D16;
-	_G_ _08_DATA_16 *_08_D16;
-	_G_ _16_DATA_16 *_16_D16;
-	_G_ _02_DATA_32 *_02_D32;
-	_G_ _04_DATA_32 *_04_D32;
-	_G_ _08_DATA_32 *_08_D32;
-	_G_ _16_DATA_32 *_16_D32;
+		_P_ _02_data_08 *_02_D08;
+		_P_ _04_data_08 *_04_D08;
+		_P_ _08_data_08 *_08_D08;
+		_P_ _16_data_08 *_16_D08;
+		_P_ _02_data_16 *_02_D16;
+		_P_ _04_data_16 *_04_D16;
+		_P_ _08_data_16 *_08_D16;
+		_P_ _16_data_16 *_16_D16;
+		_P_ _02_data_32 *_02_D32;
+		_P_ _04_data_32 *_04_D32;
+		_P_ _08_data_32 *_08_D32;
+		_P_ _16_data_32 *_16_D32;
 #if(_ABLE_I64_)
-	_G_ _02_DATA_64 *_02_D64;
-	_G_ _04_DATA_64 *_04_D64;
-	_G_ _08_DATA_64 *_08_D64;
-	_G_ _16_DATA_64 *_16_D64;
+		_P_ _02_data_64 *_02_D64;
+		_P_ _04_data_64 *_04_D64;
+		_P_ _08_data_64 *_08_D64;
+		_P_ _16_data_64 *_16_D64;
 #endif
-	_G_ _02_INTE_08 *_02_I08;
-	_G_ _04_INTE_08 *_04_I08;
-	_G_ _08_INTE_08 *_08_I08;
-	_G_ _16_INTE_08 *_16_I08;
-	_G_ _02_INTE_16 *_02_I16;
-	_G_ _04_INTE_16 *_04_I16;
-	_G_ _08_INTE_16 *_08_I16;
-	_G_ _16_INTE_16 *_16_I16;
-	_G_ _02_INTE_32 *_02_I32;
-	_G_ _04_INTE_32 *_04_I32;
-	_G_ _08_INTE_32 *_08_I32;
-	_G_ _16_INTE_32 *_16_I32;
+		_P_ _02_inte_08 *_02_I08;
+		_P_ _04_inte_08 *_04_I08;
+		_P_ _08_inte_08 *_08_I08;
+		_P_ _16_inte_08 *_16_I08;
+		_P_ _02_inte_16 *_02_I16;
+		_P_ _04_inte_16 *_04_I16;
+		_P_ _08_inte_16 *_08_I16;
+		_P_ _16_inte_16 *_16_I16;
+		_P_ _02_inte_32 *_02_I32;
+		_P_ _04_inte_32 *_04_I32;
+		_P_ _08_inte_32 *_08_I32;
+		_P_ _16_inte_32 *_16_I32;
 #if(_ABLE_I64_)
-	_G_ _02_INTE_64 *_02_I64;
-	_G_ _04_INTE_64 *_04_I64;
-	_G_ _08_INTE_64 *_08_I64;
-	_G_ _16_INTE_64 *_16_I64;
+		_P_ _02_inte_64 *_02_I64;
+		_P_ _04_inte_64 *_04_I64;
+		_P_ _08_inte_64 *_08_I64;
+		_P_ _16_inte_64 *_16_I64;
 #endif
 #if(_ABLE_R16_)
-	_G_ _02_REAL_16 *_02_R16;
-	_G_ _04_REAL_16 *_04_R16;
-	_G_ _08_REAL_16 *_08_R16;
-	_G_ _16_REAL_16 *_16_R16;
+		_P_ _02_real_16 *_02_R16;
+		_P_ _04_real_16 *_04_R16;
+		_P_ _08_real_16 *_08_R16;
+		_P_ _16_real_16 *_16_R16;
 #endif
-	_G_ _02_REAL_32 *_02_R32;
-	_G_ _04_REAL_32 *_04_R32;
-	_G_ _08_REAL_32 *_08_R32;
-	_G_ _16_REAL_32 *_16_R32;
+		_P_ _02_real_32 *_02_R32;
+		_P_ _04_real_32 *_04_R32;
+		_P_ _08_real_32 *_08_R32;
+		_P_ _16_real_32 *_16_R32;
 #if(_ABLE_R64_)
-	_G_ _02_REAL_64 *_02_R64;
-	_G_ _04_REAL_64 *_04_R64;
-	_G_ _08_REAL_64 *_08_R64;
-	_G_ _16_REAL_64 *_16_R64;
+		_P_ _02_real_64 *_02_R64;
+		_P_ _04_real_64 *_04_R64;
+		_P_ _08_real_64 *_08_R64;
+		_P_ _16_real_64 *_16_R64;
 #endif
+	}
+	V;
+	union _p_ptr_c
+	{
+		_P_ GENERAL *G;
+		_P_ GENERAL **GG;
+		_P_ ADDRESS *AA;
+		_P_ DATA_08 *D08;
+		_P_ DATA_16 *D16;
+		_P_ DATA_32 *D32;
+#if(_ABLE_I64_)
+		_P_ DATA_64 *D64;
+#endif
+		_P_ INTE_08 *I08;
+		_P_ INTE_16 *I16;
+		_P_ INTE_32 *I32;
+#if(_ABLE_I64_)
+		_P_ INTE_64 *I64;
+#endif
+#if(_ABLE_R16_)
+		_P_ REAL_16 *R16;
+#endif
+		_P_ REAL_32 *R32;
+#if(_ABLE_R64_)
+		_P_ REAL_64 *R64;
+#endif
+		_P_ _02_DATA_08 *_02_D08;
+		_P_ _04_DATA_08 *_04_D08;
+		_P_ _08_DATA_08 *_08_D08;
+		_P_ _16_DATA_08 *_16_D08;
+		_P_ _02_DATA_16 *_02_D16;
+		_P_ _04_DATA_16 *_04_D16;
+		_P_ _08_DATA_16 *_08_D16;
+		_P_ _16_DATA_16 *_16_D16;
+		_P_ _02_DATA_32 *_02_D32;
+		_P_ _04_DATA_32 *_04_D32;
+		_P_ _08_DATA_32 *_08_D32;
+		_P_ _16_DATA_32 *_16_D32;
+#if(_ABLE_I64_)
+		_P_ _02_DATA_64 *_02_D64;
+		_P_ _04_DATA_64 *_04_D64;
+		_P_ _08_DATA_64 *_08_D64;
+		_P_ _16_DATA_64 *_16_D64;
+#endif
+		_P_ _02_INTE_08 *_02_I08;
+		_P_ _04_INTE_08 *_04_I08;
+		_P_ _08_INTE_08 *_08_I08;
+		_P_ _16_INTE_08 *_16_I08;
+		_P_ _02_INTE_16 *_02_I16;
+		_P_ _04_INTE_16 *_04_I16;
+		_P_ _08_INTE_16 *_08_I16;
+		_P_ _16_INTE_16 *_16_I16;
+		_P_ _02_INTE_32 *_02_I32;
+		_P_ _04_INTE_32 *_04_I32;
+		_P_ _08_INTE_32 *_08_I32;
+		_P_ _16_INTE_32 *_16_I32;
+#if(_ABLE_I64_)
+		_P_ _02_INTE_64 *_02_I64;
+		_P_ _04_INTE_64 *_04_I64;
+		_P_ _08_INTE_64 *_08_I64;
+		_P_ _16_INTE_64 *_16_I64;
+#endif
+#if(_ABLE_R16_)
+		_P_ _02_REAL_16 *_02_R16;
+		_P_ _04_REAL_16 *_04_R16;
+		_P_ _08_REAL_16 *_08_R16;
+		_P_ _16_REAL_16 *_16_R16;
+#endif
+		_P_ _02_REAL_32 *_02_R32;
+		_P_ _04_REAL_32 *_04_R32;
+		_P_ _08_REAL_32 *_08_R32;
+		_P_ _16_REAL_32 *_16_R32;
+#if(_ABLE_R64_)
+		_P_ _02_REAL_64 *_02_R64;
+		_P_ _04_REAL_64 *_04_R64;
+		_P_ _08_REAL_64 *_08_R64;
+		_P_ _16_REAL_64 *_16_R64;
+#endif
+	}
+	C;
 };
-typedef union _g_ptr_c g_ptr_c;
-typedef const union _g_ptr_c G_PTR_C;
-
-union _l_ptr_v
-{
-	_L_ general *G;
-	_L_ general **GG;
-	_L_ address *AA;
-	_L_ data_08 *D08;
-	_L_ data_16 *D16;
-	_L_ data_32 *D32;
-#if(_ABLE_I64_)
-	_L_ data_64 *D64;
+Type_Declare_(union,point_p,POINT_P);
 #endif
-	_L_ inte_08 *I08;
-	_L_ inte_16 *I16;
-	_L_ inte_32 *I32;
-#if(_ABLE_I64_)
-	_L_ inte_64 *I64;
-#endif
-#if(_ABLE_R16_)
-	_L_ real_16 *R16;
-#endif
-	_L_ real_32 *R32;
-#if(_ABLE_R64_)
-	_L_ real_64 *R64;
-#endif
-	_L_ _02_data_08 *_02_D08;
-	_L_ _04_data_08 *_04_D08;
-	_L_ _08_data_08 *_08_D08;
-	_L_ _16_data_08 *_16_D08;
-	_L_ _02_data_16 *_02_D16;
-	_L_ _04_data_16 *_04_D16;
-	_L_ _08_data_16 *_08_D16;
-	_L_ _16_data_16 *_16_D16;
-	_L_ _02_data_32 *_02_D32;
-	_L_ _04_data_32 *_04_D32;
-	_L_ _08_data_32 *_08_D32;
-	_L_ _16_data_32 *_16_D32;
-#if(_ABLE_I64_)
-	_L_ _02_data_64 *_02_D64;
-	_L_ _04_data_64 *_04_D64;
-	_L_ _08_data_64 *_08_D64;
-	_L_ _16_data_64 *_16_D64;
-#endif
-	_L_ _02_inte_08 *_02_I08;
-	_L_ _04_inte_08 *_04_I08;
-	_L_ _08_inte_08 *_08_I08;
-	_L_ _16_inte_08 *_16_I08;
-	_L_ _02_inte_16 *_02_I16;
-	_L_ _04_inte_16 *_04_I16;
-	_L_ _08_inte_16 *_08_I16;
-	_L_ _16_inte_16 *_16_I16;
-	_L_ _02_inte_32 *_02_I32;
-	_L_ _04_inte_32 *_04_I32;
-	_L_ _08_inte_32 *_08_I32;
-	_L_ _16_inte_32 *_16_I32;
-#if(_ABLE_I64_)
-	_L_ _02_inte_64 *_02_I64;
-	_L_ _04_inte_64 *_04_I64;
-	_L_ _08_inte_64 *_08_I64;
-	_L_ _16_inte_64 *_16_I64;
-#endif
-#if(_ABLE_R16_)
-	_L_ _02_real_16 *_02_R16;
-	_L_ _04_real_16 *_04_R16;
-	_L_ _08_real_16 *_08_R16;
-	_L_ _16_real_16 *_16_R16;
-#endif
-	_L_ _02_real_32 *_02_R32;
-	_L_ _04_real_32 *_04_R32;
-	_L_ _08_real_32 *_08_R32;
-	_L_ _16_real_32 *_16_R32;
-#if(_ABLE_R64_)
-	_L_ _02_real_64 *_02_R64;
-	_L_ _04_real_64 *_04_R64;
-	_L_ _08_real_64 *_08_R64;
-	_L_ _16_real_64 *_16_R64;
-#endif
-};
-typedef union _l_ptr_v l_ptr_v;
-typedef const union _l_ptr_v L_PTR_V;
-
-union _l_ptr_c
-{
-	_L_ GENERAL *G;
-	_L_ GENERAL **GG;
-	_L_ ADDRESS *AA;
-	_L_ DATA_08 *D08;
-	_L_ DATA_16 *D16;
-	_L_ DATA_32 *D32;
-#if(_ABLE_I64_)
-	_L_ DATA_64 *D64;
-#endif
-	_L_ INTE_08 *I08;
-	_L_ INTE_16 *I16;
-	_L_ INTE_32 *I32;
-#if(_ABLE_I64_)
-	_L_ INTE_64 *I64;
-#endif
-#if(_ABLE_R16_)
-	_L_ REAL_16 *R16;
-#endif
-	_L_ REAL_32 *R32;
-#if(_ABLE_R64_)
-	_L_ REAL_64 *R64;
-#endif
-	_L_ _02_DATA_08 *_02_D08;
-	_L_ _04_DATA_08 *_04_D08;
-	_L_ _08_DATA_08 *_08_D08;
-	_L_ _16_DATA_08 *_16_D08;
-	_L_ _02_DATA_16 *_02_D16;
-	_L_ _04_DATA_16 *_04_D16;
-	_L_ _08_DATA_16 *_08_D16;
-	_L_ _16_DATA_16 *_16_D16;
-	_L_ _02_DATA_32 *_02_D32;
-	_L_ _04_DATA_32 *_04_D32;
-	_L_ _08_DATA_32 *_08_D32;
-	_L_ _16_DATA_32 *_16_D32;
-#if(_ABLE_I64_)
-	_L_ _02_DATA_64 *_02_D64;
-	_L_ _04_DATA_64 *_04_D64;
-	_L_ _08_DATA_64 *_08_D64;
-	_L_ _16_DATA_64 *_16_D64;
-#endif
-	_L_ _02_INTE_08 *_02_I08;
-	_L_ _04_INTE_08 *_04_I08;
-	_L_ _08_INTE_08 *_08_I08;
-	_L_ _16_INTE_08 *_16_I08;
-	_L_ _02_INTE_16 *_02_I16;
-	_L_ _04_INTE_16 *_04_I16;
-	_L_ _08_INTE_16 *_08_I16;
-	_L_ _16_INTE_16 *_16_I16;
-	_L_ _02_INTE_32 *_02_I32;
-	_L_ _04_INTE_32 *_04_I32;
-	_L_ _08_INTE_32 *_08_I32;
-	_L_ _16_INTE_32 *_16_I32;
-#if(_ABLE_I64_)
-	_L_ _02_INTE_64 *_02_I64;
-	_L_ _04_INTE_64 *_04_I64;
-	_L_ _08_INTE_64 *_08_I64;
-	_L_ _16_INTE_64 *_16_I64;
-#endif
-#if(_ABLE_R16_)
-	_L_ _02_REAL_16 *_02_R16;
-	_L_ _04_REAL_16 *_04_R16;
-	_L_ _08_REAL_16 *_08_R16;
-	_L_ _16_REAL_16 *_16_R16;
-#endif
-	_L_ _02_REAL_32 *_02_R32;
-	_L_ _04_REAL_32 *_04_R32;
-	_L_ _08_REAL_32 *_08_R32;
-	_L_ _16_REAL_32 *_16_R32;
-#if(_ABLE_R64_)
-	_L_ _02_REAL_64 *_02_R64;
-	_L_ _04_REAL_64 *_04_R64;
-	_L_ _08_REAL_64 *_08_R64;
-	_L_ _16_REAL_64 *_16_R64;
-#endif
-};
-typedef union _l_ptr_c l_ptr_c;
-typedef const union _l_ptr_c L_PTR_C;
-
-union _p_ptr_v
-{
-	_P_ general *G;
-	_P_ general **GG;
-	_P_ address *AA;
-	_P_ data_08 *D08;
-	_P_ data_16 *D16;
-	_P_ data_32 *D32;
-#if(_ABLE_I64_)
-	_P_ data_64 *D64;
-#endif
-	_P_ inte_08 *I08;
-	_P_ inte_16 *I16;
-	_P_ inte_32 *I32;
-#if(_ABLE_I64_)
-	_P_ inte_64 *I64;
-#endif
-#if(_ABLE_R16_)
-	_P_ real_16 *R16;
-#endif
-	_P_ real_32 *R32;
-#if(_ABLE_R64_)
-	_P_ real_64 *R64;
-#endif
-	_P_ _02_data_08 *_02_D08;
-	_P_ _04_data_08 *_04_D08;
-	_P_ _08_data_08 *_08_D08;
-	_P_ _16_data_08 *_16_D08;
-	_P_ _02_data_16 *_02_D16;
-	_P_ _04_data_16 *_04_D16;
-	_P_ _08_data_16 *_08_D16;
-	_P_ _16_data_16 *_16_D16;
-	_P_ _02_data_32 *_02_D32;
-	_P_ _04_data_32 *_04_D32;
-	_P_ _08_data_32 *_08_D32;
-	_P_ _16_data_32 *_16_D32;
-#if(_ABLE_I64_)
-	_P_ _02_data_64 *_02_D64;
-	_P_ _04_data_64 *_04_D64;
-	_P_ _08_data_64 *_08_D64;
-	_P_ _16_data_64 *_16_D64;
-#endif
-	_P_ _02_inte_08 *_02_I08;
-	_P_ _04_inte_08 *_04_I08;
-	_P_ _08_inte_08 *_08_I08;
-	_P_ _16_inte_08 *_16_I08;
-	_P_ _02_inte_16 *_02_I16;
-	_P_ _04_inte_16 *_04_I16;
-	_P_ _08_inte_16 *_08_I16;
-	_P_ _16_inte_16 *_16_I16;
-	_P_ _02_inte_32 *_02_I32;
-	_P_ _04_inte_32 *_04_I32;
-	_P_ _08_inte_32 *_08_I32;
-	_P_ _16_inte_32 *_16_I32;
-#if(_ABLE_I64_)
-	_P_ _02_inte_64 *_02_I64;
-	_P_ _04_inte_64 *_04_I64;
-	_P_ _08_inte_64 *_08_I64;
-	_P_ _16_inte_64 *_16_I64;
-#endif
-#if(_ABLE_R16_)
-	_P_ _02_real_16 *_02_R16;
-	_P_ _04_real_16 *_04_R16;
-	_P_ _08_real_16 *_08_R16;
-	_P_ _16_real_16 *_16_R16;
-#endif
-	_P_ _02_real_32 *_02_R32;
-	_P_ _04_real_32 *_04_R32;
-	_P_ _08_real_32 *_08_R32;
-	_P_ _16_real_32 *_16_R32;
-#if(_ABLE_R64_)
-	_P_ _02_real_64 *_02_R64;
-	_P_ _04_real_64 *_04_R64;
-	_P_ _08_real_64 *_08_R64;
-	_P_ _16_real_64 *_16_R64;
-#endif
-};
-typedef union _p_ptr_v p_ptr_v;
-typedef const union _p_ptr_v P_PTR_V;
-
-union _p_ptr_c
-{
-	_P_ GENERAL *G;
-	_P_ GENERAL **GG;
-	_P_ ADDRESS *AA;
-	_P_ DATA_08 *D08;
-	_P_ DATA_16 *D16;
-	_P_ DATA_32 *D32;
-#if(_ABLE_I64_)
-	_P_ DATA_64 *D64;
-#endif
-	_P_ INTE_08 *I08;
-	_P_ INTE_16 *I16;
-	_P_ INTE_32 *I32;
-#if(_ABLE_I64_)
-	_P_ INTE_64 *I64;
-#endif
-#if(_ABLE_R16_)
-	_P_ REAL_16 *R16;
-#endif
-	_P_ REAL_32 *R32;
-#if(_ABLE_R64_)
-	_P_ REAL_64 *R64;
-#endif
-	_P_ _02_DATA_08 *_02_D08;
-	_P_ _04_DATA_08 *_04_D08;
-	_P_ _08_DATA_08 *_08_D08;
-	_P_ _16_DATA_08 *_16_D08;
-	_P_ _02_DATA_16 *_02_D16;
-	_P_ _04_DATA_16 *_04_D16;
-	_P_ _08_DATA_16 *_08_D16;
-	_P_ _16_DATA_16 *_16_D16;
-	_P_ _02_DATA_32 *_02_D32;
-	_P_ _04_DATA_32 *_04_D32;
-	_P_ _08_DATA_32 *_08_D32;
-	_P_ _16_DATA_32 *_16_D32;
-#if(_ABLE_I64_)
-	_P_ _02_DATA_64 *_02_D64;
-	_P_ _04_DATA_64 *_04_D64;
-	_P_ _08_DATA_64 *_08_D64;
-	_P_ _16_DATA_64 *_16_D64;
-#endif
-	_P_ _02_INTE_08 *_02_I08;
-	_P_ _04_INTE_08 *_04_I08;
-	_P_ _08_INTE_08 *_08_I08;
-	_P_ _16_INTE_08 *_16_I08;
-	_P_ _02_INTE_16 *_02_I16;
-	_P_ _04_INTE_16 *_04_I16;
-	_P_ _08_INTE_16 *_08_I16;
-	_P_ _16_INTE_16 *_16_I16;
-	_P_ _02_INTE_32 *_02_I32;
-	_P_ _04_INTE_32 *_04_I32;
-	_P_ _08_INTE_32 *_08_I32;
-	_P_ _16_INTE_32 *_16_I32;
-#if(_ABLE_I64_)
-	_P_ _02_INTE_64 *_02_I64;
-	_P_ _04_INTE_64 *_04_I64;
-	_P_ _08_INTE_64 *_08_I64;
-	_P_ _16_INTE_64 *_16_I64;
-#endif
-#if(_ABLE_R16_)
-	_P_ _02_REAL_16 *_02_R16;
-	_P_ _04_REAL_16 *_04_R16;
-	_P_ _08_REAL_16 *_08_R16;
-	_P_ _16_REAL_16 *_16_R16;
-#endif
-	_P_ _02_REAL_32 *_02_R32;
-	_P_ _04_REAL_32 *_04_R32;
-	_P_ _08_REAL_32 *_08_R32;
-	_P_ _16_REAL_32 *_16_R32;
-#if(_ABLE_R64_)
-	_P_ _02_REAL_64 *_02_R64;
-	_P_ _04_REAL_64 *_04_R64;
-	_P_ _08_REAL_64 *_08_R64;
-	_P_ _16_REAL_64 *_16_R64;
-#endif
-};
-typedef union _p_ptr_c p_ptr_c;
-typedef const union _p_ptr_c P_PTR_C;
 #endif
