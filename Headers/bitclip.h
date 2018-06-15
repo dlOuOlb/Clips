@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.15	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -935,9 +935,11 @@ general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ C,REAL_64 *MemC_Rst_ A,REAL_64 *MemC
 #ifdef __OPENCL_H
 //BitC_CL : Kernel Manager Set Memory Allocation - Deallocate with "BitC_CL_Delete_"
 bitc_cl *BitC_CL_Create_(general);
-//BitC_CL : Activation Check for the Specified Kernel before "BitC_CL_Launch_"
-//＊Return value is an error code.
-cl_int BitC_CL_Toggle_(BITC_CL _PL_ KernelManager,BITC_KI KernelIndicator);
+//BitC_CL : Kernel Activation Check Table
+//＊Example of checking the kernel "BitC_Endian_D16_" :
+//　BitC_CL_Choice_( KernelManager ) [ BitCEndianD16 ] = 1;
+//＊Do not access the returned table after "BitC_CL_Launch_"
+address *BitC_CL_Choice_(BITC_CL _PL_ KernelManager);
 //BitC_CL : OpenCL Program Build with Specified Kernels
 //＊Execute only one time.
 //＊Return value is an error code.
