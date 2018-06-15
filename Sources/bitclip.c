@@ -15,12 +15,17 @@
 #define _BitC_Kernel_Name_Length 24
 #endif
 #define _BitC_DT_Define_(IType,type,IFlag) MemC_DT_Define_(IdiomVersion,IType,IdiomTypeName[IType],IFlag,NULL,NULL,type)
-#define _BitC_DT_Flag_Real_(Bool) ((Bool)<<0)
-#define _BitC_DT_Flag_Sign_(Bool) ((Bool)<<1)
+#define _BitC_DT_Flag_Sign_(Bool) ((Bool)<<2)
+#define _BitC_DT_Flag_Real_(Bool) ((Bool)<<3)
+#define _BitC_DT_Flag_Bits_(Bits) _BitC_DT_Flag_Bits_##Bits##_
+#define _BitC_DT_Flag_Bits_08_ (0)
+#define _BitC_DT_Flag_Bits_16_ (1)
+#define _BitC_DT_Flag_Bits_32_ (2)
+#define _BitC_DT_Flag_Bits_64_ (3)
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.06.12";
+static DATA_08 IdiomVersion[16]="Date:2018.06.15";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -40,18 +45,18 @@ static INTE_08 IdiomTypeName[_BitC_Total_Types][_BitC_Type_Name_Length]=
 	"inte_08","inte_16","inte_32","inte_64",
 	"real_08","real_16","real_32","real_64",
 };
-static MEMC_DT TypeData08=_BitC_DT_Define_(BitCTypeD08,data_08,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeData16=_BitC_DT_Define_(BitCTypeD16,data_16,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeData32=_BitC_DT_Define_(BitCTypeD32,data_32,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeData64=_BitC_DT_Define_(BitCTypeD64,data_64,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeInte08=_BitC_DT_Define_(BitCTypeI08,inte_08,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeInte16=_BitC_DT_Define_(BitCTypeI16,inte_16,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeInte32=_BitC_DT_Define_(BitCTypeI32,inte_32,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeInte64=_BitC_DT_Define_(BitCTypeI64,inte_64,_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal08=_BitC_DT_Define_(BitCTypeR08,data_08,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal16=_BitC_DT_Define_(BitCTypeR16,data_16,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal32=_BitC_DT_Define_(BitCTypeR32,real_32,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal64=_BitC_DT_Define_(BitCTypeR64,real_64,_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeData08=_BitC_DT_Define_(BitCTypeD08,data_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeData16=_BitC_DT_Define_(BitCTypeD16,data_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeData32=_BitC_DT_Define_(BitCTypeD32,data_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeData64=_BitC_DT_Define_(BitCTypeD64,data_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
+static MEMC_DT TypeInte08=_BitC_DT_Define_(BitCTypeI08,inte_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeInte16=_BitC_DT_Define_(BitCTypeI16,inte_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeInte32=_BitC_DT_Define_(BitCTypeI32,inte_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeInte64=_BitC_DT_Define_(BitCTypeI64,inte_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal08=_BitC_DT_Define_(BitCTypeR08,data_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal16=_BitC_DT_Define_(BitCTypeR16,data_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal32=_BitC_DT_Define_(BitCTypeR32,real_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TypeReal64=_BitC_DT_Define_(BitCTypeR64,real_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
 #endif
 
 #ifdef __OPENCL_H
@@ -4621,32 +4626,19 @@ bitc_cl *BitC_CL_Create_(general)
 
 	return Manager;
 }
-cl_int BitC_CL_Toggle_(BITC_CL _PL_ Manager,BITC_KI Indicator)
+address *BitC_CL_Choice_(BITC_CL _PL_ Manager)
 {
-	cl_int Error;
+	address *Table;
 
 	if(Manager)
 		if(Manager->Helper)
-			Error=CL_INVALID_HOST_PTR;
+			Table=NULL;
 		else
-			if(Indicator<0)
-				Error=CL_INVALID_KERNEL_NAME;
-			else
-				if(Indicator<_BitC_Total_Kernels)
-				{
-					if(Manager->KMSet[Indicator])
-						((GENERAL**)(Manager->KMSet))[Indicator]=NULL;
-					else
-						((GENERAL**)(Manager->KMSet))[Indicator]=MemCrux;
-
-					Error=CL_SUCCESS;
-				}
-				else
-					Error=CL_INVALID_KERNEL_NAME;
+			Table=(address*)(Manager->KMSet);
 	else
-		Error=CL_INVALID_HOST_PTR;
+		Table=NULL;
 
-	return Error;
+	return Table;
 }
 cl_int BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ Option)
 {
@@ -4805,6 +4797,11 @@ cl_int BitC_CL_Action_(BITC_CL _PL_ Manager,BITC_KI Indicator)
 #endif
 
 #if(MemC_Fold_(Undefinition:Macros))
+#undef _BitC_DT_Flag_Bits_64_
+#undef _BitC_DT_Flag_Bits_32_
+#undef _BitC_DT_Flag_Bits_16_
+#undef _BitC_DT_Flag_Bits_08_
+#undef _BitC_DT_Flag_Bits_
 #undef _BitC_DT_Flag_Sign_
 #undef _BitC_DT_Flag_Real_
 #undef _BitC_DT_Define_
