@@ -25,7 +25,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.06.15";
+static DATA_08 IdiomVersion[16]="Date:2018.06.16";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -45,18 +45,27 @@ static INTE_08 IdiomTypeName[_BitC_Total_Types][_BitC_Type_Name_Length]=
 	"inte_08","inte_16","inte_32","inte_64",
 	"real_08","real_16","real_32","real_64",
 };
-static MEMC_DT TypeData08=_BitC_DT_Define_(BitCTypeD08,data_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeData16=_BitC_DT_Define_(BitCTypeD16,data_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeData32=_BitC_DT_Define_(BitCTypeD32,data_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeData64=_BitC_DT_Define_(BitCTypeD64,data_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0));
-static MEMC_DT TypeInte08=_BitC_DT_Define_(BitCTypeI08,inte_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeInte16=_BitC_DT_Define_(BitCTypeI16,inte_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeInte32=_BitC_DT_Define_(BitCTypeI32,inte_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeInte64=_BitC_DT_Define_(BitCTypeI64,inte_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal08=_BitC_DT_Define_(BitCTypeR08,data_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal16=_BitC_DT_Define_(BitCTypeR16,data_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal32=_BitC_DT_Define_(BitCTypeR32,real_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
-static MEMC_DT TypeReal64=_BitC_DT_Define_(BitCTypeR64,real_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1));
+static MEMC_DT TableType[_BitC_Total_Types]=
+{
+	_BitC_DT_Define_(BitCTypeD08,data_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0)),
+	_BitC_DT_Define_(BitCTypeD16,data_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0)),
+	_BitC_DT_Define_(BitCTypeD32,data_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0)),
+	_BitC_DT_Define_(BitCTypeD64,data_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0)),
+	_BitC_DT_Define_(BitCTypeI08,inte_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1)),
+	_BitC_DT_Define_(BitCTypeI16,inte_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1)),
+	_BitC_DT_Define_(BitCTypeI32,inte_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1)),
+	_BitC_DT_Define_(BitCTypeI64,inte_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(1)),
+	_BitC_DT_Define_(BitCTypeR08,data_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1)),
+	_BitC_DT_Define_(BitCTypeR16,data_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1)),
+	_BitC_DT_Define_(BitCTypeR32,real_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1)),
+	_BitC_DT_Define_(BitCTypeR64,real_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1))
+};
+static MEMC_DT _PL_ AddressType[_BitC_Total_Types]=
+{
+	TableType+BitCTypeD08,TableType+BitCTypeD16,TableType+BitCTypeD32,TableType+BitCTypeD64,
+	TableType+BitCTypeI08,TableType+BitCTypeI16,TableType+BitCTypeI32,TableType+BitCTypeI64,
+	TableType+BitCTypeR08,TableType+BitCTypeR16,TableType+BitCTypeR32,TableType+BitCTypeR64
+};
 #endif
 
 #ifdef __OPENCL_H
@@ -201,20 +210,7 @@ REAL_64 _PL_ BitCInvalid64=(real_64*)ConstantInvalid64;
 REAL_32 _PL_ BitCPi32=(real_32*)ConstantPi32;
 REAL_64 _PL_ BitCPi64=(real_64*)ConstantPi64;
 BOOLEAN _PL_ BitCBool=TableBool+2;
-#if(MemC_Fold_(Type Descriptors))
-MEMC_DT _PL_ BitCTypeData08=&TypeData08;
-MEMC_DT _PL_ BitCTypeData16=&TypeData16;
-MEMC_DT _PL_ BitCTypeData32=&TypeData32;
-MEMC_DT _PL_ BitCTypeData64=&TypeData64;
-MEMC_DT _PL_ BitCTypeInte08=&TypeInte08;
-MEMC_DT _PL_ BitCTypeInte16=&TypeInte16;
-MEMC_DT _PL_ BitCTypeInte32=&TypeInte32;
-MEMC_DT _PL_ BitCTypeInte64=&TypeInte64;
-MEMC_DT _PL_ BitCTypeReal08=&TypeReal08;
-MEMC_DT _PL_ BitCTypeReal16=&TypeReal16;
-MEMC_DT _PL_ BitCTypeReal32=&TypeReal32;
-MEMC_DT _PL_ BitCTypeReal64=&TypeReal64;
-#endif
+MEMC_DT _PL_ _PL_ BitCType=AddressType;
 #ifdef __OPENCL_H
 NAME_08 _PL_ _PL_ BitCFile=AddressFileName;
 NAME_08 _PL_ _PL_ BitCKernel=AddressKernelName;
@@ -4723,7 +4719,7 @@ general BitC_CL_Delete_(bitc_cl *_PL_ Manager)
 	}
 }
 
-cl_int BitC_CL_Worker_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indicator)
+cl_int BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indicator)
 {
 	cl_int Error;
 
@@ -4740,21 +4736,25 @@ cl_int BitC_CL_Worker_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indica
 							else
 							{
 								DEVI_KM _PL_ KM=Manager->KMSet[Indicator];
-								cl_uint Index=0;
 
-								Error=CL_SUCCESS;
-								while(Index<KM->KArgs)
 								{
-									Error=Devi_KM_Save_G_(KM,Index,Argument->Slot.P[Index]);
-									if(Error==CL_SUCCESS)
-										Index++;
-									else
-										break;
+									cl_uint Index=0;
+
+									Error=CL_SUCCESS;
+									while(Index<KM->KArgs)
+									{
+										Error=Devi_KM_Save_G_(KM,Index,Argument->Slot.P[Index]);
+										if(Error==CL_SUCCESS)
+											Index++;
+										else
+											break;
+									}
 								}
 								if(Error==CL_SUCCESS)
 								{
 									KM->WGroups[0]=Manager->Helper->Cores;
 									KM->WLocals[0]=Manager->Helper->SizeWorker[0];
+									Error=Devi_KM_Enqueue_(Manager->Helper->Queue,KM);
 								}
 							}
 						else
@@ -4763,29 +4763,6 @@ cl_int BitC_CL_Worker_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indica
 						Error=CL_INVALID_KERNEL_NAME;
 			else
 				Error=CL_INVALID_HOST_PTR;
-		else
-			Error=CL_INVALID_HOST_PTR;
-	else
-		Error=CL_INVALID_HOST_PTR;
-
-	return Error;
-}
-cl_int BitC_CL_Action_(BITC_CL _PL_ Manager,BITC_KI Indicator)
-{
-	cl_int Error;
-
-	if(Manager)
-		if(Manager->Helper)
-			if(Indicator<0)
-				Error=CL_INVALID_KERNEL_NAME;
-			else
-				if(Indicator<_BitC_Total_Kernels)
-					if(Manager->KMSet[Indicator])
-						Error=Devi_KM_Enqueue_(Manager->Helper->Queue,Manager->KMSet[Indicator]);
-					else
-						Error=CL_INVALID_KERNEL_NAME;
-				else
-					Error=CL_INVALID_KERNEL_NAME;
 		else
 			Error=CL_INVALID_HOST_PTR;
 	else
