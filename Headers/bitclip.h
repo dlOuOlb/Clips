@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.15	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.16	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -437,21 +437,10 @@ extern REAL_64 _PL_ BitCPi64;
 //　[0] : 0
 //　[1] : ~0
 extern BOOLEAN _PL_ BitCBool;
+//BitClip : Type Descriptor Set
+//＊Access with BitCTypeT##
+extern MEMC_DT _PL_ _PL_ BitCType;
 
-#if(MemC_Fold_(Type Descriptors))
-extern MEMC_DT _PL_ BitCTypeData08;	//BitClip : Type Descriptor (D08)
-extern MEMC_DT _PL_ BitCTypeData16;	//BitClip : Type Descriptor (D16)
-extern MEMC_DT _PL_ BitCTypeData32;	//BitClip : Type Descriptor (D32)
-extern MEMC_DT _PL_ BitCTypeData64;	//BitClip : Type Descriptor (D64)
-extern MEMC_DT _PL_ BitCTypeInte08;	//BitClip : Type Descriptor (I08)
-extern MEMC_DT _PL_ BitCTypeInte16;	//BitClip : Type Descriptor (I16)
-extern MEMC_DT _PL_ BitCTypeInte32;	//BitClip : Type Descriptor (I32)
-extern MEMC_DT _PL_ BitCTypeInte64;	//BitClip : Type Descriptor (I64)
-extern MEMC_DT _PL_ BitCTypeReal08;	//BitClip : Type Descriptor (R08) (Not Available)
-extern MEMC_DT _PL_ BitCTypeReal16;	//BitClip : Type Descriptor (R16) (Special Device Only)
-extern MEMC_DT _PL_ BitCTypeReal32;	//BitClip : Type Descriptor (R32)
-extern MEMC_DT _PL_ BitCTypeReal64;	//BitClip : Type Descriptor (R64)
-#endif
 #ifdef __OPENCL_H
 //BitC_CL : OpenCL Source File Name Set
 //＊[0] : "ouoclip.cl"
@@ -947,15 +936,12 @@ cl_int BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ KernelManager,N
 //BitC_CL : Kernel Manager Set Memory Deallocation
 general BitC_CL_Delete_(bitc_cl *_PL_ KernelManager);
 
-//BitC_CL : Setting Kernel Manager's Local Workers and Work Groups
+//BitC_CL : Kernel Manager Task Enqueueing
 //＊Example for KernelIndicator : BitCEndianD16
 //　KernelArgument -> Slot.P[0] : &(cl_mem)(Data)
 //　KernelArgument -> Slot.P[1] : &(data_32)(Length)
 //＊Return value is an error code.
-cl_int BitC_CL_Worker_(BITC_CL _PL_ KernelManager,MEMC_MS _PL_ KernelArgument,BITC_KI KernelIndicator);
-//BitC_CL : Task Enqueueing
-//＊Return value is an error code.
-cl_int BitC_CL_Action_(BITC_CL _PL_ KernelManager,BITC_KI KernelIndicator);
+cl_int BitC_CL_Action_(BITC_CL _PL_ KernelManager,MEMC_MS _PL_ KernelArgument,BITC_KI KernelIndicator);
 #endif
 #endif
 #endif
