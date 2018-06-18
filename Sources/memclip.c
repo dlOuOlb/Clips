@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.06.11";
+static const char IdiomVersion[16]="Date:2018.06.18";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -260,12 +260,12 @@ errno_t _Line_Init_(void _PL_ Memory,const void _PL_ Tile,const size_t NumberEle
 		char *Ptr=(char*)Memory;
 		size_t Copy=SizeElement;
 
-		ErrorCode=Line_Copy_(Tile,Ptr,Copy,char);
+		ErrorCode=Byte_Copy_(Tile,Ptr,Copy);
 		if(!ErrorCode)
 		{
 			for(Ptr+=Copy;Ptr<End;Copy<<=1)
 			{
-				ErrorCode=Line_Copy_(Memory,Ptr,Copy,char);
+				ErrorCode=Byte_Copy_(Memory,Ptr,Copy);
 				if(ErrorCode)
 					break;
 				else
@@ -275,7 +275,7 @@ errno_t _Line_Init_(void _PL_ Memory,const void _PL_ Tile,const size_t NumberEle
 			{
 				Copy=Safe^NumberElement;
 				Copy*=SizeElement;
-				ErrorCode=Line_Copy_(Memory,Ptr,Copy,char);
+				ErrorCode=Byte_Copy_(Memory,Ptr,Copy);
 			}
 		}
 	}
@@ -1046,17 +1046,19 @@ static void _Devi_Work_Global_(size_t *MemC_Rst_ GlobalWorkers,const size_t *Mem
 }
 cl_int Devi_Kenq_(cl_command_queue const Queue,cl_kernel const Kernel,const size_t _PL_ WorkGroups,const size_t _PL_ LocalWorkers,const size_t _PL_ GlobalOffset,const cl_uint Dimensions)
 {
-	cl_int ErrorCode=CL_INVALID_WORK_DIMENSION;
+	cl_int Error;
 
-	if(Dimensions<=Devi_Copy_Max_Dimension)
+	if(Dimensions>Devi_Copy_Max_Dimension)
+		Error=CL_INVALID_WORK_DIMENSION;
+	else
 	{
 		size_t Total[Devi_Copy_Max_Dimension];
 
 		_Devi_Work_Global_(Total,WorkGroups,LocalWorkers,Dimensions);
-		ErrorCode=clEnqueueNDRangeKernel(Queue,Kernel,Dimensions,GlobalOffset,Total,LocalWorkers,0,NULL,NULL);
+		Error=clEnqueueNDRangeKernel(Queue,Kernel,Dimensions,GlobalOffset,Total,LocalWorkers,0,NULL,NULL);
 	}
 
-	return ErrorCode;
+	return Error;
 }
 
 static cl_platform_id *_Devi_QC_Alloc_List_Platform_(cl_uint _PL_ Platforms)
@@ -1156,267 +1158,283 @@ void Devi_QC_Delete_(devi_qc *_PL_ QC)
 	}
 }
 
-devi_km *Devi_KM_Create_(cl_kernel const Kernel,const cl_uint Args,const cl_uint Dims)
+devi_km *Devi_KM_Create_(const void _PL_ ID,const size_t Args,const size_t Dims)
 {
 	devi_km *KM;
 
-	if(Dims)
-		if(Dims<=Devi_Copy_Max_Dimension)
-		{
-			cl_uint Number;
-
-			if(Devi_Info_Kernel_(Kernel,&Number,1,cl_uint,CL_KERNEL_NUM_ARGS)==CL_SUCCESS)
-				if(Number==Args)
-				{
-					KM=Unit_Alloc_(devi_km);
-					if(KM)
-						if(Args)
-						{
-							const size_t StringLength=Args+1;
-
-							MemC_Acs_(char*,KM->Flag)=Line_Alloc_(StringLength,char);
-							if(KM->Flag)
-							{
-								const size_t Bulk=(Args+Dims)<<2;
-
-								MemC_Acs_(size_t*,KM->WLocals)=Line_Alloc_(Bulk,size_t);
-								if(KM->WLocals)
-								{
-									MemC_Acs_(cl_kernel,KM->Kernel)=Kernel;
-									Line_Clear_((char*)(KM->Flag),StringLength,char);
-									MemC_Acs_(void*,KM->Memory)=NULL;
-
-									MemC_Acs_(size_t*,KM->WGroups)=Line_Clear_(KM->WLocals,Bulk,size_t)+Dims;
-									MemC_Acs_(size_t*,KM->WOffset)=KM->WGroups+Dims;
-									MemC_Acs_(size_t*,KM->WLength)=KM->WOffset+Dims;
-
-									MemC_Acs_(size_t*,KM->TypeSize)=KM->WLength+Dims;
-									MemC_Acs_(size_t*,KM->Elements)=(size_t*)(KM->TypeSize+Args);
-									MemC_Acs_(size_t*,KM->ArgSize)=(size_t*)(KM->Elements+Args);
-									MemC_Acs_(void**,KM->ArgAddress)=(void**)(KM->ArgSize+Args);
-
-									MemC_Acs_(cl_uint,KM->KArgs)=Args;
-									MemC_Acs_(cl_uint,KM->WDims)=Dims;
-								}
-								else
-								{
-									MemC_Deloc_(MemC_Acs_(char*,KM->Flag));
-									MemC_Deloc_(KM);
-								}
-							}
-							else
-								MemC_Deloc_(KM);
-						}
-						else
-						{
-							const size_t Bulk=Dims<<2;
-
-							MemC_Acs_(size_t*,KM->WLocals)=Line_Alloc_(Bulk,size_t);
-							if(KM->WLocals)
-							{
-								MemC_Acs_(cl_kernel,KM->Kernel)=Kernel;
-								MemC_Acs_(char*,KM->Flag)=(char*)&(KM->KArgs);
-								MemC_Acs_(void*,KM->Memory)=NULL;
-
-								MemC_Acs_(size_t*,KM->WGroups)=Line_Clear_(KM->WLocals,Bulk,size_t)+Dims;
-								MemC_Acs_(size_t*,KM->WOffset)=KM->WGroups+Dims;
-								MemC_Acs_(size_t*,KM->WLength)=KM->WOffset+Dims;
-
-								MemC_Acs_(size_t*,KM->TypeSize)=NULL;
-								MemC_Acs_(size_t*,KM->Elements)=NULL;
-								MemC_Acs_(size_t*,KM->ArgSize)=NULL;
-								MemC_Acs_(void**,KM->ArgAddress)=NULL;
-
-								MemC_Acs_(cl_uint,KM->KArgs)=0;
-								MemC_Acs_(cl_uint,KM->WDims)=Dims;
-							}
-							else
-								MemC_Deloc_(KM);
-						}
-				}
-				else
-					KM=NULL;
-			else
-				KM=NULL;
-		}
-		else
-			KM=NULL;
-	else
+	if(Dims>Devi_Copy_Max_Dimension)
+	{
+ESCAPE:
 		KM=NULL;
+	}
+	else
+	{
+		size_t Temp[2];
+
+		Temp[0]=_MemC_Overflow_Mul_(Dims,sizeof(size_t)<<2);
+		if(!(Temp[0]))
+			goto ESCAPE;
+
+		Temp[1]=_MemC_Overflow_Mul_(Args,sizeof(size_t)<<1);
+		if(!(Temp[1]))
+			goto ESCAPE;
+
+		Temp[0]=_MemC_Overflow_Add_(Temp[0],Temp[1]);
+		if(!(Temp[0]))
+			goto ESCAPE;
+
+		Temp[1]=_MemC_Overflow_Mul_(Args,sizeof(devi_df));
+		if(!(Temp[1]))
+			goto ESCAPE;
+
+		Temp[0]=_MemC_Overflow_Add_(Temp[0],Temp[1]);
+		if(!(Temp[0]))
+			goto ESCAPE;
+
+		Temp[0]=_MemC_Overflow_Add_(Temp[0],sizeof(devi_km));
+		KM=Byte_Alloc_(Temp[0]);
+	}
+	if(KM)
+	{
+		MemC_Acs_(const void*,KM->ID)=ID;
+		MemC_Acs_(size_t,KM->KArgs)=Args;
+		MemC_Acs_(size_t,KM->WDims)=Dims;
+		MemC_Acs_(cl_kernel,KM->Kernel)=NULL;
+
+		MemC_Acs_(const size_t*,KM->ArgSize)=Line_Clear_(KM+1,Args<<1,size_t);
+		MemC_Acs_(const size_t*,KM->ArgAccess.V)=KM->ArgSize+Args;
+
+		MemC_Acs_(size_t*,KM->WLocals)=Line_Clear_((size_t*)(KM->ArgAccess.V+Args),Dims<<2,size_t);
+		MemC_Acs_(size_t*,KM->WGroups)=KM->WLocals+Dims;
+		MemC_Acs_(size_t*,KM->WOffset)=KM->WGroups+Dims;
+		MemC_Acs_(size_t*,KM->WLength)=KM->WOffset+Dims;
+
+		MemC_Acs_(devi_df*,KM->ArgFlag)=Line_Clear_((devi_df*)(KM->WLength+Dims),Args,devi_df);
+		MemC_Acs_(void*,KM->ArgMemory)=NULL;
+	}
 
 	return KM;
+}
+cl_int _Devi_KM_Type_(DEVI_KM _PL_ KM,const size_t Order,const size_t ArgSize,DEVI_DF Domain)
+{
+	cl_int Error;
+
+	if(KM)
+		if(KM->ArgMemory)
+			Error=CL_INVALID_HOST_PTR;
+		else
+			if(Order<KM->KArgs)
+			{
+				switch(Domain)
+				{
+				case DeviDomainConstant:
+				case DeviDomainGlobal:
+					((size_t*)(KM->ArgSize))[Order]=sizeof(cl_mem);
+					break;
+				case DeviDomainLocal:
+				case DeviDomainPrivate:
+					((size_t*)(KM->ArgSize))[Order]=ArgSize;
+					break;
+				default:
+					Error=CL_INVALID_ARG_VALUE;
+					goto ESCAPE;
+				}
+				{
+					((devi_df*)(KM->ArgFlag))[Order]=Domain;
+					Error=CL_SUCCESS;
+				}
+			}
+			else
+				Error=CL_INVALID_ARG_INDEX;
+	else
+		Error=CL_INVALID_HOST_PTR;
+ESCAPE:
+	return Error;
+}
+cl_int Devi_KM_Init_(devi_km _PL_ KM,cl_kernel const Kernel)
+{
+	cl_int Error;
+
+	if(KM)
+		if(KM->ArgMemory)
+			Error=CL_INVALID_HOST_PTR;
+		else
+		{
+			cl_uint Args;
+
+			Error=Devi_Info_Kernel_(Kernel,&Args,1,cl_uint,CL_KERNEL_NUM_ARGS);
+			if(Error==CL_SUCCESS)
+				if(((size_t)Args)==KM->KArgs)
+				{
+					DEVI_DF _PL_ End=KM->ArgFlag+KM->KArgs;
+					DEVI_DF *MemC_Rst_ PtrF;
+					const size_t *MemC_Rst_ PtrS;
+					size_t Total=0;
+
+					for(PtrF=KM->ArgFlag,PtrS=KM->ArgSize;PtrF<End;PtrF++,PtrS++)
+						switch(*PtrF)
+						{
+						case DeviDomainConstant:
+						case DeviDomainGlobal:
+							if((*PtrS)==sizeof(cl_mem))
+							{
+								Total=_MemC_Overflow_Add_(Total,*PtrS);
+								if(Total)
+									break;
+								else
+									goto ESCAPE_INVALID_ARG_SIZE;
+							}
+							else
+								goto ESCAPE_INVALID_ARG_SIZE;
+						case DeviDomainLocal:
+							if(*PtrS)
+								break;
+							else
+								goto ESCAPE_INVALID_ARG_SIZE;
+						case DeviDomainPrivate:
+							if(*PtrS)
+							{
+								Total=_MemC_Overflow_Add_(Total,*PtrS);
+								if(Total)
+									break;
+								else
+									goto ESCAPE_INVALID_ARG_SIZE;
+							}
+							else
+								goto ESCAPE_INVALID_ARG_SIZE;
+						default:
+							Error=CL_INVALID_KERNEL_DEFINITION;
+							goto ESCAPE;
+						}
+
+					if(Total)
+						MemC_Acs_(void*,KM->ArgMemory)=Byte_Alloc_(Total);
+					else
+					{
+ESCAPE_INVALID_ARG_SIZE:
+						Error=CL_INVALID_ARG_SIZE;
+						goto ESCAPE;
+					}
+
+					if(KM->ArgMemory)
+					{
+						void **PtrA=(void**)(KM->ArgAccess.P);
+
+						{
+							PtrF=KM->ArgFlag;
+							PtrS=KM->ArgSize;
+							PtrA[0]=Byte_Clear_((void*)(KM->ArgMemory),Total);
+						}
+						for(PtrF++,PtrS++,PtrA++;PtrF<End;PtrF++,PtrS++,PtrA++)
+							if(PtrF[-1]==DeviDomainLocal)
+							{
+								PtrA[0]=PtrA[-1];
+								PtrA[-1]=NULL;
+							}
+							else
+								PtrA[0]=((char*)(PtrA[-1]))+PtrS[-1];
+						if(PtrF[-1]==DeviDomainLocal)
+							PtrA[-1]=NULL;
+					}
+					else
+						Error=CL_OUT_OF_HOST_MEMORY;
+				}
+				else
+					Error=CL_INVALID_KERNEL_ARGS;
+		}
+	else
+		Error=CL_INVALID_HOST_PTR;
+ESCAPE:
+	return Error;
 }
 void Devi_KM_Delete_(devi_km *_PL_ KM)
 {
 	if(*KM)
 	{
-		if((*KM)->KArgs)
-		{
-			MemC_Deloc_(MemC_Acs_(void*,(*KM)->Memory));
-			MemC_Deloc_(MemC_Acs_(char*,(*KM)->Flag));
-		}
-		{
-			MemC_Deloc_(MemC_Acs_(size_t*,(*KM)->WLocals));
-			MemC_Deloc_(*KM);
-		}
+		MemC_Deloc_(MemC_Acs_(void*,(*KM)->ArgMemory));
+		MemC_Deloc_(*KM);
 	}
 }
 
-cl_int _Devi_KM_Type_(DEVI_KM _PL_ KM,const cl_uint Order,const size_t TypeSize,const int Mode)
+cl_int Devi_KM_Save_(DEVI_KM _PL_ KM,const size_t Order,const size_t Thing)
 {
-	cl_int ErrorCode;
+	cl_int Error;
 
 	if(KM)
-		if(KM->Memory)
-			ErrorCode=CL_INVALID_HOST_PTR;
-		else
+		if(KM->ArgMemory)
 			if(Order<KM->KArgs)
-			{
-				((char*)(KM->Flag))[Order]=ConstantArgType[Mode&1];
-				((size_t*)(KM->TypeSize))[Order]=TypeSize;
-
-				ErrorCode=CL_SUCCESS;
-			}
-			else
-				ErrorCode=CL_INVALID_ARG_INDEX;
-	else
-		ErrorCode=CL_INVALID_HOST_PTR;
-
-	return ErrorCode;
-}
-cl_int Devi_KM_Init_(devi_km _PL_ KM)
-{
-	cl_int ErrorCode;
-
-	if(KM)
-		if(KM->KArgs)
-			if(KM->Memory)
-				ErrorCode=CL_INVALID_HOST_PTR;
-			else
-			{
-				const char *PointerF=KM->Flag;
-				const size_t *PointerS=KM->TypeSize;
-				size_t SizeTotal=0;
-
+				switch(KM->ArgFlag[Order])
 				{
-					const char _PL_ End=KM->Flag+KM->KArgs;
+				case DeviDomainConstant:
+				case DeviDomainGlobal:
+					*((void**)(KM->ArgAccess.P[Order]))=*((void**)Thing);
 
-					for(ErrorCode=CL_SUCCESS;PointerF<End;PointerF++,PointerS++)
-						switch(PointerF[0])
-						{
-						case 'G':
-							SizeTotal+=PointerS[0];
-							break;
-						case 'L':
-							break;
-						default:
-							ErrorCode=CL_INVALID_VALUE;
-							goto ESCAPE;
-						}
-				}
-ESCAPE:
-				if(ErrorCode==CL_SUCCESS)
-				{
-					MemC_Acs_(void*,KM->Memory)=Byte_Alloc_(SizeTotal);
-					if(KM->Memory)
-					{
-						const void _PL_ _PL_ End=KM->ArgAddress+(KM->KArgs-1);
-						const void **PointerA=(void**)(KM->ArgAddress);
+					Error=CL_SUCCESS;
+					break;
+				case DeviDomainLocal:
+					((size_t*)(KM->ArgAccess.V))[Order]=Thing;
 
-						for(PointerA[0]=Line_Clear_((void*)(KM->Memory),SizeTotal,char),PointerS=KM->TypeSize,PointerF=KM->Flag;PointerA<End;PointerA++,PointerS++,PointerF++)
-							if(PointerF[0]==ConstantArgType[0])
-								PointerA[1]=((char**)PointerA)[0]+PointerS[0];
-							else
-							{
-								PointerA[1]=PointerA[0];
-								PointerA[0]=NULL;
-							}
-						if(PointerF[0]==ConstantArgType[1])
-							PointerA[0]=NULL;
-					}
+					Error=CL_SUCCESS;
+					break;
+				case DeviDomainPrivate:
+					if(Byte_Copy_((void*)Thing,(void*)(KM->ArgAccess.P[Order]),KM->ArgSize[Order]))
+						Error=CL_INVALID_ARG_VALUE;
 					else
-						ErrorCode=CL_OUT_OF_HOST_MEMORY;
+						Error=CL_SUCCESS;
+					break;
+				default:
+					Error=CL_INVALID_ARG_VALUE;
 				}
-			}
-		else
-			ErrorCode=CL_SUCCESS;
-	else
-		ErrorCode=CL_INVALID_HOST_PTR;
-
-	return ErrorCode;
-}
-
-cl_int Devi_KM_Save_G_(DEVI_KM _PL_ KM,const cl_uint Order,const void _PL_ Value)
-{
-	cl_int ErrorCode;
-
-	if(KM)
-		if(KM->Memory)
-			if(Order<KM->KArgs)
-			{
-				((size_t*)(KM->ArgSize))[Order]=KM->TypeSize[Order];
-				Line_Copy_(Value,((void**)(KM->ArgAddress))[Order],KM->TypeSize[Order],char);
-
-				ErrorCode=CL_SUCCESS;
-			}
 			else
-				ErrorCode=CL_INVALID_VALUE;
+				Error=CL_INVALID_ARG_INDEX;
 		else
-			ErrorCode=CL_INVALID_HOST_PTR;
+			Error=CL_INVALID_HOST_PTR;
 	else
-		ErrorCode=CL_INVALID_HOST_PTR;
+		Error=CL_INVALID_HOST_PTR;
 
-	return ErrorCode;
-}
-cl_int Devi_KM_Save_L_(DEVI_KM _PL_ KM,const cl_uint Order,const size_t Elements)
-{
-	cl_int ErrorCode;
-
-	if(KM)
-		if(KM->Memory)
-			if(Order<KM->KArgs)
-			{
-				((size_t*)(KM->ArgSize))[Order]=KM->TypeSize[Order]*Elements;
-				MemC_Acs_(void**,KM->ArgAddress)[Order]=NULL;
-
-				ErrorCode=CL_SUCCESS;
-			}
-			else
-				ErrorCode=CL_INVALID_VALUE;
-		else
-			ErrorCode=CL_INVALID_HOST_PTR;
-	else
-		ErrorCode=CL_INVALID_HOST_PTR;
-
-	return ErrorCode;
+	return Error;
 }
 cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KM)
 {
-	cl_int ErrorCode;
+	cl_int Error;
 
 	if(KM)
-		if(KM->KArgs)
-			if(KM->Memory)
+		if(KM->ArgMemory)
+		{
+			size_t Index=0;
+
+			Error=CL_SUCCESS;
+			while(Index<KM->KArgs)
 			{
-				cl_uint Index=0;
-
-				for(ErrorCode=CL_SUCCESS;Index<KM->KArgs;Index++)
+				switch(KM->ArgFlag[Index])
 				{
-					ErrorCode=Devi_Karg_(KM->Kernel,Index,KM->ArgAddress[Index],KM->ArgSize[Index]);
-					if(ErrorCode!=CL_SUCCESS)
-						break;
+				case DeviDomainConstant:
+				case DeviDomainGlobal:
+					Error=Devi_Karg_(KM->Kernel,(cl_uint)Index,KM->ArgAccess.P[Index],sizeof(cl_mem));
+					break;
+				case DeviDomainLocal:
+					Error=Devi_Karg_(KM->Kernel,(cl_uint)Index,NULL,KM->ArgAccess.V[Index]*KM->ArgSize[Index]);
+					break;
+				case DeviDomainPrivate:
+					Error=Devi_Karg_(KM->Kernel,(cl_uint)Index,KM->ArgAccess.P[Index],KM->ArgSize[Index]);
+					break;
+				default:
+					Error=CL_INVALID_ARG_VALUE;
 				}
-				if(ErrorCode==CL_SUCCESS)
-					ErrorCode=Devi_Kenq_(Queue,KM->Kernel,KM->WGroups,KM->WLocals,KM->WOffset,KM->WDims);
+				if(Error==CL_SUCCESS)
+					Index++;
+				else
+					break;
 			}
-			else
-				ErrorCode=CL_INVALID_HOST_PTR;
+			if(Error==CL_SUCCESS)
+				Error=Devi_Kenq_(Queue,KM->Kernel,KM->WGroups,KM->WLocals,KM->WOffset,(cl_uint)(KM->WDims));
+		}
 		else
-			ErrorCode=Devi_Kenq_(Queue,KM->Kernel,KM->WGroups,KM->WLocals,KM->WOffset,KM->WDims);
+			Error=CL_INVALID_HOST_PTR;
 	else
-		ErrorCode=CL_INVALID_HOST_PTR;
+		Error=CL_INVALID_HOST_PTR;
 
-	return ErrorCode;
+	return Error;
 }
 
 static size_t _Devi_BC_Length_Total_(const size_t *MemC_Rst_ Lng,const size_t Nums)
@@ -1436,7 +1454,7 @@ static size_t _Devi_BC_Length_Total_(const size_t *MemC_Rst_ Lng,const size_t Nu
 ESCAPE:
 	return Return;
 }
-devi_bc *Devi_BC_Create_(const void _PL_ ID,const cl_context Context,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT,const int Mode)
+devi_bc *Devi_BC_Create_(const void _PL_ ID,cl_context const Context,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT,const int Mode)
 {
 	devi_bc *BC;
 
@@ -2046,7 +2064,7 @@ int MemC_VC_Init_(void _PL_ Queue,MEMC_VC _PL_ VC)
 			switch(VC->Domain.E)
 			{
 			case MemCDomainHost:
-				Line_Clear_(_MemC_VC_Direct_((void*)(VC->Hidden),VC->Dims-1),(VC->Lng1D)*(VC->Unit),char);
+				Byte_Clear_(_MemC_VC_Direct_((void*)(VC->Hidden),VC->Dims-1),(VC->Lng1D)*(VC->Unit));
 				goto SUCCESS;
 #ifdef __OPENCL_H
 			case MemCDomainDevice:
@@ -2266,9 +2284,7 @@ int MemC_VC_Copy_(void _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target,MEMC_M
 							else
 #endif
 							{
-								const size_t Bytes=(Source->Lng1D)*(Source->Unit);
-
-								if(Line_Copy_(MemoryS,MemoryT,Bytes,char))
+								if(Byte_Copy_(MemoryS,MemoryT,(Source->Lng1D)*(Source->Unit)))
 									goto FAILURE;
 								else
 									goto SUCCESS;

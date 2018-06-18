@@ -25,7 +25,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.06.16";
+static DATA_08 IdiomVersion[16]="Date:2018.06.18";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -4529,81 +4529,82 @@ general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ DataC,REAL_64 *MemC_Rst_ DataA,REAL_
 
 #if(MemC_Fold_(Definition:BitClip Managed Functions))
 #ifdef __OPENCL_H
-static devi_km *_BitC_Create_KM_Endian_(cl_kernel const Kernel)
+static devi_km *_BitC_Create_KM_Endian_(cl_kernel const Kernel,GENERAL _PL_ ID)
 {
-	devi_km *KM=Devi_KM_Create_(Kernel,2,1);
-
+	devi_km *KM=Devi_KM_Create_(ID,2,1);
+	
 	if(KM)
 	{
-		Devi_KM_Type_G_(KM,0,cl_mem);
-		Devi_KM_Type_G_(KM,1,data_32);
-		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
+		cl_int Error=CL_SUCCESS;
+
+		Error|=Devi_KM_Type_G_(KM,0);
+		Error|=Devi_KM_Type_P_(KM,1,data_32);
+		Error|=Devi_KM_Init_(KM,Kernel);
+		if(Error!=CL_SUCCESS)
 			Devi_KM_Delete_(&KM);
 	}
 
 	return KM;
 }
-static devi_km *_BitC_Create_KM_Caster_(cl_kernel const Kernel)
+static devi_km *_BitC_Create_KM_Caster_(cl_kernel const Kernel,GENERAL _PL_ ID)
 {
-	devi_km *KM=Devi_KM_Create_(Kernel,3,1);
+	devi_km *KM=Devi_KM_Create_(ID,3,1);
 
 	if(KM)
 	{
-		Devi_KM_Type_G_(KM,0,cl_mem);
-		Devi_KM_Type_G_(KM,1,cl_mem);
-		Devi_KM_Type_G_(KM,2,data_32);
-		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
+		cl_int Error=CL_SUCCESS;
+
+		Error|=Devi_KM_Type_G_(KM,0);
+		Error|=Devi_KM_Type_G_(KM,1);
+		Error|=Devi_KM_Type_P_(KM,2,data_32);
+		Error|=Devi_KM_Init_(KM,Kernel);
+		if(Error!=CL_SUCCESS)
 			Devi_KM_Delete_(&KM);
 	}
 
 	return KM;
 }
-static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,ADDRESS TypeSize)
+static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,GENERAL _PL_ ID,ADDRESS TypeSize)
 {
-	devi_km *KM=Devi_KM_Create_(Kernel,4,1);
+	devi_km *KM=Devi_KM_Create_(ID,4,1);
 
 	if(KM)
 	{
-		Devi_KM_Type_G_(KM,0,cl_mem);
-		Devi_KM_Type_G_(KM,1,cl_mem);
-		_Devi_KM_Type_(KM,2,TypeSize,0);
-		Devi_KM_Type_G_(KM,3,data_32);
-		if(Devi_KM_Init_(KM)!=CL_SUCCESS)
+		cl_int Error=CL_SUCCESS;
+
+		Error|=Devi_KM_Type_G_(KM,0);
+		Error|=Devi_KM_Type_G_(KM,1);
+		Error|=_Devi_KM_Type_(KM,2,TypeSize,DeviDomainPrivate);
+		Error|=Devi_KM_Type_P_(KM,3,data_32);
+		Error|=Devi_KM_Init_(KM,Kernel);
+		if(Error!=CL_SUCCESS)
 			Devi_KM_Delete_(&KM);
 	}
 
 	return KM;
 }
-static devi_km *_BitC_Create_KM_(cl_kernel const Kernel)
+static devi_km *_BitC_Create_KM_(cl_kernel const Kernel,BITC_KI Switch)
 {
-	data_08 BufferName[_BitC_Kernel_Name_Length]="";
 	devi_km *KM;
 
-	if(Devi_Info_Kernel_(Kernel,BufferName,_BitC_Kernel_Name_Length,data_08,CL_KERNEL_FUNCTION_NAME)==CL_SUCCESS)
-	{
-		BITC_KI Switch=(bitc_ki)MemC_Switch_(BufferName,(general**)BitCKernel,NULL,_BitC_Kernel_Name_Length,_BitC_Total_Kernels,data_08);
-
-		if(Switch<0)
-			KM=NULL;
-		else if(Switch<4)
-			KM=_BitC_Create_KM_Endian_(Kernel);
-		else if(Switch<=148)
-			KM=_BitC_Create_KM_Caster_(Kernel);
-		else if(Switch<152)
-			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
-		else if(Switch<164)
-			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
-		else if(Switch<172)
-			KM=_BitC_Create_KM_Op_(Kernel,sizeof(inte_32));
-		else if(Switch<180)
-			KM=_BitC_Create_KM_Caster_(Kernel);
-		else if(Switch<212)
-			KM=_BitC_Create_KM_Op_(Kernel,(address)(1<<(Switch&3)));
-		else if(Switch<244)
-			KM=_BitC_Create_KM_Op_(Kernel,sizeof(cl_mem));
-		else
-			KM=NULL;
-	}
+	if(Switch<0)
+		KM=NULL;
+	else if(Switch<4)
+		KM=_BitC_Create_KM_Endian_(Kernel,BitCKernel[Switch]);
+	else if(Switch<=148)
+		KM=_BitC_Create_KM_Caster_(Kernel,BitCKernel[Switch]);
+	else if(Switch<152)
+		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],sizeof(cl_mem));
+	else if(Switch<164)
+		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],(address)(1<<(Switch&3)));
+	else if(Switch<172)
+		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],sizeof(inte_32));
+	else if(Switch<180)
+		KM=_BitC_Create_KM_Caster_(Kernel,BitCKernel[Switch]);
+	else if(Switch<212)
+		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],(address)(1<<(Switch&3)));
+	else if(Switch<244)
+		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],sizeof(cl_mem));
 	else
 		KM=NULL;
 
@@ -4670,7 +4671,7 @@ cl_int BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08
 
 					while(Index<Count)
 					{
-						Slot[Index]=_BitC_Create_KM_(Helper->SetKernel[Index]);
+						Slot[Index]=_BitC_Create_KM_(Helper->SetKernel[Index],Link[Index]);
 						if(Slot[Index])
 							Index++;
 						else
@@ -4743,7 +4744,7 @@ cl_int BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indica
 									Error=CL_SUCCESS;
 									while(Index<KM->KArgs)
 									{
-										Error=Devi_KM_Save_G_(KM,Index,Argument->Slot.P[Index]);
+										Error=Devi_KM_Save_(KM,Index,Argument->Slot.V[Index]);
 										if(Error==CL_SUCCESS)
 											Index++;
 										else
