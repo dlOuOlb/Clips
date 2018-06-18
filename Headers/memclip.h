@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.11	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.18	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -61,17 +61,17 @@ struct _memc_dt					//MemClip : Data Type Structure
 };
 MemC_Type_Declare_(struct,memc_dt,MEMC_DT);	//MemClip : Data Type Structure
 
-struct _memc_ms				//MemClip : Memory Slot Structure
+struct _memc_ms			//MemClip : Memory Slot Structure
 {
-	const void _PL_ ID;		//MemClip : Identification
-	MEMC_DT _PL_ Type;		//MemClip : Data Type
-	const size_t Nums;		//MemClip : Number of Slots
-	const union _memc_pv	//MemClip : Pointer and Value Union
+	const void _PL_ ID;	//MemClip : Identification
+	MEMC_DT _PL_ Type;	//MemClip : Data Type
+	const size_t Nums;	//MemClip : Number of Slots
+	union _memc_vp		//MemClip : Variable Pointer Union
 	{
-		void *_PL_ P;		//MemClip : Access as Pointer Array
-		size_t _PL_ V;		//MemClip : Access as Numeric Array
+		void *_PL_ P;	//MemClip : Access as Pointer Array
+		size_t _PL_ V;	//MemClip : Access as Numeric Array
 	}
-	Slot;					//MemClip : Slot Access
+	Slot;				//MemClip : Slot Access
 };
 MemC_Type_Declare_(struct,memc_ms,MEMC_MS);	//MemClip : Memory Slot Structure
 
@@ -137,26 +137,40 @@ struct _devi_bc				//MemC_CL : Buffer Container Structure
 };
 MemC_Type_Declare_(struct,devi_bc,DEVI_BC);	//MemC_CL : Buffer Container Structure
 
-struct _devi_km							//MemC_CL : Kernel Manager Structure
+enum _devi_df					//MemC_CL : Device Memory Domain Flag Enumeration
 {
-	const cl_kernel Kernel;				//MemC_CL : Linked Kernel
-	const char _PL_ Flag;				//MemC_CL : Argument Type Indicator
-	const void _PL_ Memory;				//MemC_CL : Argument Data Storage
-	const void _PL_ _PL_ ArgAddress;	//MemC_CL : Argument Address Set
-	const size_t _PL_ ArgSize;			//MemC_CL : Argument Byte Size Set
-	const size_t _PL_ Elements;			//MemC_CL : The Number of Elements for Local Memory
-	const size_t _PL_ TypeSize;			//MemC_CL : Argument Type Byte Size
-	size_t _PL_ WLocals;				//MemC_CL : The Number of Local Workers
-	size_t _PL_ WGroups;				//MemC_CL : The Number of Work Groups
-	size_t _PL_ WOffset;				//MemC_CL : Global Worker Offset
-	size_t _PL_ WLength;				//MemC_CL : Work Length
-	const cl_uint KArgs;				//MemC_CL : The Number of Kernel Arguments
-	const cl_uint WDims;				//MemC_CL : Work Dimensions
+	DeviDomainConstant=0x43,	//MemC_CL : Constant Memory
+	DeviDomainGlobal=0x47,		//MemC_CL : Global Memory
+	DeviDomainLocal=0x4C,		//MemC_CL : Local Memory
+	DeviDomainPrivate=0x50		//MemC_CL : Private Memory
+};
+MemC_Type_Declare_(enum,devi_df,DEVI_DF);	//MemC_CL : Device Memory Domain Flag Enumeration
+
+struct _devi_km					//MemC_CL : Kernel Manager Structure
+{
+	const void _PL_ ID;			//MemC_CL : Identification
+	const size_t KArgs;			//MemC_CL : The Number of Kernel Arguments
+	const size_t WDims;			//MemC_CL : Work Dimensions
+	const cl_kernel Kernel;		//MemC_CL : Linked Kernel
+	DEVI_DF _PL_ ArgFlag;		//MemC_CL : Argument Type Indicator
+	const size_t _PL_ ArgSize;	//MemC_CL : Argument Byte Size Set
+	union _memc_cp				//MemC_CL : Constant Pointer Union
+	{
+		const void _PL_ _PL_ P;	//MemC_CL : Access as Pointer Array
+		const size_t _PL_ V;	//MemC_CL : Access as Numeric Array
+	}
+	ArgAccess;					//MemC_CL : Argument Access
+	const void _PL_ ArgMemory;	//MemC_CL : Argument Data Storage
+	size_t _PL_ WLocals;		//MemC_CL : The Number of Local Workers
+	size_t _PL_ WGroups;		//MemC_CL : The Number of Work Groups
+	size_t _PL_ WOffset;		//MemC_CL : Global Worker Offset
+	size_t _PL_ WLength;		//MemC_CL : Work Length
 };
 MemC_Type_Declare_(struct,devi_km,DEVI_KM);	//MemC_CL : Kernel Manager Structure
 
 enum _devi_cf		//MemC_CL : Device Memory Copy Function Flag Enumeration
 {
+	DeviCopyHtoH=0,	//MemC_CL : Host to Host Copy (Not Used)
 	DeviCopyHtoD=1,	//MemC_CL : Host to Device Copy
 	DeviCopyDtoH=2, //MemC_CL : Device to Host Copy
 	DeviCopyDtoD=3	//MemC_CL : Device to Device Copy
@@ -178,6 +192,10 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))	//MemClip : Byte Size of Elements
 #define MemC_Acs_(type,Data) (*((type*)(&(Data))))			//MemClip : Indirect Memory Access
 #define MemC_Rst_ __restrict								//MemClip : Exclusive memory Access
+
+#define Byte_Clear_(Memory,ByteSize) memset(Memory,0,ByteSize)							//MemClip : Data Reset in Byte Size
+#define Byte_Copy_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)	//MemClip : Data Copy in Byte Size
+#define Byte_Compare_(MemoryA,MemoryB,ByteSize) memcmp(MemoryA,MemoryB,ByteSize)		//MemClip : Data Compare in Byte Size
 
 #define Unit_Clear_(Unit,type) (type*)memset(Unit,0,sizeof(type))			//MemClip : Unit Data Reset
 #define Unit_Compare_(UnitA,UnitB,type) memcmp(UnitA,UnitB,sizeof(type))	//MemClip : Unit Data Compare
@@ -258,13 +276,12 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #define Devi_Flush_(Queue) clFlush(Queue)	//MemC_CL : Command Queue Flush
 #define Devi_Finish_(Queue) clFinish(Queue)	//MemC_CL : Command Queue Finish
 
-#define Devi_Karg_(Kernel,Order,Address,ByteSize) clSetKernelArg(Kernel,Order,ByteSize,Address)					//MemC_CL : Kernel Argument Set
-#define Devi_Karg_Global_(Kernel,Order,BufferAddress) clSetKernelArg(Kernel,Order,sizeof(cl_mem),BufferAddress)	//MemC_CL : Kernel Argument Set (Buffer Object)
-#define Devi_Karg_Local_(Kernel,Order,Elements,type) clSetKernelArg(Kernel,Order,(Elements)*sizeof(type),NULL)	//MemC_CL : Kernel Argument Set (Local Memory)
-#define Devi_Karg_Value_(Kernel,Order,ValueAddress,type) clSetKernelArg(Kernel,Order,sizeof(type),ValueAddress)	//MemC_CL : Kernel Argument Set (Parameter Value)
+#define Devi_Karg_(Kernel,Order,Address,ByteSize) clSetKernelArg(Kernel,Order,ByteSize,Address)	//MemC_CL : Kernel Argument Set
 
-#define Devi_KM_Type_G_(Karg,Order,type) _Devi_KM_Type_(Karg,Order,sizeof(type),0)	//MemC_CL : Kernel Manager Argument Type Set (Global Parameter)
-#define Devi_KM_Type_L_(Karg,Order,type) _Devi_KM_Type_(Karg,Order,sizeof(type),1)	//MemC_CL : Kernel Manager Argument Type Set (Local Parameter)
+#define Devi_KM_Type_C_(KM,Index) _Devi_KM_Type_(KM,Index,0,DeviDomainConstant)					//MemC_CL : Kernel Manager Argument Type Setting (Constant Domain)
+#define Devi_KM_Type_G_(KM,Index) _Devi_KM_Type_(KM,Index,0,DeviDomainGlobal)					//MemC_CL : Kernel Manager Argument Type Setting (Global Domain)
+#define Devi_KM_Type_L_(KM,Index,type) _Devi_KM_Type_(KM,Index,sizeof(type),DeviDomainLocal)	//MemC_CL : Kernel Manager Argument Type Setting (Local Domain)
+#define Devi_KM_Type_P_(KM,Index,type) _Devi_KM_Type_(KM,Index,sizeof(type),DeviDomainPrivate)	//MemC_CL : Kernel Manager Argument Type Setting (Private Domain)
 #endif
 #endif
 #if(MemC_Fold_(Part:Literals))
@@ -345,22 +362,23 @@ void Devi_QC_Delete_(devi_qc *_PL_ QueueContainer);
 //　LngS = { V[1], V[1], ..., V[1] | V = ShapeInfo -> Slot.V }
 //＊Mode 1 : Ununiform Length
 //　LngS = { V[1], V[2], ..., V[Nums] | V = ShapeInfo -> Slot.V }
-devi_bc *Devi_BC_Create_(const void _PL_ Identification,const cl_context Context,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo,const int Mode);
+devi_bc *Devi_BC_Create_(const void _PL_ Identification,cl_context const Context,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo,const int Mode);
 //MemC_CL : Buffer Container Memory Deallocation
 void Devi_BC_Delete_(devi_bc *_PL_ BufferContainer);
 
 //MemC_CL : Kernel Manager Memory Allocation - Deallocate with "Devi_KM_Delete_"
-devi_km *Devi_KM_Create_(cl_kernel const,const cl_uint KernelArguments,const cl_uint WorkDimension);
+devi_km *Devi_KM_Create_(const void _PL_ Identification,const size_t KernelArguments,const size_t WorkDimension);
 //MemC_CL : Kernel Manager Initialization
-//＊Execute only one time for one karg manager.
-cl_int Devi_KM_Init_(devi_km _PL_ KernelManager);
+//＊Execute only one time for one kernel manager, after type setting with "Devi_KM_Type_*_".
+cl_int Devi_KM_Init_(devi_km _PL_ KernelManager,cl_kernel const Kernel);
 //MemC_CL : Kernel Manager Memory Deallocation
 void Devi_KM_Delete_(devi_km *_PL_ KernelManager);
 
-//MemC_CL : Kernel Manager Argument Save (Global)
-cl_int Devi_KM_Save_G_(DEVI_KM _PL_ KernelManager,const cl_uint Index,const void _PL_ Value);
-//MemC_CL : Kernel Manager Argument Save (Local)
-cl_int Devi_KM_Save_L_(DEVI_KM _PL_ KernelManager,const cl_uint Index,const size_t Elements);
+//MemC_CL : Kernel Manager Argument Save
+//＊If KM -> Flag[Order] == DeviDomainLocal,
+//　then pass the number of local buffer elements as the token,
+//　otherwise pass the address of the argument as the token.
+cl_int Devi_KM_Save_(DEVI_KM _PL_ KM,const size_t Order,const size_t Token);
 
 //MemC_CL : Kernel Enqueue with Kernel Manager
 cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager);
@@ -443,7 +461,7 @@ cl_int _Devi_Delete_Event_(cl_event const);
 cl_int _Devi_Copy_(cl_command_queue const Q,void _PL_ S,void _PL_ T,const size_t _PL_ OfsS,const size_t _PL_ OfsT,const size_t _PL_ Lng,const size_t _PL_ ShpS,const size_t _PL_ ShpT,const cl_uint Dims,const size_t TypeSize,DEVI_CF Mode);
 cl_int _Devi_Copy_1D_(cl_command_queue const Q,void _PL_ S,void _PL_ T,const size_t OfsS,const size_t OfsT,const size_t Lng,const size_t TypeSize,DEVI_CF Mode);
 
-cl_int _Devi_KM_Type_(DEVI_KM _PL_ KM,const cl_uint,const size_t,const int);
+cl_int _Devi_KM_Type_(DEVI_KM _PL_ KM,const size_t Idx,const size_t TypeSize,DEVI_DF Mode);
 #endif
 #endif
 #endif
