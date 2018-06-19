@@ -25,7 +25,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.06.18";
+static DATA_08 IdiomVersion[16]="Date:2018.06.19";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -4637,13 +4637,13 @@ address *BitC_CL_Choice_(BITC_CL _PL_ Manager)
 
 	return Table;
 }
-cl_int BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ Option)
+penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ Option)
 {
-	cl_int Error;
+	penc_eu Error;
 
 	if(Manager)
 		if(Manager->Helper)
-			Error=CL_INVALID_HOST_PTR;
+			Error.E=CLInvalidHostPtr;
 		else
 		{
 			GENERAL *Slot[_BitC_Total_Kernels];
@@ -4692,15 +4692,15 @@ cl_int BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08
 							Devi_KM_Delete_((devi_km**)(Slot+Down));
 						PenC_CL_Delete_(&Helper);
 
-						Error=CL_BUILD_PROGRAM_FAILURE;
+						Error.E=CLBuildProgramFailure;
 					}
 				}
 			}
 			else
-				Error=CL_INVALID_VALUE;
+				Error.E=CLInvalidValue;
 		}
 	else
-		Error=CL_INVALID_HOST_PTR;
+		Error.E=CLInvalidHostPtr;
 
 	return Error;
 }
@@ -4720,20 +4720,20 @@ general BitC_CL_Delete_(bitc_cl *_PL_ Manager)
 	}
 }
 
-cl_int BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indicator)
+penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indicator)
 {
-	cl_int Error;
+	penc_eu Error;
 
 	if(Manager)
 		if(Argument)
 			if(Manager->Helper)
 				if(Indicator<0)
-					Error=CL_INVALID_KERNEL_NAME;
+					Error.E=CLInvalidKernelName;
 				else
 					if(Indicator<_BitC_Total_Kernels)
 						if(Manager->KMSet[Indicator])
 							if((Argument->Nums)<((address)(Manager->KMSet[Indicator]->KArgs)))
-								Error=CL_INVALID_KERNEL_ARGS;
+								Error.E=CLInvalidKernelArgs;
 							else
 							{
 								DEVI_KM _PL_ KM=Manager->KMSet[Indicator];
@@ -4741,33 +4741,33 @@ cl_int BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indica
 								{
 									cl_uint Index=0;
 
-									Error=CL_SUCCESS;
+									Error.E=CLSuccess;
 									while(Index<KM->KArgs)
 									{
-										Error=Devi_KM_Save_(KM,Index,Argument->Slot.V[Index]);
-										if(Error==CL_SUCCESS)
+										Error.I=Devi_KM_Save_(KM,Index,Argument->Slot.V[Index]);
+										if(Error.E==CLSuccess)
 											Index++;
 										else
 											break;
 									}
 								}
-								if(Error==CL_SUCCESS)
+								if(Error.E==CLSuccess)
 								{
 									KM->WGroups[0]=Manager->Helper->Cores;
 									KM->WLocals[0]=Manager->Helper->SizeWorker[0];
-									Error=Devi_KM_Enqueue_(Manager->Helper->Queue,KM);
+									Error.I=Devi_KM_Enqueue_(Manager->Helper->Queue,KM);
 								}
 							}
 						else
-							Error=CL_INVALID_KERNEL_NAME;
+							Error.E=CLInvalidKernelName;
 					else
-						Error=CL_INVALID_KERNEL_NAME;
+						Error.E=CLInvalidKernelName;
 			else
-				Error=CL_INVALID_HOST_PTR;
+				Error.E=CLInvalidHostPtr;
 		else
-			Error=CL_INVALID_HOST_PTR;
+			Error.E=CLInvalidHostPtr;
 	else
-		Error=CL_INVALID_HOST_PTR;
+		Error.E=CLInvalidHostPtr;
 
 	return Error;
 }

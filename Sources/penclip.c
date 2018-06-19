@@ -1,7 +1,7 @@
 ﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.06.12";
+static NAME_08 IdiomVersion[16]="Date:2018.06.19";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -459,7 +459,7 @@ static void _PenC_Build_Log_CL_(cl_device_id const Device,cl_program const Progr
 		}
 	}
 }
-penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName,NAME_08 _PL_ _PL_ SetIndicator,NAME_08 _PL_ Option,const size_t Files,const cl_uint Kernels,cl_int _PL_ Error)
+penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName,NAME_08 _PL_ _PL_ SetIndicator,NAME_08 _PL_ Option,const size_t Files,const cl_uint Kernels,penc_eu _PL_ Error)
 {
 	penc_cl *Helper=NULL;
 	
@@ -467,23 +467,23 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName
 	{
 		cl_device_id Device;
 
-		(*Error)=Devi_Info_Queue_(Queue,&Device,1,cl_device_id,CL_QUEUE_DEVICE);
-		if((*Error)==CL_SUCCESS)
+		Error->I=Devi_Info_Queue_(Queue,&Device,1,cl_device_id,CL_QUEUE_DEVICE);
+		if(Error->E==CLSuccess)
 		{
 			cl_context Context;
 
-			(*Error)=Devi_Info_Queue_(Queue,&Context,1,cl_context,CL_QUEUE_CONTEXT);
-			if((*Error)==CL_SUCCESS)
+			Error->I=Devi_Info_Queue_(Queue,&Context,1,cl_context,CL_QUEUE_CONTEXT);
+			if(Error->E==CLSuccess)
 			{
 				cl_uint Cores;
 
-				(*Error)=Devi_Info_Device_(Device,&Cores,1,cl_uint,CL_DEVICE_MAX_COMPUTE_UNITS);
-				if((*Error)==CL_SUCCESS)
+				Error->I=Devi_Info_Device_(Device,&Cores,1,cl_uint,CL_DEVICE_MAX_COMPUTE_UNITS);
+				if(Error->E==CLSuccess)
 				{
 					cl_uint Dimensions;
 
-					(*Error)=Devi_Info_Device_(Device,&Dimensions,1,cl_uint,CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);
-					if((*Error)==CL_SUCCESS)
+					Error->I=Devi_Info_Device_(Device,&Dimensions,1,cl_uint,CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS);
+					if(Error->E==CLSuccess)
 					{
 						size_t *FileSize=Line_Alloc_(Files,size_t);
 
@@ -504,137 +504,106 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName
 										if(_PenC_Line_Reader_S_(Text,FileName,FileSize,Files))
 											if(Line_Assign_N_(TextSet,Text,FileSize,Files,name_08)==SizeText)
 											{
-												Helper=Unit_Alloc_(penc_cl);
+												{
+													size_t SizeTemp;
+
+													SizeTemp=_PenC_Overflow_Mul_(Kernels,sizeof(cl_kernel));
+													if(SizeTemp)
+													{
+														SizeTemp=_PenC_Overflow_Add_(SizeTemp,MemC_Size_(size_t,Dimensions));
+														if(SizeTemp)
+														{
+															SizeTemp=_PenC_Overflow_Add_(SizeTemp,sizeof(penc_cl));
+															Helper=Byte_Alloc_(SizeTemp);
+														}
+													}
+												}
 												if(Helper)
 												{
-													size_t *SizeWorker=Line_Alloc_(Dimensions,size_t);
+													MemC_Acs_(size_t*,Helper->SizeWorker)=(size_t*)(Helper+1);
+													MemC_Acs_(cl_kernel*,Helper->SetKernel)=(cl_kernel*)(Helper->SizeWorker+Dimensions);
 
-													if(SizeWorker)
+													Error->I=Devi_Info_Device_(Device,(void*)(Helper->SizeWorker),Dimensions,size_t,CL_DEVICE_MAX_WORK_ITEM_SIZES);
+													if(Error->E==CLSuccess)
 													{
-														MemC_Acs_(cl_kernel*,Helper->SetKernel)=Line_Alloc_(Kernels,cl_kernel);
-														if(Helper->SetKernel)
+														Error->I=Devi_Info_Device_(Device,(void*)&(Helper->Workers),1,size_t,CL_DEVICE_MAX_WORK_GROUP_SIZE);
+														if(Error->E==CLSuccess)
 														{
-															(*Error)=Devi_Info_Device_(Device,SizeWorker,Dimensions,size_t,CL_DEVICE_MAX_WORK_ITEM_SIZES);
-															if((*Error)==CL_SUCCESS)
+															Error->I=Devi_Info_Device_(Device,(void*)&(Helper->SizeLocal),1,cl_ulong,CL_DEVICE_LOCAL_MEM_SIZE);
+															if(Error->E==CLSuccess)
 															{
-																size_t Workers;
-
-																(*Error)=Devi_Info_Device_(Device,&Workers,1,size_t,CL_DEVICE_MAX_WORK_GROUP_SIZE);
-																if((*Error)==CL_SUCCESS)
+																MemC_Acs_(cl_program,Helper->Program)=Devi_Create_Program_(Context,TextSet,FileSize,(cl_uint)Files,&(Error->I));
+																if(Helper->Program)
 																{
-																	cl_ulong MaxLocal;
-
-																	(*Error)=Devi_Info_Device_(Device,&MaxLocal,1,cl_ulong,CL_DEVICE_LOCAL_MEM_SIZE);
-																	if((*Error)==CL_SUCCESS)
+																	Error->I=Devi_Build_(Helper->Program,Option);
+																	_PenC_Build_Log_CL_(Device,Helper->Program);
+																	if(Error->E==CLSuccess)
 																	{
-																		MemC_Acs_(cl_program,Helper->Program)=Devi_Create_Program_(Context,TextSet,FileSize,(cl_uint)Files,Error);
-																		if(Helper->Program)
-																		{
-																			(*Error)=Devi_Build_(Helper->Program,Option);
-																			_PenC_Build_Log_CL_(Device,Helper->Program);
-																			if((*Error)==CL_SUCCESS)
-																			{
-																				NAME_08 _PL_ _PL_ End=SetIndicator+Kernels;
-																				NAME_08 _PL_ *PointerI=SetIndicator;
-																				cl_kernel *PointerK=Helper->SetKernel;
+																		NAME_08 _PL_ _PL_ End=SetIndicator+Kernels;
+																		NAME_08 _PL_ *PointerI=SetIndicator;
+																		cl_kernel *PointerK=Helper->SetKernel;
 
-																				for(;PointerI<End;PointerI++,PointerK++)
-																				{
-																					PointerK[0]=Devi_Create_Kernel_(Helper->Program,PointerI[0],Error);
-																					if(!(PointerK[0]))
-																						break;
-																				}
-																				if(PointerI==End)
-																				{
-																					MemC_Acs_(cl_device_id,Helper->Device)=Device;
-																					MemC_Acs_(cl_context,Helper->Context)=Context;
-																					MemC_Acs_(cl_command_queue,Helper->Queue)=Queue;
-																					MemC_Acs_(size_t*,Helper->SizeWorker)=SizeWorker;
-																					*(size_t*)&(Helper->Workers)=Workers;
-																					*(cl_ulong*)&(Helper->SizeLocal)=MaxLocal;
-																					*(cl_uint*)&(Helper->Cores)=Cores;
-																					*(cl_uint*)&(Helper->Dimensions)=Dimensions;
-																					*(cl_uint*)&(Helper->Kernels)=Kernels;
-																				}
-																				else
-																				{
-																					for(PointerK--;PointerK>=Helper->SetKernel;PointerK--)
-																						Devi_Delete_Kernel_(PointerK[0]);
-																					Devi_Delete_Program_(MemC_Acs_(cl_program,Helper->Program));
-																					MemC_Deloc_(MemC_Acs_(cl_kernel*,Helper->SetKernel));
-																					MemC_Deloc_(SizeWorker);
-																					MemC_Deloc_(Helper);
-																				}
-																			}
-																			else
-																			{
-																				Devi_Delete_Program_(MemC_Acs_(cl_program,Helper->Program));
-																				MemC_Deloc_(MemC_Acs_(cl_kernel*,Helper->SetKernel));
-																				MemC_Deloc_(SizeWorker);
-																				MemC_Deloc_(Helper);
-																			}
+																		for(;PointerI<End;PointerI++,PointerK++)
+																		{
+																			PointerK[0]=Devi_Create_Kernel_(Helper->Program,PointerI[0],&(Error->I));
+																			if(!(PointerK[0]))
+																				break;
+																		}
+																		if(PointerI==End)
+																		{
+																			MemC_Acs_(cl_device_id,Helper->Device)=Device;
+																			MemC_Acs_(cl_context,Helper->Context)=Context;
+																			MemC_Acs_(cl_command_queue,Helper->Queue)=Queue;
+																			MemC_Acs_(cl_uint,Helper->Cores)=Cores;
+																			MemC_Acs_(cl_uint,Helper->Dimensions)=Dimensions;
+																			MemC_Acs_(cl_uint,Helper->Kernels)=Kernels;
 																		}
 																		else
 																		{
-																			MemC_Deloc_(MemC_Acs_(cl_kernel*,Helper->SetKernel));
-																			MemC_Deloc_(SizeWorker);
+																			for(PointerK--;PointerK>=Helper->SetKernel;PointerK--)
+																				Devi_Delete_Kernel_(PointerK[0]);
+																			Devi_Delete_Program_(MemC_Acs_(cl_program,Helper->Program));
 																			MemC_Deloc_(Helper);
 																		}
 																	}
 																	else
 																	{
-																		MemC_Deloc_(MemC_Acs_(cl_kernel*,Helper->SetKernel));
-																		MemC_Deloc_(SizeWorker);
+																		Devi_Delete_Program_(MemC_Acs_(cl_program,Helper->Program));
 																		MemC_Deloc_(Helper);
 																	}
 																}
 																else
-																{
-																	MemC_Deloc_(MemC_Acs_(cl_kernel*,Helper->SetKernel));
-																	MemC_Deloc_(SizeWorker);
 																	MemC_Deloc_(Helper);
-																}
 															}
 															else
-															{
-																MemC_Deloc_(MemC_Acs_(cl_kernel*,Helper->SetKernel));
-																MemC_Deloc_(SizeWorker);
 																MemC_Deloc_(Helper);
-															}
 														}
 														else
-														{
-															MemC_Deloc_(SizeWorker);
 															MemC_Deloc_(Helper);
-															(*Error)=CL_INVALID_HOST_PTR;
-														}
 													}
 													else
-													{
 														MemC_Deloc_(Helper);
-														(*Error)=CL_INVALID_HOST_PTR;
-													}
 												}
 												else
-													(*Error)=CL_INVALID_HOST_PTR;
+													Error->E=CLInvalidHostPtr;
 											}
 											else
-												(*Error)=CL_INVALID_PROGRAM;
+												Error->E=CLInvalidProgram;
 										else
-											(*Error)=CL_INVALID_PROGRAM;
+											Error->E=CLInvalidProgram;
 									else
-										(*Error)=CL_INVALID_HOST_PTR;
+										Error->E=CLInvalidHostPtr;
 
 									MemC_Deloc_(TextSet);
 								}
 								else
-									(*Error)=CL_INVALID_HOST_PTR;
+									Error->E=CLInvalidHostPtr;
 
 								MemC_Deloc_(Text);
 							}
 						}
 						else
-							(*Error)=CL_INVALID_HOST_PTR;
+							Error->E=CLInvalidHostPtr;
 
 						MemC_Deloc_(FileSize);
 					}
@@ -643,7 +612,7 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName
 		}
 	}
 	else
-		(*Error)=CL_INVALID_COMMAND_QUEUE;
+		Error->E=CLInvalidCommandQueue;
 
 	return Helper;
 }
@@ -656,8 +625,6 @@ void PenC_CL_Delete_(penc_cl *_PL_ Helper)
 		for(;PointerK>=(*Helper)->SetKernel;PointerK--)
 			Devi_Delete_Kernel_(PointerK[0]);
 		Devi_Delete_Program_(MemC_Acs_(cl_program,(*Helper)->Program));
-		MemC_Deloc_(MemC_Acs_(cl_kernel*,(*Helper)->SetKernel));
-		MemC_Deloc_(MemC_Acs_(size_t*,(*Helper)->SizeWorker));
 		MemC_Deloc_(*Helper);
 	}
 }
@@ -710,21 +677,22 @@ static void _PenC_Show_Device_CL_(cl_device_id const Device,name_08 *Buffer)
 		Printer_Console_(AddressMessage[6],AddressInfo[10],Buffer);
 	Printer_Console_(AddressMessage[7]);
 }
-cl_int PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
+penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 {
 	name_08 Buffer[1024];
 	cl_uint Platforms;
-	cl_int ErrorCode=Devi_Numb_Platforms_(&Platforms);
-
-	if(ErrorCode==CL_SUCCESS)
+	penc_eu ErrorCode;
+	
+	ErrorCode.I=Devi_Numb_Platforms_(&Platforms);
+	if(ErrorCode.E==CLSuccess)
 		if(Platforms)
 		{
 			cl_platform_id *Platform=Line_Alloc_(Platforms,cl_platform_id);
 
 			if(Platform)
 			{
-				ErrorCode=Devi_List_Platforms_(Platform,&Platforms,Platforms);
-				if(ErrorCode==CL_SUCCESS)
+				ErrorCode.I=Devi_List_Platforms_(Platform,&Platforms,Platforms);
+				if(ErrorCode.E==CLSuccess)
 					if(Platforms)
 					{
 						NAME_08 *Plural=(Platforms>1)?(IdiomInfo+102):(IdiomInfo+103);
@@ -733,13 +701,13 @@ cl_int PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 						Printer_Console_(AddressMessage[2],Platforms,AddressInfo[0],Plural);
 						for(Index=0;Index<Platforms;Index++)
 						{
-							ErrorCode=Devi_Info_Platform_(Platform[Index],Buffer,1024,name_08,CL_PLATFORM_NAME);
-							if(ErrorCode==CL_SUCCESS)
+							ErrorCode.I=Devi_Info_Platform_(Platform[Index],Buffer,1024,name_08,CL_PLATFORM_NAME);
+							if(ErrorCode.E==CLSuccess)
 								Printer_Console_(AddressMessage[3],Index,Buffer);
 							else
 								break;
 						}
-						if(ErrorCode==CL_SUCCESS)
+						if(ErrorCode.E==CLSuccess)
 						{
 							Index=_PenC_Select_Key_CL_();
 							if(Index<Platforms)
@@ -748,29 +716,29 @@ cl_int PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 
 								(*SelectPlatform)=Index;
 								_PenC_Show_Platform_CL_(Platform[*SelectPlatform],Buffer);
-								ErrorCode=Devi_Numb_Devices_(Platform[*SelectPlatform],&Devices);
-								if(ErrorCode==CL_SUCCESS)
+								ErrorCode.I=Devi_Numb_Devices_(Platform[*SelectPlatform],&Devices);
+								if(ErrorCode.E==CLSuccess)
 									if(Devices)
 									{
 										cl_device_id *Device=Line_Alloc_(Devices,cl_device_id);
 
 										if(Device)
 										{
-											ErrorCode=Devi_List_Devices_(Platform[*SelectPlatform],Device,&Devices,Devices);
-											if(ErrorCode==CL_SUCCESS)
+											ErrorCode.I=Devi_List_Devices_(Platform[*SelectPlatform],Device,&Devices,Devices);
+											if(ErrorCode.E==CLSuccess)
 												if(Devices)
 												{
 													Plural=(Devices>1)?(IdiomInfo+102):(IdiomInfo+103);
 													Printer_Console_(AddressMessage[2],Devices,AddressInfo[1],Plural);
 													for(Index=0;Index<Devices;Index++)
 													{
-														ErrorCode=Devi_Info_Device_(Device[Index],Buffer,1024,name_08,CL_DEVICE_NAME);
-														if(ErrorCode==CL_SUCCESS)
+														ErrorCode.I=Devi_Info_Device_(Device[Index],Buffer,1024,name_08,CL_DEVICE_NAME);
+														if(ErrorCode.E==CLSuccess)
 															Printer_Console_(AddressMessage[3],Index,Buffer);
 														else
 															break;
 													}
-													if(ErrorCode==CL_SUCCESS)
+													if(ErrorCode.E==CLSuccess)
 													{
 														Index=_PenC_Select_Key_CL_();
 														if(Index<Devices)
@@ -781,49 +749,49 @@ cl_int PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 														else
 														{
 															Printer_Console_(AddressMessage[1]);
-															ErrorCode=CL_INVALID_DEVICE;
+															ErrorCode.E=CLInvalidDevice;
 														}
 													}
 												}
 												else
 												{
 													Printer_Console_(AddressMessage[0],AddressInfo[1]);
-													ErrorCode=CL_INVALID_DEVICE;
+													ErrorCode.E=CLInvalidDevice;
 												}
 										}
 										else
-											ErrorCode=CL_OUT_OF_HOST_MEMORY;
+											ErrorCode.E=CLOutOfHostMemory;
 
 										MemC_Deloc_(Device);
 									}
 									else
 									{
 										Printer_Console_(AddressMessage[0],AddressInfo[1]);
-										ErrorCode=CL_INVALID_DEVICE;
+										ErrorCode.E=CLInvalidDevice;
 									}
 							}
 							else
 							{
 								Printer_Console_(AddressMessage[1]);
-								ErrorCode=CL_INVALID_PLATFORM;
+								ErrorCode.E=CLInvalidPlatform;
 							}
 						}
 					}
 					else
 					{
 						Printer_Console_(AddressMessage[0],AddressInfo[0]);
-						ErrorCode=CL_INVALID_PLATFORM;
+						ErrorCode.E=CLInvalidPlatform;
 					}
 			}
 			else
-				ErrorCode=CL_OUT_OF_HOST_MEMORY;
+				ErrorCode.E=CLOutOfHostMemory;
 
 			MemC_Deloc_(Platform);
 		}
 		else
 		{
 			Printer_Console_(AddressMessage[0],AddressInfo[0]);
-			ErrorCode=CL_INVALID_PLATFORM;
+			ErrorCode.E=CLInvalidPlatform;
 		}
 	
 	return ErrorCode;
