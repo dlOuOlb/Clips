@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.18	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.19	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -932,7 +932,7 @@ address *BitC_CL_Choice_(BITC_CL _PL_ KernelManager);
 //BitC_CL : OpenCL Program Build with Specified Kernels
 //＊Execute only one time.
 //＊Return value is an error code.
-cl_int BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ KernelManager,NAME_08 _PL_ BuildOption);
+penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ KernelManager,NAME_08 _PL_ BuildOption);
 //BitC_CL : Kernel Manager Set Memory Deallocation
 general BitC_CL_Delete_(bitc_cl *_PL_ KernelManager);
 
@@ -941,7 +941,7 @@ general BitC_CL_Delete_(bitc_cl *_PL_ KernelManager);
 //　KernelArgument -> Slot.P[0] : &(cl_mem)(Data)
 //　KernelArgument -> Slot.P[1] : &(data_32)(Length)
 //＊Return value is an error code.
-cl_int BitC_CL_Action_(BITC_CL _PL_ KernelManager,MEMC_MS _PL_ KernelArgument,BITC_KI KernelIndicator);
+penc_eu BitC_CL_Action_(BITC_CL _PL_ KernelManager,MEMC_MS _PL_ KernelArgument,BITC_KI KernelIndicator);
 #endif
 #endif
 #endif

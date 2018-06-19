@@ -2,7 +2,7 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.19	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -67,6 +67,78 @@ struct _penc_cl						//PenC_CL : OpenCL Program Resource Structure
 	const cl_uint Kernels;			//PenC_CL : The Number of Kernels
 };
 MemC_Type_Declare_(struct,penc_cl,PENC_CL);	//PenC_CL : OpenCL Program Resource Structure
+
+union _penc_eu		//PenC_CL : OpenCL Error Union
+{
+	enum _penc_ee	//PenC_CL : OpenCL Error Enumeration
+	{
+		CLSuccess=CL_SUCCESS,
+		CLDeviceNotFound=CL_DEVICE_NOT_FOUND,
+		CLDeviceNotAvailable=CL_DEVICE_NOT_AVAILABLE,
+		CLCompilerNotAvailable=CL_COMPILER_NOT_AVAILABLE,
+		CLMemObjectAllocationFailure=CL_MEM_OBJECT_ALLOCATION_FAILURE,
+		CLOutOfResources=CL_OUT_OF_RESOURCES,
+		CLOutOfHostMemory=CL_OUT_OF_HOST_MEMORY,
+		CLProfilingInfoNotAvailable=CL_PROFILING_INFO_NOT_AVAILABLE,
+		CLMemCopyOverlap=CL_MEM_COPY_OVERLAP,
+		CLImageFormatMismatch=CL_IMAGE_FORMAT_MISMATCH,
+		CLImageFormatNotSupported=CL_IMAGE_FORMAT_NOT_SUPPORTED,
+		CLBuildProgramFailure=CL_BUILD_PROGRAM_FAILURE,
+		CLMapFailure=CL_MAP_FAILURE,
+		CLMisalignedSubBufferOffset=CL_MISALIGNED_SUB_BUFFER_OFFSET,
+		CLExecStatusErrorForEventsInWaitList=CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST,
+		CLCompileProgramFailure=CL_COMPILE_PROGRAM_FAILURE,
+		CLLinkerNotAvailable=CL_LINKER_NOT_AVAILABLE,
+		CLLinkProgramFailure=CL_LINK_PROGRAM_FAILURE,
+		CLDevicePartitionFailed=CL_DEVICE_PARTITION_FAILED,
+		CLKernelArgInfoNotAvailable=CL_KERNEL_ARG_INFO_NOT_AVAILABLE,
+		CLInvalidValue=CL_INVALID_VALUE,
+		CLInvalidDeviceType=CL_INVALID_DEVICE_TYPE,
+		CLInvalidPlatform=CL_INVALID_PLATFORM,
+		CLInvalidDevice=CL_INVALID_DEVICE,
+		CLInvalidContext=CL_INVALID_CONTEXT,
+		CLInvalidQueueProperties=CL_INVALID_QUEUE_PROPERTIES,
+		CLInvalidCommandQueue=CL_INVALID_COMMAND_QUEUE,
+		CLInvalidHostPtr=CL_INVALID_HOST_PTR,
+		CLInvalidMemObject=CL_INVALID_MEM_OBJECT,
+		CLInvalidImageFormatDescriptor=CL_INVALID_IMAGE_FORMAT_DESCRIPTOR,
+		CLInvalidImageSize=CL_INVALID_IMAGE_SIZE,
+		CLInvalidSampler=CL_INVALID_SAMPLER,
+		CLInvalidBinary=CL_INVALID_BINARY,
+		CLInvalidBuildOptions=CL_INVALID_BUILD_OPTIONS,
+		CLInvalidProgram=CL_INVALID_PROGRAM,
+		CLInvalidProgramExecutable=CL_INVALID_PROGRAM_EXECUTABLE,
+		CLInvalidKernelName=CL_INVALID_KERNEL_NAME,
+		CLInvalidKernelDefinition=CL_INVALID_KERNEL_DEFINITION,
+		CLInvalidKernel=CL_INVALID_KERNEL,
+		CLInvalidArgIndex=CL_INVALID_ARG_INDEX,
+		CLInvalidArgValue=CL_INVALID_ARG_VALUE,
+		CLInvalidArgSize=CL_INVALID_ARG_SIZE,
+		CLInvalidKernelArgs=CL_INVALID_KERNEL_ARGS,
+		CLInvalidWorkDimension=CL_INVALID_WORK_DIMENSION,
+		CLInvalidWorkGroupSize=CL_INVALID_WORK_GROUP_SIZE,
+		CLInvalidWorkItemSize=CL_INVALID_WORK_ITEM_SIZE,
+		CLInvalidGlobalOffset=CL_INVALID_GLOBAL_OFFSET,
+		CLInvalidEventWaitList=CL_INVALID_EVENT_WAIT_LIST,
+		CLInvalidEvent=CL_INVALID_EVENT,
+		CLInvalidOperation=CL_INVALID_OPERATION,
+		CLInvalidGlObject=CL_INVALID_GL_OBJECT,
+		CLInvalidBufferSize=CL_INVALID_BUFFER_SIZE,
+		CLInvalidMipLevel=CL_INVALID_MIP_LEVEL,
+		CLInvalidGlobalWorkSize=CL_INVALID_GLOBAL_WORK_SIZE,
+		CLInvalidProperty=CL_INVALID_PROPERTY,
+		CLInvalidImageDescriptor=CL_INVALID_IMAGE_DESCRIPTOR,
+		CLInvalidCompilerOptions=CL_INVALID_COMPILER_OPTIONS,
+		CLInvalidLinkerOptions=CL_INVALID_LINKER_OPTIONS,
+		CLInvalidDevicePartitionCount=CL_INVALID_DEVICE_PARTITION_COUNT,
+		CLInvalidPipeSize=CL_INVALID_PIPE_SIZE,
+		CLInvalidDeviceQueue=CL_INVALID_DEVICE_QUEUE
+	}
+	E;				//PenC_CL : Access as Enumeration
+	cl_int I;		//PenC_CL : Access as Integer
+};
+MemC_Type_Declare_(union,penc_eu,PENC_EU);	//PenC_CL : OpenCL Error Union
+static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(int)");
 #endif
 #endif
 
@@ -179,10 +251,10 @@ int PenC_SS_Assign_(PENC_SS _PL_ SS,const size_t Index,const size_t Offset,const
 #if(MemC_Fold_(Declaration:OpenCL Functions))
 #ifdef __OPENCL_H
 //PenC_CL : Select Platform and Device with Console Interface
-cl_int PenC_CL_Identify_(cl_uint _PL_ PlatformSelect,cl_uint _PL_ DeviceSelect);
+penc_eu PenC_CL_Identify_(cl_uint _PL_ PlatformSelect,cl_uint _PL_ DeviceSelect);
 
 //PenC_CL : Program Resource Memory Allocation - Deallocate with "PenC_Delete_CL_"
-penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileNameSet,NAME_08 _PL_ _PL_ IndicatorSet,NAME_08 _PL_ BuildOption,const size_t FilesNumber,const cl_uint KernelsNumber,cl_int _PL_ Error);
+penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileNameSet,NAME_08 _PL_ _PL_ IndicatorSet,NAME_08 _PL_ BuildOption,const size_t FilesNumber,const cl_uint KernelsNumber,penc_eu _PL_ Error);
 //PenC_CL : Program Resource Memory Deallocation
 void PenC_CL_Delete_(penc_cl *_PL_ PenCL);
 #endif
