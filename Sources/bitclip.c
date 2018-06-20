@@ -25,7 +25,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.06.19";
+static DATA_08 IdiomVersion[16]="Date:2018.06.20";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -4535,12 +4535,12 @@ static devi_km *_BitC_Create_KM_Endian_(cl_kernel const Kernel,GENERAL _PL_ ID)
 	
 	if(KM)
 	{
-		cl_int Error=CL_SUCCESS;
+		penc_eu Error={.E=CLSuccess};
 
-		Error|=Devi_KM_Type_G_(KM,0);
-		Error|=Devi_KM_Type_P_(KM,1,data_32);
-		Error|=Devi_KM_Init_(KM,Kernel);
-		if(Error!=CL_SUCCESS)
+		Error.I|=Devi_KM_Type_G_(KM,0);
+		Error.I|=Devi_KM_Type_P_(KM,1,data_32);
+		Error.I|=Devi_KM_Init_(KM,Kernel);
+		if(Error.E!=CLSuccess)
 			Devi_KM_Delete_(&KM);
 	}
 
@@ -4552,13 +4552,13 @@ static devi_km *_BitC_Create_KM_Caster_(cl_kernel const Kernel,GENERAL _PL_ ID)
 
 	if(KM)
 	{
-		cl_int Error=CL_SUCCESS;
+		penc_eu Error={.E=CLSuccess};
 
-		Error|=Devi_KM_Type_G_(KM,0);
-		Error|=Devi_KM_Type_G_(KM,1);
-		Error|=Devi_KM_Type_P_(KM,2,data_32);
-		Error|=Devi_KM_Init_(KM,Kernel);
-		if(Error!=CL_SUCCESS)
+		Error.I|=Devi_KM_Type_G_(KM,0);
+		Error.I|=Devi_KM_Type_G_(KM,1);
+		Error.I|=Devi_KM_Type_P_(KM,2,data_32);
+		Error.I|=Devi_KM_Init_(KM,Kernel);
+		if(Error.E!=CLSuccess)
 			Devi_KM_Delete_(&KM);
 	}
 
@@ -4570,14 +4570,14 @@ static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,GENERAL _PL_ ID,ADDRE
 
 	if(KM)
 	{
-		cl_int Error=CL_SUCCESS;
+		penc_eu Error={.E=CLSuccess};
 
-		Error|=Devi_KM_Type_G_(KM,0);
-		Error|=Devi_KM_Type_G_(KM,1);
-		Error|=_Devi_KM_Type_(KM,2,TypeSize,DeviDomainPrivate);
-		Error|=Devi_KM_Type_P_(KM,3,data_32);
-		Error|=Devi_KM_Init_(KM,Kernel);
-		if(Error!=CL_SUCCESS)
+		Error.I|=Devi_KM_Type_G_(KM,0);
+		Error.I|=Devi_KM_Type_G_(KM,1);
+		Error.I|=_Devi_KM_Type_(KM,2,TypeSize,DeviDomainPrivate);
+		Error.I|=Devi_KM_Type_P_(KM,3,data_32);
+		Error.I|=Devi_KM_Init_(KM,Kernel);
+		if(Error.E!=CLSuccess)
 			Devi_KM_Delete_(&KM);
 	}
 
