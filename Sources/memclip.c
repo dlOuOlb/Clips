@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.06.18";
+static const char IdiomVersion[16]="Date:2018.06.26";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -1335,6 +1335,8 @@ ESCAPE_INVALID_ARG_SIZE:
 								PtrA[0]=((char*)(PtrA[-1]))+PtrS[-1];
 						if(PtrF[-1]==DeviDomainLocal)
 							PtrA[-1]=NULL;
+
+						MemC_Acs_(cl_kernel,KM->Kernel)=Kernel;
 					}
 					else
 						Error=CL_OUT_OF_HOST_MEMORY;
