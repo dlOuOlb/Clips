@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.26	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -21,41 +21,23 @@
 #endif
 
 #if(MemC_Fold_(Definition:Types))
-typedef uint8_t data_08;		//BitClip : 8-bit Natural Variable
-typedef uint16_t data_16;		//BitClip : 16-bit Natural Variable
-typedef uint32_t data_32;		//BitClip : 32-bit Natural Variable
-typedef uint64_t data_64;		//BitClip : 64-bit Natural Variable
+MemC_Type_Rename_(uint8_t,data_08,DATA_08)	//BitClip : 8-bit Natural
+MemC_Type_Rename_(uint16_t,data_16,DATA_16)	//BitClip : 16-bit Natural
+MemC_Type_Rename_(uint32_t,data_32,DATA_32)	//BitClip : 32-bit Natural
+MemC_Type_Rename_(uint64_t,data_64,DATA_64)	//BitClip : 64-bit Natural
 
-typedef const data_08 DATA_08;	//BitClip : 8-bit Natural Constant
-typedef const data_16 DATA_16;	//BitClip : 16-bit Natural Constant
-typedef const data_32 DATA_32;	//BitClip : 32-bit Natural Constant
-typedef const data_64 DATA_64;	//BitClip : 64-bit Natural Constant
+MemC_Type_Rename_(int8_t,inte_08,INTE_08)	//BitClip : 8-bit Integer
+MemC_Type_Rename_(int16_t,inte_16,INTE_16)	//BitClip : 16-bit Integer
+MemC_Type_Rename_(int32_t,inte_32,INTE_32)	//BitClip : 32-bit Integer
+MemC_Type_Rename_(int64_t,inte_64,INTE_64)	//BitClip : 64-bit Integer
 
-typedef int8_t inte_08;			//BitClip : 8-bit Integer Variable
-typedef int16_t inte_16;		//BitClip : 16-bit Integer Variable
-typedef int32_t inte_32;		//BitClip : 32-bit Integer Variable
-typedef int64_t inte_64;		//BitClip : 64-bit Integer Variable
+MemC_Type_Rename_(float,real_32,REAL_32)	//BitClip : 32-bit Single Precision Floating Point
+MemC_Type_Rename_(double,real_64,REAL_64)	//BitClip : 64-bit Double Precision Floating Point
 
-typedef const inte_08 INTE_08;	//BitClip : 8-bit Integer Constant
-typedef const inte_16 INTE_16;	//BitClip : 16-bit Integer Constant
-typedef const inte_32 INTE_32;	//BitClip : 32-bit Integer Constant
-typedef const inte_64 INTE_64;	//BitClip : 64-bit Integer Constant
-
-typedef float real_32;			//BitClip : 32-bit Single Precision Floating Point Variable
-typedef double real_64;			//BitClip : 64-bit Double Precision Floating Point Variable
-
-typedef const real_32 REAL_32;	//BitClip : 32-bit Single Precision Floating Point Constant
-typedef const real_64 REAL_64;	//BitClip : 64-bit Double Precision Floating Point Constant
-
-typedef void general;			//BitClip : General Variable
-typedef signed int integer;		//BitClip : Integer Variable
-typedef unsigned int natural;	//BitClip : Natural Variable
-typedef size_t address;			//BitClip : Address Variable
-
-typedef const general GENERAL;	//BitClip : General Constant
-typedef const integer INTEGER;	//BitClip : Integer Constant
-typedef const natural NATURAL;	//BitClip : Natural Constant
-typedef const address ADDRESS;	//BitClip : Address Constant
+MemC_Type_Rename_(void,general,GENERAL)			//BitClip : Void
+MemC_Type_Rename_(size_t,address,ADDRESS)		//BitClip : Size
+MemC_Type_Rename_(signed int,integer,INTEGER)	//BitClip : Integer
+MemC_Type_Rename_(unsigned int,natural,NATURAL)	//BitClip : Natural
 
 typedef void (*func_p_)(void);	//BitClip : Function Pointer Variable
 typedef const func_p_ FUNC_P_;	//BitClip : Function Pointer Constant
