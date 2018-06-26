@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.18	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.26	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -35,8 +35,11 @@ static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
 #define FULL ((void*)(~((size_t)(0))))	//MemClip : Full Pointer Definition
 #endif
 
-static_assert((sizeof(void*)==sizeof(size_t)),"sizeof(void*) != sizeof(size_t)");
 static_assert((sizeof(char)==1),"sizeof(char) != 1");
+static_assert((sizeof(void*)==sizeof(size_t)),"sizeof(void*) != sizeof(size_t)");
+#ifdef __OPENCL_H
+static_assert((sizeof(cl_int)<=sizeof(size_t)),"sizeof(cl_int) > sizeof(size_t)");
+#endif
 
 #ifdef _PL_
 #error The macro "_PL_" is already defined.
@@ -145,6 +148,7 @@ enum _devi_df					//MemC_CL : Device Memory Domain Flag Enumeration
 	DeviDomainPrivate=0x50		//MemC_CL : Private Memory
 };
 MemC_Type_Declare_(enum,devi_df,DEVI_DF);	//MemC_CL : Device Memory Domain Flag Enumeration
+static_assert(sizeof(devi_df)<=sizeof(size_t),"sizeof(enum) > sizeof(size_t)");
 
 struct _devi_km					//MemC_CL : Kernel Manager Structure
 {
