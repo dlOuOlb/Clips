@@ -47,7 +47,8 @@ static_assert((sizeof(cl_int)<=sizeof(size_t)),"sizeof(cl_int) > sizeof(size_t)"
 #define _PL_ *const	//MemClip : Pointer Lock Definition
 #endif
 
-#define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;	//MemClip : Macro for Type Declaration
+#define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;	//MemClip : Macro for Type Renaming
+#define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;		//MemClip : Macro for Type Declaration
 #endif
 
 #if(MemC_Fold_(Definition:Types))
