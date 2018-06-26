@@ -51,10 +51,10 @@ MemC_Type_Declare_(enum,boolean,BOOLEAN);	//BitClip : Boolean Enumeration
 
 union _bitclip			//BitClip : Pointer Union
 {
+	address A;			//BitClip : Address Container
 	union _point_v		//BitClip : Variable Pointer Union
 	{
 		general *G;		//BitClip : General Container
-		address A;		//BitClip : Address Container
 		general **GG;	//BitClip : General Access
 		address *AA;	//BitClip : Address Access
 		data_08 *D08;	//BitClip : 8-Bit Natural Access
@@ -72,7 +72,6 @@ union _bitclip			//BitClip : Pointer Union
 	union _point_c		//BitClip : Constant Pointer Union
 	{
 		GENERAL *G;		//BitClip : General Container
-		address A;		//BitClip : Address Container
 		GENERAL **GG;	//BitClip : General Access
 		ADDRESS *AA;	//BitClip : Address Access
 		DATA_08 *D08;	//BitClip : 8-Bit Natural Access
