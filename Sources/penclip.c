@@ -1,7 +1,7 @@
 ﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.06.19";
+static NAME_08 IdiomVersion[16]="Date:2018.06.27";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -199,8 +199,8 @@ penc_sc *PenC_SC_Create_(const size_t Capacity)
 		SC=Byte_Alloc_(_PenC_Overflow_Add_(Capacity,sizeof(penc_sc)));
 		if(SC)
 		{
-			MemC_Acs_(size_t,SC->Capacity)=Capacity;
-			MemC_Acs_(name_08*,SC->String.N08)=Line_Clear_(SC+1,Capacity,name_08);
+			Acs_(size_t,SC->Capacity)=Capacity;
+			Acs_(name_08*,SC->String.N08)=Line_Clear_(SC+1,Capacity,name_08);
 		}
 	}
 	else
@@ -229,8 +229,8 @@ penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ Root,const size_t Offset,const size_t 
 					SC=Unit_Alloc_(penc_sc);
 					if(SC)
 					{
-						MemC_Acs_(size_t,SC->Capacity)=Length;
-						MemC_Acs_(name_08*,SC->String.N08)=Root->String.N08+Offset;
+						Acs_(size_t,SC->Capacity)=Length;
+						Acs_(name_08*,SC->String.N08)=Root->String.N08+Offset;
 					}
 				}
 			else
@@ -287,10 +287,10 @@ penc_ss *PenC_SS_Create_(const size_t Parts,const size_t Total)
 					SS=Byte_Alloc_(Size);
 					if(SS)
 					{
-						MemC_Acs_(size_t,SS->Root.Capacity)=Total;
-						MemC_Acs_(size_t,SS->Nums)=Parts;
-						MemC_Acs_(penc_sc*,SS->Part)=Line_Clear_(SS+1,Parts,penc_sc);
-						MemC_Acs_(name_08*,SS->Root.String.N08)=Line_Clear_((name_08*)(SS->Part+Parts),Total,name_08);
+						Acs_(size_t,SS->Root.Capacity)=Total;
+						Acs_(size_t,SS->Nums)=Parts;
+						Acs_(penc_sc*,SS->Part)=Line_Clear_(SS+1,Parts,penc_sc);
+						Acs_(name_08*,SS->Root.String.N08)=Line_Clear_((name_08*)(SS->Part+Parts),Total,name_08);
 					}
 				}
 				else
@@ -309,10 +309,10 @@ penc_ss *PenC_SS_Create_(const size_t Parts,const size_t Total)
 				SS=Byte_Alloc_(Size);
 				if(SS)
 				{
-					MemC_Acs_(size_t,SS->Root.Capacity)=0;
-					MemC_Acs_(name_08*,SS->Root.String.N08)=NULL;
-					MemC_Acs_(size_t,SS->Nums)=Parts;
-					MemC_Acs_(penc_sc*,SS->Part)=Line_Clear_(SS+1,Parts,penc_sc);
+					Acs_(size_t,SS->Root.Capacity)=0;
+					Acs_(name_08*,SS->Root.String.N08)=NULL;
+					Acs_(size_t,SS->Nums)=Parts;
+					Acs_(penc_sc*,SS->Part)=Line_Clear_(SS+1,Parts,penc_sc);
 				}
 			}
 			else
@@ -324,10 +324,10 @@ penc_ss *PenC_SS_Create_(const size_t Parts,const size_t Total)
 			SS=Byte_Alloc_(_PenC_Overflow_Add_(Total,sizeof(penc_ss)));
 			if(SS)
 			{
-				MemC_Acs_(size_t,SS->Root.Capacity)=Total;
-				MemC_Acs_(name_08*,SS->Root.String.N08)=Line_Clear_(SS+1,Total,name_08);
-				MemC_Acs_(size_t,SS->Nums)=0;
-				MemC_Acs_(penc_sc*,SS->Part)=NULL;
+				Acs_(size_t,SS->Root.Capacity)=Total;
+				Acs_(name_08*,SS->Root.String.N08)=Line_Clear_(SS+1,Total,name_08);
+				Acs_(size_t,SS->Nums)=0;
+				Acs_(penc_sc*,SS->Part)=NULL;
 			}
 		}
 		else
@@ -358,16 +358,16 @@ int PenC_SS_Assign_(PENC_SS _PL_ SS,const size_t Index,const size_t Offset,const
 						goto FAILURE;
 					else
 					{
-						MemC_Acs_(size_t,SS->Part[Index].Capacity)=Length;
-						MemC_Acs_(name_08*,SS->Part[Index].String.N08)=SS->Root.String.N08+Offset;
+						Acs_(size_t,SS->Part[Index].Capacity)=Length;
+						Acs_(name_08*,SS->Part[Index].String.N08)=SS->Root.String.N08+Offset;
 
 						goto SUCCESS;
 					}
 				}
 				else
 				{
-					MemC_Acs_(size_t,SS->Part[Index].Capacity)=0;
-					MemC_Acs_(name_08*,SS->Part[Index].String.N08)=NULL;
+					Acs_(size_t,SS->Part[Index].Capacity)=0;
+					Acs_(name_08*,SS->Part[Index].String.N08)=NULL;
 
 					goto SUCCESS;
 				}
@@ -520,8 +520,8 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName
 												}
 												if(Helper)
 												{
-													MemC_Acs_(size_t*,Helper->SizeWorker)=(size_t*)(Helper+1);
-													MemC_Acs_(cl_kernel*,Helper->SetKernel)=(cl_kernel*)(Helper->SizeWorker+Dimensions);
+													Acs_(size_t*,Helper->SizeWorker)=(size_t*)(Helper+1);
+													Acs_(cl_kernel*,Helper->SetKernel)=(cl_kernel*)(Helper->SizeWorker+Dimensions);
 
 													Error->I=Devi_Info_Device_(Device,(void*)(Helper->SizeWorker),Dimensions,size_t,CL_DEVICE_MAX_WORK_ITEM_SIZES);
 													if(Error->E==CLSuccess)
@@ -532,7 +532,7 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName
 															Error->I=Devi_Info_Device_(Device,(void*)&(Helper->SizeLocal),1,cl_ulong,CL_DEVICE_LOCAL_MEM_SIZE);
 															if(Error->E==CLSuccess)
 															{
-																MemC_Acs_(cl_program,Helper->Program)=Devi_Create_Program_(Context,TextSet,FileSize,(cl_uint)Files,&(Error->I));
+																Acs_(cl_program,Helper->Program)=Devi_Create_Program_(Context,TextSet,FileSize,(cl_uint)Files,&(Error->I));
 																if(Helper->Program)
 																{
 																	Error->I=Devi_Build_(Helper->Program,Option);
@@ -551,24 +551,24 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileName
 																		}
 																		if(PointerI==End)
 																		{
-																			MemC_Acs_(cl_device_id,Helper->Device)=Device;
-																			MemC_Acs_(cl_context,Helper->Context)=Context;
-																			MemC_Acs_(cl_command_queue,Helper->Queue)=Queue;
-																			MemC_Acs_(cl_uint,Helper->Cores)=Cores;
-																			MemC_Acs_(cl_uint,Helper->Dimensions)=Dimensions;
-																			MemC_Acs_(cl_uint,Helper->Kernels)=Kernels;
+																			Acs_(cl_device_id,Helper->Device)=Device;
+																			Acs_(cl_context,Helper->Context)=Context;
+																			Acs_(cl_command_queue,Helper->Queue)=Queue;
+																			Acs_(cl_uint,Helper->Cores)=Cores;
+																			Acs_(cl_uint,Helper->Dimensions)=Dimensions;
+																			Acs_(cl_uint,Helper->Kernels)=Kernels;
 																		}
 																		else
 																		{
 																			for(PointerK--;PointerK>=Helper->SetKernel;PointerK--)
 																				Devi_Delete_Kernel_(PointerK[0]);
-																			Devi_Delete_Program_(MemC_Acs_(cl_program,Helper->Program));
+																			Devi_Delete_Program_(Acs_(cl_program,Helper->Program));
 																			MemC_Deloc_(Helper);
 																		}
 																	}
 																	else
 																	{
-																		Devi_Delete_Program_(MemC_Acs_(cl_program,Helper->Program));
+																		Devi_Delete_Program_(Acs_(cl_program,Helper->Program));
 																		MemC_Deloc_(Helper);
 																	}
 																}
@@ -624,7 +624,7 @@ void PenC_CL_Delete_(penc_cl *_PL_ Helper)
 
 		for(;PointerK>=(*Helper)->SetKernel;PointerK--)
 			Devi_Delete_Kernel_(PointerK[0]);
-		Devi_Delete_Program_(MemC_Acs_(cl_program,(*Helper)->Program));
+		Devi_Delete_Program_(Acs_(cl_program,(*Helper)->Program));
 		MemC_Deloc_(*Helper);
 	}
 }
