@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.27	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -443,182 +443,182 @@ general BitC_Endian_D64_(data_64 _PL_ Data,DATA_32 Length);
 
 #if(MemC_Fold_(Declaration:Caster Functions))
 //BitClip : 8-bit Natural to 16-bit Natural Type Casting
-general BitC_Caster_D08_D16_(DATA_08 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D08_D16_(DATA_08 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 32-bit Natural Type Casting
-general BitC_Caster_D08_D32_(DATA_08 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D08_D32_(DATA_08 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 64-bit Natural Type Casting
-general BitC_Caster_D08_D64_(DATA_08 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D08_D64_(DATA_08 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 8-bit Integer Type Casting
-general BitC_Caster_D08_I08_(DATA_08 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D08_I08_(DATA_08 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 32-bit Real Type Casting
-general BitC_Caster_D08_R32_(DATA_08 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D08_R32_(DATA_08 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 64-bit Real Type Casting
-general BitC_Caster_D08_R64_(DATA_08 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D08_R64_(DATA_08 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 16-bit Natural to 8-bit Natural Type Casting
-general BitC_Caster_D16_D08_(DATA_16 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D16_D08_(DATA_16 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 32-bit Natural Type Casting
-general BitC_Caster_D16_D32_(DATA_16 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D16_D32_(DATA_16 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 64-bit Natural Type Casting
-general BitC_Caster_D16_D64_(DATA_16 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D16_D64_(DATA_16 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 8-bit Integer Type Casting
-general BitC_Caster_D16_I08_(DATA_16 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D16_I08_(DATA_16 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 16-bit Integer Type Casting
-general BitC_Caster_D16_I16_(DATA_16 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D16_I16_(DATA_16 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 32-bit Real Type Casting
-general BitC_Caster_D16_R32_(DATA_16 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D16_R32_(DATA_16 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 64-bit Real Type Casting
-general BitC_Caster_D16_R64_(DATA_16 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D16_R64_(DATA_16 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 32-bit Natural to 8-bit Natural Type Casting
-general BitC_Caster_D32_D08_(DATA_32 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_D08_(DATA_32 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 16-bit Natural Type Casting
-general BitC_Caster_D32_D16_(DATA_32 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_D16_(DATA_32 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 64-bit Natural Type Casting
-general BitC_Caster_D32_D64_(DATA_32 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_D64_(DATA_32 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 8-bit Integer Type Casting
-general BitC_Caster_D32_I08_(DATA_32 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_I08_(DATA_32 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 16-bit Integer Type Casting
-general BitC_Caster_D32_I16_(DATA_32 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_I16_(DATA_32 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 32-bit Integer Type Casting
-general BitC_Caster_D32_I32_(DATA_32 *MemC_Rst_ I,inte_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_I32_(DATA_32 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 32-bit Real Type Casting
-general BitC_Caster_D32_R32_(DATA_32 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_R32_(DATA_32 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 64-bit Real Type Casting
-general BitC_Caster_D32_R64_(DATA_32 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D32_R64_(DATA_32 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 64-bit Natural to 8-bit Natural Type Casting
-general BitC_Caster_D64_D08_(DATA_64 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_D08_(DATA_64 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 16-bit Natural Type Casting
-general BitC_Caster_D64_D16_(DATA_64 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_D16_(DATA_64 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 32-bit Natural Type Casting
-general BitC_Caster_D64_D32_(DATA_64 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_D32_(DATA_64 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 8-bit Integer Type Casting
-general BitC_Caster_D64_I08_(DATA_64 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_I08_(DATA_64 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 16-bit Integer Type Casting
-general BitC_Caster_D64_I16_(DATA_64 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_I16_(DATA_64 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 32-bit Integer Type Casting
-general BitC_Caster_D64_I32_(DATA_64 *MemC_Rst_ I,inte_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_I32_(DATA_64 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 64-bit Integer Type Casting
-general BitC_Caster_D64_I64_(DATA_64 *MemC_Rst_ I,inte_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_I64_(DATA_64 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 32-bit Real Type Casting
-general BitC_Caster_D64_R32_(DATA_64 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_R32_(DATA_64 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 64-bit Real Type Casting
-general BitC_Caster_D64_R64_(DATA_64 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_D64_R64_(DATA_64 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 8-bit Integer to 8-bit Natural Type Casting
-general BitC_Caster_I08_D08_(INTE_08 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_D08_(INTE_08 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 16-bit Natural Type Casting
-general BitC_Caster_I08_D16_(INTE_08 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_D16_(INTE_08 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 32-bit Natural Type Casting
-general BitC_Caster_I08_D32_(INTE_08 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_D32_(INTE_08 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 64-bit Natural Type Casting
-general BitC_Caster_I08_D64_(INTE_08 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_D64_(INTE_08 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 16-bit Integer Type Casting
-general BitC_Caster_I08_I16_(INTE_08 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_I16_(INTE_08 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 32-bit Integer Type Casting
-general BitC_Caster_I08_I32_(INTE_08 *MemC_Rst_ I,inte_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_I32_(INTE_08 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 64-bit Integer Type Casting
-general BitC_Caster_I08_I64_(INTE_08 *MemC_Rst_ I,inte_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_I64_(INTE_08 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 32-bit Real Type Casting
-general BitC_Caster_I08_R32_(INTE_08 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_R32_(INTE_08 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 64-bit Real Type Casting
-general BitC_Caster_I08_R64_(INTE_08 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I08_R64_(INTE_08 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 16-bit Integer to 8-bit Natural Type Casting
-general BitC_Caster_I16_D08_(INTE_16 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_D08_(INTE_16 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 16-bit Natural Type Casting
-general BitC_Caster_I16_D16_(INTE_16 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_D16_(INTE_16 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 32-bit Natural Type Casting
-general BitC_Caster_I16_D32_(INTE_16 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_D32_(INTE_16 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 64-bit Natural Type Casting
-general BitC_Caster_I16_D64_(INTE_16 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_D64_(INTE_16 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 8-bit Integer Type Casting
-general BitC_Caster_I16_I08_(INTE_16 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_I08_(INTE_16 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 32-bit Integer Type Casting
-general BitC_Caster_I16_I32_(INTE_16 *MemC_Rst_ I,inte_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_I32_(INTE_16 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 64-bit Integer Type Casting
-general BitC_Caster_I16_I64_(INTE_16 *MemC_Rst_ I,inte_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_I64_(INTE_16 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 32-bit Real Type Casting
-general BitC_Caster_I16_R32_(INTE_16 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_R32_(INTE_16 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 64-bit Real Type Casting
-general BitC_Caster_I16_R64_(INTE_16 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I16_R64_(INTE_16 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 32-bit Integer to 8-bit Natural Type Casting
-general BitC_Caster_I32_D08_(INTE_32 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_D08_(INTE_32 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 16-bit Natural Type Casting
-general BitC_Caster_I32_D16_(INTE_32 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_D16_(INTE_32 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 32-bit Natural Type Casting
-general BitC_Caster_I32_D32_(INTE_32 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_D32_(INTE_32 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 64-bit Natural Type Casting
-general BitC_Caster_I32_D64_(INTE_32 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_D64_(INTE_32 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 8-bit Integer Type Casting
-general BitC_Caster_I32_I08_(INTE_32 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_I08_(INTE_32 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 16-bit Integer Type Casting
-general BitC_Caster_I32_I16_(INTE_32 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_I16_(INTE_32 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 64-bit Integer Type Casting
-general BitC_Caster_I32_I64_(INTE_32 *MemC_Rst_ I,inte_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_I64_(INTE_32 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 32-bit Real Type Casting
-general BitC_Caster_I32_R32_(INTE_32 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_R32_(INTE_32 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 64-bit Real Type Casting
-general BitC_Caster_I32_R64_(INTE_32 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I32_R64_(INTE_32 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 64-bit Integer to 8-bit Natural Type Casting
-general BitC_Caster_I64_D08_(INTE_64 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_D08_(INTE_64 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 16-bit Natural Type Casting
-general BitC_Caster_I64_D16_(INTE_64 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_D16_(INTE_64 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 32-bit Natural Type Casting
-general BitC_Caster_I64_D32_(INTE_64 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_D32_(INTE_64 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 64-bit Natural Type Casting
-general BitC_Caster_I64_D64_(INTE_64 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_D64_(INTE_64 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 8-bit Integer Type Casting
-general BitC_Caster_I64_I08_(INTE_64 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_I08_(INTE_64 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 16-bit Integer Type Casting
-general BitC_Caster_I64_I16_(INTE_64 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_I16_(INTE_64 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 32-bit Integer Type Casting
-general BitC_Caster_I64_I32_(INTE_64 *MemC_Rst_ I,inte_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_I32_(INTE_64 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 32-bit Real Type Casting
-general BitC_Caster_I64_R32_(INTE_64 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_R32_(INTE_64 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 64-bit Real Type Casting
-general BitC_Caster_I64_R64_(INTE_64 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_I64_R64_(INTE_64 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 32-bit Real to 8-bit Natural Type Casting
-general BitC_Caster_R32_D08_(REAL_32 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_D08_(REAL_32 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 16-bit Natural Type Casting
-general BitC_Caster_R32_D16_(REAL_32 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_D16_(REAL_32 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 32-bit Natural Type Casting
-general BitC_Caster_R32_D32_(REAL_32 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_D32_(REAL_32 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 64-bit Natural Type Casting
-general BitC_Caster_R32_D64_(REAL_32 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_D64_(REAL_32 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 8-bit Integer Type Casting
-general BitC_Caster_R32_I08_(REAL_32 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_I08_(REAL_32 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 16-bit Integer Type Casting
-general BitC_Caster_R32_I16_(REAL_32 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_I16_(REAL_32 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 32-bit Integer Type Casting
-general BitC_Caster_R32_I32_(REAL_32 *MemC_Rst_ I,inte_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_I32_(REAL_32 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 64-bit Integer Type Casting
-general BitC_Caster_R32_I64_(REAL_32 *MemC_Rst_ I,inte_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_I64_(REAL_32 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 64-bit Real Type Casting
-general BitC_Caster_R32_R64_(REAL_32 *MemC_Rst_ I,real_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R32_R64_(REAL_32 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 64-bit Real to 8-bit Natural Type Casting
-general BitC_Caster_R64_D08_(REAL_64 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_D08_(REAL_64 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 16-bit Natural Type Casting
-general BitC_Caster_R64_D16_(REAL_64 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_D16_(REAL_64 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 32-bit Natural Type Casting
-general BitC_Caster_R64_D32_(REAL_64 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_D32_(REAL_64 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 64-bit Natural Type Casting
-general BitC_Caster_R64_D64_(REAL_64 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_D64_(REAL_64 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 8-bit Integer Type Casting
-general BitC_Caster_R64_I08_(REAL_64 *MemC_Rst_ I,inte_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_I08_(REAL_64 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 16-bit Integer Type Casting
-general BitC_Caster_R64_I16_(REAL_64 *MemC_Rst_ I,inte_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_I16_(REAL_64 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 32-bit Integer Type Casting
-general BitC_Caster_R64_I32_(REAL_64 *MemC_Rst_ I,inte_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_I32_(REAL_64 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 64-bit Integer Type Casting
-general BitC_Caster_R64_I64_(REAL_64 *MemC_Rst_ I,inte_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_I64_(REAL_64 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 32-bit Real Type Casting
-general BitC_Caster_R64_R32_(REAL_64 *MemC_Rst_ I,real_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Caster_R64_R32_(REAL_64 *_R_ I,real_32 *_R_ O,DATA_32 N);
 #endif
 
 #if(MemC_Fold_(Declaration:Bit Operation Functions))
@@ -703,202 +703,202 @@ general BitC_BO_X_2_D08_(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,DATA_32 N)
 #if(MemC_Fold_(Declaration:Relational Operation Functions))
 //BitClip : Bit Expansion to 8-bit Natural
 //＊O[n]＝(I[n/8].bit[n%8])?(0xFF):(0x00)
-general BitC_Expand_D08_(DATA_08 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Expand_D08_(DATA_08 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : Bit Expansion to 16-bit Natural
 //＊O[n]＝(I[n/8].bit[n%8])?(0xFFFF):(0x0000)
-general BitC_Expand_D16_(DATA_08 *MemC_Rst_ I,data_16 *MemC_Rst_ O,DATA_32 N);
+general BitC_Expand_D16_(DATA_08 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : Bit Expansion to 32-bit Natural
 //＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFF):(0x00000000)
-general BitC_Expand_D32_(DATA_08 *MemC_Rst_ I,data_32 *MemC_Rst_ O,DATA_32 N);
+general BitC_Expand_D32_(DATA_08 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : Bit Expansion to 64-bit Natural
 //＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFFFFFFFFFF):(0x0000000000000000)
-general BitC_Expand_D64_(DATA_08 *MemC_Rst_ I,data_64 *MemC_Rst_ O,DATA_32 N);
+general BitC_Expand_D64_(DATA_08 *_R_ I,data_64 *_R_ O,DATA_32 N);
 
 //BitClip : Bit Shrinkage from 8-bit Natural
 //＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-general BitC_Shrink_D08_(DATA_08 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Shrink_D08_(DATA_08 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : Bit Shrinkage from 16-bit Natural
 //＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-general BitC_Shrink_D16_(DATA_16 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Shrink_D16_(DATA_16 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : Bit Shrinkage from 32-bit Natural
 //＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-general BitC_Shrink_D32_(DATA_32 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Shrink_D32_(DATA_32 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : Bit Shrinkage from 64-bit Natural
 //＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-general BitC_Shrink_D64_(DATA_64 *MemC_Rst_ I,data_08 *MemC_Rst_ O,DATA_32 N);
+general BitC_Shrink_D64_(DATA_64 *_R_ I,data_08 *_R_ O,DATA_32 N);
 
 //BitClip : 8-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==V)
-general BitC_RO_E_1_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 V,DATA_32 N);
+general BitC_RO_E_1_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,DATA_32 N);
 //BitClip : 16-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==V)
-general BitC_RO_E_1_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 V,DATA_32 N);
+general BitC_RO_E_1_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,DATA_32 N);
 //BitClip : 32-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==V)
-general BitC_RO_E_1_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 V,DATA_32 N);
+general BitC_RO_E_1_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,DATA_32 N);
 //BitClip : 64-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==V)
-general BitC_RO_E_1_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 V,DATA_32 N);
+general BitC_RO_E_1_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,DATA_32 N);
 //BitClip : 8-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==B[n])
-general BitC_RO_E_2_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_E_2_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,DATA_32 N);
 //BitClip : 16-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==B[n])
-general BitC_RO_E_2_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_E_2_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==B[n])
-general BitC_RO_E_2_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_E_2_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==B[n])
-general BitC_RO_E_2_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_E_2_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,DATA_32 N);
 
 //BitClip : 8-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=V)
-general BitC_RO_N_1_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 V,DATA_32 N);
+general BitC_RO_N_1_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,DATA_32 N);
 //BitClip : 16-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=V)
-general BitC_RO_N_1_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 V,DATA_32 N);
+general BitC_RO_N_1_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,DATA_32 N);
 //BitClip : 32-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=V)
-general BitC_RO_N_1_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 V,DATA_32 N);
+general BitC_RO_N_1_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,DATA_32 N);
 //BitClip : 64-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=V)
-general BitC_RO_N_1_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 V,DATA_32 N);
+general BitC_RO_N_1_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,DATA_32 N);
 //BitClip : 8-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-general BitC_RO_N_2_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_N_2_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,DATA_32 N);
 //BitClip : 16-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-general BitC_RO_N_2_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_N_2_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-general BitC_RO_N_2_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_N_2_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Natural NE Operation
 //＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-general BitC_RO_N_2_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_N_2_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,DATA_32 N);
 
 //BitClip : 8-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 V,DATA_32 N);
+general BitC_RO_G_1_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,DATA_32 N);
 //BitClip : 16-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 V,DATA_32 N);
+general BitC_RO_G_1_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,DATA_32 N);
 //BitClip : 32-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 V,DATA_32 N);
+general BitC_RO_G_1_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,DATA_32 N);
 //BitClip : 64-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 V,DATA_32 N);
+general BitC_RO_G_1_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,DATA_32 N);
 //BitClip : 8-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_I08_(data_08 *MemC_Rst_ C,INTE_08 *MemC_Rst_ A,INTE_08 V,DATA_32 N);
+general BitC_RO_G_1_I08_(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 V,DATA_32 N);
 //BitClip : 16-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_I16_(data_08 *MemC_Rst_ C,INTE_16 *MemC_Rst_ A,INTE_16 V,DATA_32 N);
+general BitC_RO_G_1_I16_(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 V,DATA_32 N);
 //BitClip : 32-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_I32_(data_08 *MemC_Rst_ C,INTE_32 *MemC_Rst_ A,INTE_32 V,DATA_32 N);
+general BitC_RO_G_1_I32_(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 V,DATA_32 N);
 //BitClip : 64-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_I64_(data_08 *MemC_Rst_ C,INTE_64 *MemC_Rst_ A,INTE_64 V,DATA_32 N);
+general BitC_RO_G_1_I64_(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 V,DATA_32 N);
 //BitClip : 32-bit Real GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_R32_(data_08 *MemC_Rst_ C,REAL_32 *MemC_Rst_ A,REAL_32 V,DATA_32 N);
+general BitC_RO_G_1_R32_(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 V,DATA_32 N);
 //BitClip : 64-bit Real GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥V)
-general BitC_RO_G_1_R64_(data_08 *MemC_Rst_ C,REAL_64 *MemC_Rst_ A,REAL_64 V,DATA_32 N);
+general BitC_RO_G_1_R64_(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 V,DATA_32 N);
 //BitClip : 8-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,DATA_32 N);
 //BitClip : 16-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Natural GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,DATA_32 N);
 //BitClip : 8-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_I08_(data_08 *MemC_Rst_ C,INTE_08 *MemC_Rst_ A,INTE_08 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_I08_(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 *_R_ B,DATA_32 N);
 //BitClip : 16-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_I16_(data_08 *MemC_Rst_ C,INTE_16 *MemC_Rst_ A,INTE_16 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_I16_(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_I32_(data_08 *MemC_Rst_ C,INTE_32 *MemC_Rst_ A,INTE_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_I32_(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Integer GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_I64_(data_08 *MemC_Rst_ C,INTE_64 *MemC_Rst_ A,INTE_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_I64_(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Real GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_R32_(data_08 *MemC_Rst_ C,REAL_32 *MemC_Rst_ A,REAL_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_R32_(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Real GE Operation
 //＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-general BitC_RO_G_2_R64_(data_08 *MemC_Rst_ C,REAL_64 *MemC_Rst_ A,REAL_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_G_2_R64_(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,DATA_32 N);
 
 //BitClip : 8-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 V,DATA_32 N);
+general BitC_RO_L_1_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,DATA_32 N);
 //BitClip : 16-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 V,DATA_32 N);
+general BitC_RO_L_1_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,DATA_32 N);
 //BitClip : 32-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 V,DATA_32 N);
+general BitC_RO_L_1_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,DATA_32 N);
 //BitClip : 64-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 V,DATA_32 N);
+general BitC_RO_L_1_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,DATA_32 N);
 //BitClip : 8-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_I08_(data_08 *MemC_Rst_ C,INTE_08 *MemC_Rst_ A,INTE_08 V,DATA_32 N);
+general BitC_RO_L_1_I08_(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 V,DATA_32 N);
 //BitClip : 16-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_I16_(data_08 *MemC_Rst_ C,INTE_16 *MemC_Rst_ A,INTE_16 V,DATA_32 N);
+general BitC_RO_L_1_I16_(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 V,DATA_32 N);
 //BitClip : 32-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_I32_(data_08 *MemC_Rst_ C,INTE_32 *MemC_Rst_ A,INTE_32 V,DATA_32 N);
+general BitC_RO_L_1_I32_(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 V,DATA_32 N);
 //BitClip : 64-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_I64_(data_08 *MemC_Rst_ C,INTE_64 *MemC_Rst_ A,INTE_64 V,DATA_32 N);
+general BitC_RO_L_1_I64_(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 V,DATA_32 N);
 //BitClip : 32-bit Real LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_R32_(data_08 *MemC_Rst_ C,REAL_32 *MemC_Rst_ A,REAL_32 V,DATA_32 N);
+general BitC_RO_L_1_R32_(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 V,DATA_32 N);
 //BitClip : 64-bit Real LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜V)
-general BitC_RO_L_1_R64_(data_08 *MemC_Rst_ C,REAL_64 *MemC_Rst_ A,REAL_64 V,DATA_32 N);
+general BitC_RO_L_1_R64_(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 V,DATA_32 N);
 
 //BitClip : 8-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_D08_(data_08 *MemC_Rst_ C,DATA_08 *MemC_Rst_ A,DATA_08 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_D08_(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,DATA_32 N);
 //BitClip : 16-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_D16_(data_08 *MemC_Rst_ C,DATA_16 *MemC_Rst_ A,DATA_16 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_D16_(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_D32_(data_08 *MemC_Rst_ C,DATA_32 *MemC_Rst_ A,DATA_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_D32_(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Natural LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_D64_(data_08 *MemC_Rst_ C,DATA_64 *MemC_Rst_ A,DATA_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_D64_(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,DATA_32 N);
 //BitClip : 8-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_I08_(data_08 *MemC_Rst_ C,INTE_08 *MemC_Rst_ A,INTE_08 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_I08_(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 *_R_ B,DATA_32 N);
 //BitClip : 16-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_I16_(data_08 *MemC_Rst_ C,INTE_16 *MemC_Rst_ A,INTE_16 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_I16_(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_I32_(data_08 *MemC_Rst_ C,INTE_32 *MemC_Rst_ A,INTE_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_I32_(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Integer LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_I64_(data_08 *MemC_Rst_ C,INTE_64 *MemC_Rst_ A,INTE_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_I64_(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 *_R_ B,DATA_32 N);
 //BitClip : 32-bit Real LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_R32_(data_08 *MemC_Rst_ C,REAL_32 *MemC_Rst_ A,REAL_32 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_R32_(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 *_R_ B,DATA_32 N);
 //BitClip : 64-bit Real LT Operation
 //＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-general BitC_RO_L_2_R64_(data_08 *MemC_Rst_ C,REAL_64 *MemC_Rst_ A,REAL_64 *MemC_Rst_ B,DATA_32 N);
+general BitC_RO_L_2_R64_(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,DATA_32 N);
 #endif
 
 #if(MemC_Fold_(Declaration:BitClip Kernel Manager Functions))

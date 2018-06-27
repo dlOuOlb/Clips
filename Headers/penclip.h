@@ -2,7 +2,7 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.19	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.27	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/

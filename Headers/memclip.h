@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.27	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -45,6 +45,18 @@ static_assert((sizeof(cl_int)<=sizeof(size_t)),"sizeof(cl_int) > sizeof(size_t)"
 #error The macro "_PL_" is already defined.
 #else
 #define _PL_ *const	//MemClip : Pointer Lock Definition
+#endif
+
+#ifdef _R_
+#error The macro "_R_" is already defined.
+#else
+#define _R_ __restrict	//MemClip : Exclusive memory Access
+#endif
+
+#ifdef Acs_
+#error The macro "Acs_" is already defined.
+#else
+#define Acs_(type,Data) (*((type*)(&(Data))))	//MemClip : Indirect Memory Access
 #endif
 
 #define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;	//MemClip : Macro for Type Renaming
@@ -195,8 +207,6 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 
 #define MemC_Mute_(Argument) ((void)(Argument))				//MemClip : Unused Argument Warning Mute
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))	//MemClip : Byte Size of Elements
-#define MemC_Acs_(type,Data) (*((type*)(&(Data))))			//MemClip : Indirect Memory Access
-#define MemC_Rst_ __restrict								//MemClip : Exclusive memory Access
 
 #define Byte_Clear_(Memory,ByteSize) memset(Memory,0,ByteSize)							//MemClip : Data Reset in Byte Size
 #define Byte_Copy_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)	//MemClip : Data Copy in Byte Size
@@ -338,6 +348,11 @@ int MemC_MS_Init_(MEMC_MS _PL_ MemorySlot);
 //＊Mode 0 : Return value is 1 for all NULLs, otherwise 0.
 //＊Mode 1 : Return value is 0 for any NULLs, otherwise 1.
 int MemC_MS_Null_(MEMC_MS _PL_ MemorySlot,const int CheckMode);
+
+//MemClip : Just kidding!
+int MemC_MS_Joke_(MEMC_MS _PL_ MemorySlot);
+//MemClip : Oops!
+int MemC_MS_Oops_(MEMC_MS _PL_ MemorySlot);
 
 //MemClip : Memory Container Memory Allocation - Deallocate with "MemC_MC_Delete_"
 //＊Unit = TypeInfo -> SizeType
