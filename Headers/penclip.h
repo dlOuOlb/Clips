@@ -2,7 +2,7 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.27	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.29	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -13,6 +13,7 @@
 
 #include <uchar.h>
 #include <stdio.h>
+#include <string.h>
 #include <time.h>
 #ifdef _CL
 #include <CL\opencl.h>
@@ -20,14 +21,10 @@
 #include <memclip.h>
 
 #if(MemC_Fold_(Definition:Types))
-typedef char name_08;			//PenClip : 8-bit Name Variable
-typedef const name_08 NAME_08;	//PenClip : 8-bit Name Constant
 
-typedef char16_t name_16;		//PenClip : 16-bit Name Variable
-typedef const name_16 NAME_16;	//PenClip : 16-bit Name Constant
-
-typedef char32_t name_32;		//PenClip : 32-bit Name Variable
-typedef const name_32 NAME_32;	//PenClip : 32-bit Name Constant
+MemC_Type_Rename_(char,name_08,NAME_08)		//PenClip : 8-bit Character
+MemC_Type_Rename_(char16_t,name_16,NAME_16)	//PenClip : 16-bit Character
+MemC_Type_Rename_(char32_t,name_32,NAME_32)	//PenClip : 32-bit Character
 
 struct _penc_sc				//PenClip : String Container Structure
 {
@@ -161,6 +158,8 @@ static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(in
 #define Byte_Setter_(Buffer,Value,Length) (name_08*)memset(Buffer,Value,Length)	//PenClip : Buffer Byte Set
 #define Byte_Finder_(Buffer,Value,Length) (name_08*)memchr(Buffer,Value,Length)	//PenClip : Buffer Byte Find
 #define Word_Finder_(Sentence,Word) (name_08*)strstr(Sentence,Word)				//PenClip : Sentence Word Find
+#define Word_Concat_(Buffer,Source,Capacity) strcat_s(Buffer,Capacity,Source)	//PenClip : String Concatenation
+#define Word_Copier_(Buffer,Source,Capacity) strcpy_s(Buffer,Capacity,Source)	//PenClip : String Copy
 
 #define Line_Reader_(Line,FileName,Elements,type) _Line_Reader_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Read
 #define Line_Writer_(Line,FileName,Elements,type) _Line_Writer_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Write
@@ -226,6 +225,8 @@ void PenC_Time_(name_08 _PL_ Buffer);
 //PenClip : Find the last dot character.
 //＊Return value is offset.
 size_t PenC_Extend_(NAME_08 _PL_ Buffer,const size_t Length);
+//PenClip : Concatenate the directory and name strings.
+errno_t PenC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Directory,NAME_08 _PL_ Name,const size_t Capacity);
 #endif
 
 #if(MemC_Fold_(Declaration:PenClip Managed Functions))
@@ -252,9 +253,11 @@ int PenC_SS_Assign_(PENC_SS _PL_ SS,const size_t Index,const size_t Offset,const
 #ifdef __OPENCL_H
 //PenC_CL : Select Platform and Device with Console Interface
 penc_eu PenC_CL_Identify_(cl_uint _PL_ PlatformSelect,cl_uint _PL_ DeviceSelect);
+//PenC_CL : Program Build from Source Files to an Object File
+penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ SourceFileNameSet,NAME_08 _PL_ BuildOption,const size_t SourceFilesNumber);
 
 //PenC_CL : Program Resource Memory Allocation - Deallocate with "PenC_Delete_CL_"
-penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ _PL_ FileNameSet,NAME_08 _PL_ _PL_ IndicatorSet,NAME_08 _PL_ BuildOption,const size_t FilesNumber,const cl_uint KernelsNumber,penc_eu _PL_ Error);
+penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ IndicatorSet,NAME_08 _PL_ BuildOption,const cl_uint KernelsNumber,penc_eu _PL_ Error);
 //PenC_CL : Program Resource Memory Deallocation
 void PenC_CL_Delete_(penc_cl *_PL_ PenCL);
 #endif

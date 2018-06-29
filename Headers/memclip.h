@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.27	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.29	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -248,10 +248,11 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #define Devi_Info_Context_(Cntx,List,Num,type,Flag) clGetContextInfo(Cntx,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Context Information Get
 #define Devi_Size_Info_Context_(Cntx,Size,Flag) clGetContextInfo(Cntx,Flag,0,NULL,Size)							//MemC_CL : Context Information Size Get
 
-#define Devi_Create_Program_(Cntx,List,Lng,Num,Error) clCreateProgramWithSource(Cntx,Num,List,Lng,Error)		//MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
-#define Devi_Delete_Program_(Program) do{if(Program){clReleaseProgram(Program);(Program)=NULL;}}while(0)		//MemC_CL : Program Memory Deallocation
-#define Devi_Info_Program_(Prgm,List,Num,type,Flag) clGetProgramInfo(Prgm,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Program Information Get
-#define Devi_Size_Info_Program_(Prgm,Size,Flag) clGetProgramInfo(Prgm,Flag,0,NULL,Size)							//MemC_CL : Program Information Size Get
+#define Devi_Create_Program_Source_(Cntx,SrcList,SrcLng,SrcNum,Error) clCreateProgramWithSource(Cntx,SrcNum,SrcList,SrcLng,Error)							//MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
+#define Devi_Create_Program_Binary_(DeviList,Cntx,BinList,BinLng,BinNum,Error) clCreateProgramWithBinary(Cntx,BinNum,DeviList,BinLng,BinList,NULL,Error)	//MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
+#define Devi_Delete_Program_(Program) do{if(Program){clReleaseProgram(Program);(Program)=NULL;}}while(0)													//MemC_CL : Program Memory Deallocation
+#define Devi_Info_Program_(Prgm,List,Num,type,Flag) clGetProgramInfo(Prgm,Flag,(Num)*sizeof(type),List,NULL)												//MemC_CL : Program Information Get
+#define Devi_Size_Info_Program_(Prgm,Size,Flag) clGetProgramInfo(Prgm,Flag,0,NULL,Size)																		//MemC_CL : Program Information Size Get
 
 #define Devi_Build_(Program,Option) clBuildProgram(Program,0,NULL,Option,NULL,NULL)											//MemC_CL : Program Build
 #define Devi_Info_Build_(Devi,Prgm,List,Num,type,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Program Build Information Get

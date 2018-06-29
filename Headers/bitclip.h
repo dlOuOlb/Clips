@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.27	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.06.29	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -426,6 +426,7 @@ extern MEMC_DT _PL_ _PL_ BitCType;
 //BitC_CL : OpenCL Source File Name Set
 //＊[0] : "ouoclip.cl"
 //　[1] : "bitclip.cl"
+//　[2] : "bitclip.obj"
 extern NAME_08 _PL_ _PL_ BitCFile;
 //BitC_CL : OpenCL Kernel Indicator Set
 extern NAME_08 _PL_ _PL_ BitCKernel;
@@ -903,6 +904,10 @@ general BitC_RO_L_2_R64_(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,DATA_32 N)
 
 #if(MemC_Fold_(Declaration:BitClip Kernel Manager Functions))
 #ifdef __OPENCL_H
+//BitC_CL : Program Build
+//＊Return value is an error code.
+penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ SourceDirectory,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption);
+
 //BitC_CL : Kernel Manager Set Memory Allocation - Deallocate with "BitC_CL_Delete_"
 bitc_cl *BitC_CL_Create_(general);
 //BitC_CL : Kernel Activation Check Table
@@ -913,7 +918,7 @@ address *BitC_CL_Choice_(BITC_CL _PL_ KernelManager);
 //BitC_CL : OpenCL Program Build with Specified Kernels
 //＊Execute only one time.
 //＊Return value is an error code.
-penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ KernelManager,NAME_08 _PL_ BuildOption);
+penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ KernelManager,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption);
 //BitC_CL : Kernel Manager Set Memory Deallocation
 general BitC_CL_Delete_(bitc_cl *_PL_ KernelManager);
 
