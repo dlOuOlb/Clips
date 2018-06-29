@@ -8,9 +8,6 @@
 #define _BitC_Total_Types 12
 #define _BitC_Type_Name_Length 8
 #ifdef __OPENCL_H
-#define _BitC_Total_Files 2
-#define _BitC_File_Name_Length 16
-
 #define _BitC_Total_Kernels 244
 #define _BitC_Kernel_Name_Length 24
 #endif
@@ -25,7 +22,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.06.27";
+static DATA_08 IdiomVersion[16]="Date:2018.06.29";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -69,7 +66,7 @@ static MEMC_DT _PL_ AddressType[_BitC_Total_Types]=
 #endif
 
 #ifdef __OPENCL_H
-static NAME_08 IdiomFileName[_BitC_Total_Files][_BitC_File_Name_Length]={"ouoclip.cl","bitclip.cl"};
+static NAME_08 IdiomFileName[36]="ouoclip.cl\0\0bitclip.cl\0\0bitclip.obj";
 static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 {
 	"",						"BitC_Endian_D16_",		"BitC_Endian_D32_",		"BitC_Endian_D64_",
@@ -135,7 +132,7 @@ static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 	"",						"BitC_RO_L_2_R16_",		"BitC_RO_L_2_R32_",		"BitC_RO_L_2_R64_"
 };
 
-static NAME_08 _PL_ AddressFileName[_BitC_Total_Files]={IdiomFileName[0],IdiomFileName[1]};
+static NAME_08 _PL_ AddressFileName[4]={IdiomFileName+0,IdiomFileName+12,IdiomFileName+24,NULL};
 static NAME_08 _PL_ AddressKernelName[_BitC_Total_Kernels]=
 {
 	IdiomKernelName[0],IdiomKernelName[1],IdiomKernelName[2],IdiomKernelName[3],
@@ -4529,6 +4526,33 @@ general BitC_RO_L_2_R64_(data_08 *_R_ DataC,REAL_64 *_R_ DataA,REAL_64 *_R_ Data
 
 #if(MemC_Fold_(Definition:BitClip Managed Functions))
 #ifdef __OPENCL_H
+penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
+{
+	ADDRESS Length=1024;
+	name_08 _PL_ _PL_ Name=Rect_Alloc_(3,Length,name_08);
+	penc_eu Error;
+
+	if(Name)
+	{
+		if(PenC_Path_(Name[0],DirSrc,BitCFile[0],Length))
+			goto ESCAPE;
+		if(PenC_Path_(Name[1],DirSrc,BitCFile[1],Length))
+			goto ESCAPE;
+		if(PenC_Path_(Name[2],DirBin,BitCFile[2],Length))
+			goto ESCAPE;
+
+		Error=PenC_CL_Binary_(Queue,Name[2],Name,Option,2);
+	}
+	else
+	{
+ESCAPE:
+		Error.E=CLOutOfHostMemory;
+	}
+	MemC_Deloc_(Acs_(name_08**,Name));
+
+	return Error;
+}
+
 static devi_km *_BitC_Create_KM_Endian_(cl_kernel const Kernel,GENERAL _PL_ ID)
 {
 	devi_km *KM=Devi_KM_Create_(ID,2,1);
@@ -4637,7 +4661,7 @@ address *BitC_CL_Choice_(BITC_CL _PL_ Manager)
 
 	return Table;
 }
-penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ Option)
+penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
 {
 	penc_eu Error;
 
@@ -4663,38 +4687,51 @@ penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_0
 			}
 			if(Count)
 			{
-				penc_cl *Helper=PenC_CL_Create_(Queue,BitCFile,(name_08**)Slot,Option,_BitC_Total_Files,Count,&Error);
+				ADDRESS Length=1024;
+				name_08 *Path=Line_Alloc_(Length,name_08);
 
-				if(Helper)
-				{
-					cl_uint Index=0;
-
-					while(Index<Count)
-					{
-						Slot[Index]=_BitC_Create_KM_(Helper->SetKernel[Index],Link[Index]);
-						if(Slot[Index])
-							Index++;
-						else
-							break;
-					}
-					if(Index==Count)
-					{
-						for(Index=0;Index<Count;Index++)
-							((DEVI_KM**)(Manager->KMSet))[Link[Index]]=Slot[Index];
-
-						Acs_(penc_cl*,Manager->Helper)=Helper;
-					}
+				if(Path)
+					if(PenC_Path_(Path,DirBin,BitCFile[2],Length))
+						Error.E=CLOutOfHostMemory;
 					else
 					{
-						cl_int Down;
+						penc_cl *Helper=PenC_CL_Create_(Queue,Path,(name_08**)Slot,Option,Count,&Error);
 
-						for(Down=Index-1;Down>=0;Down--)
-							Devi_KM_Delete_((devi_km**)(Slot+Down));
-						PenC_CL_Delete_(&Helper);
+						if(Helper)
+						{
+							cl_uint Index=0;
 
-						Error.E=CLBuildProgramFailure;
+							while(Index<Count)
+							{
+								Slot[Index]=_BitC_Create_KM_(Helper->SetKernel[Index],Link[Index]);
+								if(Slot[Index])
+									Index++;
+								else
+									break;
+							}
+							if(Index==Count)
+							{
+								for(Index=0;Index<Count;Index++)
+									((DEVI_KM**)(Manager->KMSet))[Link[Index]]=Slot[Index];
+
+								Acs_(penc_cl*,Manager->Helper)=Helper;
+							}
+							else
+							{
+								cl_int Down;
+
+								for(Down=Index-1;Down>=0;Down--)
+									Devi_KM_Delete_((devi_km**)(Slot+Down));
+								PenC_CL_Delete_(&Helper);
+
+								Error.E=CLBuildProgramFailure;
+							}
+						}
 					}
-				}
+				else
+					Error.E=CLOutOfHostMemory;
+
+				MemC_Deloc_(Path);
 			}
 			else
 				Error.E=CLInvalidValue;
@@ -4771,6 +4808,7 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indic
 
 	return Error;
 }
+
 #endif
 #endif
 
@@ -4786,8 +4824,6 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indic
 #ifdef __OPENCL_H
 #undef _BitC_Kernel_Name_Length
 #undef _BitC_Total_Kernels
-#undef _BitC_File_Name_Length
-#undef _BitC_Total_Files
 #endif
 #undef _BitC_Total_Types
 #undef _BitC_Type_Name_Length
