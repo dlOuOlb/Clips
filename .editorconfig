@@ -5,9 +5,3 @@ indent_style=tab
 indent_size=4
 insert_final_newline=true
 charset=utf-8
-
-[*.{h,c}]
-c_include_path=Headers
-
-[*.{cl}]
-c_include_path=Kernels
