@@ -22,7 +22,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.06.29";
+static DATA_08 IdiomVersion[16]="Date:2018.07.02";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -4526,29 +4526,45 @@ general BitC_RO_L_2_R64_(data_08 *_R_ DataC,REAL_64 *_R_ DataA,REAL_64 *_R_ Data
 
 #if(MemC_Fold_(Definition:BitClip Managed Functions))
 #ifdef __OPENCL_H
+static NAME_08 *_BitC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_ Name,ADDRESS Capacity)
+{
+	NAME_08 *Return;
+
+	if(Prefix)
+		if(Word_Copier_(Buffer,Prefix,Capacity))
+			Return=NULL;
+		else
+			if(Word_Concat_(Buffer,Name,Capacity))
+				Return=NULL;
+			else
+				Return=Buffer;
+	else
+		Return=Name;
+
+	return Return;
+}
 penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
 {
 	ADDRESS Length=1024;
-	name_08 _PL_ _PL_ Name=Rect_Alloc_(3,Length,name_08);
+	name_08 _PL_ _PL_ Buffer=Rect_Alloc_(3,Length,name_08);
 	penc_eu Error;
 
-	if(Name)
+	if(Buffer)
 	{
-		if(PenC_Path_(Name[0],DirSrc,BitCFile[0],Length))
-			goto ESCAPE;
-		if(PenC_Path_(Name[1],DirSrc,BitCFile[1],Length))
-			goto ESCAPE;
-		if(PenC_Path_(Name[2],DirBin,BitCFile[2],Length))
-			goto ESCAPE;
+		NAME_08 *Name[3];
 
-		Error=PenC_CL_Binary_(Queue,Name[2],Name,Option,2);
+		Name[0]=_BitC_Path_(Buffer[0],DirSrc,BitCFile[0],Length);
+		Name[1]=_BitC_Path_(Buffer[1],DirSrc,BitCFile[1],Length);
+		Name[2]=_BitC_Path_(Buffer[2],DirBin,BitCFile[2],Length);
+		if(MemC_Check_(Name,3))
+			Error=PenC_CL_Binary_(Queue,Name[2],Name,Option,2);
+		else
+			Error.E=CLOutOfHostMemory;
 	}
 	else
-	{
-ESCAPE:
 		Error.E=CLOutOfHostMemory;
-	}
-	MemC_Deloc_(Acs_(name_08**,Name));
+
+	MemC_Deloc_(Acs_(name_08**,Buffer));
 
 	return Error;
 }
@@ -4688,14 +4704,15 @@ penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_0
 			if(Count)
 			{
 				ADDRESS Length=1024;
-				name_08 *Path=Line_Alloc_(Length,name_08);
+				name_08 *Buffer=Line_Alloc_(Length,name_08);
 
-				if(Path)
-					if(PenC_Path_(Path,DirBin,BitCFile[2],Length))
-						Error.E=CLOutOfHostMemory;
-					else
+				if(Buffer)
+				{
+					NAME_08 *Name=_BitC_Path_(Buffer,DirBin,BitCFile[2],Length);
+
+					if(Name)
 					{
-						penc_cl *Helper=PenC_CL_Create_(Queue,Path,(name_08**)Slot,Option,Count,&Error);
+						penc_cl *Helper=PenC_CL_Create_(Queue,Buffer,(name_08**)Slot,Option,Count,&Error);
 
 						if(Helper)
 						{
@@ -4728,10 +4745,13 @@ penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_0
 							}
 						}
 					}
+					else
+						Error.E=CLOutOfHostMemory;
+				}
 				else
 					Error.E=CLOutOfHostMemory;
 
-				MemC_Deloc_(Path);
+				MemC_Deloc_(Buffer);
 			}
 			else
 				Error.E=CLInvalidValue;
