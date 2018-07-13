@@ -2,7 +2,7 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.29	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.07.13	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -140,10 +140,10 @@ static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(in
 #endif
 
 #if(MemC_Fold_(Definition:Macros))
-#define File_Opener_(FilePointer,FileName,Mode) fopen_s(&(FilePointer),FileName,Mode)	//PenClip : File Open
-#define File_Closer_(FilePointer) if(!fclose(FilePointer)){(FilePointer)=NULL;}			//PenClip : File Close
-#define File_Remove_(FileName) remove(FileName)											//PenClip : File Delete
-#define File_Rename_(FileNameOld,FileNameNew) rename(FileNameOld,FileNameNew)			//PenClip : File Rename
+#define File_Opener_(FilePointer,FileName,Mode) fopen_s(&(FilePointer),FileName,Mode)							//PenClip : File Open
+#define File_Closer_(FilePointer) do{if(FilePointer){if(!fclose(FilePointer)){(FilePointer)=NULL;}}}while(0)	//PenClip : File Close
+#define File_Remove_(FileName) remove(FileName)																	//PenClip : File Delete
+#define File_Rename_(FileNameOld,FileNameNew) rename(FileNameOld,FileNameNew)									//PenClip : File Rename
 
 #define File_Writer_(FilePointer,Buffer,Elements,type) fwrite(Buffer,sizeof(type),Elements,FilePointer)								//PenClip : File Write
 #define File_Reader_(FilePointer,Buffer,Elements,type) fread_s(Buffer,(Elements)*sizeof(type),sizeof(type),Elements,FilePointer)	//PenClip : File Read
@@ -157,6 +157,7 @@ static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(in
 
 #define Byte_Setter_(Buffer,Value,Length) (name_08*)memset(Buffer,Value,Length)	//PenClip : Buffer Byte Set
 #define Byte_Finder_(Buffer,Value,Length) (name_08*)memchr(Buffer,Value,Length)	//PenClip : Buffer Byte Find
+#define Word_Length_(String,Capacity) strnlen_s(String,Capacity)				//PenClip : String Length
 #define Word_Finder_(Sentence,Word) (name_08*)strstr(Sentence,Word)				//PenClip : Sentence Word Find
 #define Word_Concat_(Buffer,Source,Capacity) strcat_s(Buffer,Capacity,Source)	//PenClip : String Concatenation
 #define Word_Copier_(Buffer,Source,Capacity) strcpy_s(Buffer,Capacity,Source)	//PenClip : String Copy
@@ -164,8 +165,8 @@ static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(in
 #define Line_Reader_(Line,FileName,Elements,type) _Line_Reader_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Read
 #define Line_Writer_(Line,FileName,Elements,type) _Line_Writer_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Write
 
-#define Program_Opener_(ProgramPointer,Command,Mode) {(ProgramPointer)=_popen(Command,Mode);}								//PenClip : Program Open
-#define Program_Closer_(ProgramPointer,Return) if(ProgramPointer){(Return)=_pclose(ProgramPointer);(ProgramPointer)=NULL;}	//PenClip : Program Close
+#define Program_Opener_(ProgramPointer,Command,Mode) do{(ProgramPointer)=_popen(Command,Mode);}while(0)									//PenClip : Program Open
+#define Program_Closer_(ProgramPointer,Return) do{if(ProgramPointer){(Return)=_pclose(ProgramPointer);(ProgramPointer)=NULL;}}while(0)	//PenClip : Program Close
 
 #define PenC_Clocks_ clock()						//PenClip : Current Clocks
 #define PenC_Elapse_(Start) (PenC_Clocks_-(Start))	//PenClip : Clock Measure from Start
@@ -225,8 +226,6 @@ void PenC_Time_(name_08 _PL_ Buffer);
 //PenClip : Find the last dot character.
 //＊Return value is offset.
 size_t PenC_Extend_(NAME_08 _PL_ Buffer,const size_t Length);
-//PenClip : Concatenate the directory and name strings.
-errno_t PenC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Directory,NAME_08 _PL_ Name,const size_t Capacity);
 #endif
 
 #if(MemC_Fold_(Declaration:PenClip Managed Functions))
@@ -236,9 +235,20 @@ penc_sc *PenC_SC_Create_(const size_t CapacityBytes);
 penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ RootContainer,const size_t OffsetBytes,const size_t LengthBytes);
 //PenClip : String Container Memory Deallocation
 void PenC_SC_Delete_(penc_sc *_PL_ StringContainer);
+
 //PenClip : String Container Data Reset
 //＊Return value is 1 for success, 0 for failure.
 int PenC_SC_Init_(PENC_SC _PL_ StringContainer);
+
+//PenClip : String Container Null Character Finding
+//＊Return value is the first found null character's location for success, or the capacity for failure.
+size_t PenC_SC_Length_N08_(PENC_SC _PL_ StringContainer);
+//PenClip : String Container Data Copy
+//＊Return value is 1 for success, 0 for failure.
+int PenC_SC_Copy_N08_(PENC_SC _PL_ TargetContainer,PENC_SC _PL_ SourceContainer);
+//PenClip : String Container Data Concatenation
+//＊Return value is 1 for success, 0 for failure.
+int PenC_SC_Concat_N08_(PENC_SC _PL_ TargetContainer,PENC_SC _PL_ SourceContainer);
 
 //PenClip : Sub-Container Set Memory Allocation - Deallocate with "PenC_SS_Delete_"
 penc_ss *PenC_SS_Create_(const size_t SubBufferNumbers,const size_t TotalCapacityBytes);
