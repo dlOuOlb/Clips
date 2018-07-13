@@ -8,7 +8,7 @@
 #define _BitC_Total_Types 12
 #define _BitC_Type_Name_Length 8
 #ifdef __OPENCL_H
-#define _BitC_Total_Kernels 244
+#define _BitC_Total_Kernels 248
 #define _BitC_Kernel_Name_Length 24
 #endif
 #define _BitC_DT_Define_(IType,type,IFlag) MemC_DT_Define_(IdiomVersion,IType,IdiomTypeName[IType],IFlag,NULL,NULL,type)
@@ -22,7 +22,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.07.02";
+static DATA_08 IdiomVersion[16]="Date:2018.07.13";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -34,6 +34,9 @@ static DATA_32 TableShrink32[8]={0x00000001,0x00000002,0x00000004,0x00000008,0x0
 static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080};
 static DATA_08 TableShrink08[8]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 static BOOLEAN TableBool[4]={!1,!0,BitCNull,BitCFull};
+#ifdef __OPENCL_H
+static INTE_08 TableSwitch[_BitC_Total_Kernels]={0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1};
+#endif
 
 #if(MemC_Fold_(Type Descriptors))
 static INTE_08 IdiomTypeName[_BitC_Total_Types][_BitC_Type_Name_Length]=
@@ -66,7 +69,7 @@ static MEMC_DT _PL_ AddressType[_BitC_Total_Types]=
 #endif
 
 #ifdef __OPENCL_H
-static NAME_08 IdiomFileName[36]="ouoclip.cl\0\0bitclip.cl\0\0bitclip.obj";
+static NAME_08 IdiomFileName[40]="ouoclip.cl\0\0bitclip.cl\0\0bitclip.obj";
 static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 {
 	"",						"BitC_Endian_D16_",		"BitC_Endian_D32_",		"BitC_Endian_D64_",
@@ -129,7 +132,8 @@ static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 	"",						"BitC_RO_G_2_R16_",		"BitC_RO_G_2_R32_",		"BitC_RO_G_2_R64_",
 	"BitC_RO_L_2_D08_",		"BitC_RO_L_2_D16_",		"BitC_RO_L_2_D32_",		"BitC_RO_L_2_D64_",
 	"BitC_RO_L_2_I08_",		"BitC_RO_L_2_I16_",		"BitC_RO_L_2_I32_",		"BitC_RO_L_2_I64_",
-	"",						"BitC_RO_L_2_R16_",		"BitC_RO_L_2_R32_",		"BitC_RO_L_2_R64_"
+	"",						"BitC_RO_L_2_R16_",		"BitC_RO_L_2_R32_",		"BitC_RO_L_2_R64_",
+	"",						"",						"",						""
 };
 
 static NAME_08 _PL_ AddressFileName[4]={IdiomFileName+0,IdiomFileName+12,IdiomFileName+24,NULL};
@@ -4627,26 +4631,26 @@ static devi_km *_BitC_Create_KM_(cl_kernel const Kernel,BITC_KI Switch)
 {
 	devi_km *KM;
 
-	if(Switch<0)
-		KM=NULL;
-	else if(Switch<4)
+	switch(TableSwitch[Switch])
+	{
+	case 0:
 		KM=_BitC_Create_KM_Endian_(Kernel,BitCKernel[Switch]);
-	else if(Switch<=148)
+		break;
+	case 1:
 		KM=_BitC_Create_KM_Caster_(Kernel,BitCKernel[Switch]);
-	else if(Switch<152)
+		break;
+	case 2:
 		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],sizeof(cl_mem));
-	else if(Switch<164)
+		break;
+	case 3:
 		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],(address)(1<<(Switch&3)));
-	else if(Switch<172)
+		break;
+	case 4:
 		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],sizeof(inte_32));
-	else if(Switch<180)
-		KM=_BitC_Create_KM_Caster_(Kernel,BitCKernel[Switch]);
-	else if(Switch<212)
-		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],(address)(1<<(Switch&3)));
-	else if(Switch<244)
-		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],sizeof(cl_mem));
-	else
+		break;
+	default:
 		KM=NULL;
+	}
 
 	return KM;
 }
@@ -4712,7 +4716,7 @@ penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_0
 
 					if(Name)
 					{
-						penc_cl *Helper=PenC_CL_Create_(Queue,Buffer,(name_08**)Slot,Option,Count,&Error);
+						penc_cl *Helper=PenC_CL_Create_(Queue,Name,(name_08**)Slot,Option,Count,&Error);
 
 						if(Helper)
 						{
@@ -4828,7 +4832,6 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indic
 
 	return Error;
 }
-
 #endif
 #endif
 
