@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.07.02	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.07.13	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
