@@ -1,7 +1,7 @@
 ﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.06.29";
+static NAME_08 IdiomVersion[16]="Date:2018.07.13";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -175,44 +175,6 @@ size_t PenC_Extend_(NAME_08 _PL_ Line,const size_t Length)
 
 	return Offset;
 }
-errno_t PenC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Directory,NAME_08 _PL_ Name,const size_t Capacity)
-{
-	errno_t Error;
-
-	if(Capacity)
-		if(Directory)
-			if(Directory[0]=='\0')
-				Error=Word_Copier_(Buffer,Name,Capacity);
-			else
-			{
-				Error=Word_Copier_(Buffer,Directory,Capacity);
-				if(!Error)
-				{
-					name_08 *Pointer=Byte_Finder_(Buffer,'\0',Capacity);
-
-					if(Pointer)
-						if(Pointer[-1]=='\\')
-							Error=Word_Concat_(Buffer,Name,Capacity);
-						else
-							if((Pointer+1)<(Buffer+Capacity))
-							{
-								Pointer[0]='\\';
-								Pointer[1]='\0';
-								Error=Word_Concat_(Buffer,Name,Capacity);
-							}
-							else
-								Error=ERANGE;
-					else
-						Error=EINVAL;
-				}
-			}
-		else
-			Error=Word_Copier_(Buffer,Name,Capacity);
-	else
-		Error=ERANGE;
-
-	return Error;
-}
 #endif
 
 #if(MemC_Fold_(Definition:PenClip Managed Functions))
@@ -228,6 +190,30 @@ static size_t _PenC_Overflow_Mul_(const size_t A,const size_t B)
 
 	return (((Return/B)==A)?(Return):(0));
 }
+static void _PenC_SC_Bound_(PENC_SC _PL_ SC)
+{
+	size_t Temp=SC->Capacity;
+
+	if(Temp)
+	{
+		SC->String.N08[0]=0x00;
+		SC->String.N08[Temp-1]=0x00;
+		Temp>>=1;
+
+		if(Temp)
+		{
+			SC->String.N16[0]=0x0000;
+			SC->String.N16[Temp-1]=0x0000;
+			Temp>>=1;
+
+			if(Temp)
+			{
+				SC->String.N32[0]=0x00000000;
+				SC->String.N32[Temp-1]=0x00000000;
+			}
+		}
+	}
+}
 penc_sc *PenC_SC_Create_(const size_t Capacity)
 {
 	penc_sc *SC;
@@ -238,7 +224,8 @@ penc_sc *PenC_SC_Create_(const size_t Capacity)
 		if(SC)
 		{
 			Acs_(size_t,SC->Capacity)=Capacity;
-			Acs_(name_08*,SC->String.N08)=Line_Clear_(SC+1,Capacity,name_08);
+			Acs_(name_08*,SC->String.N08)=(name_08*)(SC+1);
+			_PenC_SC_Bound_(SC);
 		}
 	}
 	else
@@ -269,6 +256,7 @@ penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ Root,const size_t Offset,const size_t 
 					{
 						Acs_(size_t,SC->Capacity)=Length;
 						Acs_(name_08*,SC->String.N08)=Root->String.N08+Offset;
+						_PenC_SC_Bound_(SC);
 					}
 				}
 			else
@@ -307,6 +295,108 @@ SUCCESS:
 	return 1;
 }
 
+static size_t _PenC_SC_Length_N08_(PENC_SC _PL_ SC)
+{
+	NAME_08 _PL_ Pointer=(SC->Capacity)?(Byte_Finder_(SC->String.N08,'\0',SC->Capacity)):(NULL);
+
+	return ((Pointer)?(Pointer-SC->String.N08):(SC->Capacity));
+}
+size_t PenC_SC_Length_N08_(PENC_SC _PL_ SC)
+{
+	size_t Return;
+
+	if(SC)
+		Return=_PenC_SC_Length_N08_(SC);
+	else
+		Return=0;
+
+	return Return;
+}
+int PenC_SC_Copy_N08_(PENC_SC _PL_ Target,PENC_SC _PL_ Source)
+{
+	if(Source)
+		if(Target)
+		{
+			const size_t Copy=_PenC_SC_Length_N08_(Source);
+
+			if(Copy)
+				if(Copy<Source->Capacity)
+					if(Copy<Target->Capacity)
+						if(Line_Copy_(Source->String.N08,Target->String.N08,Copy,name_08))
+							goto FAILURE;
+						else
+						{
+							Target->String.N08[Copy]='\0';
+							goto SUCCESS;
+						}
+					else
+						goto FAILURE;
+				else
+					goto FAILURE;
+			else
+			{
+				if(Target->Capacity)
+					Target->String.N08[0]='\0';
+				goto SUCCESS;
+			}
+		}
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
+int PenC_SC_Concat_N08_(PENC_SC _PL_ Target,PENC_SC _PL_ Source)
+{
+	if(Source)
+		if(Target)
+		{
+			const size_t LngS=_PenC_SC_Length_N08_(Source);
+
+			if(LngS<Source->Capacity)
+			{
+				const size_t LngT=_PenC_SC_Length_N08_(Target);
+
+				if(LngT<Target->Capacity)
+					if(LngS)
+					{
+						const size_t Sum=_PenC_Overflow_Add_(LngS,LngT);
+
+						if(Sum)
+							if(Sum<Target->Capacity)
+								if(Line_Copy_(Source->String.N08,Target->String.N08+LngT,LngS,name_08))
+									goto FAILURE;
+								else
+								{
+									Target->String.N08[Sum]='\0';
+									goto SUCCESS;
+								}
+							else
+								goto FAILURE;
+						else
+							goto FAILURE;
+					}
+					else
+						goto SUCCESS;
+				else
+					goto FAILURE;
+			}
+			else
+				goto FAILURE;
+		}
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
+
 penc_ss *PenC_SS_Create_(const size_t Parts,const size_t Total)
 {
 	penc_ss *SS;
@@ -328,7 +418,8 @@ penc_ss *PenC_SS_Create_(const size_t Parts,const size_t Total)
 						Acs_(size_t,SS->Root.Capacity)=Total;
 						Acs_(size_t,SS->Nums)=Parts;
 						Acs_(penc_sc*,SS->Part)=Line_Clear_(SS+1,Parts,penc_sc);
-						Acs_(name_08*,SS->Root.String.N08)=Line_Clear_((name_08*)(SS->Part+Parts),Total,name_08);
+						Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS->Part+Parts);
+						_PenC_SC_Bound_(&(SS->Root));
 					}
 				}
 				else
@@ -363,9 +454,10 @@ penc_ss *PenC_SS_Create_(const size_t Parts,const size_t Total)
 			if(SS)
 			{
 				Acs_(size_t,SS->Root.Capacity)=Total;
-				Acs_(name_08*,SS->Root.String.N08)=Line_Clear_(SS+1,Total,name_08);
+				Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS+1);
 				Acs_(size_t,SS->Nums)=0;
 				Acs_(penc_sc*,SS->Part)=NULL;
+				_PenC_SC_Bound_(&(SS->Root));
 			}
 		}
 		else
@@ -398,6 +490,7 @@ int PenC_SS_Assign_(PENC_SS _PL_ SS,const size_t Index,const size_t Offset,const
 					{
 						Acs_(size_t,SS->Part[Index].Capacity)=Length;
 						Acs_(name_08*,SS->Part[Index].String.N08)=SS->Root.String.N08+Offset;
+						_PenC_SC_Bound_(SS->Part+Index);
 
 						goto SUCCESS;
 					}
