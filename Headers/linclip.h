@@ -7,9 +7,6 @@
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
 /*------------------------------------------------------------------*/
-/*	R32 : 32-bit Real Number										*/
-/*	R64 : 64-bit Real Number										*/
-/*------------------------------------------------------------------*/
 
 #ifndef _INC_LINCLIP
 #define _INC_LINCLIP	//LinClip : Header Declaration
