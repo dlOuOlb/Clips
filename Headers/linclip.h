@@ -1,8 +1,8 @@
 ﻿/*------------------------------------------------------------------*/
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
-/*	Written by Aggroid									Version		*/
-/*	http://memclip.codeplex.com/releases				2018.07.20	*/
+/*	Written by Ranny Clover								Date		*/
+/*	http://github.com/dlOuOlb/Clips/					2018.07.20	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
