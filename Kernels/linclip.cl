@@ -2,7 +2,7 @@
 /*	LinClip's OpenCL Source Parts.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.07.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.07.23	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -54,7 +54,6 @@ _K_ LinC_Ari_0_I32_(_G_ inte_32 _PL_ Line,_P_ INTE_32 VStart,_P_ INTE_32 VStep,_
 		Line[Index]=Temp;
 	}
 }
-#if(_ABLE_I64_)
 _K_ LinC_Ari_0_I64_(_G_ inte_64 _PL_ Line,_P_ INTE_64 VStart,_P_ INTE_64 VStep,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 IStep=Work_SGX_;
@@ -70,7 +69,6 @@ _K_ LinC_Ari_0_I64_(_G_ inte_64 _PL_ Line,_P_ INTE_64 VStart,_P_ INTE_64 VStep,_
 		Line[Index]=Temp;
 	}
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Ari_0_R16_(_G_ real_16 _PL_ Line,_P_ INTE_16 VStart,_P_ INTE_16 VStep,_P_ DATA_32 Length)
 {
@@ -224,7 +222,6 @@ _K_ LinC_Geo_0_I32_(_G_ inte_32 _PL_ Line,_P_ INTE_32 VStart,_P_ INTE_32 VStep,_
 		Line[Index]=Temp[0];
 	}
 }
-#if(_ABLE_I64_)
 _K_ LinC_Geo_0_I64_(_G_ inte_64 _PL_ Line,_P_ INTE_64 VStart,_P_ INTE_64 VStep,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 IStep=Work_SGX_;
@@ -255,7 +252,6 @@ _K_ LinC_Geo_0_I64_(_G_ inte_64 _PL_ Line,_P_ INTE_64 VStart,_P_ INTE_64 VStep,_
 		Line[Index]=Temp[0];
 	}
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Geo_0_R16_(_G_ real_16 _PL_ Line,_P_ INTE_16 VStart,_P_ INTE_16 VStep,_P_ DATA_32 Length)
 {
@@ -310,7 +306,6 @@ _K_ LinC_Inc_1_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_P_ INTE_32 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]+Value;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Inc_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -319,7 +314,6 @@ _K_ LinC_Inc_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]+Value;
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Inc_1_R16_(_G_ real_16 _PL_ LineC,_G_ REAL_16 _PL_ LineA,_P_ INTE_16 Value,_P_ DATA_32 Length)
 {
@@ -374,7 +368,6 @@ _K_ LinC_Amp_1_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_P_ INTE_32 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]*Value;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Amp_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -383,7 +376,6 @@ _K_ LinC_Amp_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]*Value;
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Amp_1_R16_(_G_ real_16 _PL_ LineC,_G_ REAL_16 _PL_ LineA,_P_ INTE_16 Value,_P_ DATA_32 Length)
 {
@@ -438,7 +430,6 @@ _K_ LinC_Add_2_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_G_ INTE_32 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]+LineB[Index];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Add_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _PL_ LineB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -447,7 +438,6 @@ _K_ LinC_Add_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]+LineB[Index];
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Add_2_R16_(_G_ real_16 _PL_ LineC,_G_ REAL_16 _PL_ LineA,_G_ REAL_16 _PL_ LineB,_P_ DATA_32 Length)
 {
@@ -502,7 +492,6 @@ _K_ LinC_Sub_2_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_G_ INTE_32 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]-LineB[Index];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Sub_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _PL_ LineB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -511,7 +500,6 @@ _K_ LinC_Sub_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]-LineB[Index];
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Sub_2_R16_(_G_ real_16 _PL_ LineC,_G_ REAL_16 _PL_ LineA,_G_ REAL_16 _PL_ LineB,_P_ DATA_32 Length)
 {
@@ -566,7 +554,6 @@ _K_ LinC_Mul_2_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_G_ INTE_32 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]*LineB[Index];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Mul_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _PL_ LineB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -575,7 +562,6 @@ _K_ LinC_Mul_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]*LineB[Index];
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Mul_2_R16_(_G_ real_16 _PL_ LineC,_G_ REAL_16 _PL_ LineA,_G_ REAL_16 _PL_ LineB,_P_ DATA_32 Length)
 {
@@ -630,7 +616,6 @@ _K_ LinC_Div_2_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_G_ INTE_32 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/LineB[Index];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Div_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _PL_ LineB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -639,7 +624,6 @@ _K_ LinC_Div_2_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_G_ INTE_64 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/LineB[Index];
 }
-#endif
 _K_ LinC_Div_2_D08_(_G_ data_08 _PL_ LineC,_G_ DATA_08 _PL_ LineA,_G_ DATA_08 _PL_ LineB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -664,7 +648,6 @@ _K_ LinC_Div_2_D32_(_G_ data_32 _PL_ LineC,_G_ DATA_32 _PL_ LineA,_G_ DATA_32 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/LineB[Index];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Div_2_D64_(_G_ data_64 _PL_ LineC,_G_ DATA_64 _PL_ LineA,_G_ DATA_64 _PL_ LineB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -673,7 +656,6 @@ _K_ LinC_Div_2_D64_(_G_ data_64 _PL_ LineC,_G_ DATA_64 _PL_ LineA,_G_ DATA_64 _P
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/LineB[Index];
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Div_2_R16_(_G_ real_16 _PL_ LineC,_G_ REAL_16 _PL_ LineA,_G_ REAL_16 _PL_ LineB,_P_ DATA_32 Length)
 {
@@ -727,7 +709,6 @@ _K_ LinC_Div_1_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_P_ INTE_32 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/Value;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Div_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -736,7 +717,6 @@ _K_ LinC_Div_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/Value;
 }
-#endif
 _K_ LinC_Div_1_D08_(_G_ data_08 _PL_ LineC,_G_ DATA_08 _PL_ LineA,_P_ DATA_08 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -761,7 +741,6 @@ _K_ LinC_Div_1_D32_(_G_ data_32 _PL_ LineC,_G_ DATA_32 _PL_ LineA,_P_ DATA_32 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/Value;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Div_1_D64_(_G_ data_64 _PL_ LineC,_G_ DATA_64 _PL_ LineA,_P_ DATA_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -770,7 +749,6 @@ _K_ LinC_Div_1_D64_(_G_ data_64 _PL_ LineC,_G_ DATA_64 _PL_ LineA,_P_ DATA_64 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=LineA[Index]/Value;
 }
-#endif
 
 _K_ LinC_Inv_1_I08_(_G_ inte_08 _PL_ LineC,_G_ INTE_08 _PL_ LineA,_P_ INTE_08 Value,_P_ DATA_32 Length)
 {
@@ -796,7 +774,6 @@ _K_ LinC_Inv_1_I32_(_G_ inte_32 _PL_ LineC,_G_ INTE_32 _PL_ LineA,_P_ INTE_32 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=Value/LineA[Index];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Inv_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -805,7 +782,6 @@ _K_ LinC_Inv_1_I64_(_G_ inte_64 _PL_ LineC,_G_ INTE_64 _PL_ LineA,_P_ INTE_64 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=Value/LineA[Index];
 }
-#endif
 _K_ LinC_Inv_1_D08_(_G_ data_08 _PL_ LineC,_G_ DATA_08 _PL_ LineA,_P_ DATA_08 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -830,7 +806,6 @@ _K_ LinC_Inv_1_D32_(_G_ data_32 _PL_ LineC,_G_ DATA_32 _PL_ LineA,_P_ DATA_32 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=Value/LineA[Index];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Inv_1_D64_(_G_ data_64 _PL_ LineC,_G_ DATA_64 _PL_ LineA,_P_ DATA_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -839,7 +814,6 @@ _K_ LinC_Inv_1_D64_(_G_ data_64 _PL_ LineC,_G_ DATA_64 _PL_ LineA,_P_ DATA_64 Va
 	for(;Index<Length;Index+=Step)
 		LineC[Index]=Value/LineA[Index];
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Inv_1_R16_(_G_ real_16 _PL_ LineC,_G_ REAL_16 _PL_ LineA,_P_ REAL_16 Value,_P_ DATA_32 Length)
 {
@@ -933,7 +907,6 @@ _K_ LinC_Sum_1_I32_(_G_ inte_32 _PL_ Result,_L_ inte_32 _PL_ Work,_G_ INTE_32 *L
 	if(!Start)
 		Result[Group]=Temp;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Sum_1_I64_(_G_ inte_64 _PL_ Result,_L_ inte_64 _PL_ Work,_G_ INTE_64 *Line,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -955,7 +928,6 @@ _K_ LinC_Sum_1_I64_(_G_ inte_64 _PL_ Result,_L_ inte_64 _PL_ Work,_G_ INTE_64 *L
 	if(!Start)
 		Result[Group]=Temp;
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Sum_1_R16_(_G_ real_16 _PL_ Result,_L_ real_16 _PL_ Work,_G_ REAL_16 *Line,_P_ DATA_32 Length)
 {
@@ -1091,7 +1063,6 @@ _K_ LinC_Dot_2_I32_(_G_ inte_32 _PL_ Result,_L_ inte_32 _PL_ Work,_G_ INTE_32 *L
 	if(!Start)
 		Result[Group]=Temp;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Dot_2_I64_(_G_ inte_64 _PL_ Result,_L_ inte_64 _PL_ Work,_G_ INTE_64 *LineA,_G_ INTE_64 *LineB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -1114,7 +1085,6 @@ _K_ LinC_Dot_2_I64_(_G_ inte_64 _PL_ Result,_L_ inte_64 _PL_ Work,_G_ INTE_64 *L
 	if(!Start)
 		Result[Group]=Temp;
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Dot_2_R16_(_G_ real_16 _PL_ Result,_L_ real_16 _PL_ Work,_G_ REAL_16 *LineA,_G_ REAL_16 *LineB,_P_ DATA_32 Length)
 {
@@ -1328,7 +1298,6 @@ _K_ LinC_Max_1_I32_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ INTE_32 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Max_1_I64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ INTE_64 *Line,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -1376,7 +1345,6 @@ _K_ LinC_Max_1_I64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ INTE_64 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#endif
 _K_ LinC_Max_1_D08_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_08 *Line,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -1518,7 +1486,6 @@ _K_ LinC_Max_1_D32_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_32 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Max_1_D64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_64 *Line,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -1566,7 +1533,6 @@ _K_ LinC_Max_1_D64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_64 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Max_1_R16_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ REAL_16 *Line,_P_ DATA_32 Length)
 {
@@ -1855,7 +1821,6 @@ _K_ LinC_Min_1_I32_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ INTE_32 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Min_1_I64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ INTE_64 *Line,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -1903,7 +1868,6 @@ _K_ LinC_Min_1_I64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ INTE_64 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#endif
 _K_ LinC_Min_1_D08_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_08 *Line,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -2045,7 +2009,6 @@ _K_ LinC_Min_1_D32_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_32 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#if(_ABLE_I64_)
 _K_ LinC_Min_1_D64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_64 *Line,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Group=Work_IBX_;
@@ -2093,7 +2056,6 @@ _K_ LinC_Min_1_D64_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ DATA_64 *L
 	if(!Start)
 		Result[Group]=Arg;
 }
-#endif
 #if(_ABLE_R16_)
 _K_ LinC_Min_1_R16_(_G_ data_32 _PL_ Result,_L_ data_32 _PL_ Work,_G_ REAL_16 *Line,_P_ DATA_32 Length)
 {
@@ -2271,7 +2233,6 @@ _K_ LinC_Map_1_D32_(_G_ data_32 *Line,_G_ DATA_32 *Match,_G_ DATA_32 *Table,_P_ 
 	for(Table+=(Start*Length);Table<End;Line+=Step,Match+=Step,Table+=StepT)
 		Line[Start]=Table[Match[Start]];
 }
-#if(_ABLE_I64_)
 _K_ LinC_Map_1_D64_(_G_ data_64 *Line,_G_ DATA_32 *Match,_G_ DATA_64 *Table,_P_ DATA_32 Number,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Step=Work_SGX_;
@@ -2282,5 +2243,4 @@ _K_ LinC_Map_1_D64_(_G_ data_64 *Line,_G_ DATA_32 *Match,_G_ DATA_64 *Table,_P_ 
 	for(Table+=(Start*Length);Table<End;Line+=Step,Match+=Step,Table+=StepT)
 		Line[Start]=Table[Match[Start]];
 }
-#endif
 #endif

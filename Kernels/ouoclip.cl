@@ -2,7 +2,7 @@
 /*	BitClip's OpenCL Header Parts.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.07.23	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -15,15 +15,6 @@
 
 #if(Fold_(OpenCL Extensions))
 #define _EMPTY_(X) ((~(~X+0)==0)&&(~(~X+1)==1))
-
-#ifdef _ABLE_I64_
-#if(_EMPTY_(_ABLE_I64_))
-#undef _ABLE_I64_
-#define _ABLE_I64_ (1)
-#endif
-#else
-#define _ABLE_I64_ (0)
-#endif
 
 #ifdef _ABLE_R16_
 #if(_EMPTY_(_ABLE_R16_))
@@ -43,16 +34,6 @@
 #define _ABLE_R64_ (0)
 #endif
 
-#undef _EMPTY_
-
-#if(_ABLE_I64_)
-#pragma OPENCL EXTENSION cl_khr_int64_base_atomics : enable
-#pragma OPENCL EXTENSION cl_khr_int64_extended_atomics : enable
-#else
-#pragma OPENCL EXTENSION cl_khr_int64_base_atomics : disable
-#pragma OPENCL EXTENSION cl_khr_int64_extended_atomics : disable
-#endif
-
 #if(_ABLE_R16_)
 #pragma OPENCL EXTENSION cl_khr_fp16 : enable
 #else
@@ -64,6 +45,8 @@
 #else
 #pragma OPENCL EXTENSION cl_khr_fp64 : disable
 #endif
+
+#undef _EMPTY_
 #endif
 
 #if(Fold_(Definitions:Macros))
@@ -130,32 +113,28 @@
 #if(Fold_(Definition:Scalar and Vector Data Types))
 #define _Parse_A_(oldtype,newtype,NEWTYPE) Type_Rename_(oldtype,newtype,NEWTYPE);Type_Rename_(oldtype##2,_02_##newtype,_02_##NEWTYPE);Type_Rename_(oldtype##3,_03_##newtype,_03_##NEWTYPE);Type_Rename_(oldtype##4,_04_##newtype,_04_##NEWTYPE);Type_Rename_(oldtype##8,_08_##newtype,_08_##NEWTYPE);Type_Rename_(oldtype##16,_16_##newtype,_16_##NEWTYPE);
 
-Type_Rename_(void,general,GENERAL)
-Type_Rename_(size_t,address,ADDRESS)
-Type_Rename_(bool,boolean,BOOLEAN)
-Type_Rename_(intptr_t,sintptr,SINTPTR)
-Type_Rename_(uintptr_t,uintptr,UINTPTR)
+Type_Rename_(void,general,GENERAL);
+Type_Rename_(size_t,address,ADDRESS);
+Type_Rename_(bool,boolean,BOOLEAN);
+Type_Rename_(intptr_t,sintptr,SINTPTR);
+Type_Rename_(uintptr_t,uintptr,UINTPTR);
 
-_Parse_A_(uchar,data_08,DATA_08)
-_Parse_A_(ushort,data_16,DATA_16)
-_Parse_A_(uint,data_32,DATA_32)
-#if(_ABLE_I64_)
-_Parse_A_(ulong,data_64,DATA_64)
-#endif
+_Parse_A_(uchar,data_08,DATA_08);
+_Parse_A_(ushort,data_16,DATA_16);
+_Parse_A_(uint,data_32,DATA_32);
+_Parse_A_(ulong,data_64,DATA_64);
 
-_Parse_A_(char,inte_08,INTE_08)
-_Parse_A_(short,inte_16,INTE_16)
-_Parse_A_(int,inte_32,INTE_32)
-#if(_ABLE_I64_)
-_Parse_A_(long,inte_64,INTE_64)
-#endif
+_Parse_A_(char,inte_08,INTE_08);
+_Parse_A_(short,inte_16,INTE_16);
+_Parse_A_(int,inte_32,INTE_32);
+_Parse_A_(long,inte_64,INTE_64);
 
 #if(_ABLE_R16_)
-_Parse_A_(half,real_16,REAL_16)
+_Parse_A_(half,real_16,REAL_16);
 #endif
-_Parse_A_(float,real_32,REAL_32)
+_Parse_A_(float,real_32,REAL_32);
 #if(_ABLE_R64_)
-_Parse_A_(double,real_64,REAL_64)
+_Parse_A_(double,real_64,REAL_64);
 #endif
 
 #undef _Parse_A_
@@ -173,24 +152,21 @@ union _point_c
 		_C_ general **GG;
 		_C_ address *AA;
 
-		_Parse_B_(C,data_08,D08)
-		_Parse_B_(C,data_16,D16)
-		_Parse_B_(C,data_32,D32)
-#if(_ABLE_I64_)
-		_Parse_B_(C,data_64,D64)
-#endif
-		_Parse_B_(C,inte_08,I08)
-		_Parse_B_(C,inte_16,I16)
-		_Parse_B_(C,inte_32,I32)
-#if(_ABLE_I64_)
-		_Parse_B_(C,inte_64,I64)
-#endif
+		_Parse_B_(C,data_08,D08);
+		_Parse_B_(C,data_16,D16);
+		_Parse_B_(C,data_32,D32);
+		_Parse_B_(C,data_64,D64);
+
+		_Parse_B_(C,inte_08,I08);
+		_Parse_B_(C,inte_16,I16);
+		_Parse_B_(C,inte_32,I32);
+		_Parse_B_(C,inte_64,I64);
 #if(_ABLE_R16_)
-		_Parse_B_(C,real_16,R16)
+		_Parse_B_(C,real_16,R16);
 #endif
-		_Parse_B_(C,real_32,R32)
+		_Parse_B_(C,real_32,R32);
 #if(_ABLE_R64_)
-		_Parse_B_(C,real_64,R64)
+		_Parse_B_(C,real_64,R64);
 #endif
 	}
 	V;
@@ -200,29 +176,26 @@ union _point_c
 		_C_ GENERAL **GG;
 		_C_ ADDRESS *AA;
 
-		_Parse_B_(C,DATA_08,D08)
-		_Parse_B_(C,DATA_16,D16)
-		_Parse_B_(C,DATA_32,D32)
-#if(_ABLE_I64_)
-		_Parse_B_(C,DATA_64,D64)
-#endif
-		_Parse_B_(C,INTE_08,I08)
-		_Parse_B_(C,INTE_16,I16)
-		_Parse_B_(C,INTE_32,I32)
-#if(_ABLE_I64_)
-		_Parse_B_(C,INTE_64,I64)
-#endif
+		_Parse_B_(C,DATA_08,D08);
+		_Parse_B_(C,DATA_16,D16);
+		_Parse_B_(C,DATA_32,D32);
+		_Parse_B_(C,DATA_64,D64);
+
+		_Parse_B_(C,INTE_08,I08);
+		_Parse_B_(C,INTE_16,I16);
+		_Parse_B_(C,INTE_32,I32);
+		_Parse_B_(C,INTE_64,I64);
 #if(_ABLE_R16_)
-		_Parse_B_(C,REAL_16,R16)
+		_Parse_B_(C,REAL_16,R16);
 #endif
-		_Parse_B_(C,REAL_32,R32)
+		_Parse_B_(C,REAL_32,R32);
 #if(_ABLE_R64_)
-		_Parse_B_(C,REAL_64,R64)
+		_Parse_B_(C,REAL_64,R64);
 #endif
 	}
 	C;
 };
-Type_Declare_(union,point_c,POINT_C)
+Type_Declare_(union,point_c,POINT_C);
 
 union _point_g
 {
@@ -232,24 +205,21 @@ union _point_g
 		_G_ general **GG;
 		_G_ address *AA;
 
-		_Parse_B_(G,data_08,D08)
-		_Parse_B_(G,data_16,D16)
-		_Parse_B_(G,data_32,D32)
-#if(_ABLE_I64_)
-		_Parse_B_(G,data_64,D64)
-#endif
-		_Parse_B_(G,inte_08,I08)
-		_Parse_B_(G,inte_16,I16)
-		_Parse_B_(G,inte_32,I32)
-#if(_ABLE_I64_)
-		_Parse_B_(G,inte_64,I64)
-#endif
+		_Parse_B_(G,data_08,D08);
+		_Parse_B_(G,data_16,D16);
+		_Parse_B_(G,data_32,D32);
+		_Parse_B_(G,data_64,D64);
+
+		_Parse_B_(G,inte_08,I08);
+		_Parse_B_(G,inte_16,I16);
+		_Parse_B_(G,inte_32,I32);
+		_Parse_B_(G,inte_64,I64);
 #if(_ABLE_R16_)
-		_Parse_B_(G,real_16,R16)
+		_Parse_B_(G,real_16,R16);
 #endif
-		_Parse_B_(G,real_32,R32)
+		_Parse_B_(G,real_32,R32);
 #if(_ABLE_R64_)
-		_Parse_B_(G,real_64,R64)
+		_Parse_B_(G,real_64,R64);
 #endif
 	}
 	V;
@@ -262,15 +232,11 @@ union _point_g
 		_Parse_B_(G,DATA_08,D08)
 		_Parse_B_(G,DATA_16,D16)
 		_Parse_B_(G,DATA_32,D32)
-#if(_ABLE_I64_)
 		_Parse_B_(G,DATA_64,D64)
-#endif
 		_Parse_B_(G,INTE_08,I08)
 		_Parse_B_(G,INTE_16,I16)
 		_Parse_B_(G,INTE_32,I32)
-#if(_ABLE_I64_)
 		_Parse_B_(G,INTE_64,I64)
-#endif
 #if(_ABLE_R16_)
 		_Parse_B_(G,REAL_16,R16)
 #endif
@@ -281,7 +247,7 @@ union _point_g
 	}
 	C;
 };
-Type_Declare_(union,point_g,POINT_G)
+Type_Declare_(union,point_g,POINT_G);
 
 union _point_l
 {
@@ -291,24 +257,21 @@ union _point_l
 		_L_ general **GG;
 		_L_ address *AA;
 
-		_Parse_B_(L,data_08,D08)
-		_Parse_B_(L,data_16,D16)
-		_Parse_B_(L,data_32,D32)
-#if(_ABLE_I64_)
-		_Parse_B_(L,data_64,D64)
-#endif
-		_Parse_B_(L,inte_08,I08)
-		_Parse_B_(L,inte_16,I16)
-		_Parse_B_(L,inte_32,I32)
-#if(_ABLE_I64_)
-		_Parse_B_(L,inte_64,I64)
-#endif
+		_Parse_B_(L,data_08,D08);
+		_Parse_B_(L,data_16,D16);
+		_Parse_B_(L,data_32,D32);
+		_Parse_B_(L,data_64,D64);
+
+		_Parse_B_(L,inte_08,I08);
+		_Parse_B_(L,inte_16,I16);
+		_Parse_B_(L,inte_32,I32);
+		_Parse_B_(L,inte_64,I64);
 #if(_ABLE_R16_)
-		_Parse_B_(L,real_16,R16)
+		_Parse_B_(L,real_16,R16);
 #endif
-		_Parse_B_(L,real_32,R32)
+		_Parse_B_(L,real_32,R32);
 #if(_ABLE_R64_)
-		_Parse_B_(L,real_64,R64)
+		_Parse_B_(L,real_64,R64);
 #endif
 	}
 	V;
@@ -318,29 +281,26 @@ union _point_l
 		_L_ GENERAL **GG;
 		_L_ ADDRESS *AA;
 
-		_Parse_B_(L,DATA_08,D08)
-		_Parse_B_(L,DATA_16,D16)
-		_Parse_B_(L,DATA_32,D32)
-#if(_ABLE_I64_)
-		_Parse_B_(L,DATA_64,D64)
-#endif
-		_Parse_B_(L,INTE_08,I08)
-		_Parse_B_(L,INTE_16,I16)
-		_Parse_B_(L,INTE_32,I32)
-#if(_ABLE_I64_)
-		_Parse_B_(L,INTE_64,I64)
-#endif
+		_Parse_B_(L,DATA_08,D08);
+		_Parse_B_(L,DATA_16,D16);
+		_Parse_B_(L,DATA_32,D32);
+		_Parse_B_(L,DATA_64,D64);
+
+		_Parse_B_(L,INTE_08,I08);
+		_Parse_B_(L,INTE_16,I16);
+		_Parse_B_(L,INTE_32,I32);
+		_Parse_B_(L,INTE_64,I64);
 #if(_ABLE_R16_)
-		_Parse_B_(L,REAL_16,R16)
+		_Parse_B_(L,REAL_16,R16);
 #endif
-		_Parse_B_(L,REAL_32,R32)
+		_Parse_B_(L,REAL_32,R32);
 #if(_ABLE_R64_)
-		_Parse_B_(L,REAL_64,R64)
+		_Parse_B_(L,REAL_64,R64);
 #endif
 	}
 	C;
 };
-Type_Declare_(union,point_l,POINT_L)
+Type_Declare_(union,point_l,POINT_L);
 
 union _point_p
 {
@@ -350,24 +310,21 @@ union _point_p
 		_P_ general **GG;
 		_P_ address *AA;
 
-		_Parse_B_(P,data_08,D08)
-		_Parse_B_(P,data_16,D16)
-		_Parse_B_(P,data_32,D32)
-#if(_ABLE_I64_)
-		_Parse_B_(P,data_64,D64)
-#endif
-		_Parse_B_(P,inte_08,I08)
-		_Parse_B_(P,inte_16,I16)
-		_Parse_B_(P,inte_32,I32)
-#if(_ABLE_I64_)
-		_Parse_B_(P,inte_64,I64)
-#endif
+		_Parse_B_(P,data_08,D08);
+		_Parse_B_(P,data_16,D16);
+		_Parse_B_(P,data_32,D32);
+		_Parse_B_(P,data_64,D64);
+
+		_Parse_B_(P,inte_08,I08);
+		_Parse_B_(P,inte_16,I16);
+		_Parse_B_(P,inte_32,I32);
+		_Parse_B_(P,inte_64,I64);
 #if(_ABLE_R16_)
-		_Parse_B_(P,real_16,R16)
+		_Parse_B_(P,real_16,R16);
 #endif
-		_Parse_B_(P,real_32,R32)
+		_Parse_B_(P,real_32,R32);
 #if(_ABLE_R64_)
-		_Parse_B_(P,real_64,R64)
+		_Parse_B_(P,real_64,R64);
 #endif
 	}
 	V;
@@ -377,29 +334,26 @@ union _point_p
 		_P_ GENERAL **GG;
 		_P_ ADDRESS *AA;
 
-		_Parse_B_(P,DATA_08,D08)
-		_Parse_B_(P,DATA_16,D16)
-		_Parse_B_(P,DATA_32,D32)
-#if(_ABLE_I64_)
-		_Parse_B_(P,DATA_64,D64)
-#endif
-		_Parse_B_(P,INTE_08,I08)
-		_Parse_B_(P,INTE_16,I16)
-		_Parse_B_(P,INTE_32,I32)
-#if(_ABLE_I64_)
-		_Parse_B_(P,INTE_64,I64)
-#endif
+		_Parse_B_(P,DATA_08,D08);
+		_Parse_B_(P,DATA_16,D16);
+		_Parse_B_(P,DATA_32,D32);
+		_Parse_B_(P,DATA_64,D64);
+
+		_Parse_B_(P,INTE_08,I08);
+		_Parse_B_(P,INTE_16,I16);
+		_Parse_B_(P,INTE_32,I32);
+		_Parse_B_(P,INTE_64,I64);
 #if(_ABLE_R16_)
-		_Parse_B_(P,REAL_16,R16)
+		_Parse_B_(P,REAL_16,R16);
 #endif
-		_Parse_B_(P,REAL_32,R32)
+		_Parse_B_(P,REAL_32,R32);
 #if(_ABLE_R64_)
-		_Parse_B_(P,REAL_64,R64)
+		_Parse_B_(P,REAL_64,R64);
 #endif
 	}
 	C;
 };
-Type_Declare_(union,point_p,POINT_P)
+Type_Declare_(union,point_p,POINT_P);
 
 #undef _Parse_B_
 #undef _Parse_A_

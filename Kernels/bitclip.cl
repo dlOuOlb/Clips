@@ -2,7 +2,7 @@
 /*	BitClip's OpenCL Source Parts.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.06.15	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.07.23	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -89,7 +89,6 @@ _K_ BitC_Endian_D32_(_G_ data_32 *_R_ Data,_P_ DATA_32 Length)
 	else
 		Wait_L_;
 }
-#if(_ABLE_I64_)
 _K_ BitC_Endian_D64_(_G_ data_64 *_R_ Data,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -151,7 +150,6 @@ _K_ BitC_Endian_D64_(_G_ data_64 *_R_ Data,_P_ DATA_32 Length)
 		Wait_L_;
 }
 #endif
-#endif
 
 #if(Fold_(Caster))
 _K_ BitC_Caster_D08_D16_(_G_ DATA_08 *_R_ DataI,_G_ data_16 *_R_ DataO,_P_ DATA_32 Length)
@@ -172,7 +170,6 @@ _K_ BitC_Caster_D08_D32_(_G_ DATA_08 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)(DataI[0]);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_D08_D64_(_G_ DATA_08 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -182,7 +179,6 @@ _K_ BitC_Caster_D08_D64_(_G_ DATA_08 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)(DataI[0]);
 }
-#endif
 _K_ BitC_Caster_D08_I08_(_G_ DATA_08 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_08 Max=0x7FU;
@@ -243,7 +239,6 @@ _K_ BitC_Caster_D16_D32_(_G_ DATA_16 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)(DataI[0]);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_D16_D64_(_G_ DATA_16 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -253,7 +248,6 @@ _K_ BitC_Caster_D16_D64_(_G_ DATA_16 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)(DataI[0]);
 }
-#endif
 _K_ BitC_Caster_D16_I08_(_G_ DATA_16 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_16 Max=0x007FU;
@@ -325,7 +319,6 @@ _K_ BitC_Caster_D32_D16_(_G_ DATA_32 *_R_ DataI,_G_ data_16 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_16)min(DataI[0],Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_D32_D64_(_G_ DATA_32 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -335,7 +328,6 @@ _K_ BitC_Caster_D32_D64_(_G_ DATA_32 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)(DataI[0]);
 }
-#endif
 _K_ BitC_Caster_D32_I08_(_G_ DATA_32 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Max=0x0000007FU;
@@ -397,7 +389,6 @@ _K_ BitC_Caster_D32_R64_(_G_ DATA_32 *_R_ DataI,_G_ real_64 *_R_ DataO,_P_ DATA_
 		DataO[0]=(real_64)(DataI[0]);
 }
 #endif
-#if(_ABLE_I64_)
 _K_ BitC_Caster_D64_D08_(_G_ DATA_64 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_64 Max=0x00000000000000FFUL;
@@ -499,7 +490,6 @@ _K_ BitC_Caster_D64_R64_(_G_ DATA_64 *_R_ DataI,_G_ real_64 *_R_ DataO,_P_ DATA_
 		DataO[0]=(real_64)(DataI[0]);
 }
 #endif
-#endif
 _K_ BitC_Caster_I08_D08_(_G_ INTE_08 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_08 Min=0x00;
@@ -530,7 +520,6 @@ _K_ BitC_Caster_I08_D32_(_G_ INTE_08 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)max(DataI[0],Min);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_I08_D64_(_G_ INTE_08 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_08 Min=0x00;
@@ -541,7 +530,6 @@ _K_ BitC_Caster_I08_D64_(_G_ INTE_08 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)max(DataI[0],Min);
 }
-#endif
 _K_ BitC_Caster_I08_I16_(_G_ INTE_08 *_R_ DataI,_G_ inte_16 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -560,7 +548,6 @@ _K_ BitC_Caster_I08_I32_(_G_ INTE_08 *_R_ DataI,_G_ inte_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_32)(DataI[0]);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_I08_I64_(_G_ INTE_08 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -570,7 +557,6 @@ _K_ BitC_Caster_I08_I64_(_G_ INTE_08 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_64)(DataI[0]);
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_Caster_I08_R16_(_G_ INTE_08 *_R_ DataI,_G_ real_16 *_R_ DataO,_P_ DATA_32 Length)
 {
@@ -633,7 +619,6 @@ _K_ BitC_Caster_I16_D32_(_G_ INTE_16 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)max(DataI[0],Min);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_I16_D64_(_G_ INTE_16 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_16 Min=0x0000;
@@ -644,7 +629,6 @@ _K_ BitC_Caster_I16_D64_(_G_ INTE_16 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)max(DataI[0],Min);
 }
-#endif
 _K_ BitC_Caster_I16_I08_(_G_ INTE_16 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_16 Min=0xFF80;
@@ -665,7 +649,6 @@ _K_ BitC_Caster_I16_I32_(_G_ INTE_16 *_R_ DataI,_G_ inte_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_32)(DataI[0]);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_I16_I64_(_G_ INTE_16 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -675,7 +658,6 @@ _K_ BitC_Caster_I16_I64_(_G_ INTE_16 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_64)(DataI[0]);
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_Caster_I16_R16_(_G_ INTE_16 *_R_ DataI,_G_ real_16 *_R_ DataO,_P_ DATA_32 Length)
 {
@@ -739,7 +721,6 @@ _K_ BitC_Caster_I32_D32_(_G_ INTE_32 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)max(DataI[0],Min);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_I32_D64_(_G_ INTE_32 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_32 Min=0x00000000;
@@ -750,7 +731,6 @@ _K_ BitC_Caster_I32_D64_(_G_ INTE_32 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)max(DataI[0],Min);
 }
-#endif
 _K_ BitC_Caster_I32_I08_(_G_ INTE_32 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_32 Min=0xFFFFFF80;
@@ -773,7 +753,6 @@ _K_ BitC_Caster_I32_I16_(_G_ INTE_32 *_R_ DataI,_G_ inte_16 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_16)clamp(DataI[0],Min,Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_I32_I64_(_G_ INTE_32 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -783,7 +762,6 @@ _K_ BitC_Caster_I32_I64_(_G_ INTE_32 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_64)(DataI[0]);
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_Caster_I32_R16_(_G_ INTE_32 *_R_ DataI,_G_ real_16 *_R_ DataO,_P_ DATA_32 Length)
 {
@@ -815,7 +793,6 @@ _K_ BitC_Caster_I32_R64_(_G_ INTE_32 *_R_ DataI,_G_ real_64 *_R_ DataO,_P_ DATA_
 		DataO[0]=(real_64)(DataI[0]);
 }
 #endif
-#if(_ABLE_I64_)
 _K_ BitC_Caster_I64_D08_(_G_ INTE_64 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_64 Min=0x0000000000000000L;
@@ -923,7 +900,6 @@ _K_ BitC_Caster_I64_R64_(_G_ INTE_64 *_R_ DataI,_G_ real_64 *_R_ DataO,_P_ DATA_
 		DataO[0]=(real_64)(DataI[0]);
 }
 #endif
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_Caster_R16_D08_(_G_ REAL_16 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 Length)
 {
@@ -961,7 +937,6 @@ _K_ BitC_Caster_R16_D32_(_G_ REAL_16 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)clamp(DataI[0],Min,Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_R16_D64_(_G_ REAL_16 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_64 Table[2]={0x0000000000000000UL,0xFFFFFFFFFFFFFFFFUL};
@@ -974,7 +949,6 @@ _K_ BitC_Caster_R16_D64_(_G_ REAL_16 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)clamp(DataI[0],Min,Max);
 }
-#endif
 _K_ BitC_Caster_R16_I08_(_G_ REAL_16 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_08 Table[2]={0x80,0x7F};
@@ -1011,7 +985,6 @@ _K_ BitC_Caster_R16_I32_(_G_ REAL_16 *_R_ DataI,_G_ inte_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_32)clamp(DataI[0],Min,Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_R16_I64_(_G_ REAL_16 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_64 Table[2]={0x8000000000000000L,0x7FFFFFFFFFFFFFFFL};
@@ -1024,7 +997,6 @@ _K_ BitC_Caster_R16_I64_(_G_ REAL_16 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_64)(DataI[0],Min,Max);
 }
-#endif
 _K_ BitC_Caster_R16_R32_(_G_ REAL_16 *_R_ DataI,_G_ real_32 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1082,7 +1054,6 @@ _K_ BitC_Caster_R32_D32_(_G_ REAL_32 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)clamp(DataI[0],Min,Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_R32_D64_(_G_ REAL_32 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_64 Table[2]={0x0000000000000000UL,0xFFFFFFFFFFFFFFFFUL};
@@ -1095,7 +1066,6 @@ _K_ BitC_Caster_R32_D64_(_G_ REAL_32 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)clamp(DataI[0],Min,Max);
 }
-#endif
 _K_ BitC_Caster_R32_I08_(_G_ REAL_32 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_08 Table[2]={0x80,0x7F};
@@ -1132,7 +1102,6 @@ _K_ BitC_Caster_R32_I32_(_G_ REAL_32 *_R_ DataI,_G_ inte_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_32)clamp(DataI[0],Min,Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_R32_I64_(_G_ REAL_32 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_64 Table[2]={0x8000000000000000L,0x7FFFFFFFFFFFFFFFL};
@@ -1145,7 +1114,6 @@ _K_ BitC_Caster_R32_I64_(_G_ REAL_32 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_64)clamp(DataI[0],Min,Max);
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_Caster_R32_R16_(_G_ REAL_32 *_R_ DataI,_G_ real_16 *_R_ DataO,_P_ DATA_32 Length)
 {
@@ -1205,7 +1173,6 @@ _K_ BitC_Caster_R64_D32_(_G_ REAL_64 *_R_ DataI,_G_ data_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_32)clamp(DataI[0],Min,Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_R64_D64_(_G_ REAL_64 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_64 Table[2]={0x0000000000000000UL,0xFFFFFFFFFFFFFFFFUL};
@@ -1218,7 +1185,6 @@ _K_ BitC_Caster_R64_D64_(_G_ REAL_64 *_R_ DataI,_G_ data_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(data_64)clamp(DataI[0],Min,Max);
 }
-#endif
 _K_ BitC_Caster_R64_I08_(_G_ REAL_64 *_R_ DataI,_G_ inte_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_08 Table[2]={0x80,0x7F};
@@ -1255,7 +1221,6 @@ _K_ BitC_Caster_R64_I32_(_G_ REAL_64 *_R_ DataI,_G_ inte_32 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_32)clamp(DataI[0],Min,Max);
 }
-#if(_ABLE_I64_)
 _K_ BitC_Caster_R64_I64_(_G_ REAL_64 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ INTE_64 Table[2]={0x8000000000000000L,0x7FFFFFFFFFFFFFFFL};
@@ -1268,7 +1233,6 @@ _K_ BitC_Caster_R64_I64_(_G_ REAL_64 *_R_ DataI,_G_ inte_64 *_R_ DataO,_P_ DATA_
 	for(DataI+=Start,DataO+=Start;DataI<End;DataI+=Step,DataO+=Step)
 		DataO[0]=(inte_64)clamp(DataI[0],Min,Max);
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_Caster_R64_R16_(_G_ REAL_64 *_R_ DataI,_G_ real_16 *_R_ DataO,_P_ DATA_32 Length)
 {
@@ -1375,7 +1339,6 @@ _K_ BitC_BO_S_1_D32_(_G_ data_32 *DataC,_G_ DATA_32 *DataA,_P_ inte_32 Shift,_P_
 		for(Shift=-Shift,DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 			DataC[0]=DataA[0]>>Shift;
 }
-#if(_ABLE_I64_)
 _K_ BitC_BO_S_1_D64_(_G_ data_64 *DataC,_G_ DATA_64 *DataA,_P_ inte_32 Shift,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1389,7 +1352,6 @@ _K_ BitC_BO_S_1_D64_(_G_ data_64 *DataC,_G_ DATA_64 *DataA,_P_ inte_32 Shift,_P_
 		for(Shift=-Shift,DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 			DataC[0]=DataA[0]>>Shift;
 }
-#endif
 _K_ BitC_BO_S_1_I08_(_G_ inte_08 *DataC,_G_ INTE_08 *DataA,_P_ inte_32 Shift,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1429,7 +1391,6 @@ _K_ BitC_BO_S_1_I32_(_G_ inte_32 *DataC,_G_ INTE_32 *DataA,_P_ inte_32 Shift,_P_
 		for(Shift=-Shift,DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 			DataC[0]=DataA[0]>>Shift;
 }
-#if(_ABLE_I64_)
 _K_ BitC_BO_S_1_I64_(_G_ inte_64 *DataC,_G_ INTE_64 *DataA,_P_ inte_32 Shift,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1443,7 +1404,6 @@ _K_ BitC_BO_S_1_I64_(_G_ inte_64 *DataC,_G_ INTE_64 *DataA,_P_ inte_32 Shift,_P_
 		for(Shift=-Shift,DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 			DataC[0]=DataA[0]>>Shift;
 }
-#endif
 
 _K_ BitC_BO_A_1_D08_(_G_ data_08* DataC,_G_ DATA_08* DataA,_P_ DATA_08 Mask,_P_ DATA_32 Length)
 {
@@ -1472,7 +1432,6 @@ _K_ BitC_BO_A_1_D32_(_G_ data_32* DataC,_G_ DATA_32* DataA,_P_ DATA_32 Mask,_P_ 
 	for(DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 		DataC[0]=DataA[0]&Mask;
 }
-#if(_ABLE_I64_)
 _K_ BitC_BO_A_1_D64_(_G_ data_64* DataC,_G_ DATA_64* DataA,_P_ DATA_64 Mask,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1482,7 +1441,6 @@ _K_ BitC_BO_A_1_D64_(_G_ data_64* DataC,_G_ DATA_64* DataA,_P_ DATA_64 Mask,_P_ 
 	for(DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 		DataC[0]=DataA[0]&Mask;
 }
-#endif
 _K_ BitC_BO_A_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _PL_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1556,7 +1514,6 @@ _K_ BitC_BO_O_1_D32_(_G_ data_32* DataC,_G_ DATA_32* DataA,_P_ DATA_32 Mask,_P_ 
 	for(DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 		DataC[0]=DataA[0]|Mask;
 }
-#if(_ABLE_I64_)
 _K_ BitC_BO_O_1_D64_(_G_ data_64* DataC,_G_ DATA_64* DataA,_P_ DATA_64 Mask,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1566,7 +1523,6 @@ _K_ BitC_BO_O_1_D64_(_G_ data_64* DataC,_G_ DATA_64* DataA,_P_ DATA_64 Mask,_P_ 
 	for(DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 		DataC[0]=DataA[0]|Mask;
 }
-#endif
 _K_ BitC_BO_O_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _PL_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1640,7 +1596,6 @@ _K_ BitC_BO_X_1_D32_(_G_ data_32* DataC,_G_ DATA_32* DataA,_P_ DATA_32 Mask,_P_ 
 	for(DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 		DataC[0]=DataA[0]^Mask;
 }
-#if(_ABLE_I64_)
 _K_ BitC_BO_X_1_D64_(_G_ data_64* DataC,_G_ DATA_64* DataA,_P_ DATA_64 Mask,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1650,7 +1605,6 @@ _K_ BitC_BO_X_1_D64_(_G_ data_64* DataC,_G_ DATA_64* DataA,_P_ DATA_64 Mask,_P_ 
 	for(DataA+=Start,DataC+=Start;DataA<End;DataA+=Step,DataC+=Step)
 		DataC[0]=DataA[0]^Mask;
 }
-#endif
 _K_ BitC_BO_X_2_D08_(_G_ data_08 _PL_ DataC,_G_ DATA_08 _PL_ DataA,_G_ DATA_08 _PL_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -1786,7 +1740,6 @@ _I_ general _BitC_Taking_D32_(_P_ data_32 _PL_ _R_ T,_G_ DATA_32 _PL_ _R_ S,_P_ 
 	default:;
 	}
 }
-#if(_ABLE_I64_)
 _I_ general _BitC_Taking_D64_(_P_ data_64 _PL_ _R_ T,_G_ DATA_64 _PL_ _R_ S,_P_ INTE_32 L)
 {
 	inte_32 I=0;
@@ -1816,7 +1769,6 @@ _I_ general _BitC_Taking_D64_(_P_ data_64 _PL_ _R_ T,_G_ DATA_64 _PL_ _R_ S,_P_ 
 	default:;
 	}
 }
-#endif
 
 _I_ general _BitC_Choose_D08_(_P_ point_p M,_P_ POINT_P P)
 {
@@ -1839,7 +1791,6 @@ _I_ general _BitC_Choose_D32_(_P_ point_p M,_P_ POINT_P P)
 	M.V._02_D32[0]|=M.C._02_D32[1];
 	M.V.D32[0]|=M.C.D32[1];
 }
-#if(_ABLE_I64_)
 _I_ general _BitC_Choose_D64_(_P_ point_p M,_P_ POINT_P P)
 {
 	M.V._08_D64[0]&=P.C._08_D64[0];
@@ -1847,7 +1798,6 @@ _I_ general _BitC_Choose_D64_(_P_ point_p M,_P_ POINT_P P)
 	M.V._02_D64[0]|=M.C._02_D64[1];
 	M.V.D64[0]|=M.C.D64[1];
 }
-#endif
 
 _I_ general _BitC_RO_S_M_D08_(_P_ point_p M)
 {
@@ -1891,7 +1841,6 @@ _I_ general _BitC_RO_S_M_D32_(_P_ point_p M)
 	M.V._02_D32[0]|=M.C._02_D32[1];
 	M.V.D32[0]|=M.C.D32[1];
 }
-#if(_ABLE_I64_)
 _I_ general _BitC_RO_S_M_D64_(_P_ point_p M)
 {
 	M.V.D64[1]<<=1;
@@ -1906,7 +1855,6 @@ _I_ general _BitC_RO_S_M_D64_(_P_ point_p M)
 	M.V._02_D64[0]|=M.C._02_D64[1];
 	M.V.D64[0]|=M.C.D64[1];
 }
-#endif
 
 _I_ general _BitC_RO_Rem_D08_(_P_ data_08 _PL_ _R_ M,_P_ INTE_32 S,_P_ DATA_08 C)
 {
@@ -1929,7 +1877,6 @@ _I_ general _BitC_RO_Rem_D32_(_P_ data_32 _PL_ _R_ M,_P_ INTE_32 S,_P_ DATA_32 C
 	M[1]&=C;
 	M[0]|=M[1];
 }
-#if(_ABLE_I64_)
 _I_ general _BitC_RO_Rem_D64_(_P_ data_64 _PL_ _R_ M,_P_ INTE_32 S,_P_ DATA_64 C)
 {
 	M[1]=0xFFFFFFFFFFFFFFFFUL;
@@ -1937,7 +1884,6 @@ _I_ general _BitC_RO_Rem_D64_(_P_ data_64 _PL_ _R_ M,_P_ INTE_32 S,_P_ DATA_64 C
 	M[1]&=C;
 	M[0]|=M[1];
 }
-#endif
 
 _K_ BitC_Expand_D08_(_G_ DATA_08 _PL_ _R_ DataI,_G_ data_08 _PL_ _R_ DataO,_P_ DATA_32 Length)
 {
@@ -1996,7 +1942,6 @@ _K_ BitC_Expand_D32_(_G_ DATA_08 _PL_ _R_ DataI,_G_ data_32 _PL_ _R_ DataO,_P_ D
 		DataO[Index]=Temp;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_Expand_D64_(_G_ DATA_08 _PL_ _R_ DataI,_G_ data_64 _PL_ _R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -2016,7 +1961,6 @@ _K_ BitC_Expand_D64_(_G_ DATA_08 _PL_ _R_ DataI,_G_ data_64 _PL_ _R_ DataO,_P_ D
 		DataO[Index]=Temp;
 	}
 }
-#endif
 
 _K_ BitC_Shrink_D08_(_G_ DATA_08 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 Length)
 {
@@ -2215,7 +2159,6 @@ _K_ BitC_Shrink_D32_(_G_ DATA_32 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_Shrink_D64_(_G_ DATA_64 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 Length)
 {
 	_P_ DATA_64 Table[8]={0x0000000000000001,0x0000000000000002,0x0000000000000004,0x0000000000000008,0x0000000000000010,0x0000000000000020,0x0000000000000040,0x0000000000000080};
@@ -2285,7 +2228,6 @@ _K_ BitC_Shrink_D64_(_G_ DATA_64 *_R_ DataI,_G_ data_08 *_R_ DataO,_P_ DATA_32 L
 		Wait_L_;
 	}
 }
-#endif
 
 _K_ BitC_RO_E_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 Value,_P_ DATA_32 Length)
 {
@@ -2503,7 +2445,6 @@ _K_ BitC_RO_E_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_E_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -2576,7 +2517,6 @@ _K_ BitC_RO_E_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		Wait_L_;
 	}
 }
-#endif
 
 _K_ BitC_RO_E_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *_R_ DataB,_P_ DATA_32 Length)
 {
@@ -2803,7 +2743,6 @@ _K_ BitC_RO_E_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_E_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -2879,7 +2818,6 @@ _K_ BitC_RO_E_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		Wait_L_;
 	}
 }
-#endif
 
 _K_ BitC_RO_N_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 Value,_P_ DATA_32 Length)
 {
@@ -3097,7 +3035,6 @@ _K_ BitC_RO_N_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_N_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -3140,7 +3077,7 @@ _K_ BitC_RO_N_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 			_BitC_Taking_D64_(Mask.V.D64,DataA,Margin);
 
 			Wait_L_;
-			Mask.C._08_I64[0]=(Mask.C._08_D64[0]!=Value);
+			Mask.V._08_I64[0]=(Mask.C._08_D64[0]!=Value);
 
 			Wait_L_;
 			_BitC_RO_S_M_D64_(Mask);
@@ -3170,7 +3107,6 @@ _K_ BitC_RO_N_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		Wait_L_;
 	}
 }
-#endif
 
 _K_ BitC_RO_N_2_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_G_ DATA_08 *_R_ DataB,_P_ DATA_32 Length)
 {
@@ -3397,7 +3333,6 @@ _K_ BitC_RO_N_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_N_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -3473,7 +3408,6 @@ _K_ BitC_RO_N_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		Wait_L_;
 	}
 }
-#endif
 
 _K_ BitC_RO_G_1_D08_(_G_ data_08 *_R_ DataC,_G_ DATA_08 *_R_ DataA,_P_ DATA_08 Value,_P_ DATA_32 Length)
 {
@@ -3691,7 +3625,6 @@ _K_ BitC_RO_G_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_G_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -3764,7 +3697,6 @@ _K_ BitC_RO_G_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		Wait_L_;
 	}
 }
-#endif
 _K_ BitC_RO_G_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -3983,7 +3915,6 @@ _K_ BitC_RO_G_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_G_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -4056,7 +3987,6 @@ _K_ BitC_RO_G_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		Wait_L_;
 	}
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_RO_G_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 Value,_P_ DATA_32 Length)
 {
@@ -4503,7 +4433,6 @@ _K_ BitC_RO_G_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_G_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -4579,7 +4508,6 @@ _K_ BitC_RO_G_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		Wait_L_;
 	}
 }
-#endif
 _K_ BitC_RO_G_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -4809,7 +4737,6 @@ _K_ BitC_RO_G_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_G_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -4885,7 +4812,6 @@ _K_ BitC_RO_G_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		Wait_L_;
 	}
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_RO_G_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *_R_ DataB,_P_ DATA_32 Length)
 {
@@ -5332,7 +5258,6 @@ _K_ BitC_RO_L_1_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_P_ DATA_32 V
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_L_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -5405,7 +5330,6 @@ _K_ BitC_RO_L_1_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_P_ DATA_64 V
 		Wait_L_;
 	}
 }
-#endif
 _K_ BitC_RO_L_1_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_P_ INTE_08 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -5624,7 +5548,6 @@ _K_ BitC_RO_L_1_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_P_ INTE_32 V
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_L_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 Value,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -5697,7 +5620,6 @@ _K_ BitC_RO_L_1_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_P_ INTE_64 V
 		Wait_L_;
 	}
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_RO_L_1_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_P_ DATA_16 Value,_P_ DATA_32 Length)
 {
@@ -6148,7 +6070,6 @@ _K_ BitC_RO_L_2_D32_(_G_ data_08 *_R_ DataC,_G_ DATA_32 *_R_ DataA,_G_ DATA_32 *
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_L_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -6224,7 +6145,6 @@ _K_ BitC_RO_L_2_D64_(_G_ data_08 *_R_ DataC,_G_ DATA_64 *_R_ DataA,_G_ DATA_64 *
 		Wait_L_;
 	}
 }
-#endif
 _K_ BitC_RO_L_2_I08_(_G_ data_08 *_R_ DataC,_G_ INTE_08 *_R_ DataA,_G_ INTE_08 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -6454,7 +6374,6 @@ _K_ BitC_RO_L_2_I32_(_G_ data_08 *_R_ DataC,_G_ INTE_32 *_R_ DataA,_G_ INTE_32 *
 		Wait_L_;
 	}
 }
-#if(_ABLE_I64_)
 _K_ BitC_RO_L_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *_R_ DataB,_P_ DATA_32 Length)
 {
 	_P_ DATA_32 Start=Work_IGX_;
@@ -6530,7 +6449,6 @@ _K_ BitC_RO_L_2_I64_(_G_ data_08 *_R_ DataC,_G_ INTE_64 *_R_ DataA,_G_ INTE_64 *
 		Wait_L_;
 	}
 }
-#endif
 #if(_ABLE_R16_)
 _K_ BitC_RO_L_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *_R_ DataB,_P_ DATA_32 Length)
 {
