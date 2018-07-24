@@ -1,12 +1,6 @@
 root=true
 
-[*.{h,c,cl}]
-indent_style=tab
-indent_size=4
-insert_final_newline=true
-charset=utf-8
-
-[CMakeLists.txt]
+[*.{h,c,cl,txt}]
 indent_style=tab
 indent_size=4
 insert_final_newline=true
