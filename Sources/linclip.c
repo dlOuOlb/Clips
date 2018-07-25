@@ -13,7 +13,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.07.20";
+static DATA_08 IdiomVersion[16]="Date:2018.07.25";
 static ADDRESS ConstantSize[2]={sizeof(real_32),sizeof(real_64)};
 
 #ifdef __OPENCL_H
@@ -1689,6 +1689,34 @@ data_32 LinC_Min_1_R64_(REAL_64 _PL_ Line,DATA_32 Length)
 #endif
 #if(MemC_Fold_(Definition:Radix Sorting Functions))
 #if(MemC_Fold_(Definition:Sub-Functions))
+static inline general _LinC_Swap_D08_(data_08 _PL_ A,INTEGER _PL_ T)
+{
+	DATA_08 Temp=A[T[1]];
+
+	A[0]=A[T[0]];
+	A[1]=Temp;
+}
+static inline general _LinC_Swap_D16_(data_16 _PL_ A,INTEGER _PL_ T)
+{
+	DATA_16 Temp=A[T[1]];
+
+	A[0]=A[T[0]];
+	A[1]=Temp;
+}
+static inline general _LinC_Swap_D32_(data_32 _PL_ A,INTEGER _PL_ T)
+{
+	DATA_32 Temp=A[T[1]];
+
+	A[0]=A[T[0]];
+	A[1]=Temp;
+}
+static inline general _LinC_Swap_D64_(data_64 _PL_ A,INTEGER _PL_ T)
+{
+	DATA_64 Temp=A[T[1]];
+
+	A[0]=A[T[0]];
+	A[1]=Temp;
+}
 static data_08 *_LinC_Radix_D08_(data_08 *_R_ ValueFirst,data_32 *_R_ IndexFirst,DATA_08 *_R_ ValueMess,DATA_32 *_R_ IndexMess,DATA_32 Length,BOOLEAN Mode,DATA_08 Scan)
 {
 	data_08 *_R_ ValueLast=ValueFirst+Length;
@@ -1865,341 +1893,449 @@ static data_64 *_LinC_Radix_D64_(data_64 *_R_ ValueFirst,data_32 *_R_ IndexFirst
 
 	return ValueFirst;
 }
-static general _LinC_Sort_2_D08_(data_08 _PL_ ValueA,data_08 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+static general _LinC_Sort_2_Here_D08_(data_08 _PL_ ValueA,data_32 _PL_ IndexA,BOOLEAN Mode)
 {
-	if(Mode)
-		if(ValueA[0]<ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
+	integer T[2];
 
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
 	else
-		if(ValueA[0]>ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
-
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		_LinC_Swap_D08_(ValueA,T);
+		_LinC_Swap_D32_(IndexA,T);
+	}
 }
-static general _LinC_Sort_2_D16_(data_16 _PL_ ValueA,data_16 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+static general _LinC_Sort_2_Here_D16_(data_16 _PL_ ValueA,data_32 _PL_ IndexA,BOOLEAN Mode)
 {
-	if(Mode)
-		if(ValueA[0]<ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
+	integer T[2];
 
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
 	else
-		if(ValueA[0]>ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
-
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		_LinC_Swap_D16_(ValueA,T);
+		_LinC_Swap_D32_(IndexA,T);
+	}
 }
-static general _LinC_Sort_2_D32_(data_32 _PL_ ValueA,data_32 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+static general _LinC_Sort_2_Here_D32_(data_32 _PL_ ValueA,data_32 _PL_ IndexA,BOOLEAN Mode)
 {
-	if(Mode)
-		if(ValueA[0]<ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
+	integer T[2];
 
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
 	else
-		if(ValueA[0]>ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
-
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		_LinC_Swap_D32_(ValueA,T);
+		_LinC_Swap_D32_(IndexA,T);
+	}
 }
-static general _LinC_Sort_2_D64_(data_64 _PL_ ValueA,data_64 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+static general _LinC_Sort_2_Here_D64_(data_64 _PL_ ValueA,data_32 _PL_ IndexA,BOOLEAN Mode)
 {
-	if(Mode)
-		if(ValueA[0]<ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
+	integer T[2];
 
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
 	else
-		if(ValueA[0]>ValueA[1])
-		{
-			ValueB[0]=ValueA[1];
-			ValueB[1]=ValueA[0];
-			ValueA[0]=ValueB[0];
-			ValueA[1]=ValueB[1];
-
-			IndexB[0]=IndexA[1];
-			IndexB[1]=IndexA[0];
-			IndexA[0]=IndexB[0];
-			IndexA[1]=IndexB[1];
-		}
-		else
-		{
-			ValueB[0]=ValueA[0];
-			ValueB[1]=ValueA[1];
-
-			IndexB[0]=IndexA[0];
-			IndexB[1]=IndexA[1];
-		}
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		_LinC_Swap_D64_(ValueA,T);
+		_LinC_Swap_D32_(IndexA,T);
+	}
 }
-static general _LinC_Recur_D08_(data_08 *ValueSource,data_32 *IndexSource,data_08 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,data_08 Scan)
+static general _LinC_Sort_2_Move_D08_(data_08 _PL_ ValueA,data_08 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
 {
-	data_32 Offset=(data_32)(_LinC_Radix_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,Scan)-ValueTarget);
+	integer T[2];
 
-	Scan>>=1;
-	if(Scan)
-		switch(Offset)
-		{
-		default:
-			_LinC_Recur_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-			goto JUMP;
-		case 2:
-			_LinC_Sort_2_D08_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-			goto JUMP;
-		case 1:
-			ValueSource[0]=ValueTarget[0];
-			IndexSource[0]=IndexTarget[0];
-JUMP:
-			ValueSource+=Offset;
-			IndexSource+=Offset;
-			ValueTarget+=Offset;
-			IndexTarget+=Offset;
-		case 0:
-			Offset=Length-Offset;
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
+	else
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		ValueB[0]=ValueA[T[0]];
+		ValueB[1]=ValueA[T[1]];
+
+		IndexB[0]=IndexA[T[0]];
+		IndexB[1]=IndexA[T[1]];
+	}
+}
+static general _LinC_Sort_2_Move_D16_(data_16 _PL_ ValueA,data_16 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+{
+	integer T[2];
+
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
+	else
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		ValueB[0]=ValueA[T[0]];
+		ValueB[1]=ValueA[T[1]];
+
+		IndexB[0]=IndexA[T[0]];
+		IndexB[1]=IndexA[T[1]];
+	}
+}
+static general _LinC_Sort_2_Move_D32_(data_32 _PL_ ValueA,data_32 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+{
+	integer T[2];
+
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
+	else
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		ValueB[0]=ValueA[T[0]];
+		ValueB[1]=ValueA[T[1]];
+
+		IndexB[0]=IndexA[T[0]];
+		IndexB[1]=IndexA[T[1]];
+	}
+}
+static general _LinC_Sort_2_Move_D64_(data_64 _PL_ ValueA,data_64 _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+{
+	integer T[2];
+
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
+	else
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		ValueB[0]=ValueA[T[0]];
+		ValueB[1]=ValueA[T[1]];
+
+		IndexB[0]=IndexA[T[0]];
+		IndexB[1]=IndexA[T[1]];
+	}
+}
+static general _LinC_Recur_D08_(data_08 *ValueSource,data_32 *IndexSource,data_08 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
+{
+	data_32 Offset=(data_32)(_LinC_Radix_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_08)1)<<((data_08)Bits))-ValueTarget);
+
+	if(Bits)
+	{
+		Bits--;
+		if(Bits&1)
 			switch(Offset)
 			{
 			default:
-				_LinC_Recur_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-				break;
+				_LinC_Recur_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_A;
 			case 2:
-				_LinC_Sort_2_D08_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-				break;
+				_LinC_Sort_2_Here_D08_(ValueTarget,IndexTarget,Mode);
 			case 1:
-				ValueSource[0]=ValueTarget[0];
-				IndexSource[0]=IndexTarget[0];
-			case 0:;
+JUMP_A:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Here_D08_(ValueTarget,IndexTarget,Mode);
+					break;
+				case 1:
+				case 0:;
+				}
 			}
-		}
-}
-static general _LinC_Recur_D16_(data_16 *ValueSource,data_32 *IndexSource,data_16 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,data_16 Scan)
-{
-	data_32 Offset=(data_32)(_LinC_Radix_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,Scan)-ValueTarget);
-
-	Scan>>=1;
-	if(Scan)
-		switch(Offset)
-		{
-		default:
-			_LinC_Recur_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-			goto JUMP;
-		case 2:
-			_LinC_Sort_2_D16_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-			goto JUMP;
-		case 1:
-			ValueSource[0]=ValueTarget[0];
-			IndexSource[0]=IndexTarget[0];
-JUMP:
-			ValueSource+=Offset;
-			IndexSource+=Offset;
-			ValueTarget+=Offset;
-			IndexTarget+=Offset;
-		case 0:
-			Offset=Length-Offset;
+		else
 			switch(Offset)
 			{
 			default:
-				_LinC_Recur_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-				break;
+				_LinC_Recur_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_B;
 			case 2:
-				_LinC_Sort_2_D16_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-				break;
+				_LinC_Sort_2_Move_D08_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+				goto JUMP_B;
 			case 1:
 				ValueSource[0]=ValueTarget[0];
 				IndexSource[0]=IndexTarget[0];
-			case 0:;
+JUMP_B:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Move_D08_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+					break;
+				case 1:
+					ValueSource[0]=ValueTarget[0];
+					IndexSource[0]=IndexTarget[0];
+				case 0:;
+				}
 			}
-		}
+	}
 }
-static general _LinC_Recur_D32_(data_32 *ValueSource,data_32 *IndexSource,data_32 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,data_32 Scan)
+static general _LinC_Recur_D16_(data_16 *ValueSource,data_32 *IndexSource,data_16 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
 {
-	data_32 Offset=(data_32)(_LinC_Radix_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,Scan)-ValueTarget);
+	data_32 Offset=(data_32)(_LinC_Radix_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_16)1)<<((data_16)Bits))-ValueTarget);
 
-	Scan>>=1;
-	if(Scan)
-		switch(Offset)
-		{
-		default:
-			_LinC_Recur_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-			goto JUMP;
-		case 2:
-			_LinC_Sort_2_D32_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-			goto JUMP;
-		case 1:
-			ValueSource[0]=ValueTarget[0];
-			IndexSource[0]=IndexTarget[0];
-JUMP:
-			ValueSource+=Offset;
-			IndexSource+=Offset;
-			ValueTarget+=Offset;
-			IndexTarget+=Offset;
-		case 0:
-			Offset=Length-Offset;
+	if(Bits)
+	{
+		Bits--;
+		if(Bits&1)
 			switch(Offset)
 			{
 			default:
-				_LinC_Recur_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-				break;
+				_LinC_Recur_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_A;
 			case 2:
-				_LinC_Sort_2_D32_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-				break;
+				_LinC_Sort_2_Here_D16_(ValueTarget,IndexTarget,Mode);
 			case 1:
-				ValueSource[0]=ValueTarget[0];
-				IndexSource[0]=IndexTarget[0];
-			case 0:;
+JUMP_A:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Here_D16_(ValueTarget,IndexTarget,Mode);
+					break;
+				case 1:
+				case 0:;
+				}
 			}
-		}
-}
-static general _LinC_Recur_D64_(data_64 *ValueSource,data_32 *IndexSource,data_64 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,data_64 Scan)
-{
-	data_32 Offset=(data_32)(_LinC_Radix_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,Scan)-ValueTarget);
-
-	Scan>>=1;
-	if(Scan)
-		switch(Offset)
-		{
-		default:
-			_LinC_Recur_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-			goto JUMP;
-		case 2:
-			_LinC_Sort_2_D64_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-			goto JUMP;
-		case 1:
-			ValueSource[0]=ValueTarget[0];
-			IndexSource[0]=IndexTarget[0];
-JUMP:
-			ValueSource+=Offset;
-			IndexSource+=Offset;
-			ValueTarget+=Offset;
-			IndexTarget+=Offset;
-		case 0:
-			Offset=Length-Offset;
+		else
 			switch(Offset)
 			{
 			default:
-				_LinC_Recur_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Scan);
-				break;
+				_LinC_Recur_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_B;
 			case 2:
-				_LinC_Sort_2_D64_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
-				break;
+				_LinC_Sort_2_Move_D16_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+				goto JUMP_B;
 			case 1:
 				ValueSource[0]=ValueTarget[0];
 				IndexSource[0]=IndexTarget[0];
-			case 0:;
+JUMP_B:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Move_D16_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+					break;
+				case 1:
+					ValueSource[0]=ValueTarget[0];
+					IndexSource[0]=IndexTarget[0];
+				case 0:;
+				}
 			}
-		}
+	}
+}
+static general _LinC_Recur_D32_(data_32 *ValueSource,data_32 *IndexSource,data_32 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
+{
+	data_32 Offset=(data_32)(_LinC_Radix_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_32)1)<<((data_32)Bits))-ValueTarget);
+
+	if(Bits)
+	{
+		Bits--;
+		if(Bits&1)
+			switch(Offset)
+			{
+			default:
+				_LinC_Recur_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_A;
+			case 2:
+				_LinC_Sort_2_Here_D32_(ValueTarget,IndexTarget,Mode);
+			case 1:
+JUMP_A:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Here_D32_(ValueTarget,IndexTarget,Mode);
+					break;
+				case 1:
+				case 0:;
+				}
+			}
+		else
+			switch(Offset)
+			{
+			default:
+				_LinC_Recur_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_B;
+			case 2:
+				_LinC_Sort_2_Move_D32_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+				goto JUMP_B;
+			case 1:
+				ValueSource[0]=ValueTarget[0];
+				IndexSource[0]=IndexTarget[0];
+JUMP_B:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Move_D32_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+					break;
+				case 1:
+					ValueSource[0]=ValueTarget[0];
+					IndexSource[0]=IndexTarget[0];
+				case 0:;
+				}
+			}
+	}
+}
+static general _LinC_Recur_D64_(data_64 *ValueSource,data_32 *IndexSource,data_64 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
+{
+	data_32 Offset=(data_32)(_LinC_Radix_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_64)1)<<((data_64)Bits))-ValueTarget);
+
+	if(Bits)
+	{
+		Bits--;
+		if(Bits&1)
+			switch(Offset)
+			{
+			default:
+				_LinC_Recur_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_A;
+			case 2:
+				_LinC_Sort_2_Here_D64_(ValueTarget,IndexTarget,Mode);
+			case 1:
+JUMP_A:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Here_D64_(ValueTarget,IndexTarget,Mode);
+					break;
+				case 1:
+				case 0:;
+				}
+			}
+		else
+			switch(Offset)
+			{
+			default:
+				_LinC_Recur_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				goto JUMP_B;
+			case 2:
+				_LinC_Sort_2_Move_D64_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+				goto JUMP_B;
+			case 1:
+				ValueSource[0]=ValueTarget[0];
+				IndexSource[0]=IndexTarget[0];
+JUMP_B:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					_LinC_Recur_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					_LinC_Sort_2_Move_D64_(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+					break;
+				case 1:
+					ValueSource[0]=ValueTarget[0];
+					IndexSource[0]=IndexTarget[0];
+				case 0:;
+				}
+			}
+	}
 }
 static general _LinC_Index_(data_32 _PL_ _R_ Index,DATA_32 Length)
 {
@@ -2229,7 +2365,7 @@ general LinC_Order_D08_(data_08 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_08 _PL_ ValueTemp=(data_08*)(IndexTemp+Length);
 
 		_LinC_Index_(Index,Length);
-		_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,Mode,0x80);
+		_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],7);
 	}
 }
 general LinC_Order_D16_(data_16 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2240,7 +2376,7 @@ general LinC_Order_D16_(data_16 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_16 _PL_ ValueTemp=(data_16*)(IndexTemp+Length);
 
 		_LinC_Index_(Index,Length);
-		_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,Mode,0x8000);
+		_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],15);
 	}
 }
 general LinC_Order_D32_(data_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2251,7 +2387,7 @@ general LinC_Order_D32_(data_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 _PL_ ValueTemp=(data_32*)(IndexTemp+Length);
 
 		_LinC_Index_(Index,Length);
-		_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,Mode,0x80000000);
+		_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],31);
 	}
 }
 general LinC_Order_D64_(data_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2262,7 +2398,7 @@ general LinC_Order_D64_(data_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_64 _PL_ ValueTemp=(data_64*)(IndexTemp+Length);
 
 		_LinC_Index_(Index,Length);
-		_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,Mode,0x8000000000000000);
+		_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],63);
 	}
 }
 general LinC_Order_I08_(inte_08 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2276,9 +2412,9 @@ general LinC_Order_I08_(inte_08 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		_LinC_Index_(Index,Length);
 		Offset=(data_32)((inte_08*)_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,~BitCBool[Mode&1],0x80)-ValueTemp);
 		if(Offset)
-			_LinC_Recur_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,Mode,0x40);
+			_LinC_Recur_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,Mode,6);
 		if(Offset<Length)
-			_LinC_Recur_D08_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,Mode,0x40);
+			_LinC_Recur_D08_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,Mode,6);
 	}
 }
 general LinC_Order_I16_(inte_16 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2292,9 +2428,9 @@ general LinC_Order_I16_(inte_16 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		_LinC_Index_(Index,Length);
 		Offset=(data_32)((inte_16*)_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,~BitCBool[Mode&1],0x8000)-ValueTemp);
 		if(Offset)
-			_LinC_Recur_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,Mode,0x4000);
+			_LinC_Recur_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,Mode,14);
 		if(Offset<Length)
-			_LinC_Recur_D16_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,Mode,0x4000);
+			_LinC_Recur_D16_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,Mode,14);
 	}
 }
 general LinC_Order_I32_(inte_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2306,11 +2442,11 @@ general LinC_Order_I32_(inte_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 Offset;
 
 		_LinC_Index_(Index,Length);
-		Offset=(data_32)((inte_32*)_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitCBool[Mode&1],0x80000000)-ValueTemp);
+		Offset=(data_32)((inte_32*)_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitCBool[Mode&1],0x80000000U)-ValueTemp);
 		if(Offset)
-			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,Mode,0x40000000);
+			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,Mode,30);
 		if(Offset<Length)
-			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,Mode,0x40000000);
+			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,Mode,30);
 	}
 }
 general LinC_Order_I64_(inte_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2322,11 +2458,11 @@ general LinC_Order_I64_(inte_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 Offset;
 
 		_LinC_Index_(Index,Length);
-		Offset=(data_32)((inte_64*)_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitCBool[Mode&1],0x8000000000000000)-ValueTemp);
+		Offset=(data_32)((inte_64*)_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitCBool[Mode&1],0x8000000000000000UL)-ValueTemp);
 		if(Offset)
-			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,Mode,0x4000000000000000);
+			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,Mode,62);
 		if(Offset<Length)
-			_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,Mode,0x4000000000000000);
+			_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,Mode,62);
 	}
 }
 general LinC_Order_R32_(real_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2338,11 +2474,11 @@ general LinC_Order_R32_(real_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 Offset;
 
 		_LinC_Index_(Index,Length);
-		Offset=(data_32)((real_32*)_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitCBool[Mode&1],0x80000000)-ValueTemp);
+		Offset=(data_32)((real_32*)_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitCBool[Mode&1],0x80000000U)-ValueTemp);
 		if(Offset)
-			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,BitCFull,0x40000000);
+			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,BitCFull,30);
 		if(Offset<Length)
-			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,0x40000000);
+			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,30);
 	}
 }
 general LinC_Order_R64_(real_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
@@ -2354,11 +2490,11 @@ general LinC_Order_R64_(real_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 Offset;
 		
 		_LinC_Index_(Index,Length);
-		Offset=(data_32)((real_64*)_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitCBool[Mode&1],0x8000000000000000)-ValueTemp);
+		Offset=(data_32)((real_64*)_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitCBool[Mode&1],0x8000000000000000UL)-ValueTemp);
 		if(Offset)
-			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,BitCFull,0x4000000000000000);
+			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,BitCFull,62);
 		if(Offset<Length)
-			_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,0x4000000000000000);
+			_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,62);
 	}
 }
 #endif
