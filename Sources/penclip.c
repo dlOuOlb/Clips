@@ -1,7 +1,7 @@
 ﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.07.13";
+static NAME_08 IdiomVersion[16]="Date:2018.07.26";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -29,11 +29,14 @@ int _Line_Reader_(void _PL_ Line,NAME_08 _PL_ Name,const size_t Size,const size_
 		if(File_Opener_(FilePointer,Name,AddressOpen[0]))
 			Success=0;
 		else
-			if(Count==File_Reader_(FilePointer,Line,Count*Size,name_08))
+		{
+			const size_t Bytes=Count*Size;
+
+			if(Bytes==File_Reader_(FilePointer,Line,Bytes,name_08))
 				Success=1;
 			else
 				Success=0;
-
+		}
 		File_Closer_(FilePointer);
 	}
 	else
@@ -52,11 +55,14 @@ int _Line_Writer_(const void _PL_ Line,NAME_08 _PL_ Name,const size_t Size,const
 		if(File_Opener_(FilePointer,Name,AddressOpen[1]))
 			Success=0;
 		else
-			if(Count==File_Writer_(FilePointer,Line,Count*Size,name_08))
+		{
+			const size_t Bytes=Count*Size;
+
+			if(Bytes==File_Writer_(FilePointer,Line,Bytes,name_08))
 				Success=1;
 			else
 				Success=0;
-
+		}
 		File_Closer_(FilePointer);
 	}
 	else
@@ -985,6 +991,5 @@ penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 	
 	return ErrorCode;
 }
-
 #endif
 #endif
