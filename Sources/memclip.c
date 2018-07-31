@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.06.29";
+static const char IdiomVersion[16]="Date:2018.07.31";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -1281,6 +1281,15 @@ void Devi_QC_Delete_(devi_qc *_PL_ QC)
 	}
 }
 
+static size_t _Devi_KM_Arg_Size_Padding_(size_t Size)
+{
+	Size+=sizeof(size_t);
+	Size--;
+	Size/=sizeof(size_t);
+	Size*=sizeof(size_t);
+
+	return Size;
+}
 devi_km *Devi_KM_Create_(const void _PL_ ID,const size_t Args,const size_t Dims)
 {
 	devi_km *KM;
@@ -1393,6 +1402,7 @@ cl_int Devi_KM_Init_(devi_km _PL_ KM,cl_kernel const Kernel)
 					DEVI_DF *_R_ PtrF;
 					const size_t *_R_ PtrS;
 					size_t Total=0;
+					size_t Temp;
 
 					for(PtrF=KM->ArgFlag,PtrS=KM->ArgSize;PtrF<End;PtrF++,PtrS++)
 						switch(*PtrF)
@@ -1415,9 +1425,10 @@ cl_int Devi_KM_Init_(devi_km _PL_ KM,cl_kernel const Kernel)
 							else
 								goto ESCAPE_INVALID_ARG_SIZE;
 						case DeviDomainPrivate:
-							if(*PtrS)
+							Temp=_Devi_KM_Arg_Size_Padding_(*PtrS);
+							if(Temp)
 							{
-								Total=_MemC_Overflow_Add_(Total,*PtrS);
+								Total=_MemC_Overflow_Add_(Total,Temp);
 								if(Total)
 									break;
 								else
@@ -1455,7 +1466,8 @@ ESCAPE_INVALID_ARG_SIZE:
 								PtrA[-1]=NULL;
 							}
 							else
-								PtrA[0]=((char*)(PtrA[-1]))+PtrS[-1];
+								PtrA[0]=((char*)(PtrA[-1]))+_Devi_KM_Arg_Size_Padding_(PtrS[-1]);
+
 						if(PtrF[-1]==DeviDomainLocal)
 							PtrA[-1]=NULL;
 
