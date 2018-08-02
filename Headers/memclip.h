@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.07.31	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.02	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -91,7 +91,7 @@ struct _memc_ms			//MemClip : Memory Slot Structure
 };
 MemC_Type_Declare_(struct,memc_ms,MEMC_MS);	//MemClip : Memory Slot Structure
 
-struct _memc_mc					//MemClip : Memory Container Structure
+struct _memc_mc					//MemClip : Host Memory Container Structure
 {
 	const void _PL_ ID;			//MemClip : Identification
 	MEMC_DT _PL_ Type;			//MemClip : Data Type
@@ -102,7 +102,7 @@ struct _memc_mc					//MemClip : Memory Container Structure
 	void _PL_ Acs1D;			//MemClip : 1-Dimensional Data Access
 	const void _PL_ AcsND;		//MemClip : N-Dimensional Data Access
 };
-MemC_Type_Declare_(struct,memc_mc,MEMC_MC);	//MemClip : Memory Container Structure
+MemC_Type_Declare_(struct,memc_mc,MEMC_MC);	//MemClip : Host Memory Container Structure
 
 enum _memc_df				//MemClip : Memory Domain Flag Enumeration
 {
@@ -140,18 +140,18 @@ struct _devi_qc						//MemC_CL : Queue Container Structure
 };
 MemC_Type_Declare_(struct,devi_qc,DEVI_QC);	//MemC_CL : Queue Container Structure
 
-struct _devi_bc				//MemC_CL : Buffer Container Structure
+struct _devi_mc				//MemC_Cl : Device Memory Container Structure
 {
-	const void _PL_ ID;		//MemC_CL : Identification
+	const void _PL_ ID;		//MemC_Cl : Identification
 	MEMC_DT _PL_ Type;		//MemC_CL : Data Type
 	const size_t Unit;		//MemC_CL : Type Size
-	const size_t LngT;		//MemC_CL : Total Length
-	const cl_mem BufT;		//MemC_CL : Main Buffer
 	const size_t Nums;		//MemC_CL : Number of Sub-Buffers
-	const size_t _PL_ LngS;	//MemC_CL : Lengths of Sub-Buffers
+	const size_t LngS;		//MemC_CL : Length of a Sub-Buffer
+	const size_t AlignS;	//MemC_CL : Byte Size of a Sub-Buffer
+	const cl_mem BufT;		//MemC_CL : Main Buffer
 	const cl_mem _PL_ BufS;	//MemC_CL : Sub-Buffer Address Array
 };
-MemC_Type_Declare_(struct,devi_bc,DEVI_BC);	//MemC_CL : Buffer Container Structure
+MemC_Type_Declare_(struct,devi_mc,DEVI_MC);	//MemC_CL : Device Memory Container Structure
 
 enum _devi_df					//MemC_CL : Device Memory Domain Flag Enumeration
 {
@@ -271,11 +271,11 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #define Devi_Info_Queue_(Queue,List,Num,type,Flag) clGetCommandQueueInfo(Queue,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Command Queue Information Get
 #define Devi_Size_Info_Queue_(Queue,Size,Flag) clGetCommandQueueInfo(Queue,Flag,0,NULL,Size)						//MemC_CL : Command Queue Information Size Get
 
-#define Devi_Create_Buffer_(Context,Elements,type) _Devi_Create_Buffer_(Context,Elements,sizeof(type))					//MemC_CL : Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
-#define Devi_Create_Buffer_Sub_(Root,Offset,Elements,type) _Devi_Create_Buffer_Sub_(Root,Offset,Elements,sizeof(type))	//MemC_CL : Sub-Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
-#define Devi_Delete_Buffer_(Memory) do{if(Memory){clReleaseMemObject(Memory);(Memory)=NULL;}}while(0)					//MemC_CL : Buffer or Sub-Buffer Object Memory Deallocation
-#define Devi_Info_Buffer_(Bf,List,Num,type,Flag) clGetMemObjectInfo(Bf,Flag,(Num)*sizeof(type),List,NULL)				//MemC_CL : Buffer or Sub-Buffer Object Information Get
-#define Devi_Size_Info_Buffer_(Bf,Size,Flag) clGetMemObjectInfo(Bf,Flag,0,NULL,Size)									//MemC_CL : Buffer or Sub-Buffer Object Information Size Get
+#define Devi_Create_Buffer_(Context,Elements,type,Error) _Devi_Create_Buffer_(Context,Elements,sizeof(type),Error)					//MemC_CL : Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
+#define Devi_Create_Buffer_Sub_(Root,Offset,Elements,type,Error) _Devi_Create_Buffer_Sub_(Root,Offset,Elements,sizeof(type),Error)	//MemC_CL : Sub-Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
+#define Devi_Delete_Buffer_(Memory) do{if(Memory){clReleaseMemObject(Memory);(Memory)=NULL;}}while(0)								//MemC_CL : Buffer or Sub-Buffer Object Memory Deallocation
+#define Devi_Info_Buffer_(Bf,List,Num,type,Flag) clGetMemObjectInfo(Bf,Flag,(Num)*sizeof(type),List,NULL)							//MemC_CL : Buffer or Sub-Buffer Object Information Get
+#define Devi_Size_Info_Buffer_(Bf,Size,Flag) clGetMemObjectInfo(Bf,Flag,0,NULL,Size)												//MemC_CL : Buffer or Sub-Buffer Object Information Size Get
 
 #define Devi_Create_Event_(Context,Error) clCreateUserEvent(Context,Error)														//MemC_CL : Event Object Memory Allocation - Deallocate with "Devi_Delete_Event_"
 #define Devi_Delete_Event_(Event,Error) do{(Error)=_Devi_Delete_Event_(Event);if((Error)==CL_SUCCESS){(Event)=NULL;}}while(0)	//MemC_CL : Event Object Memory Deallocation
@@ -377,15 +377,12 @@ devi_qc *Devi_QC_Create_(const cl_uint PlatformSelect,const cl_uint DeviceSelect
 //MemC_CL : Queue Container Memory Deallocation
 void Devi_QC_Delete_(devi_qc *_PL_ QueueContainer);
 
-//MemC_CL : Buffer Container Memory Allocation - Deallocate with "Devi_BC_Delete_"
-//＊Nums = ShapeInfo -> Slot.V[0]
-//＊Mode 0 : Uniform Length
-//　LngS = { V[1], V[1], ..., V[1] | V = ShapeInfo -> Slot.V }
-//＊Mode 1 : Ununiform Length
-//　LngS = { V[1], V[2], ..., V[Nums] | V = ShapeInfo -> Slot.V }
-devi_bc *Devi_BC_Create_(const void _PL_ Identification,cl_context const Context,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo,const int Mode);
-//MemC_CL : Buffer Container Memory Deallocation
-void Devi_BC_Delete_(devi_bc *_PL_ BufferContainer);
+//MemC_CL : Memory Container Memory Allocation - Deallocate with "Devi_MC_Delete_"
+devi_mc *Devi_MC_Create_(const void _PL_ Identification,cl_context const Context,const size_t BuffersNumber,const size_t EachLength,MEMC_DT _PL_ TypeInfo,cl_int *Error);
+//MemC_CL : Memory Container Memory Deallocation
+void Devi_MC_Delete_(devi_mc *_PL_ MemoryContainer);
+//MemClip : Memory Container Data Type Change
+int Devi_MC_Change_(DEVI_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 
 //MemC_CL : Kernel Manager Memory Allocation - Deallocate with "Devi_KM_Delete_"
 devi_km *Devi_KM_Create_(const void _PL_ Identification,const size_t KernelArguments,const size_t WorkDimension);
@@ -415,10 +412,7 @@ cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager)
 memc_vc *MemC_VC_Create_(const void _PL_ Identification,MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ EntryInfo);
 #ifdef __OPENCL_H
 //MemC_CL : Virtual Container Memory Allocation - Deallocate with "MemC_VC_Delete_"
-//＊Dims = EntryInfo -> Slot.V[1]
-//　LngND = { V[2], V[3], ..., V[Dims+1] | V = EntryInfo -> Slot.V }
-//　Hidden = BC -> BufS[V[0]]
-memc_vc *Devi_VC_Create_(const void _PL_ Identification,DEVI_BC _PL_ BufferContainer,MEMC_MS _PL_ ShapeInfo);
+memc_vc *Devi_VC_Create_(const void _PL_ Identification,DEVI_MC _PL_ MemoryContainer,const size_t SubBufferSelect);
 #endif
 //MemClip : Virtual Container Memory Deallocation
 void MemC_VC_Delete_(memc_vc *_PL_ VirtualContainer);
@@ -432,9 +426,9 @@ void *MemC_VC_Member_AcsND_(MEMC_VC _PL_ VirtualContainer);
 //＊Host Domain Only
 void *MemC_VC_Member_Acs1D_(MEMC_VC _PL_ VirtualContainer);
 #ifdef __OPENCL_H
-//MemC_CL : Virtual Container's Virtual Member :: VC->Buf
+//MemC_CL : Virtual Container's Virtual Member :: VC->BufS
 //＊Device Domain Only
-cl_mem Devi_VC_Member_Buf_(MEMC_VC _PL_ VirtualContainer);
+cl_mem Devi_VC_Member_BufS_(MEMC_VC _PL_ VirtualContainer);
 #endif
 //MemClip : Virtual Container Memory Access
 //＊V = AccessInfo -> Slot.V
@@ -475,8 +469,8 @@ size_t _Line_Assign_(void _PL_ Indexer,const void _PL_ Indexed,const size_t Inte
 size_t _MemC_Switch_(const void _PL_ Key,const void _PL_ _PL_ TblRf,const size_t* LngRf,const size_t LngKey,const size_t NumRf,const size_t TypeSize);
 
 #ifdef __OPENCL_H
-cl_mem _Devi_Create_Buffer_(cl_context const,const size_t,const size_t);
-cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,const size_t,const size_t,const size_t);
+cl_mem _Devi_Create_Buffer_(cl_context const,const size_t,const size_t,cl_int _PL_ Err);
+cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,const size_t,const size_t,const size_t,cl_int _PL_ Err);
 cl_int _Devi_Delete_Event_(cl_event const);
 
 cl_int _Devi_Copy_(cl_command_queue const Q,void _PL_ S,void _PL_ T,const size_t _PL_ OfsS,const size_t _PL_ OfsT,const size_t _PL_ Lng,const size_t _PL_ ShpS,const size_t _PL_ ShpT,const cl_uint Dims,const size_t TypeSize,DEVI_CF Mode);
