@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.07.31";
+static const char IdiomVersion[16]="Date:2018.08.02";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -945,20 +945,80 @@ SUCCESS:
 
 #if(MemC_Fold_(Definition:OpenCL Functions))
 #ifdef __OPENCL_H
-cl_mem _Devi_Create_Buffer_(cl_context const Context,const size_t Elements,const size_t SizeElement)
+cl_mem _Devi_Create_Buffer_(cl_context const Context,const size_t Elements,const size_t SizeElement,cl_int _PL_ Error)
 {
-	return clCreateBuffer(Context,CL_MEM_READ_WRITE,Elements*SizeElement,NULL,NULL);
+	const size_t Bytes=(SizeElement)?(_MemC_Overflow_Mul_(Elements,SizeElement)):(0);
+	cl_mem Return;
+	cl_int Local;
+
+	if(Bytes)
+		Return=clCreateBuffer(Context,CL_MEM_READ_WRITE,Bytes,NULL,&Local);
+	else
+	{
+		Return=NULL;
+		Local=CL_INVALID_BUFFER_SIZE;
+	}
+	if(Error)
+		*Error=Local;
+
+	return Return;
 }
-cl_mem _Devi_Create_Buffer_Sub_(cl_mem const Root,const size_t Offset,const size_t Elements,const size_t SizeElement)
+cl_mem _Devi_Create_Buffer_Sub_(cl_mem const Root,const size_t Offset,const size_t Elements,const size_t SizeElement,cl_int _PL_ Error)
 {
 	cl_buffer_region Info;
+	cl_mem Return;
+	cl_int Local;
 
+	if(SizeElement)
+		goto OFFSET;
+	else
 	{
-		Info.origin=Offset*SizeElement;
-		Info.size=Elements*SizeElement;
+		Return=NULL;
+		Local=CL_INVALID_BUFFER_SIZE;
+		goto ESCAPE;
 	}
+OFFSET:
+	if(Offset)
+	{
+		Info.origin=_MemC_Overflow_Mul_(Offset,SizeElement);
+		if(Info.origin)
+			goto LENGTH;
+		else
+		{
+			Return=NULL;
+			Local=CL_INVALID_VALUE;
+			goto ESCAPE;
+		}
+	}
+	else
+	{
+		Info.origin=0;
+		goto LENGTH;
+	}
+LENGTH:
+	if(Elements)
+	{
+		Info.size=_MemC_Overflow_Mul_(Elements,SizeElement);
+		if(Info.size)
+			Return=clCreateSubBuffer(Root,CL_MEM_READ_WRITE,CL_BUFFER_CREATE_TYPE_REGION,&Info,&Local);
+		else
+		{
+			Return=NULL;
+			Local=CL_INVALID_BUFFER_SIZE;
+			goto ESCAPE;
+		}
+	}
+	else
+	{
+		Return=NULL;
+		Local=CL_INVALID_BUFFER_SIZE;
+		goto ESCAPE;
+	}
+ESCAPE:
+	if(Error)
+		*Error=Local;
 
-	return clCreateSubBuffer(Root,CL_MEM_READ_WRITE,CL_BUFFER_CREATE_TYPE_REGION,&Info,NULL);
+	return Return;
 }
 
 cl_int _Devi_Delete_Event_(cl_event const Event)
@@ -1574,231 +1634,166 @@ cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KM)
 	return Error;
 }
 
-static size_t _Devi_BC_Length_Total_(const size_t *_R_ Lng,const size_t Nums)
+static cl_uint _Devi_MC_Align_(cl_context const Context,cl_int *Error)
 {
-	const size_t _PL_ End=Lng+Nums;
-	size_t Return=1;
+	cl_device_id Device;
+	cl_uint Align=0;
 
-	while(Lng<End)
-	{
-		Return=_MemC_Overflow_Add_(Return,*Lng);
-		if(Return)
-			Lng++;
-		else
-			goto ESCAPE;
-	}
-	Return--;
-ESCAPE:
-	return Return;
+	*Error=Devi_Info_Context_(Context,&Device,1,cl_device_id,CL_CONTEXT_DEVICES);
+	if((*Error)==CL_SUCCESS)
+		*Error=Devi_Info_Device_(Device,&Align,1,cl_uint,CL_DEVICE_MEM_BASE_ADDR_ALIGN);
+
+	return Align;
 }
-devi_bc *Devi_BC_Create_(const void _PL_ ID,cl_context const Context,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT,const int Mode)
+static size_t _Devi_MC_Length_Padded_(size_t Length,const size_t Align)
 {
-	devi_bc *BC;
+	Length+=Align;
+	Length--;
+	Length/=Align;
+	Length*=Align;
 
-	if(Context&&MS&&DT)
-		if(MS->Slot.V)
+	return Length;
+}
+devi_mc *Devi_MC_Create_(const void _PL_ ID,cl_context const Context,const size_t Number,const size_t Length,MEMC_DT _PL_ DT,cl_int *Error)
+{
+	devi_mc *MC;
+
+	if(DT)
+	{
+		const size_t Align=(size_t)_Devi_MC_Align_(Context,Error);
+
+		if((*Error)==CL_SUCCESS)
 		{
-			int Flag;
-
-			if(Mode)
-				if(MS->Slot.V[0]<MS->Nums)
-					if(_MemC_Array_All_Zero_(MS->Slot.V+1,MS->Slot.V[0]))
-						Flag=0x1;
-					else
-						Flag=0x9;
-				else
-					goto ESCAPE;
-			else
-				if(MS->Nums<2)
-					goto ESCAPE;
-				else
-					if(MS->Slot.V[1])
-						Flag=0x8;
-					else
-						Flag=0x0;
-			if(DT->SizeType)
-				Flag|=0x2;
-			if(MS->Slot.V[0])
-				Flag|=0x4;
-
-			switch(Flag)
 			{
-			case 0x0:
-			case 0x1:
-			case 0x2:
-			case 0x3:
-			case 0x8:
-			case 0x9:
-			case 0xA:
-			case 0xB:
-				BC=Unit_Alloc_(devi_bc);
-				if(BC)
+				size_t Size;
+
+				if(Number)
 				{
-					Acs_(const void*,BC->ID)=ID;
-					Acs_(MEMC_DT*,BC->Type)=DT;
-					Acs_(size_t,BC->Unit)=DT->SizeType;
-					Acs_(size_t,BC->LngT)=0;
-					Acs_(cl_mem,BC->BufT)=NULL;
-					Acs_(size_t,BC->Nums)=0;
-					Acs_(size_t*,BC->LngS)=NULL;
-					Acs_(cl_mem*,BC->BufS)=NULL;
+					Size=_MemC_Overflow_Mul_(Number,sizeof(cl_mem));
+					if(Size)
+						Size=_MemC_Overflow_Add_(Size,sizeof(devi_mc));
 				}
-				break;
-			case 0x4:
-			case 0x5:
-			case 0x6:
-			case 0x7:
-			case 0xC:
-			case 0xD:
-				{
-					size_t Total[2];
+				else
+					Size=sizeof(devi_mc);
 
-					if(Flag&0x8)
-					{
-						if(Flag&0x1)
-							Total[0]=_Devi_BC_Length_Total_(MS->Slot.V+1,MS->Slot.V[0]);
-						else
-							Total[0]=_MemC_Overflow_Mul_(MS->Slot.V[1],MS->Slot.V[0]);
-						if(!(Total[0]))
-							goto ESCAPE;
-					}
-					else
-						Total[0]=0;
+				MC=Byte_Alloc_(Size);
+			}
+			if(MC)
+			{
+				Acs_(const void*,MC->ID)=ID;
+				Acs_(MEMC_DT*,MC->Type)=DT;
+				Acs_(size_t,MC->Unit)=DT->SizeType;
+				Acs_(size_t,MC->Nums)=Number;
+				Acs_(size_t,MC->LngS)=Length;
 
-					Total[1]=_MemC_Overflow_Mul_(MS->Slot.V[0],sizeof(size_t)<<1);
-					if(Total[1])
+				if(DT->SizeType)
+					if(Length)
 					{
-						Total[1]=_MemC_Overflow_Add_(Total[1],sizeof(devi_bc));
-						BC=Byte_Alloc_(Total[1]);
-						if(BC)
-						{
-							Acs_(const void*,BC->ID)=ID;
-							Acs_(MEMC_DT*,BC->Type)=DT;
-							Acs_(size_t,BC->Unit)=DT->SizeType;
-							Acs_(size_t,BC->LngT)=Total[0];
-							Acs_(cl_mem,BC->BufT)=NULL;
-							Acs_(size_t,BC->Nums)=MS->Slot.V[0];
-							Acs_(size_t*,BC->LngS)=(size_t*)(BC+1);
-							Acs_(cl_mem*,BC->BufS)=Line_Clear_((cl_mem*)(BC->LngS+BC->Nums),BC->Nums,cl_mem);
-							if(Flag&0x1)
+						Acs_(size_t,MC->AlignS)=_Devi_MC_Length_Padded_(_MemC_Overflow_Mul_(Length,DT->SizeType),Align);
+						if(MC->AlignS)
+							if(Number)
 							{
-								if(Line_Copy_(MS->Slot.V+1,(size_t*)(BC->LngS),BC->Nums,size_t))
-									MemC_Deloc_(BC);
-							}
-							else
-								for(Total[1]=0;Total[1]<BC->Nums;Total[1]++)
-									((size_t*)(BC->LngS))[Total[1]]=MS->Slot.V[1];
-						}
-					}
-					else
-						goto ESCAPE;
-				}
-				break;
-			case 0xE:
-			case 0xF:
-				{
-					const size_t Total=(Flag&0x1)?_Devi_BC_Length_Total_(MS->Slot.V+1,MS->Slot.V[0]):_MemC_Overflow_Mul_(MS->Slot.V[1],MS->Slot.V[0]);
+								const size_t Size=_MemC_Overflow_Mul_(Number,MC->AlignS);
 
-					if(Total)
-					{
-						size_t Temp=_MemC_Overflow_Mul_(MS->Slot.V[0],sizeof(size_t)<<1);
-						
-						if(Temp)
-						{
-							Temp=_MemC_Overflow_Add_(Temp,sizeof(devi_bc));
-							BC=Byte_Alloc_(Temp);
-							if(BC)
-							{
+								Acs_(cl_mem,MC->BufT)=Devi_Create_Buffer_(Context,Size,char,Error);
+								Acs_(cl_mem*,MC->BufS)=(cl_mem*)(MC+1);
+								if((*Error)==CL_SUCCESS)
 								{
-									Acs_(size_t*,BC->LngS)=(size_t*)(BC+1);
-									Acs_(cl_mem*,BC->BufS)=(cl_mem*)(BC->LngS+MS->Slot.V[0]);
-									Acs_(cl_mem,BC->BufT)=_Devi_Create_Buffer_(Context,Total,DT->SizeType);
-								}
-								if(BC->BufT)
-								{
-									const cl_mem _PL_ End=BC->BufS+MS->Slot.V[0];
-									cl_mem *_R_ Ptr=(cl_mem*)(BC->BufS);
-									size_t *_R_ Lng=(size_t*)(BC->LngS);
+									const cl_mem _PL_ End=MC->BufS+Number;
+									cl_mem *Ptr=(cl_mem*)(MC->BufS);
+									size_t Ofs=0;
 
-									if(Flag&0x1)
+									while(Ptr<End)
 									{
-										if(!Line_Copy_(MS->Slot.V+1,Lng,MS->Slot.V[0],size_t))
-											for(Temp=0;Ptr<End;Ptr++,Lng++)
-												if(*Lng)
-												{
-													(*Ptr)=_Devi_Create_Buffer_Sub_(BC->BufT,Temp,*Lng,DT->SizeType);
-													if(*Ptr)
-														Temp+=(*Lng);
-													else
-														break;
-												}
-												else
-													(*Ptr)=NULL;
-									}
-									else
-										for(Temp=0;Ptr<End;Ptr++,Lng++,Temp+=MS->Slot.V[1])
+										*Ptr=Devi_Create_Buffer_Sub_(MC->BufT,Ofs,MC->AlignS,char,Error);
+										if((*Error)==CL_SUCCESS)
 										{
-											(*Ptr)=_Devi_Create_Buffer_Sub_(BC->BufT,Temp,MS->Slot.V[1],DT->SizeType);
-											if(*Ptr)
-												(*Lng)=MS->Slot.V[1];
-											else
-												break;
+											Ptr++;
+											Ofs+=MC->AlignS;
 										}
-									if(Ptr==End)
-									{
-										Acs_(const void*,BC->ID)=ID;
-										Acs_(MEMC_DT*,BC->Type)=DT;
-										Acs_(size_t,BC->Unit)=DT->SizeType;
-										Acs_(size_t,BC->LngT)=Total;
-										Acs_(size_t,BC->Nums)=MS->Slot.V[0];
+										else
+											break;
 									}
-									else
+									if(Ptr<End)
 									{
-										for(Ptr--;Ptr>=BC->BufS;Ptr--)
+										for(Ptr--;Ptr>=MC->BufS;Ptr--)
 											Devi_Delete_Buffer_(*Ptr);
-										Devi_Delete_Buffer_(Acs_(cl_mem,BC->BufT));
-										MemC_Deloc_(BC);
+										Devi_Delete_Buffer_(Acs_(cl_mem,MC->BufT));
+										MemC_Deloc_(MC);
 									}
 								}
 								else
-									MemC_Deloc_(BC);
+									MemC_Deloc_(MC);
 							}
-						}
+							else
+							{
+								Acs_(cl_mem,MC->BufT)=NULL;
+								Acs_(cl_mem,MC->BufS)=NULL;
+							}
 						else
-							goto ESCAPE;
+						{
+							MemC_Deloc_(MC);
+							*Error=CL_INVALID_BUFFER_SIZE;
+						}
 					}
 					else
-						goto ESCAPE;
+						goto VACANT;
+				else
+				{
+VACANT:
+					Acs_(size_t,MC->AlignS)=0;
+					Acs_(cl_mem,MC->BufT)=NULL;
+					Acs_(cl_mem*,MC->BufS)=(Number)?(Line_Clear_(MC+1,Number,cl_mem)):(NULL);
 				}
-				break;
-			default:
-				goto ESCAPE;
 			}
+			else
+				*Error=CL_OUT_OF_HOST_MEMORY;
 		}
 		else
-			goto ESCAPE;
+			MC=NULL;
+	}
 	else
 	{
-ESCAPE:
-		BC=NULL;
+		MC=NULL;
+		*Error=CL_INVALID_HOST_PTR;
 	}
 
-	return BC;
+	return MC;
 }
-void Devi_BC_Delete_(devi_bc *_PL_ BC)
+void Devi_MC_Delete_(devi_mc *_PL_ MC)
 {
-	if(*BC)
+	if(*MC)
 	{
-		if((*BC)->BufT)
+		if((*MC)->BufS)
 		{
-			cl_mem *Ptr=(cl_mem*)((*BC)->BufS+(*BC)->Nums);
+			cl_mem *Ptr=(cl_mem*)((*MC)->BufS+(*MC)->Nums);
 
-			for(Ptr--;Ptr>=(*BC)->BufS;Ptr--)
+			for(Ptr--;Ptr>=(*MC)->BufS;Ptr--)
 				Devi_Delete_Buffer_(*Ptr);
-			Devi_Delete_Buffer_(Acs_(cl_mem,(*BC)->BufT));
+			Devi_Delete_Buffer_(Acs_(cl_mem,(*MC)->BufT));
 		}
-		MemC_Deloc_(*BC);
+		MemC_Deloc_(*MC);
 	}
+}
+int Devi_MC_Change_(DEVI_MC _PL_ MC,MEMC_DT _PL_ DT)
+{
+	if(MC)
+		if(DT)
+			if(DT->SizeType==MC->Unit)
+			{
+				Acs_(MEMC_DT*,MC->Type)=DT;
+				goto SUCCESS;
+			}
+			else
+				goto FAILURE;
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 #endif
 #endif
@@ -1867,6 +1862,7 @@ memc_vc *MemC_VC_Create_(const void _PL_ ID,MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
 				Acs_(size_t*,VC->LngND)=NULL;
 				Acs_(void*,VC->Hidden)=NULL;
 			}
+			Acs_(size_t,VC->Domain.N)=0;
 			Acs_(memc_df,VC->Domain.E)=MemCDomainHost;
 		}
 	}
@@ -1879,143 +1875,31 @@ ESCAPE:
 	return VC;
 }
 #ifdef __OPENCL_H
-memc_vc *Devi_VC_Create_(const void _PL_ ID,DEVI_BC _PL_ BC,MEMC_MS _PL_ MS)
+memc_vc *Devi_VC_Create_(const void _PL_ ID,DEVI_MC _PL_ MC,const size_t Select)
 {
 	memc_vc *VC;
 
-	if(BC)
-	{
-		if(MS)
-			if(MS->Nums<2)
-				goto ESCAPE;
-			else
+	if(MC)
+		if(Select<MC->Nums)
+		{
+			VC=Unit_Alloc_(memc_vc);
+			if(VC)
 			{
-				const size_t Index=MS->Slot.V[0];
-				const size_t Dims=MS->Slot.V[1];
-				const size_t _PL_ Shape=(MS->Nums>2)?(MS->Slot.V+2):(NULL);
-				const void *Buffer;
-				int Flag;
-
-				if(Index<BC->Nums)
-				{
-					const size_t Temp=Dims+1;
-
-					if(Temp<Dims)
-						goto ESCAPE;
-					else
-						if(Temp<MS->Nums)
-							Buffer=BC->BufS[Index];
-						else
-							goto ESCAPE;
-				}
-				else
-					goto ESCAPE;
-
-				if(Dims)
-					if(BC->LngS[Index])
-						if(_MemC_Array_Non_Zero_(Shape,Dims))
-							if(_MemC_Shape_Overflow_(Shape,Dims)==BC->LngS[Index])
-								Flag=0x2;
-							else
-								goto ESCAPE;
-						else
-							goto ESCAPE;
-					else
-						if(_MemC_Array_Non_Zero_(Shape,Dims))
-							goto ESCAPE;
-						else
-							Flag=0x0;
-				else
-					if(BC->LngS[Index])
-						goto ESCAPE;
-					else
-						Flag=0x0;
-
-				if(BC->Unit)
-					Flag|=0x1;
-
-				switch(Flag)
-				{
-				case 0x0:
-				case 0x1:
-				case 0x2:
-					if(Buffer)
-						goto ESCAPE;
-					else
-						if(Dims)
-						{
-							size_t Temp=_MemC_Overflow_Mul_(Dims,sizeof(size_t));
-
-							if(Temp)
-							{
-								Temp=_MemC_Overflow_Add_(Temp,sizeof(memc_vc));
-								VC=Byte_Alloc_(Temp);
-							}
-							else
-								goto ESCAPE;
-						}
-						else
-							VC=Unit_Alloc_(memc_vc);
-					if(VC)
-					{
-						Acs_(const void*,VC->ID)=ID;
-						Acs_(MEMC_DT*,VC->Type)=BC->Type;
-						Acs_(size_t,VC->Unit)=BC->Unit;
-						Acs_(size_t,VC->Dims)=Dims;
-						Acs_(size_t,VC->Lng1D)=BC->LngS[Index];
-						Acs_(memc_df,VC->Domain.E)=MemCDomainDevice;
-						Acs_(void*,VC->Hidden)=NULL;
-						if(Dims)
-						{
-							Acs_(size_t*,VC->LngND)=(size_t*)(VC+1);
-							if(Line_Copy_(Shape,(size_t*)(VC->LngND),Dims,size_t))
-								MemC_Deloc_(VC);
-						}
-						else
-							Acs_(size_t*,VC->LngND)=NULL;
-					}
-					break;
-				case 0x3:
-					if(Buffer)
-					{
-						size_t Temp=_MemC_Overflow_Mul_(Dims,sizeof(size_t));
-
-						if(Temp)
-						{
-							Temp=_MemC_Overflow_Add_(Temp,sizeof(memc_vc));
-							VC=Byte_Alloc_(Temp);
-						}
-						else
-							goto ESCAPE;
-					}
-					else
-						goto ESCAPE;
-					if(VC)
-					{
-						Acs_(const void*,VC->ID)=ID;
-						Acs_(MEMC_DT*,VC->Type)=BC->Type;
-						Acs_(size_t,VC->Unit)=BC->Unit;
-						Acs_(size_t,VC->Dims)=Dims;
-						Acs_(size_t,VC->Lng1D)=BC->LngS[Index];
-						Acs_(size_t*,VC->LngND)=(size_t*)(VC+1);
-						Acs_(memc_df,VC->Domain.E)=MemCDomainDevice;
-						Acs_(const void*,VC->Hidden)=Buffer;
-						if(Line_Copy_(Shape,(size_t*)(VC->LngND),Dims,size_t))
-							MemC_Deloc_(VC);
-					}
-					break;
-				default:
-					goto ESCAPE;
-				}
+				Acs_(const void*,VC->ID)=ID;
+				Acs_(MEMC_DT*,VC->Type)=MC->Type;
+				Acs_(size_t,VC->Unit)=MC->Unit;
+				Acs_(size_t,VC->Dims)=1;
+				Acs_(size_t,VC->Lng1D)=MC->LngS;
+				Acs_(const size_t*,VC->LngND)=&(VC->Lng1D);
+				Acs_(size_t,VC->Domain.N)=0;
+				Acs_(memc_df,VC->Domain.E)=MemCDomainDevice;
+				Acs_(const void*,VC->Hidden)=MC->BufS[Select];
 			}
+		}
 		else
-			goto ESCAPE;
-	}
+			VC=NULL;
 	else
-	{
-ESCAPE:
 		VC=NULL;
-	}
 
 	return VC;
 }
@@ -2074,7 +1958,7 @@ void *MemC_VC_Member_Acs1D_(MEMC_VC _PL_ VC)
 	return Return;
 }
 #ifdef __OPENCL_H
-cl_mem Devi_VC_Member_Buf_(MEMC_VC _PL_ VC)
+cl_mem Devi_VC_Member_BufS_(MEMC_VC _PL_ VC)
 {
 	return ((VC)?((VC->Domain.E==MemCDomainDevice)?((cl_mem)(VC->Hidden)):(NULL)):(NULL));
 }
