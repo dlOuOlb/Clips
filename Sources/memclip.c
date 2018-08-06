@@ -1,7 +1,7 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.08.02";
+static const char IdiomVersion[16]="Date:2018.08.06";
 static const char IdiomAddress[8]="address";
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 #ifdef __OPENCL_H
@@ -1823,7 +1823,6 @@ memc_vc *MemC_VC_Create_(const void _PL_ ID,MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
 	memc_vc *VC;
 
 	if(MC)
-	{
 		if(MS)
 			if(MS->Slot.V)
 				if(MS->Slot.V[0]<MS->Nums)
@@ -1840,67 +1839,161 @@ memc_vc *MemC_VC_Create_(const void _PL_ ID,MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
 				goto ESCAPE;
 		else
 			goto ESCAPE;
-
-		if(VC)
-		{
-			Acs_(const void*,VC->ID)=ID;
-			Acs_(MEMC_DT*,VC->Type)=MC->Type;
-			Acs_(size_t,VC->Unit)=MC->Unit;
-			Acs_(size_t,VC->Dims)=MC->Dims-MS->Slot.V[0];
-			if(VC->Dims)
-			{
-				Acs_(const size_t*,VC->LngND)=MC->LngND+MS->Slot.V[0];
-				Acs_(size_t,VC->Lng1D)=_MemC_VC_Total_Length_(VC->LngND,VC->Dims);
-				if(MC->AcsND)
-					Acs_(void*,VC->Hidden)=_MemC_VC_Access_((void*)(MC->AcsND),MS->Slot.V+1,MS->Slot.V[0]);
-				else
-					Acs_(void*,VC->Hidden)=NULL;
-			}
-			else
-			{
-				Acs_(size_t,VC->Lng1D)=0;
-				Acs_(size_t*,VC->LngND)=NULL;
-				Acs_(void*,VC->Hidden)=NULL;
-			}
-			Acs_(size_t,VC->Domain.N)=0;
-			Acs_(memc_df,VC->Domain.E)=MemCDomainHost;
-		}
-	}
 	else
 	{
 ESCAPE:
 		VC=NULL;
+		goto RETURN;
 	}
-
+	if(VC)
+	{
+		Acs_(const void*,VC->ID)=ID;
+		Acs_(MEMC_DT*,VC->Type)=MC->Type;
+		Acs_(size_t,VC->Unit)=MC->Unit;
+		Acs_(size_t,VC->Dims)=MC->Dims-MS->Slot.V[0];
+		if(VC->Dims)
+		{
+			if(VC->Dims>1)
+			{
+				Acs_(const size_t*,VC->LngND)=MC->LngND+MS->Slot.V[0];
+				Acs_(size_t,VC->Lng1D)=_MemC_VC_Total_Length_(VC->LngND,VC->Dims);
+			}
+			else
+			{
+				Acs_(size_t,VC->Lng1D)=MC->LngND[MS->Slot.V[0]];
+				Acs_(const size_t*,VC->LngND)=&(VC->Lng1D);
+			}
+			if(MC->AcsND)
+				Acs_(void*,VC->Hidden)=_MemC_VC_Access_((void*)(MC->AcsND),MS->Slot.V+1,MS->Slot.V[0]);
+			else
+				Acs_(void*,VC->Hidden)=NULL;
+		}
+		else
+		{
+			Acs_(size_t,VC->Lng1D)=0;
+			Acs_(size_t*,VC->LngND)=NULL;
+			Acs_(void*,VC->Hidden)=NULL;
+		}
+		Acs_(size_t,VC->Domain.N)=0;
+		Acs_(memc_df,VC->Domain.E)=MemCDomainHost;
+	}
+	else
+		goto RETURN;
+RETURN:
 	return VC;
 }
 #ifdef __OPENCL_H
-memc_vc *Devi_VC_Create_(const void _PL_ ID,DEVI_MC _PL_ MC,const size_t Select)
+memc_vc *Devi_VC_Create_(const void _PL_ ID,DEVI_MC _PL_ MC,const size_t Select,MEMC_MS _PL_ MS)
 {
 	memc_vc *VC;
 
 	if(MC)
 		if(Select<MC->Nums)
+			if(MS)
+				if(MS->Slot.V)
+					if(MS->Slot.V[0]<MS->Nums)
+						switch(MS->Slot.V[0])
+						{
+						default:
+							if(MC->Unit)
+								if(_MemC_Array_Non_Zero_(MS->Slot.V+1,MS->Slot.V[0]))
+									if(_MemC_Overflow_Mul_(_MemC_Shape_Overflow_(MS->Slot.V+1,MS->Slot.V[0]),MC->Unit))
+										goto ALLOC_EXTEN;
+									else
+										goto ESCAPE;
+								else
+									goto ALLOC_EXTEN;
+							else
+							{
+ALLOC_EXTEN:;
+								size_t Size=_MemC_Overflow_Mul_(MS->Slot.V[0],sizeof(size_t));
+
+								if(Size)
+								{
+									Size=_MemC_Overflow_Add_(Size,sizeof(memc_vc));
+									VC=Byte_Alloc_(Size);
+									break;
+								}
+								else
+									goto ESCAPE;
+							}
+						case 1:
+							if(MC->Unit)
+								if(MS->Slot.V[1])
+								{
+									const size_t Size=_MemC_Overflow_Mul_(MS->Slot.V[1],MC->Unit);
+
+									if(Size)
+										if(Size>MC->AlignS)
+											goto ESCAPE;
+										else
+											goto ALLOC_SMALL;
+									else
+										goto ESCAPE;
+								}
+								else
+									goto ALLOC_SMALL;
+							else
+								goto ALLOC_SMALL;
+ALLOC_SMALL:
+						case 0:
+							VC=Unit_Alloc_(memc_vc);
+						}
+					else
+						goto ESCAPE;
+				else
+					goto ESCAPE;
+			else
+				goto ESCAPE;
+		else
+			goto ESCAPE;
+	else
+	{
+ESCAPE:
+		VC=NULL;
+		goto RETURN;
+	}
+	if(VC)
+	{
+		Acs_(const void*,VC->ID)=ID;
+		Acs_(MEMC_DT*,VC->Type)=MC->Type;
+		Acs_(size_t,VC->Unit)=MC->Unit;
+		Acs_(size_t,VC->Dims)=MS->Slot.V[0];
+		if(VC->Dims)
 		{
-			VC=Unit_Alloc_(memc_vc);
-			if(VC)
+			if(VC->Dims>1)
 			{
-				Acs_(const void*,VC->ID)=ID;
-				Acs_(MEMC_DT*,VC->Type)=MC->Type;
-				Acs_(size_t,VC->Unit)=MC->Unit;
-				Acs_(size_t,VC->Dims)=1;
-				Acs_(size_t,VC->Lng1D)=MC->LngS;
-				Acs_(const size_t*,VC->LngND)=&(VC->Lng1D);
-				Acs_(size_t,VC->Domain.N)=0;
-				Acs_(memc_df,VC->Domain.E)=MemCDomainDevice;
-				Acs_(const void*,VC->Hidden)=MC->BufS[Select];
+				Acs_(size_t*,VC->LngND)=(size_t*)(VC+1);
+				if(Line_Copy_(MS->Slot.V+1,(size_t*)(VC->LngND),MS->Slot.V[0],size_t))
+				{
+					MemC_Deloc_(VC);
+					goto RETURN;
+				}
+				else
+					Acs_(size_t,VC->Lng1D)=_MemC_VC_Total_Length_(VC->LngND,VC->Dims);
 			}
+			else
+			{
+				Acs_(size_t,VC->Lng1D)=MS->Slot.V[1];
+				Acs_(const size_t*,VC->LngND)=&(VC->Lng1D);
+			}
+			if(VC->Lng1D)
+				Acs_(void*,VC->Hidden)=MC->BufS[Select];
+			else
+				Acs_(void*,VC->Hidden)=NULL;
 		}
 		else
-			VC=NULL;
+		{
+			Acs_(size_t,VC->Lng1D)=0;
+			Acs_(size_t*,VC->LngND)=NULL;
+			Acs_(void*,VC->Hidden)=NULL;
+		}
+		Acs_(size_t,VC->Domain.N)=0;
+		Acs_(memc_df,VC->Domain.E)=MemCDomainDevice;
+	}
 	else
-		VC=NULL;
-
+		goto RETURN;
+RETURN:
 	return VC;
 }
 #endif
