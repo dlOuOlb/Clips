@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.02	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.06	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -412,7 +412,10 @@ cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager)
 memc_vc *MemC_VC_Create_(const void _PL_ Identification,MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ EntryInfo);
 #ifdef __OPENCL_H
 //MemC_CL : Virtual Container Memory Allocation - Deallocate with "MemC_VC_Delete_"
-memc_vc *Devi_VC_Create_(const void _PL_ Identification,DEVI_MC _PL_ MemoryContainer,const size_t SubBufferSelect);
+//＊Dims = ShapeInfo -> Slot.V[0]
+//　LngND = { V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V }
+//　Hidden = MC -> BufS[ SubBufferSelect ]
+memc_vc *Devi_VC_Create_(const void _PL_ Identification,DEVI_MC _PL_ MemoryContainer,const size_t SubBufferSelect,MEMC_MS _PL_ ShapeInfo);
 #endif
 //MemClip : Virtual Container Memory Deallocation
 void MemC_VC_Delete_(memc_vc *_PL_ VirtualContainer);
