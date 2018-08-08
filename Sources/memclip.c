@@ -1,16 +1,26 @@
 ﻿#include "memclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static const char IdiomVersion[16]="Date:2018.08.06";
-static const char IdiomAddress[8]="address";
+#define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
+
+static const char IdiomVersion[16]="Date:2018.08.08";
+static const char IdiomType[4][8]={"none\0\0\0","byte\0\0\0","integer","address"};
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
-#ifdef __OPENCL_H
-static const char ConstantArgType[8]={'G','L','H','F'};
-#endif
-static MEMC_DT TypeAddress=MemC_DT_Define_(IdiomVersion,0,IdiomAddress,0,NULL,NULL,size_t);
+
+static MEMC_DT TableType[4]=
+{
+	_MemC_DT_Parse_(MemCTypeNone,0),
+	_MemC_DT_Parse_(MemCTypeByte,sizeof(char)),
+	_MemC_DT_Parse_(MemCTypeInteger,sizeof(int)),
+	_MemC_DT_Parse_(MemCTypeAddress,sizeof(size_t))
+};
+static MEMC_DT _PL_ AddressType[MemCTypes]={TableType+MemCTypeNone,TableType+MemCTypeByte,TableType+MemCTypeInteger,TableType+MemCTypeAddress};
+
 const char _PL_ MemClip=IdiomVersion;
 const void _PL_ MemCrux=&MemCrux;
-MEMC_DT _PL_ MemCTypeAddress=&TypeAddress;
+MEMC_DT _PL_ _PL_ MemCType=AddressType;
+
+#undef _MemC_DT_Parse_
 #endif
 
 #if(MemC_Fold_(Definition:Memory Functions))
@@ -116,19 +126,16 @@ static void **_MemC_Assign_(void **High,const size_t NumberHigh,const size_t Siz
 }
 static void *_MemC_Assign_Loop_(void **PtrM,const size_t _PL_ Size,const size_t NumberDimension,const size_t SizeElement)
 {
-	if(NumberDimension>1)
-	{
-		const size_t _PL_ End=Size+(NumberDimension-1);
-		const size_t *_R_ PtrS=Size;
-		size_t Temp=PtrS[0];
+	const size_t _PL_ End=Size+(NumberDimension-1);
+	const size_t *_R_ PtrS=Size;
+	size_t Temp=PtrS[0];
 
-		for(PtrS++;PtrS<End;PtrS++)
-		{
-			PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*sizeof(size_t));
-			Temp*=(*PtrS);
-		}
-		PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*SizeElement);
+	for(PtrS++;PtrS<End;PtrS++)
+	{
+		PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*sizeof(size_t));
+		Temp*=(*PtrS);
 	}
+	PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*SizeElement);
 
 	return PtrM;
 }
@@ -154,7 +161,8 @@ void *MemC_Alloc_(const size_t _PL_ Size,const size_t NumberDimension,const size
 				{
 					Memory=Byte_Alloc_(Temporary);
 					if(Memory)
-						_MemC_Assign_Loop_(Memory,Size,NumberDimension,SizeElement);
+						if(NumberDimension>1)
+							_MemC_Assign_Loop_(Memory,Size,NumberDimension,SizeElement);
 				}
 			}
 
@@ -529,7 +537,7 @@ memc_ms *MemC_MS_Create_(const void _PL_ ID,const size_t Slots)
 				if(MS)
 				{
 					Acs_(const void*,MS->ID)=ID;
-					Acs_(MEMC_DT*,MS->Type)=MemCTypeAddress;
+					Acs_(MEMC_DT*,MS->Type)=MemCType[MemCTypeAddress];
 					Acs_(size_t,MS->Nums)=Slots;
 					Acs_(size_t*,MS->Slot.V)=Line_Clear_(MS+1,Slots,size_t);
 				}
@@ -546,7 +554,7 @@ memc_ms *MemC_MS_Create_(const void _PL_ ID,const size_t Slots)
 		if(MS)
 		{
 			Acs_(const void*,MS->ID)=ID;
-			Acs_(MEMC_DT*,MS->Type)=MemCTypeAddress;
+			Acs_(MEMC_DT*,MS->Type)=MemCType[MemCTypeAddress];
 			Acs_(size_t,MS->Nums)=0;
 			Acs_(size_t*,MS->Slot.V)=NULL;
 		}
@@ -557,6 +565,11 @@ memc_ms *MemC_MS_Create_(const void _PL_ ID,const size_t Slots)
 void MemC_MS_Delete_(memc_ms *_PL_ MS)
 {
 	MemC_Deloc_(*MS);
+}
+
+size_t MemC_MS_Size_(MEMC_MS _PL_ MS)
+{
+	return (MS)?(sizeof(memc_ms)+MemC_Size_(size_t,MS->Nums)):(0);
 }
 int MemC_MS_Change_(MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 {
@@ -824,6 +837,7 @@ memc_mc *MemC_MC_Create_(const void _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 						case 0x0:
 						case 0x1:
 						case 0x6:
+							if(Dimensions>1)
 							{
 								size_t Size=_MemC_Overflow_Mul_(Dimensions,sizeof(size_t));
 
@@ -831,56 +845,81 @@ memc_mc *MemC_MC_Create_(const void _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 								{
 									Size=_MemC_Overflow_Add_(Size,sizeof(memc_mc));
 									MC=Byte_Alloc_(Size);
-									if(MC)
-									{
-										Acs_(const void*,MC->ID)=ID;
-										Acs_(MEMC_DT*,MC->Type)=DT;
-										Acs_(size_t,MC->Dims)=Dimensions;
-										Acs_(size_t,MC->Unit)=DT->SizeType;
-										Acs_(size_t*,MC->LngND)=(size_t*)(MC+1);
-										Acs_(size_t,MC->Lng1D)=Lng1D;
-										Acs_(void*,MC->AcsND)=NULL;
-										Acs_(void*,MC->Acs1D)=NULL;
-
-										if(Line_Copy_(Shape,(size_t*)(MC->LngND),Dimensions,size_t))
-											MemC_Deloc_(MC);
-									}
 								}
 								else
 									goto ESCAPE;
+							}
+							else
+								MC=Unit_Alloc_(memc_mc);
+
+							if(MC)
+							{
+								Acs_(const void*,MC->ID)=ID;
+								Acs_(MEMC_DT*,MC->Type)=DT;
+								Acs_(size_t,MC->Dims)=Dimensions;
+								Acs_(size_t,MC->Unit)=DT->SizeType;
+								Acs_(size_t,MC->Lng1D)=Lng1D;
+								Acs_(void*,MC->AcsND)=NULL;
+								Acs_(void*,MC->Acs1D)=NULL;
+								if(Dimensions>1)
+								{
+									Acs_(size_t*,MC->LngND)=(size_t*)(MC+1);
+									if(Line_Copy_(Shape,(size_t*)(MC->LngND),Dimensions,size_t))
+										MemC_Deloc_(MC);
+								}
+								else
+									Acs_(const size_t*,MC->LngND)=&(MC->Lng1D);
 							}
 							break;
 						case 0x7:
 							{
 								size_t Size[2];
 
-								Size[0]=_MemC_Overflow_Mul_(Dimensions,sizeof(size_t));
-								if(!(Size[0]))
-									goto ESCAPE;
-
-								Size[0]=_MemC_Overflow_Add_(Size[0],sizeof(memc_mc));
-								if(!(Size[0]))
-									goto ESCAPE;
-
-								Size[1]=_MemC_Space_Required_(Shape,Dimensions,DT->SizeType);
-								if(!(Size[1]))
-									goto ESCAPE;
-
-								Size[0]=_MemC_Overflow_Add_(Size[0],Size[1]);
-								MC=Byte_Alloc_(Size[0]);
-								if(MC)
+								if(Dimensions>1)
 								{
-									Acs_(const void*,MC->ID)=ID;
-									Acs_(MEMC_DT*,MC->Type)=DT;
-									Acs_(size_t,MC->Dims)=Dimensions;
-									Acs_(size_t,MC->Unit)=DT->SizeType;
+									Size[0]=_MemC_Overflow_Mul_(Dimensions,sizeof(size_t));
+									if(Size[0])
+										Size[0]=_MemC_Overflow_Add_(Size[0],sizeof(memc_mc));
+									else
+										goto ESCAPE;
+									if(Size[0])
+										goto INVADE;
+									else
+										goto ESCAPE;
+								}
+								else
+								{
+									Size[0]=sizeof(memc_mc);
+INVADE:
+									Size[1]=_MemC_Space_Required_(Shape,Dimensions,DT->SizeType);
+								}
+								if(Size[1])
+									Size[0]=_MemC_Overflow_Add_(Size[0],Size[1]);
+								else
+									goto ESCAPE;
+
+								MC=Byte_Alloc_(Size[0]);
+							}
+							if(MC)
+							{
+								Acs_(const void*,MC->ID)=ID;
+								Acs_(MEMC_DT*,MC->Type)=DT;
+								Acs_(size_t,MC->Dims)=Dimensions;
+								Acs_(size_t,MC->Unit)=DT->SizeType;
+								Acs_(size_t,MC->Lng1D)=Lng1D;
+								if(Dimensions>1)
+								{
 									Acs_(size_t*,MC->LngND)=(size_t*)(MC+1);
-									Acs_(size_t,MC->Lng1D)=Lng1D;
 									Acs_(void*,MC->AcsND)=(void*)(MC->LngND+Dimensions);
 									Acs_(void*,MC->Acs1D)=_MemC_Assign_Loop_((void**)(MC->AcsND),Shape,Dimensions,DT->SizeType);
-
 									if(Line_Copy_(Shape,(size_t*)(MC->LngND),Dimensions,size_t))
 										MemC_Deloc_(MC);
+								}
+								else
+								{
+									Acs_(const size_t*,MC->LngND)=&(MC->Lng1D);
+									Acs_(void*,MC->AcsND)=(void*)(MC+1);
+									Acs_(void*,MC->Acs1D)=(void*)(MC->AcsND);
 								}
 							}
 							break;
@@ -920,6 +959,57 @@ ESCAPE:
 void MemC_MC_Delete_(memc_mc *_PL_ MC)
 {
 	MemC_Deloc_(*MC);
+}
+
+static size_t _MemC_Space_Occupied_(const size_t _PL_ Shape,const size_t Dims,const size_t SizeType)
+{
+	const size_t _PL_ Last=Shape+(Dims-1);
+	const size_t *_R_ Ptr=Shape;
+	size_t Size[2]={1,0};
+
+	for(;Ptr<Last;Ptr++)
+	{
+		Size[0]*=*Ptr;
+		Size[1]+=Size[0];
+	}
+	{
+		Size[0]*=*Ptr;
+		Size[0]*=SizeType;
+		Size[1]*=sizeof(size_t);
+		Size[1]+=Size[0];
+	}
+
+	return Size[1];
+}
+size_t MemC_MC_Size_(MEMC_MC _PL_ MC)
+{
+	return (MC)?(sizeof(memc_mc)+((MC->Dims>1)?(MemC_Size_(size_t,MC->Dims)):(0))+((MC->Acs1D)?(_MemC_Space_Occupied_(MC->LngND,MC->Dims,MC->Unit)):(0))):(0);
+}
+int MemC_MC_Form_(MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
+{
+	if(MC)
+		if(MS)
+			if(MC->Dims<MS->Nums)
+			{
+				MS->Slot.V[0]=MC->Dims;
+				if(MC->Dims)
+					if(Line_Copy_(MC->LngND,MS->Slot.V+1,MC->Dims,size_t))
+						goto FAILURE;
+					else
+						goto SUCCESS;
+				else
+					goto SUCCESS;
+			}
+			else
+				goto FAILURE;
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 int MemC_MC_Change_(MEMC_MC _PL_ MC,MEMC_DT _PL_ DT)
 {
@@ -962,6 +1052,10 @@ cl_mem _Devi_Create_Buffer_(cl_context const Context,const size_t Elements,const
 		*Error=Local;
 
 	return Return;
+}
+cl_mem _Devi_Create_Buffer_GL_(cl_context const Context,const cl_GLuint Root,cl_int _PL_ Error)
+{
+	return clCreateFromGLBuffer(Context,CL_MEM_READ_WRITE,Root,Error);
 }
 cl_mem _Devi_Create_Buffer_Sub_(cl_mem const Root,const size_t Offset,const size_t Elements,const size_t SizeElement,cl_int _PL_ Error)
 {
@@ -2000,6 +2094,28 @@ RETURN:
 void MemC_VC_Delete_(memc_vc *_PL_ VC)
 {
 	MemC_Deloc_(*VC);
+}
+
+size_t MemC_VC_Size_(MEMC_VC _PL_ VC)
+{
+	size_t Return;
+
+	if(VC)
+		switch(VC->Domain.E)
+		{
+		case MemCDomainHost:
+			Return=sizeof(memc_vc);
+			break;
+		case MemCDomainDevice:
+			Return=sizeof(memc_vc)+((VC->Dims>1)?(VC->Dims*sizeof(size_t)):(0));
+			break;
+		default:
+			Return=0;
+		}
+	else
+		Return=0;
+
+	return Return;
 }
 int MemC_VC_Change_(MEMC_VC _PL_ VC,MEMC_DT _PL_ DT)
 {
