@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.06	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.08	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -129,6 +129,16 @@ struct _memc_vc					//MemClip : Virtual Container Structure
 	const void _PL_ Hidden;		//MemClip : Hidden Linkage
 };
 MemC_Type_Declare_(struct,memc_vc,MEMC_VC);	//MemClip : Virtual Container Structure
+
+enum _memc_te			//MemClip : Data Type Enumeration
+{
+	MemCTypeNone=0,		//MemClip : none
+	MemCTypeByte=1,		//MemClip : byte (char)
+	MemCTypeInteger=2,	//MemClip : integer (int)
+	MemCTypeAddress=3,	//MemClip : address (size_t)
+	MemCTypes=4			//MemClip : The Number of Types
+};
+MemC_Type_Declare_(enum,memc_te,MEMC_TE);	//MemClip : Data Type Enumeration
 
 #ifdef __OPENCL_H
 struct _devi_qc						//MemC_CL : Queue Container Structure
@@ -272,6 +282,7 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #define Devi_Size_Info_Queue_(Queue,Size,Flag) clGetCommandQueueInfo(Queue,Flag,0,NULL,Size)						//MemC_CL : Command Queue Information Size Get
 
 #define Devi_Create_Buffer_(Context,Elements,type,Error) _Devi_Create_Buffer_(Context,Elements,sizeof(type),Error)					//MemC_CL : Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
+#define Devi_Create_Buffer_GL_(Context,GLBuffer,Error) _Devi_Create_Buffer_GL_(Context,GLBuffer,Error)								//MemC_CL : OpenGL Shared Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
 #define Devi_Create_Buffer_Sub_(Root,Offset,Elements,type,Error) _Devi_Create_Buffer_Sub_(Root,Offset,Elements,sizeof(type),Error)	//MemC_CL : Sub-Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
 #define Devi_Delete_Buffer_(Memory) do{if(Memory){clReleaseMemObject(Memory);(Memory)=NULL;}}while(0)								//MemC_CL : Buffer or Sub-Buffer Object Memory Deallocation
 #define Devi_Info_Buffer_(Bf,List,Num,type,Flag) clGetMemObjectInfo(Bf,Flag,(Num)*sizeof(type),List,NULL)							//MemC_CL : Buffer or Sub-Buffer Object Information Get
@@ -313,8 +324,9 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 extern const char _PL_ MemClip;
 //MemClip : Self Reference
 extern const void _PL_ MemCrux;
-//MemClip : Address Type Descriptor
-extern MEMC_DT _PL_ MemCTypeAddress;
+//MemClip : Type Descriptor Set
+//＊Access with MemCTypeByte … MemCTypeAddress
+extern MEMC_DT _PL_ _PL_ MemCType;
 #endif
 
 #if(MemC_Fold_(Declaration:Memory Functions))
@@ -338,6 +350,9 @@ void MemC_Deloc_Set_(void **MemorySet,const size_t Count);
 memc_ms *MemC_MS_Create_(const void _PL_ Identification,const size_t SlotsNumber);
 //MemClip : Memory Slot Memory Deallocation
 void MemC_MS_Delete_(memc_ms *_PL_ MemorySlot);
+
+//MemClip : Memory Slot Memory Occupation
+size_t MemC_MS_Size_(MEMC_MS _PL_ MemorySlot);
 //MemClip : Memory Slot Memory Type Change
 int MemC_MS_Change_(MEMC_MS _PL_ MemorySlot,MEMC_DT _PL_ MemoryType);
 
@@ -362,6 +377,13 @@ int MemC_MS_Oops_(MEMC_MS _PL_ MemorySlot);
 memc_mc *MemC_MC_Create_(const void _PL_ Identification,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo);
 //MemClip : Memory Container Memory Deallocation
 void MemC_MC_Delete_(memc_mc *_PL_ MemoryContainer);
+
+//MemClip : Memory Container Memory Occupation
+size_t MemC_MC_Size_(MEMC_MC _PL_ MemoryContainer);
+//MemClip : Memory Container Shape Information Copy
+//＊ShapeInfo -> Slot.V[0] = MemoryContainer -> Dims
+//　{ V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V } = MemoryContainer -> LngND
+int MemC_MC_Form_(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ ShapeInfo);
 //MemClip : Memory Container Data Type Change
 int MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 #endif
@@ -419,6 +441,9 @@ memc_vc *Devi_VC_Create_(const void _PL_ Identification,DEVI_MC _PL_ MemoryConta
 #endif
 //MemClip : Virtual Container Memory Deallocation
 void MemC_VC_Delete_(memc_vc *_PL_ VirtualContainer);
+
+//MemClip : Virtual Container Memory Occupation
+size_t MemC_VC_Size_(MEMC_VC _PL_ VC);
 //MemClip : Virtual Container Data Type Change
 int MemC_VC_Change_(MEMC_VC _PL_ VirtualContainer,MEMC_DT _PL_ DataType);
 
@@ -473,6 +498,7 @@ size_t _MemC_Switch_(const void _PL_ Key,const void _PL_ _PL_ TblRf,const size_t
 
 #ifdef __OPENCL_H
 cl_mem _Devi_Create_Buffer_(cl_context const,const size_t,const size_t,cl_int _PL_ Err);
+cl_mem _Devi_Create_Buffer_GL_(cl_context const,const cl_GLuint,cl_int _PL_ Err);
 cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,const size_t,const size_t,const size_t,cl_int _PL_ Err);
 cl_int _Devi_Delete_Event_(cl_event const);
 
