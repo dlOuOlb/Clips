@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.07.13	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.14	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -89,20 +89,21 @@ union _bitclip			//BitClip : Pointer Union
 };
 MemC_Type_Declare_(union,bitclip,BITCLIP);	//BitClip : Pointer Union
 
-enum _bitc_dt			//BitClip : Data Type Enumeration
+enum _bitc_dt		//BitClip : Data Type Enumeration
 {
-	BitCTypeD08=0,		//BitClip : 8-bit Natural
-	BitCTypeD16=1,		//BitClip : 16-bit Natural
-	BitCTypeD32=2,		//BitClip : 32-bit Natural
-	BitCTypeD64=3,		//BitClip : 64-bit Natural
-	BitCTypeI08=4,		//BitClip : 8-bit Integer
-	BitCTypeI16=5,		//BitClip : 16-bit Integer
-	BitCTypeI32=6,		//BitClip : 32-bit Integer
-	BitCTypeI64=7,		//BitClip : 64-bit Integer
-	BitCTypeR08=8,		//BitClip : 8-bit Real (Not Available)
-	BitCTypeR16=9,		//BitClip : 16-bit Real (Special Device Only)
-	BitCTypeR32=10,		//BitClip : 32-bit Real
-	BitCTypeR64=11,		//BitClip : 64-bit Real
+	BitCTypeD08=0,	//BitClip : 8-bit Natural
+	BitCTypeD16=1,	//BitClip : 16-bit Natural
+	BitCTypeD32=2,	//BitClip : 32-bit Natural
+	BitCTypeD64=3,	//BitClip : 64-bit Natural
+	BitCTypeI08=4,	//BitClip : 8-bit Integer
+	BitCTypeI16=5,	//BitClip : 16-bit Integer
+	BitCTypeI32=6,	//BitClip : 32-bit Integer
+	BitCTypeI64=7,	//BitClip : 64-bit Integer
+	BitCTypeR08=8,	//BitClip : 8-bit Real (Not Available)
+	BitCTypeR16=9,	//BitClip : 16-bit Real (Special Device Only)
+	BitCTypeR32=10,	//BitClip : 32-bit Real
+	BitCTypeR64=11,	//BitClip : 64-bit Real
+	BitCTypes=12	//BitClip : The Number of Types
 };
 MemC_Type_Declare_(enum,bitc_dt,BITC_DT);	//BitClip : Data Type Enumeration
 
@@ -308,6 +309,7 @@ enum _bitc_ki				//BitC_CL : BitCKernel Indicator Enumeration
 	BitCROL2R16=241,		//BitC_CL : BitC_RO_L_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *_R_ DataB,_P_ DATA_32 Length)
 	BitCROL2R32=242,		//BitC_CL : BitC_RO_L_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *_R_ DataB,_P_ DATA_32 Length)
 	BitCROL2R64=243,		//BitC_CL : BitC_RO_L_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *_R_ DataB,_P_ DATA_32 Length)
+	BitCKernels=248			//BitC_CL : The Number of Kernels
 };
 MemC_Type_Declare_(enum,bitc_ki,BITC_KI);	//BitC_CL : BitCKernel Indicator Enumeration
 
