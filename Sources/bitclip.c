@@ -5,12 +5,6 @@
 #define _BitC_Max_(A,B) (((A)>(B))?(A):(B))
 #define _BitC_Clamp_(Data,Min,Max) (((Data)<(Min))?(Min):(((Data)>(Max))?(Max):(Data)))
 
-#define _BitC_Total_Types 12
-#define _BitC_Type_Name_Length 8
-#ifdef __OPENCL_H
-#define _BitC_Total_Kernels 248
-#define _BitC_Kernel_Name_Length 24
-#endif
 #define _BitC_DT_Define_(IType,type,IFlag) MemC_DT_Define_(IdiomVersion,IType,IdiomTypeName[IType],IFlag,NULL,NULL,type)
 #define _BitC_DT_Flag_Sign_(Bool) ((Bool)<<2)
 #define _BitC_DT_Flag_Real_(Bool) ((Bool)<<3)
@@ -22,7 +16,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.07.13";
+static DATA_08 IdiomVersion[16]="Date:2018.08.14";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -35,17 +29,17 @@ static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x004
 static DATA_08 TableShrink08[8]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 static BOOLEAN TableBool[4]={!1,!0,BitCNull,BitCFull};
 #ifdef __OPENCL_H
-static INTE_08 TableSwitch[_BitC_Total_Kernels]={0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1};
+static INTE_08 TableSwitch[BitCKernels]={0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1};
 #endif
 
 #if(MemC_Fold_(Type Descriptors))
-static INTE_08 IdiomTypeName[_BitC_Total_Types][_BitC_Type_Name_Length]=
+static INTE_08 IdiomTypeName[BitCTypes][8]=
 {
 	"data_08","data_16","data_32","data_64",
 	"inte_08","inte_16","inte_32","inte_64",
 	"real_08","real_16","real_32","real_64",
 };
-static MEMC_DT TableType[_BitC_Total_Types]=
+static MEMC_DT TableType[BitCTypes]=
 {
 	_BitC_DT_Define_(BitCTypeD08,data_08,_BitC_DT_Flag_Bits_(08)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0)),
 	_BitC_DT_Define_(BitCTypeD16,data_16,_BitC_DT_Flag_Bits_(16)|_BitC_DT_Flag_Real_(0)|_BitC_DT_Flag_Sign_(0)),
@@ -60,7 +54,7 @@ static MEMC_DT TableType[_BitC_Total_Types]=
 	_BitC_DT_Define_(BitCTypeR32,real_32,_BitC_DT_Flag_Bits_(32)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1)),
 	_BitC_DT_Define_(BitCTypeR64,real_64,_BitC_DT_Flag_Bits_(64)|_BitC_DT_Flag_Real_(1)|_BitC_DT_Flag_Sign_(1))
 };
-static MEMC_DT _PL_ AddressType[_BitC_Total_Types]=
+static MEMC_DT _PL_ AddressType[BitCTypes]=
 {
 	TableType+BitCTypeD08,TableType+BitCTypeD16,TableType+BitCTypeD32,TableType+BitCTypeD64,
 	TableType+BitCTypeI08,TableType+BitCTypeI16,TableType+BitCTypeI32,TableType+BitCTypeI64,
@@ -70,7 +64,7 @@ static MEMC_DT _PL_ AddressType[_BitC_Total_Types]=
 
 #ifdef __OPENCL_H
 static NAME_08 IdiomFileName[40]="ouoclip.cl\0\0bitclip.cl\0\0bitclip.obj";
-static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
+static NAME_08 IdiomKernelName[BitCKernels][24]=
 {
 	"",						"BitC_Endian_D16_",		"BitC_Endian_D32_",		"BitC_Endian_D64_",
 	"",						"BitC_Caster_D08_D16_",	"BitC_Caster_D08_D32_",	"BitC_Caster_D08_D64_",
@@ -137,7 +131,7 @@ static NAME_08 IdiomKernelName[_BitC_Total_Kernels][_BitC_Kernel_Name_Length]=
 };
 
 static NAME_08 _PL_ AddressFileName[4]={IdiomFileName+0,IdiomFileName+12,IdiomFileName+24,NULL};
-static NAME_08 _PL_ AddressKernelName[_BitC_Total_Kernels]=
+static NAME_08 _PL_ AddressKernelName[BitCKernels]=
 {
 	IdiomKernelName[0],IdiomKernelName[1],IdiomKernelName[2],IdiomKernelName[3],
 	IdiomKernelName[4],IdiomKernelName[5],IdiomKernelName[6],IdiomKernelName[7],
@@ -199,7 +193,8 @@ static NAME_08 _PL_ AddressKernelName[_BitC_Total_Kernels]=
 	IdiomKernelName[228],IdiomKernelName[229],IdiomKernelName[230],IdiomKernelName[231],
 	IdiomKernelName[232],IdiomKernelName[233],IdiomKernelName[234],IdiomKernelName[235],
 	IdiomKernelName[236],IdiomKernelName[237],IdiomKernelName[238],IdiomKernelName[239],
-	IdiomKernelName[240],IdiomKernelName[241],IdiomKernelName[242],IdiomKernelName[243]
+	IdiomKernelName[240],IdiomKernelName[241],IdiomKernelName[242],IdiomKernelName[243],
+	IdiomKernelName[244],IdiomKernelName[245],IdiomKernelName[246],IdiomKernelName[247]
 };
 #endif
 static ADDRESS ConstantUnique=1;
@@ -4657,12 +4652,12 @@ static devi_km *_BitC_Create_KM_(cl_kernel const Kernel,BITC_KI Switch)
 
 bitc_cl *BitC_CL_Create_(general)
 {
-	bitc_cl *Manager=Byte_Alloc_(sizeof(bitc_cl)+MemC_Size_(devi_km*,_BitC_Total_Kernels));
+	bitc_cl *Manager=Byte_Alloc_(sizeof(bitc_cl)+MemC_Size_(devi_km*,BitCKernels));
 
 	if(Manager)
 	{
 		Acs_(GENERAL*,Manager->Helper)=NULL;
-		Acs_(devi_km**,Manager->KMSet)=Line_Clear_(Manager+1,_BitC_Total_Kernels,devi_km*);
+		Acs_(devi_km**,Manager->KMSet)=Line_Clear_(Manager+1,BitCKernels,devi_km*);
 	}
 
 	return Manager;
@@ -4690,14 +4685,14 @@ penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_0
 			Error.E=CLInvalidHostPtr;
 		else
 		{
-			GENERAL *Slot[_BitC_Total_Kernels];
-			bitc_ki Link[_BitC_Total_Kernels];
+			GENERAL *Slot[BitCKernels];
+			bitc_ki Link[BitCKernels];
 			cl_uint Count=0;
 
 			{
 				bitc_ki Index;
 
-				for(Index=0;Index<_BitC_Total_Kernels;Index++)
+				for(Index=0;Index<BitCKernels;Index++)
 					if(Manager->KMSet[Index])
 					{
 						Slot[Count]=BitCKernel[Index];
@@ -4769,9 +4764,9 @@ general BitC_CL_Delete_(bitc_cl *_PL_ Manager)
 {
 	if(*Manager)
 	{
-		if((*Manager)->Helper!=MemCrux)
+		if((*Manager)->Helper)
 		{
-			devi_km **Ptr=(devi_km**)((*Manager)->KMSet+_BitC_Total_Kernels);
+			devi_km **Ptr=(devi_km**)((*Manager)->KMSet+BitCKernels);
 
 			for(Ptr--;Ptr>=(*Manager)->KMSet;Ptr--)
 				Devi_KM_Delete_(Ptr);
@@ -4791,7 +4786,7 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indic
 				if(Indicator<0)
 					Error.E=CLInvalidKernelName;
 				else
-					if(Indicator<_BitC_Total_Kernels)
+					if(Indicator<BitCKernels)
 						if(Manager->KMSet[Indicator])
 							if((Argument->Nums)<((address)(Manager->KMSet[Indicator]->KArgs)))
 								Error.E=CLInvalidKernelArgs;
@@ -4844,12 +4839,6 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indic
 #undef _BitC_DT_Flag_Sign_
 #undef _BitC_DT_Flag_Real_
 #undef _BitC_DT_Define_
-#ifdef __OPENCL_H
-#undef _BitC_Kernel_Name_Length
-#undef _BitC_Total_Kernels
-#endif
-#undef _BitC_Total_Types
-#undef _BitC_Type_Name_Length
 #undef _BitC_Clamp_
 #undef _BitC_Max_
 #undef _BitC_Min_
