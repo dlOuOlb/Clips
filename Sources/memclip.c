@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static const char IdiomVersion[16]="Date:2018.08.08";
+static const char IdiomVersion[16]="Date:2018.08.14";
 static const char IdiomType[4][8]={"none\0\0\0","byte\0\0\0","integer","address"};
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -24,6 +24,16 @@ MEMC_DT _PL_ _PL_ MemCType=AddressType;
 #endif
 
 #if(MemC_Fold_(Definition:Memory Functions))
+static size_t _MemC_Array_Prod_(const size_t *_R_ Ptr,const size_t Count)
+{
+	const size_t _PL_ End=Ptr+Count;
+	size_t Length=1;
+
+	for(;Ptr<End;Ptr++)
+		Length*=(*Ptr);
+
+	return Length;
+}
 static int _MemC_Array_Non_Zero_(const size_t *_R_ Ptr,const size_t Nums)
 {
 	const size_t _PL_ End=Ptr+Nums;
@@ -302,7 +312,7 @@ errno_t _Line_Pick_(const void _PL_ Input,void _PL_ Output,const size_t NumberCh
 	
 	for(;PtrI<End;PtrI+=Step,PtrO+=SizeElement)
 	{
-		ErrorCode=memcpy_s(PtrO,SizeElement,PtrI,SizeElement);
+		ErrorCode=Byte_Copy_(PtrI,PtrO,SizeElement);
 		if(ErrorCode)
 			break;
 	}
@@ -319,7 +329,7 @@ errno_t _Line_Fill_(const void _PL_ Input,void _PL_ Output,const size_t NumberCh
 
 	for(;PtrI<End;PtrI+=SizeElement,PtrO+=Step)
 	{
-		ErrorCode=memcpy_s(PtrO,SizeElement,PtrI,SizeElement);
+		ErrorCode=Byte_Copy_(PtrI,PtrO,SizeElement);
 		if(ErrorCode)
 			break;
 	}
@@ -346,7 +356,7 @@ static errno_t _MemC_Copy_2D_(const char _PL_ MemoryS,char _PL_ MemoryT,const si
 
 	for(End+=(JumpS[0]*Length[0]);PointerS<End;PointerS+=JumpS[0],PointerT+=JumpT[0])
 	{
-		ErrorCode=memcpy_s(PointerT,Copy,PointerS,Copy);
+		ErrorCode=Byte_Copy_(PointerS,PointerT,Copy);
 		if(ErrorCode)
 			break;
 	}
@@ -410,41 +420,201 @@ errno_t _MemC_Copy_(const void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ 
 			ErrorCode=0;
 			break;
 		case 1:
-			if(Bytes)
 			{
 				const size_t Copy=Length[0]*Bytes;
-
-				ErrorCode=memcpy_s(((char*)MemoryT)+(OffsetT[0]*Bytes),Copy,((char*)MemoryS)+(OffsetS[0]*Bytes),Copy);
+				
+				if(Copy)
+					ErrorCode=Byte_Copy_(((const char*)MemoryS)+(OffsetS[0]*Bytes),((char*)MemoryT)+(OffsetT[0]*Bytes),Copy);
+				else
+					ErrorCode=0;
 			}
-			else
-				ErrorCode=0;
 			break;
 		default:
 			if(Bytes)
-				if(Dimensions>MemC_Copy_Max_Dimension)
-					ErrorCode=EINVAL;
+				if(_MemC_Array_Non_Zero_(Length,Dimensions))
+					if(Dimensions>MemC_Copy_Max_Dimension)
+						ErrorCode=EINVAL;
+					else
+					{
+						size_t JumpS[MemC_Copy_Max_Dimension];
+						size_t JumpT[MemC_Copy_Max_Dimension];
+
+						if(ShapeS)
+							_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
+						else
+							_MemC_Jump_Offset_(JumpS,Length,Dimensions,Bytes);
+						if(ShapeT)
+							_MemC_Jump_Offset_(JumpT,ShapeT,Dimensions,Bytes);
+						else
+							_MemC_Jump_Offset_(JumpT,Length,Dimensions,Bytes);
+
+						ErrorCode=_MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
+					}
 				else
-				{
-					size_t JumpS[MemC_Copy_Max_Dimension];
-					size_t JumpT[MemC_Copy_Max_Dimension];
-
-					if(ShapeS)
-						_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
-					else
-						_MemC_Jump_Offset_(JumpS,Length,Dimensions,Bytes);
-					if(ShapeT)
-						_MemC_Jump_Offset_(JumpT,ShapeT,Dimensions,Bytes);
-					else
-						_MemC_Jump_Offset_(JumpT,Length,Dimensions,Bytes);
-
-					ErrorCode=_MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
-				}
+					ErrorCode=0;
 			else
 				ErrorCode=0;
 		}
 	else
 		ErrorCode=EINVAL;
 
+	return ErrorCode;
+}
+
+static int _MemC_Reform_Valid_(const size_t *_R_ Map,const size_t Dims)
+{
+	size_t Table[MemC_Copy_Max_Dimension]={0};
+	const size_t _PL_ End=Map+Dims;
+
+	while(Map<End)
+		if((*Map)<Dims)
+		{
+			Table[*Map]=(size_t)FULL;
+			Map++;
+		}
+		else
+			break;
+
+	return ((Map==End)?(_MemC_Array_Non_Zero_(Table,Dims)):(0));
+}
+static void _MemC_Reform_Short_(const size_t _PL_ Shape,const size_t _PL_ Map,size_t _PL_ Dims,size_t _PL_ Bytes)
+{
+	size_t Temp;
+
+	for(Temp=(*Dims)-1;Temp;Temp--)
+		if(Map[Temp]==Temp)
+		{
+			(*Bytes)*=Shape[Temp];
+			(*Dims)=Temp;
+		}
+		else
+			break;
+}
+static void _MemC_Reform_Merge_(size_t _PL_ Shape,size_t _PL_ Map,size_t _PL_ Dims)
+{
+	const size_t *End=Map+(*Dims);
+	const size_t *Last=End-1;
+	size_t *MapA;
+	size_t *MapB;
+	size_t *MapC;
+	size_t *ShpA;
+	size_t *ShpB;
+	size_t *ShpC;
+	size_t Pull;
+
+	for(MapA=Map,ShpA=Shape;MapA<Last;MapA++,ShpA++)
+	{
+		for(MapB=MapA,ShpB=ShpA;MapB<Last;MapB++,ShpB++)
+			if((MapB[0]+1)==MapB[1])
+				ShpA[0]*=ShpB[1];
+			else
+				break;
+
+		if(MapA<MapB)
+		{
+			for(MapC=Map,Pull=MapB-MapA;MapC<MapA;MapC++)
+				if(MapC[0]>MapA[0])
+					MapC[0]-=Pull;
+
+			for(MapB++,MapC++,ShpB++,ShpC=ShpA+1;MapB<End;MapB++,MapC++,ShpB++,ShpC++)
+			{
+				MapC[0]=(MapA[0]<MapB[0])?(MapB[0]-Pull):(MapB[0]);
+				ShpC[0]=ShpB[0];
+			}
+
+			End=MapC;
+			Last=End-1;
+			*Dims=End-Map;
+		}
+	}
+}
+static errno_t _MemC_Reform_Order_(const char _PL_ Source,char _PL_ Target,const size_t _PL_ Shape,const size_t _PL_ Map,const size_t Total,const size_t Dims,const size_t Bytes)
+{
+	size_t Jump[MemC_Copy_Max_Dimension];
+	const size_t Last=Dims-1;
+	size_t Prod;
+	size_t IdxS;
+	size_t IdxT;
+	size_t IdxJ;
+	errno_t ErrorCode=0;
+
+	for(IdxT=0;IdxT<Total;IdxT++)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		ErrorCode=Byte_Copy_(Source+(IdxS*Bytes),Target+(IdxT*Bytes),Bytes);
+		if(ErrorCode)
+			break;
+	}
+
+	return ErrorCode;
+}
+errno_t _MemC_Reform_(const void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ ShapeS,const size_t _PL_ MapT,size_t Dimensions,size_t Bytes)
+{
+	errno_t ErrorCode;
+
+	if(Dimensions)
+	{
+		_MemC_Reform_Short_(ShapeS,MapT,&Dimensions,&Bytes);
+		if(Dimensions>1)
+			if(Dimensions<MemC_Copy_Max_Dimension)
+				if(_MemC_Reform_Valid_(MapT,Dimensions))
+				{
+					const size_t Total=_MemC_Array_Prod_(ShapeS,Dimensions);
+
+					if(Total)
+					{
+						size_t ShapeSNew[MemC_Copy_Max_Dimension];
+						size_t MapTNew[MemC_Copy_Max_Dimension];
+
+						ErrorCode=Line_Copy_(ShapeS,ShapeSNew,Dimensions,size_t);
+						if(ErrorCode)
+							goto ESCAPE;
+
+						ErrorCode=Line_Copy_(MapT,MapTNew,Dimensions,size_t);
+						if(ErrorCode)
+							goto ESCAPE;
+
+						_MemC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
+						ErrorCode=_MemC_Reform_Order_(MemoryS,MemoryT,ShapeSNew,MapTNew,Total,Dimensions,Bytes);
+					}
+					else
+						goto NO_OPERATION;
+				}
+				else
+					goto INVALID;
+			else
+				goto INVALID;
+		else
+			if(MapT[0])
+			{
+INVALID:
+				ErrorCode=EINVAL;
+			}
+			else
+			{
+				const size_t Copy=ShapeS[0]*Bytes;
+
+				if(Copy)
+					ErrorCode=Byte_Copy_(MemoryS,MemoryT,Copy);
+				else
+					goto NO_OPERATION;
+			}
+	}
+	else
+	{
+NO_OPERATION:
+		ErrorCode=0;
+	}
+ESCAPE:
 	return ErrorCode;
 }
 
@@ -1668,7 +1838,7 @@ cl_int Devi_KM_Save_(DEVI_KM _PL_ KM,const size_t Order,const size_t Thing)
 					Error=CL_SUCCESS;
 					break;
 				case DeviDomainPrivate:
-					if(Byte_Copy_((void*)Thing,(void*)(KM->ArgAccess.P[Order]),KM->ArgSize[Order]))
+					if(Byte_Copy_((const void*)Thing,(void*)(KM->ArgAccess.P[Order]),KM->ArgSize[Order]))
 						Error=CL_INVALID_ARG_VALUE;
 					else
 						Error=CL_SUCCESS;
@@ -1893,16 +2063,6 @@ SUCCESS:
 #endif
 
 #if(MemC_Fold_(Definition:MemClip Fused Functions))
-static size_t _MemC_VC_Total_Length_(const size_t *_R_ Ptr,const size_t Count)
-{
-	const size_t _PL_ End=Ptr+Count;
-	size_t Length=1;
-
-	for(;Ptr<End;Ptr++)
-		Length*=(*Ptr);
-
-	return Length;
-}
 static void *_MemC_VC_Access_(void *_R_ Jumper,const size_t *_R_ Access,const size_t Count)
 {
 	const size_t _PL_ End=Access+Count;
@@ -1950,7 +2110,7 @@ ESCAPE:
 			if(VC->Dims>1)
 			{
 				Acs_(const size_t*,VC->LngND)=MC->LngND+MS->Slot.V[0];
-				Acs_(size_t,VC->Lng1D)=_MemC_VC_Total_Length_(VC->LngND,VC->Dims);
+				Acs_(size_t,VC->Lng1D)=_MemC_Array_Prod_(VC->LngND,VC->Dims);
 			}
 			else
 			{
@@ -2064,7 +2224,7 @@ ESCAPE:
 					goto RETURN;
 				}
 				else
-					Acs_(size_t,VC->Lng1D)=_MemC_VC_Total_Length_(VC->LngND,VC->Dims);
+					Acs_(size_t,VC->Lng1D)=_MemC_Array_Prod_(VC->LngND,VC->Dims);
 			}
 			else
 			{
