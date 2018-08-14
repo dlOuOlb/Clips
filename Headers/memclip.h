@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.08	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.14	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -238,6 +238,7 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 
 #define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,type) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(type))	//MemClip : Key Finding for Switch Operation
 #define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))	//MemClip : Array Data Copy
+#define MemC_Reform_(S,T,SShp,Axis,Dims,type) _MemC_Reform_(S,T,SShp,Axis,Dims,sizeof(type))							//MemClip : Array Data Reshape for SShp[Dim] == TShp[Axis[Dim]]
 
 #define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
 #endif
@@ -482,29 +483,47 @@ int MemC_VC_Copy_(const void _PL_ Queue,MEMC_VC _PL_ SourceContainer,MEMC_VC _PL
 #endif
 
 #if(MemC_Fold_(Declaration:Redefined Functions))
+//MemClip : See "Line_Alloc_".
 void *_Line_Alloc_(const size_t,const size_t);
+//MemClip : See "Rect_Alloc_".
 void *_Rect_Alloc_(const size_t,const size_t,const size_t);
+//MemClip : See "Cube_Alloc_".
 void *_Cube_Alloc_(const size_t,const size_t,const size_t,const size_t);
+//MemClip : See "Tess_Alloc_".
 void *_Tess_Alloc_(const size_t,const size_t,const size_t,const size_t,const size_t);
 
+//MemClip : See "Line_Init_".
 errno_t _Line_Init_(void _PL_ Memory,const void _PL_ Tile,const size_t Number,const size_t TypeSize);
+//MemClip : See "Line_Pick_".
 errno_t _Line_Pick_(const void _PL_ Input,void _PL_ Output,const size_t Channels,const size_t Number,const size_t TypeSize);
+//MemClip : See "Line_Fill_".
 errno_t _Line_Fill_(const void _PL_ Input,void _PL_ Output,const size_t Channels,const size_t Number,const size_t TypeSize);
 
+//MemClip : See "MemC_Copy_".
 errno_t _MemC_Copy_(const void _PL_ S,void _PL_ T,const size_t _PL_ OfsS,const size_t _PL_ OfsT,const size_t _PL_ Lng,const size_t _PL_ ShpS,const size_t _PL_ ShpT,const size_t Dims,const size_t TypeSize);
+//MemClip : See "MemC_Reform_".
+errno_t _MemC_Reform_(const void _PL_ S,void _PL_ T,const size_t _PL_ ShpS,const size_t _PL_ AxisStoT,size_t Dims,size_t TypeSize);
 
+//MemClip : See "Line_Assign_N_" or "Line_Assign_U_".
 size_t _Line_Assign_(void _PL_ Indexer,const void _PL_ Indexed,const size_t Interval,const size_t Indices,const size_t TypeSize,const int Mode);
+//MemClip : See "MemC_Switch_".
 size_t _MemC_Switch_(const void _PL_ Key,const void _PL_ _PL_ TblRf,const size_t* LngRf,const size_t LngKey,const size_t NumRf,const size_t TypeSize);
 
 #ifdef __OPENCL_H
+//MemC_CL : See "Devi_Create_Buffer_".
 cl_mem _Devi_Create_Buffer_(cl_context const,const size_t,const size_t,cl_int _PL_ Err);
+//MemC_CL : See "Devi_Create_Buffer_GL_".
 cl_mem _Devi_Create_Buffer_GL_(cl_context const,const cl_GLuint,cl_int _PL_ Err);
+//MemC_CL : See "Devi_Create_Buffer_Sub_".
 cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,const size_t,const size_t,const size_t,cl_int _PL_ Err);
+//MemC_CL : See "Devi_Delete_Event_".
 cl_int _Devi_Delete_Event_(cl_event const);
 
+//MemC_CL : See "Devi_Copy_".
 cl_int _Devi_Copy_(cl_command_queue const Q,void _PL_ S,void _PL_ T,const size_t _PL_ OfsS,const size_t _PL_ OfsT,const size_t _PL_ Lng,const size_t _PL_ ShpS,const size_t _PL_ ShpT,const cl_uint Dims,const size_t TypeSize,DEVI_CF Mode);
+//MemC_CL : See "Devi_Copy_1D_".
 cl_int _Devi_Copy_1D_(cl_command_queue const Q,void _PL_ S,void _PL_ T,const size_t OfsS,const size_t OfsT,const size_t Lng,const size_t TypeSize,DEVI_CF Mode);
-
+//MemC_CL : See "Devi_KM_Type_C_", "Devi_KM_Type_G_", "Devi_KM_Type_L_", or "Devi_KM_Type_P_".
 cl_int _Devi_KM_Type_(DEVI_KM _PL_ KM,const size_t Idx,const size_t TypeSize,DEVI_DF Mode);
 #endif
 #endif
