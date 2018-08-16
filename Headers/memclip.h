@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.16	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -17,7 +17,7 @@
 #include <CL\opencl.h>
 #endif
 
-#define MemC_Fold_(Comment) (1)	//MemClip : Code Folding with #if and #endif Pre-processor.
+#define MemC_Fold_(Comment,...) (1)	//MemClip : Code Folding with #if and #endif Pre-processor.
 #if(MemC_Fold_(Preprocessing))
 #ifdef _WIN64
 #define MemC_64_	//MemClip : 64-bit Memory Address
@@ -331,8 +331,6 @@ extern MEMC_DT _PL_ _PL_ MemCType;
 #endif
 
 #if(MemC_Fold_(Declaration:Memory Functions))
-//MemClip : Nothing
-void MemC_Void_(void);
 //MemClip : Memory Allocation Check
 //＊Return value is 0 for failure, 1 for success.
 int MemC_Check_(const void _PL_ *MemorySet,const size_t Count);
@@ -480,6 +478,22 @@ int MemC_VC_Init_(void _PL_ Queue,MEMC_VC _PL_ VirtualContainer);
 //＊Type checker should return 1 for compatible types, 0 for incompatible types.
 //＊Return value is 1 for success, 0 for failure.
 int MemC_VC_Copy_(const void _PL_ Queue,MEMC_VC _PL_ SourceContainer,MEMC_VC _PL_ TargetContainer,MEMC_MS _PL_ CopyInfo);
+#endif
+
+#if(MemC_Fold_(Declaration:Other Functions))
+//MemClip : Nothing
+void MemC_Void_(void);
+
+//MemClip : Table Indexing
+//＊Table[idx]＝Mode？＆(Table[idx])：idx
+void MemC_Self_(size_t *_R_ Table,const size_t Count,const int Mode);
+
+//MemClip : Object Sorting
+//＊Required ReferTable size is Count×sizeof(void*) bytes.
+//＊If IndexTable is not NULL, then its required size is Count×sizeof(size_t) bytes.
+//＊Required BufferSpace size is 2×Count×sizeof(size_t) bytes.
+//＊If Comparer_(ReferTable[m],ReferTable[n]) is not 0, then those two will be swapped during the process.
+errno_t MemC_Sort_(int(_PL_ Comparer_)(const void _PL_,const void _PL_),const void *_PL_ ReferTable,size_t _PL_ IndexTable,size_t _PL_ BufferSpace,const size_t Count);
 #endif
 
 #if(MemC_Fold_(Declaration:Redefined Functions))
