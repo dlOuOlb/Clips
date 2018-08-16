@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static const char IdiomVersion[16]="Date:2018.08.14";
+static const char IdiomVersion[16]="Date:2018.08.16";
 static const char IdiomType[4][8]={"none\0\0\0","byte\0\0\0","integer","address"};
 static const size_t ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -24,6 +24,7 @@ MEMC_DT _PL_ _PL_ MemCType=AddressType;
 #endif
 
 #if(MemC_Fold_(Definition:Memory Functions))
+#if(MemC_Fold_(Part:Memory Set Handle))
 static size_t _MemC_Array_Prod_(const size_t *_R_ Ptr,const size_t Count)
 {
 	const size_t _PL_ End=Ptr+Count;
@@ -73,8 +74,6 @@ static int _MemC_Array_Boundary_(const size_t *_R_ Access,const size_t *_R_ Boun
 
 	return (Access==End);
 }
-void MemC_Void_(void)
-{}
 int MemC_Check_(const void _PL_ *Memory,const size_t Sets)
 {
 	int Success;
@@ -96,7 +95,8 @@ void MemC_Deloc_Set_(void **Memory,const size_t Sets)
 			MemC_Deloc_(*Memory);
 	}
 }
-
+#endif
+#if(MemC_Fold_(Part:ND Array Memory Allocation))
 static size_t _MemC_Origin_(const size_t Number,const size_t SizeElement)
 {
 	volatile size_t New=Number*SizeElement;
@@ -178,7 +178,8 @@ void *MemC_Alloc_(const size_t _PL_ Size,const size_t NumberDimension,const size
 
 	return Memory;
 }
-
+#endif
+#if(MemC_Fold_(Part:1D, 2D, 3D, and 4D Array Memory Allocations))
 static size_t _MemC_Overflow_Add_(const size_t A,const size_t B)
 {
 	size_t C=A+B;
@@ -251,7 +252,8 @@ void *_Tess_Alloc_(const size_t W,const size_t X,const size_t Y,const size_t Z,c
 
 	return MemC_Alloc_(BufferSize,4,SizeElement);
 }
-
+#endif
+#if(MemC_Fold_(Part:1D Array Trivials))
 static size_t _MemC_Safe_2_(size_t Num)
 {
 	Num|=(Num>>1);
@@ -336,7 +338,8 @@ errno_t _Line_Fill_(const void _PL_ Input,void _PL_ Output,const size_t NumberCh
 
 	return ErrorCode;
 }
-
+#endif
+#if(MemC_Fold_(Part:ND Array Data Copy))
 static void _MemC_Jump_Offset_(size_t _PL_ Jump,const size_t _PL_ Shape,const size_t Dimension,const size_t Bytes)
 {
 	const size_t *_R_ PointerS=Shape+(Dimension-2);
@@ -460,7 +463,8 @@ errno_t _MemC_Copy_(const void _PL_ MemoryS,void _PL_ MemoryT,const size_t _PL_ 
 
 	return ErrorCode;
 }
-
+#endif
+#if(MemC_Fold_(Part:ND Array Data Reformation))
 static int _MemC_Reform_Valid_(const size_t *_R_ Map,const size_t Dims)
 {
 	size_t Table[MemC_Copy_Max_Dimension]={0};
@@ -617,7 +621,187 @@ NO_OPERATION:
 ESCAPE:
 	return ErrorCode;
 }
+#endif
+#if(MemC_Fold_(Part:Object Sorting))
+static size_t _MemC_Sort_Lng_2_(const size_t Length)
+{
+	size_t Temp=1;
 
+	Temp=~Temp;
+	Temp&=Length;
+
+	return Temp;
+}
+static void _MemC_Sort_Bound_(size_t _PL_ Jump,const void _PL_ **Bound)
+{
+	Bound[2]=Bound[1]+Jump[0];
+	if(Bound[2]>Bound[3])
+		Bound[2]=Bound[3];
+
+	Jump[1]=Bound[2]-Bound[1];
+	Jump[2]=Jump[0]+Jump[1];
+	Jump[3]=Jump[1]-1;
+}
+static void _MemC_Sort_Ord_2_(int(_PL_ Comp_)(const void _PL_,const void _PL_),const void **Ptr,size_t *Idx,const size_t Length)
+{
+	const void _PL_ _PL_ End=Ptr+_MemC_Sort_Lng_2_(Length);
+	const void *Temp;
+
+	if(Idx)
+		for(;Ptr<End;Ptr+=2,Idx+=2)
+		{
+			if(Comp_(Ptr[0],Ptr[1]))
+			{
+				Temp=Ptr[0];
+				Ptr[0]=Ptr[1];
+				Ptr[1]=Temp;
+
+				Temp=(void*)(Idx[0]);
+				Idx[0]=Idx[1];
+				Idx[1]=(size_t)Temp;
+			}
+		}
+	else
+		for(;Ptr<End;Ptr+=2)
+			if(Comp_(Ptr[0],Ptr[1]))
+			{
+				Temp=Ptr[0];
+				Ptr[0]=Ptr[1];
+				Ptr[1]=Temp;
+			}
+}
+static void _MemC_Sort_Ord_A_(int(_PL_ Comp_)(const void _PL_,const void _PL_),size_t *PtrT,const void _PL_ *PtrA,const void _PL_ _PL_ StartB,const void _PL_ _PL_ EndB)
+{
+	const void _PL_ *PtrB=StartB;
+
+	for(PtrT[0]=0;PtrB<EndB;PtrB++)
+		if(Comp_(PtrA[0],PtrB[0]))
+			PtrT[0]++;
+		else
+		{
+			for(PtrA++,PtrT++;PtrA<StartB;PtrA++,PtrT++)
+				if(Comp_(PtrA[0],PtrB[0]))
+				{
+					PtrT[0]=PtrT[-1]+1;
+					break;
+				}
+				else
+					PtrT[0]=PtrT[-1];
+
+			if(PtrA==StartB)
+				break;
+		}
+	for(PtrA++,PtrT++;PtrA<StartB;PtrA++,PtrT++)
+		PtrT[0]=PtrT[-1];
+}
+static void _MemC_Sort_Ord_B_(int(_PL_ Comp_)(const void _PL_,const void _PL_),size_t *PtrT,const void _PL_ *PtrB,const void _PL_ _PL_ StartA,const void _PL_ _PL_ StartB)
+{
+	const void _PL_ *PtrA=StartB-1;
+
+	for(PtrT[0]=0;PtrA>=StartA;PtrA--)
+		if(Comp_(PtrA[0],PtrB[0]))
+			PtrT[0]--;
+		else
+		{
+			for(PtrB--,PtrT--;PtrB>=StartB;PtrB--,PtrT--)
+				if(Comp_(PtrA[0],PtrB[0]))
+				{
+					PtrT[0]=PtrT[+1]-1;
+					break;
+				}
+				else
+					PtrT[0]=PtrT[+1];
+
+			if(PtrB<StartB)
+				break;
+		}
+	for(PtrB--,PtrT--;PtrB>=StartB;PtrB--,PtrT--)
+		PtrT[0]=PtrT[+1];
+}
+static errno_t _MemC_Sort_Table_(size_t *IdxO,size_t *IdxA,const size_t *PtrT,const size_t _PL_ MatchB,const size_t Copy,const size_t Step)
+{
+	errno_t Error=Line_Copy_(IdxO,IdxA,Copy,size_t);
+
+	if(!Error)
+	{
+		for(;IdxO<MatchB;IdxA++,IdxO++,PtrT++)
+			IdxO[PtrT[0]]=IdxA[0];
+		for(IdxA+=Step,IdxO+=Step,PtrT+=Step;IdxO>=MatchB;IdxA--,IdxO--,PtrT--)
+			IdxO[PtrT[0]]=IdxA[0];
+	}
+
+	return Error;
+}
+errno_t MemC_Sort_(int(_PL_ Comp_)(const void _PL_,const void _PL_),const void *_PL_ Refer,size_t _PL_ Index,size_t _PL_ Buffer,const size_t Length)
+{
+	errno_t ErrorCode=0;
+
+	if(Length)
+	{
+		const void _PL_ *Bound[4];
+		size_t Jump[4];
+		size_t _PL_ Table=Buffer;
+		size_t _PL_ Value=Table+Length;
+
+		_MemC_Sort_Ord_2_(Comp_,Refer,Index,Length);
+		if(Index)
+		{
+			size_t *Match;
+
+			for(Jump[0]=2,Bound[3]=Refer+Length;Jump[0]<Length;Jump[0]<<=1)
+				for(Bound[0]=Refer,Bound[1]=Refer+Jump[0],Match=Index;Bound[1]<Bound[3];Bound[0]=Bound[2],Bound[1]=Bound[2]+Jump[1],Match+=Jump[2])
+				{
+					_MemC_Sort_Bound_(Jump,Bound);
+					_MemC_Sort_Ord_A_(Comp_,Table,Bound[0],Bound[1],Bound[2]);
+					_MemC_Sort_Ord_B_(Comp_,Table+(Jump[2]-1),Bound[2]-1,Bound[0],Bound[1]);
+
+					ErrorCode=_MemC_Sort_Table_((size_t*)(Bound[0]),Value,Table,(size_t*)(Bound[1]),Jump[2],Jump[3]);
+					if(ErrorCode)
+						goto ESCAPE;
+
+					ErrorCode=_MemC_Sort_Table_(Match,Value,Table,Match+Jump[0],Jump[2],Jump[3]);
+					if(ErrorCode)
+						goto ESCAPE;
+				}
+		}
+		else
+			for(Jump[0]=2,Bound[3]=Refer+Length;Jump[0]<Length;Jump[0]<<=1)
+				for(Bound[0]=Refer,Bound[1]=Refer+Jump[0];Bound[1]<Bound[3];Bound[0]=Bound[2],Bound[1]=Bound[2]+Jump[1])
+				{
+					_MemC_Sort_Bound_(Jump,Bound);
+					_MemC_Sort_Ord_A_(Comp_,Table,Bound[0],Bound[1],Bound[2]);
+					_MemC_Sort_Ord_B_(Comp_,Table+(Jump[2]-1),Bound[2]-1,Bound[0],Bound[1]);
+
+					ErrorCode=_MemC_Sort_Table_((size_t*)(Bound[0]),Value,Table,(size_t*)(Bound[1]),Jump[2],Jump[3]);
+					if(ErrorCode)
+						goto ESCAPE;
+				}
+	}
+ESCAPE:
+	return ErrorCode;
+}
+#endif
+#if(MemC_Fold_(Part:Others))
+void MemC_Void_(void)
+{
+}
+void MemC_Self_(size_t *_R_ Table,const size_t Length,const int Mode)
+{
+	if(Mode)
+	{
+		const size_t _PL_ End=Table+Length;
+
+		for(;Table<End;Table++)
+			(*Table)=(size_t)Table;
+	}
+	else
+	{
+		size_t Idx;
+
+		for(Idx=0;Idx<Length;Idx++)
+			Table[Idx]=Idx;
+	}
+}
 size_t _Line_Assign_(void _PL_ Indexer,const void _PL_ Indexed,const size_t Interval,const size_t Indices,const size_t TypeSize,const int Mode)
 {
 	size_t Sum;
@@ -688,8 +872,10 @@ size_t _MemC_Switch_(const void _PL_ Key,const void _PL_ _PL_ ReferTable,const s
 	return Index;
 }
 #endif
+#endif
 
 #if(MemC_Fold_(Definition:MemClip Structure Functions))
+#if(MemC_Fold_(Part:MemC_MS))
 memc_ms *MemC_MS_Create_(const void _PL_ ID,const size_t Slots)
 {
 	memc_ms *MS;
@@ -897,7 +1083,7 @@ int MemC_MS_Oops_(MEMC_MS _PL_ MS)
 		{
 			const void _PL_ Start=MS->Slot.P;
 			const void _PL_ End=MS->Slot.P+MS->Nums;
-			const void _PL_* Pointer=MS->Slot.P;
+			const void _PL_ *Pointer=MS->Slot.P;
 			size_t Count=MS->Nums;
 
 			while(Count--)
@@ -925,7 +1111,8 @@ FAILURE:
 SUCCESS:
 	return 1;
 }
-
+#endif
+#if(MemC_Fold_(Part:MemC_MC))
 static size_t _MemC_Shape_Overflow_(const size_t _PL_ Shape,const size_t Dims)
 {
 	const size_t _PL_ End=Shape+Dims;
@@ -1202,9 +1389,11 @@ SUCCESS:
 	return 1;
 }
 #endif
+#endif
 
 #if(MemC_Fold_(Definition:OpenCL Functions))
 #ifdef __OPENCL_H
+#if(MemC_Fold_(Part:OpenCL Object Handle))
 cl_mem _Devi_Create_Buffer_(cl_context const Context,const size_t Elements,const size_t SizeElement,cl_int _PL_ Error)
 {
 	const size_t Bytes=(SizeElement)?(_MemC_Overflow_Mul_(Elements,SizeElement)):(0);
@@ -1308,6 +1497,31 @@ cl_int _Devi_Delete_Event_(cl_event const Event)
 	return Error;
 }
 
+static void _Devi_Work_Global_(size_t *_R_ GlobalWorkers,const size_t *_R_ WorkGroups,const size_t *_R_ LocalWorkers,const cl_uint Dimensions)
+{
+	const size_t _PL_ End=LocalWorkers+Dimensions;
+
+	for(;LocalWorkers<End;LocalWorkers++,WorkGroups++,GlobalWorkers++)
+		GlobalWorkers[0]=LocalWorkers[0]*WorkGroups[0];
+}
+cl_int Devi_Kenq_(cl_command_queue const Queue,cl_kernel const Kernel,const size_t _PL_ WorkGroups,const size_t _PL_ LocalWorkers,const size_t _PL_ GlobalOffset,const cl_uint Dimensions)
+{
+	cl_int Error;
+
+	if(Dimensions>Devi_Copy_Max_Dimension)
+		Error=CL_INVALID_WORK_DIMENSION;
+	else
+	{
+		size_t Total[Devi_Copy_Max_Dimension];
+
+		_Devi_Work_Global_(Total,WorkGroups,LocalWorkers,Dimensions);
+		Error=clEnqueueNDRangeKernel(Queue,Kernel,Dimensions,GlobalOffset,Total,LocalWorkers,0,NULL,NULL);
+	}
+
+	return Error;
+}
+#endif
+#if(MemC_Fold_(Part:ND Array Data Copy))
 cl_int _Devi_Copy_1D_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ MemoryT,const size_t OriginS,const size_t OriginT,const size_t Length,const size_t Bytes,DEVI_CF Mode)
 {
 	cl_int ErrorCode;
@@ -1483,31 +1697,8 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,void _PL_ MemoryS,void _PL_ Memo
 
 	return ErrorCode;
 }
-
-static void _Devi_Work_Global_(size_t *_R_ GlobalWorkers,const size_t *_R_ WorkGroups,const size_t *_R_ LocalWorkers,const cl_uint Dimensions)
-{
-	const size_t _PL_ End=LocalWorkers+Dimensions;
-
-	for(;LocalWorkers<End;LocalWorkers++,WorkGroups++,GlobalWorkers++)
-		GlobalWorkers[0]=LocalWorkers[0]*WorkGroups[0];
-}
-cl_int Devi_Kenq_(cl_command_queue const Queue,cl_kernel const Kernel,const size_t _PL_ WorkGroups,const size_t _PL_ LocalWorkers,const size_t _PL_ GlobalOffset,const cl_uint Dimensions)
-{
-	cl_int Error;
-
-	if(Dimensions>Devi_Copy_Max_Dimension)
-		Error=CL_INVALID_WORK_DIMENSION;
-	else
-	{
-		size_t Total[Devi_Copy_Max_Dimension];
-
-		_Devi_Work_Global_(Total,WorkGroups,LocalWorkers,Dimensions);
-		Error=clEnqueueNDRangeKernel(Queue,Kernel,Dimensions,GlobalOffset,Total,LocalWorkers,0,NULL,NULL);
-	}
-
-	return Error;
-}
-
+#endif
+#if(MemC_Fold_(Part:Devi_QC))
 static cl_platform_id *_Devi_QC_Alloc_List_Platform_(cl_uint _PL_ Platforms)
 {
 	cl_platform_id *List;
@@ -1604,7 +1795,8 @@ void Devi_QC_Delete_(devi_qc *_PL_ QC)
 		MemC_Deloc_(*QC);
 	}
 }
-
+#endif
+#if(MemC_Fold_(Part:Devi_KM))
 static size_t _Devi_KM_Arg_Size_Padding_(size_t Size)
 {
 	Size+=sizeof(size_t);
@@ -1897,7 +2089,8 @@ cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KM)
 
 	return Error;
 }
-
+#endif
+#if(MemC_Fold_(Part:Devi_MC))
 static cl_uint _Devi_MC_Align_(cl_context const Context,cl_int *Error)
 {
 	cl_device_id Device;
@@ -2039,6 +2232,7 @@ void Devi_MC_Delete_(devi_mc *_PL_ MC)
 		MemC_Deloc_(*MC);
 	}
 }
+
 int Devi_MC_Change_(DEVI_MC _PL_ MC,MEMC_DT _PL_ DT)
 {
 	if(MC)
@@ -2059,6 +2253,7 @@ FAILURE:
 SUCCESS:
 	return 1;
 }
+#endif
 #endif
 #endif
 
