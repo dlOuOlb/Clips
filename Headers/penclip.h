@@ -2,7 +2,7 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.07.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.17	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -28,13 +28,13 @@ MemC_Type_Rename_(char32_t,name_32,NAME_32)	//PenClip : 32-bit Character
 
 struct _penc_sc				//PenClip : String Container Structure
 {
-	const size_t Capacity;	//PenClip : Allowed Size in Bytes
+	ADDRESS Capacity;	//PenClip : Allowed Size in Bytes
 	union _penc_up			//PenClip : Union of Pointers
 	{
 		name_08 _PL_ N08;	//PenClip : 8-bit Access
 		name_16 _PL_ N16;	//PenClip : 16-bit Access
 		name_32 _PL_ N32;	//PenClip : 32-bit Access
-		const void _PL_ X;	//PenClip : No Access
+		GENERAL _PL_ X;	//PenClip : No Access
 	}
 	String;					//PenClip : String Data
 };
@@ -43,7 +43,7 @@ MemC_Type_Declare_(struct,penc_sc,PENC_SC);	//PenClip : String Container Structu
 struct _penc_ss			//PenClip : Sub-Container Set Structure
 {
 	PENC_SC Root;		//PenClip : Root-Container
-	const size_t Nums;	//PenClip : Number of Sub-Containers
+	ADDRESS Nums;	//PenClip : Number of Sub-Containers
 	PENC_SC _PL_ Part;	//PenClip : Sub-Container Set
 };
 MemC_Type_Declare_(struct,penc_ss,PENC_SS);	//PenClip : Sub-Container Set Structure
@@ -56,8 +56,8 @@ struct _penc_cl						//PenC_CL : OpenCL Program Resource Structure
 	cl_command_queue const Queue;	//PenC_CL : Command Queue
 	cl_program const Program;		//PenC_CL : Internal Program
 	cl_kernel _PL_ SetKernel;		//PenC_CL : Internal Kernel Set
-	const size_t _PL_ SizeWorker;	//PenC_CL : Maximum Number of Work Items that can be specified in each Dimension of the Work Group 
-	const size_t Workers;			//PenC_CL : Maximum Number of Work Items in a Work Group
+	ADDRESS _PL_ SizeWorker;	//PenC_CL : Maximum Number of Work Items that can be specified in each Dimension of the Work Group 
+	ADDRESS Workers;			//PenC_CL : Maximum Number of Work Items in a Work Group
 	const cl_ulong SizeLocal;		//PenC_CL : Size of Local Memory Arena in Bytes
 	const cl_uint Cores;			//PenC_CL : The Number of Parallel Compute Cores
 	const cl_uint Dimensions;		//PenC_CL : Maximum Dimensions of Global and Local Work Items
@@ -135,57 +135,53 @@ union _penc_eu		//PenC_CL : OpenCL Error Union
 	cl_int I;		//PenC_CL : Access as Integer
 };
 MemC_Type_Declare_(union,penc_eu,PENC_EU);	//PenC_CL : OpenCL Error Union
-static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(int)");
+static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(integer)");
 #endif
 #endif
 
 #if(MemC_Fold_(Definition:Macros))
-#define File_Opener_(FilePointer,FileName,Mode) fopen_s(&(FilePointer),FileName,Mode)							//PenClip : File Open
-#define File_Closer_(FilePointer) do{if(FilePointer){if(!fclose(FilePointer)){(FilePointer)=NULL;}}}while(0)	//PenClip : File Close
-#define File_Remove_(FileName) remove(FileName)																	//PenClip : File Delete
-#define File_Rename_(FileNameOld,FileNameNew) rename(FileNameOld,FileNameNew)									//PenClip : File Rename
+#define PenC_File_Opener_(FilePointer,FileName,Mode) fopen_s(&(FilePointer),FileName,Mode)												//PenClip : File Open
+#define PenC_File_Closer_(FilePointer) do{if(FilePointer){if(!fclose(FilePointer)){(FilePointer)=NULL;}}}while(0)						//PenClip : File Close
+#define PenC_File_Remove_(FileName) remove(FileName)																					//PenClip : File Delete
+#define PenC_File_Rename_(FileNameOld,FileNameNew) rename(FileNameOld,FileNameNew)														//PenClip : File Rename
+#define PenC_File_Writer_(FilePointer,Buffer,Elements,type) fwrite(Buffer,sizeof(type),Elements,FilePointer)							//PenClip : File Write
+#define PenC_File_Reader_(FilePointer,Buffer,Elements,type) fread_s(Buffer,(Elements)*sizeof(type),sizeof(type),Elements,FilePointer)	//PenClip : File Read
+#define PenC_File_Jumper_(FilePointer,Elements,type) fseek(FilePointer,(Elements)*sizeof(type),SEEK_CUR)								//PenClip : Step Forward from Current Location
+#define PenC_File_Backer_(FilePointer,Elements,type) fseek(FilePointer,0-((Elements)*sizeof(type)),SEEK_CUR)							//PenClip : Step Backward from Current Location
+#define PenC_File_Rewind_(FilePointer) rewind(FilePointer)	//PenClip : Pointer Restart
+#define PenC_File_Teller_(FilePointer) ftell(FilePointer)	//PenClip : Current Location from Start
+#define PenC_File_Washer_(FilePointer) fflush(FilePointer)	//PenClip : Stream Flush
+#define PenC_File_Finish_(FilePointer) feof(FilePointer)		//PenClip : End of File
 
-#define File_Writer_(FilePointer,Buffer,Elements,type) fwrite(Buffer,sizeof(type),Elements,FilePointer)								//PenClip : File Write
-#define File_Reader_(FilePointer,Buffer,Elements,type) fread_s(Buffer,(Elements)*sizeof(type),sizeof(type),Elements,FilePointer)	//PenClip : File Read
-#define File_Jumper_(FilePointer,Elements,type) fseek(FilePointer,(Elements)*sizeof(type),SEEK_CUR)									//PenClip : Step Forward from Current Location
-#define File_Backer_(FilePointer,Elements,type) fseek(FilePointer,0-((Elements)*sizeof(type)),SEEK_CUR)								//PenClip : Step Backward from Current Location
+#define PenC_Setter_Byte_(Buffer,Value,Length) (name_08*)memset(Buffer,Value,Length)	//PenClip : Buffer Byte Set
+#define PenC_Finder_Byte_(Buffer,Value,Length) (name_08*)memchr(Buffer,Value,Length)	//PenClip : Buffer Byte Find
 
-#define File_Rewind_(FilePointer) rewind(FilePointer)	//PenClip : Pointer Restart
-#define File_Teller_(FilePointer) ftell(FilePointer)	//PenClip : Current Location from Start
-#define File_Washer_(FilePointer) fflush(FilePointer)	//PenClip : Stream Flush
-#define File_Finish_(FilePointer) feof(FilePointer)		//PenClip : End of File
+#define PenC_String_Length_(String,Capacity) strnlen_s(String,Capacity)					//PenClip : String Length
+#define PenC_String_Finder_(Sentence,Word) (name_08*)strstr(Sentence,Word)				//PenClip : Sentence Word Find
+#define PenC_String_Concat_(Buffer,Source,Capacity) strcat_s(Buffer,Capacity,Source)	//PenClip : String Concatenation
+#define PenC_String_Copier_(Buffer,Source,Capacity) strcpy_s(Buffer,Capacity,Source)	//PenClip : String Copy
 
-#define Byte_Setter_(Buffer,Value,Length) (name_08*)memset(Buffer,Value,Length)	//PenClip : Buffer Byte Set
-#define Byte_Finder_(Buffer,Value,Length) (name_08*)memchr(Buffer,Value,Length)	//PenClip : Buffer Byte Find
-#define Word_Length_(String,Capacity) strnlen_s(String,Capacity)				//PenClip : String Length
-#define Word_Finder_(Sentence,Word) (name_08*)strstr(Sentence,Word)				//PenClip : Sentence Word Find
-#define Word_Concat_(Buffer,Source,Capacity) strcat_s(Buffer,Capacity,Source)	//PenClip : String Concatenation
-#define Word_Copier_(Buffer,Source,Capacity) strcpy_s(Buffer,Capacity,Source)	//PenClip : String Copy
+#define PenC_Reader_1D_(Line,FileName,Elements,type) _PenC_Reader_1D_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Read
+#define PenC_Writer_1D_(Line,FileName,Elements,type) _PenC_Writer_1D_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Write
 
-#define Line_Reader_(Line,FileName,Elements,type) _Line_Reader_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Read
-#define Line_Writer_(Line,FileName,Elements,type) _Line_Writer_(Line,FileName,sizeof(type),Elements)	//PenClip : 1D Array Data Write
+#define PenC_Pipe_Opener_(ProgramPointer,Command,Mode) do{(ProgramPointer)=_popen(Command,Mode);}while(0)									//PenClip : Program Open
+#define PenC_Pipe_Closer_(ProgramPointer,Return) do{if(ProgramPointer){(Return)=_pclose(ProgramPointer);(ProgramPointer)=NULL;}}while(0)	//PenClip : Program Close
 
-#define Program_Opener_(ProgramPointer,Command,Mode) do{(ProgramPointer)=_popen(Command,Mode);}while(0)									//PenClip : Program Open
-#define Program_Closer_(ProgramPointer,Return) do{if(ProgramPointer){(Return)=_pclose(ProgramPointer);(ProgramPointer)=NULL;}}while(0)	//PenClip : Program Close
-
-#define PenC_Clocks_ clock()						//PenClip : Current Clocks
-#define PenC_Elapse_(Start) (PenC_Clocks_-(Start))	//PenClip : Clock Measure from Start
+#define PenC_Time_Clocks_ clock()						//PenClip : Current Clocks
+#define PenC_Time_Elapse_(Start) (PenC_Time_Clocks_-(Start))	//PenClip : Clock Measure from Start
 
 #define PenC_Prefix_N08_(String) u8##String	//PenClip : 8-bit String Literal Prefix
 #define PenC_Prefix_N16_(String) u##String	//PenClip : 16-bit String Literal Prefix
 #define PenC_Prefix_N32_(String) U##String	//PenClip : 32-bit String Literal Prefix
 
-#define Printer_Console_ printf_s	//PenClip : Console Stream Print
-#define Scanner_Console_ scanf_s	//PenClip : Console Stream Scan
-
-#define Printer_File_ fprintf_s	//PenClip : File Stream Print
-#define Scanner_File_ fscanf_s	//PenClip : File Stream Scan
-
-#define Printer_Text_ fputs	//PenClip : File Stream Print in Text
-#define Scanner_Text_ fgets	//PenClip : File Stream Scan in Text
-
-#define Printer_Buffer_ sprintf_s	//PenClip : Buffer Stream Print
-#define Scanner_Buffer_ sscanf_s	//PenClip : Buffer Stream Scan
+#define PenC_String_Writer_ printf_s			//PenClip : Standard Stream Print
+#define PenC_String_Reader_ scanf_s				//PenClip : Standard Stream Scan
+#define PenC_String_Writer_File_ fprintf_s		//PenClip : File Stream Print
+#define PenC_String_Reader_File_ fscanf_s		//PenClip : File Stream Scan
+#define PenC_String_Writer_Stream_ fputs		//PenClip : Stream Print
+#define PenC_String_Reader_Stream_ fgets		//PenClip : Stream Scan
+#define PenC_String_Writer_Buffer_ sprintf_s	//PenClip : Buffer Stream Print
+#define PenC_String_Reader_Buffer_ sscanf_s		//PenClip : Buffer Stream Scan
 
 #define PenC_SC_Define_(IString) {.Capacity=sizeof(IString),.String.X=(IString)}	//PenClip : String Container Static Definition
 #endif
@@ -204,59 +200,59 @@ extern NAME_08 _PL_ _PL_ PenCOpen;
 
 #if(MemC_Fold_(Declaration:I/O Functions))
 //PenClip : File Byte Size
-size_t File_Length_(NAME_08 _PL_ FileName);
+address PenC_File_Length_(NAME_08 _PL_ FileName);
 
 //PenClip : Execute a command.
-int PenC_Command_(NAME_08 _PL_ Command);
+integer PenC_Pipe_Action_(NAME_08 _PL_ Command);
+
+//PenClip : Print current date.
+//＊Required buffer size is 10 bytes for ( yyyy.mm.dd ).
+general PenC_Time_Record_Date_(name_08 _PL_ Buffer);
+//PenClip : Print current time.
+//＊Requried buffer size is 8 bytes for ( hh:mm:ss ).
+general PenC_Time_Record_Hour_(name_08 _PL_ Buffer);
 
 //PenClip : Print an integer in decimal form.
 //＊Required buffer size is count bytes.
-void PenC_Deci_(name_08 _PL_ Buffer,const size_t Number,const size_t Count);
+general PenC_Name_Deci_(name_08 _PL_ Buffer,ADDRESS Number,ADDRESS Count);
 //PenClip : Print an integer in hexadecimal form.
 //＊Required buffer size is count bytes.
-void PenC_Hexa_(name_08 _PL_ Buffer,const size_t Number,const size_t Count);
-
-//PenClip : Print current date.
-//＊Required buffer size is 10 bytes.
-void PenC_Date_(name_08 _PL_ Buffer);
-//PenClip : Print current time.
-//＊Requried buffer size is 8 bytes.
-void PenC_Time_(name_08 _PL_ Buffer);
+general PenC_Name_Hexa_(name_08 _PL_ Buffer,ADDRESS Number,ADDRESS Count);
 
 //PenClip : Find the last dot character.
 //＊Return value is offset.
-size_t PenC_Extend_(NAME_08 _PL_ Buffer,const size_t Length);
+address PenC_Name_Extend_(NAME_08 _PL_ Buffer,ADDRESS Length);
 #endif
 
 #if(MemC_Fold_(Declaration:PenClip Managed Functions))
 //PenClip : String Container Memory Allocation - Deallocate with "PenC_SC_Delete_"
-penc_sc *PenC_SC_Create_(const size_t CapacityBytes);
+penc_sc *PenC_SC_Create_(ADDRESS CapacityBytes);
 //PenClip : Sub-Container Memory Allocation from a Root-Container - Deallocate with "PenC_SC_Delete_"
-penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ RootContainer,const size_t OffsetBytes,const size_t LengthBytes);
+penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ RootContainer,ADDRESS OffsetBytes,ADDRESS LengthBytes);
 //PenClip : String Container Memory Deallocation
-void PenC_SC_Delete_(penc_sc *_PL_ StringContainer);
+general PenC_SC_Delete_(penc_sc *_PL_ StringContainer);
 
 //PenClip : String Container Data Reset
 //＊Return value is 1 for success, 0 for failure.
-int PenC_SC_Init_(PENC_SC _PL_ StringContainer);
+integer PenC_SC_Init_(PENC_SC _PL_ StringContainer);
 
 //PenClip : String Container Null Character Finding
 //＊Return value is the first found null character's location for success, or the capacity for failure.
-size_t PenC_SC_Length_N08_(PENC_SC _PL_ StringContainer);
+address PenC_SC_Length_N08_(PENC_SC _PL_ StringContainer);
 //PenClip : String Container Data Copy
 //＊Return value is 1 for success, 0 for failure.
-int PenC_SC_Copy_N08_(PENC_SC _PL_ TargetContainer,PENC_SC _PL_ SourceContainer);
+integer PenC_SC_Copy_N08_(PENC_SC _PL_ TargetContainer,PENC_SC _PL_ SourceContainer);
 //PenClip : String Container Data Concatenation
 //＊Return value is 1 for success, 0 for failure.
-int PenC_SC_Concat_N08_(PENC_SC _PL_ TargetContainer,PENC_SC _PL_ SourceContainer);
+integer PenC_SC_Concat_N08_(PENC_SC _PL_ TargetContainer,PENC_SC _PL_ SourceContainer);
 
 //PenClip : Sub-Container Set Memory Allocation - Deallocate with "PenC_SS_Delete_"
-penc_ss *PenC_SS_Create_(const size_t SubBufferNumbers,const size_t TotalCapacityBytes);
+penc_ss *PenC_SS_Create_(ADDRESS SubBufferNumbers,ADDRESS TotalCapacityBytes);
 //PenClip : Sub-Container Set Memory Deallocation
-void PenC_SS_Delete_(penc_ss *_PL_ StringContainerSet);
+general PenC_SS_Delete_(penc_ss *_PL_ StringContainerSet);
 //PenClip : Sub-Container Assign from the Root-Container
 //＊Return value is 1 for success, 0 for failure.
-int PenC_SS_Assign_(PENC_SS _PL_ SS,const size_t Index,const size_t Offset,const size_t Length);
+integer PenC_SS_Assign_(PENC_SS _PL_ SS,ADDRESS Index,ADDRESS Offset,ADDRESS Length);
 #endif
 
 #if(MemC_Fold_(Declaration:OpenCL Functions))
@@ -264,17 +260,19 @@ int PenC_SS_Assign_(PENC_SS _PL_ SS,const size_t Index,const size_t Offset,const
 //PenC_CL : Select Platform and Device with Console Interface
 penc_eu PenC_CL_Identify_(cl_uint _PL_ PlatformSelect,cl_uint _PL_ DeviceSelect);
 //PenC_CL : Program Build from Source Files to an Object File
-penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ SourceFileNameSet,NAME_08 _PL_ BuildOption,const size_t SourceFilesNumber);
+penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ SourceFileNameSet,NAME_08 _PL_ BuildOption,ADDRESS SourceFilesNumber);
 
 //PenC_CL : Program Resource Memory Allocation - Deallocate with "PenC_Delete_CL_"
 penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ IndicatorSet,NAME_08 _PL_ BuildOption,const cl_uint KernelsNumber,penc_eu _PL_ Error);
 //PenC_CL : Program Resource Memory Deallocation
-void PenC_CL_Delete_(penc_cl *_PL_ PenCL);
+general PenC_CL_Delete_(penc_cl *_PL_ PenCL);
 #endif
 #endif
 
 #if(MemC_Fold_(Declaration:Renamed Functions))
-int _Line_Reader_(void _PL_ Line,NAME_08 _PL_ FileName,const size_t TypeSize,const size_t Count);
-int _Line_Writer_(const void _PL_ Line,NAME_08 _PL_ FileName,const size_t TypeSize,const size_t Count);
+//PenClip : See "PenC_Reader_1D_"
+integer _PenC_Reader_1D_(general _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+//PenClip : See "PenC_Writer_1D_"
+integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 #endif
 #endif

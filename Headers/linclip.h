@@ -2,7 +2,7 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.07.25	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.17	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -251,7 +251,9 @@ enum _linc_ki			//LinC_CL : LinCKernel Indicator Enumeration
 	LinCMap1D08=128,	//LinC_CL : LinC_Map_1_D08_(_G_ data_08 *Line,_G_ DATA_32 *Match,_G_ DATA_08 *Table,_P_ DATA_32 Number,_P_ DATA_32 Length)
 	LinCMap1D16=129,	//LinC_CL : LinC_Map_1_D16_(_G_ data_16 *Line,_G_ DATA_32 *Match,_G_ DATA_16 *Table,_P_ DATA_32 Number,_P_ DATA_32 Length)
 	LinCMap1D32=130,	//LinC_CL : LinC_Map_1_D32_(_G_ data_32 *Line,_G_ DATA_32 *Match,_G_ DATA_32 *Table,_P_ DATA_32 Number,_P_ DATA_32 Length)
-	LinCMap1D64=131		//LinC_CL : LinC_Map_1_D64_(_G_ data_64 *Line,_G_ DATA_32 *Match,_G_ DATA_64 *Table,_P_ DATA_32 Number,_P_ DATA_32 Length)
+	LinCMap1D64=131,	//LinC_CL : LinC_Map_1_D64_(_G_ data_64 *Line,_G_ DATA_32 *Match,_G_ DATA_64 *Table,_P_ DATA_32 Number,_P_ DATA_32 Length)
+	
+	LinCKernels=132		//LinC_CL : The Number of Kernels
 };
 MemC_Type_Declare_(enum,linc_ki,LINC_KI);	//LinC_CL : LinCKernel Indicator Enumeration
 
@@ -615,7 +617,7 @@ data_32 LinC_Min_1_R64_(REAL_64 _PL_ A,DATA_32 N);
 //　Required (Buffer) size is (Length)×5 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_I08_(inte_08 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 16-Bit Integer Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×2 bytes.
@@ -623,7 +625,7 @@ general LinC_Order_I08_(inte_08 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×6 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_I16_(inte_16 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 32-Bit Integer Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×4 bytes.
@@ -631,7 +633,7 @@ general LinC_Order_I16_(inte_16 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×8 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_I32_(inte_32 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 64-Bit Integer Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×8 bytes.
@@ -639,7 +641,7 @@ general LinC_Order_I32_(inte_32 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×12 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_I64_(inte_64 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 8-Bit Natural Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×1 bytes.
@@ -647,7 +649,7 @@ general LinC_Order_I64_(inte_64 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×5 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_D08_(data_08 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 16-Bit Natural Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×2 bytes.
@@ -655,7 +657,7 @@ general LinC_Order_D08_(data_08 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×6 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_D16_(data_16 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 32-Bit Natural Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×4 bytes.
@@ -663,7 +665,7 @@ general LinC_Order_D16_(data_16 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×8 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_D32_(data_32 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 64-Bit Natural Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×8 bytes.
@@ -671,7 +673,7 @@ general LinC_Order_D32_(data_32 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×12 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_D64_(data_64 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 32-Bit Real Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×4 bytes.
@@ -679,7 +681,7 @@ general LinC_Order_D64_(data_64 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×8 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_R32_(real_32 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 //LinClip : 64-Bit Real Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×8 bytes.
@@ -687,7 +689,7 @@ general LinC_Order_R32_(real_32 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //　Required (Buffer) size is (Length)×12 bytes.
 //＊Mode Null : Ascending Order
 //　Mode Full : Descending Order
-//＊Values in (ValueLine) should be initialized before processing.
+//＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_R64_(real_64 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 #endif
 #if(MemC_Fold_(Declaration:Mapping Functions))

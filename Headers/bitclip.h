@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.17	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -33,14 +33,6 @@ MemC_Type_Rename_(int64_t,inte_64,INTE_64)	//BitClip : 64-bit Integer
 
 MemC_Type_Rename_(float,real_32,REAL_32)	//BitClip : 32-bit Single Precision Floating Point
 MemC_Type_Rename_(double,real_64,REAL_64)	//BitClip : 64-bit Double Precision Floating Point
-
-MemC_Type_Rename_(void,general,GENERAL)			//BitClip : Void
-MemC_Type_Rename_(size_t,address,ADDRESS)		//BitClip : Size
-MemC_Type_Rename_(signed int,integer,INTEGER)	//BitClip : Integer
-MemC_Type_Rename_(unsigned int,natural,NATURAL)	//BitClip : Natural
-
-typedef void (*func_p_)(void);	//BitClip : Function Pointer Variable
-typedef const func_p_ FUNC_P_;	//BitClip : Function Pointer Constant
 
 enum _boolean	//BitClip : Boolean Enumeration
 {
@@ -331,57 +323,61 @@ static_assert(sizeof(data_32)<=sizeof(address),"The size of an address value mus
 #endif
 
 #if(MemC_Fold_(Definition:Macros))
-#define Inte_Max_08_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(((inte_08)(Output))>>7);(Output)=(InputB)-(Output);}													//BitClip : Maximum of 8-bit Integer - Only valid for Data Range under 0x40
-#define Inte_Max_16_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(((inte_16)(Output))>>15);(Output)=(InputB)-(Output);}													//BitClip : Maximum of 16-bit Integer - Only valid for Data Range under 0x4000
-#define Inte_Max_32_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(((inte_32)(Output))>>31);(Output)=(InputB)-(Output);}													//BitClip : Maximum of 32-bit Integer - Only valid for Data Range under 0x40000000
-#define Inte_Max_64_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(((inte_64)(Output))>>63);(Output)=(InputB)-(Output);}													//BitClip : Maximum of 64-bit Integer - Only valid for Data Range under 0x4000000000000000
-
-#define Inte_Min_08_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(((inte_08)(Output))>>7);(Output)+=(InputB);}															//BitClip : Minimum of 8-bit Integer - Only valid for Data Range under 0x40
-#define Inte_Min_16_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(((inte_16)(Output))>>15);(Output)+=(InputB);}															//BitClip : Minimum of 16-bit Integer - Only valid for Data Range under 0x4000
-#define Inte_Min_32_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(((inte_32)(Output))>>31);(Output)+=(InputB);}															//BitClip : Minimum of 32-bit Integer - Only valid for Data Range under 0x40000000
-#define Inte_Min_64_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(((inte_64)(Output))>>63);(Output)+=(InputB);}															//BitClip : Minimum of 64-bit Integer - Only valid for Data Range under 0x4000000000000000
-
-#define Inte_Abs_08_Positive_(Output,Input) {(Output)=((inte_08)(Input))>>7;(Output)^=((Input)+(Output));}																				//BitClip : Positive Absolute of 8-bit Integer
-#define Inte_Abs_16_Positive_(Output,Input) {(Output)=((inte_16)(Input))>>15;(Output)^=((Input)+(Output));}																				//BitClip : Positive Absolute of 16-bit Integer
-#define Inte_Abs_32_Positive_(Output,Input) {(Output)=((inte_32)(Input))>>31;(Output)^=((Input)+(Output));}																				//BitClip : Positive Absolute of 32-bit Integer
-#define Inte_Abs_64_Positive_(Output,Input) {(Output)=((inte_64)(Input))>>63;(Output)^=((Input)+(Output));}																				//BitClip : Positive Absolute of 64-bit Integer
-
-#define Inte_Abs_08_Negative_(Output,Input) {(Output)=((inte_08)(Input))>>7;(Output)=~(Output);(Output)^=((Input)+(Output));}															//BitClip : Negative Absolute of 8-bit Integer
-#define Inte_Abs_16_Negative_(Output,Input) {(Output)=((inte_16)(Input))>>15;(Output)=~(Output);(Output)^=((Input)+(Output));}															//BitClip : Negative Absolute of 16-bit Integer
-#define Inte_Abs_32_Negative_(Output,Input) {(Output)=((inte_32)(Input))>>31;(Output)=~(Output);(Output)^=((Input)+(Output));}															//BitClip : Negative Absolute of 32-bit Integer
-#define Inte_Abs_64_Negative_(Output,Input) {(Output)=((inte_64)(Input))>>63;(Output)=~(Output);(Output)^=((Input)+(Output));}															//BitClip : Negative Absolute of 64-bit Integer
-
-#define Inte_Lim_08_Positive_(Output,Input) {(Output)=((inte_08)(Input))>>7;(Output)=~(Output);(Output)&=(Input);}																		//BitClip : Positive Clipping of 8-bit Integer
-#define Inte_Lim_16_Positive_(Output,Input) {(Output)=((inte_16)(Input))>>15;(Output)=~(Output);(Output)&=(Input);}																		//BitClip : Positive Clipping of 16-bit Integer
-#define Inte_Lim_32_Positive_(Output,Input) {(Output)=((inte_32)(Input))>>31;(Output)=~(Output);(Output)&=(Input);}																		//BitClip : Positive Clipping of 32-bit Integer
-#define Inte_Lim_64_Positive_(Output,Input) {(Output)=((inte_64)(Input))>>63;(Output)=~(Output);(Output)&=(Input);}																		//BitClip : Positive Clipping of 64-bit Integer
-
-#define Inte_Lim_08_Negative_(Output,Input) {(Output)=((inte_08)(Input))>>7;(Output)&=(Input);}																							//BitClip : Negative Clipping of 8-bit Integer
-#define Inte_Lim_16_Negative_(Output,Input) {(Output)=((inte_16)(Input))>>15;(Output)&=(Input);}																						//BitClip : Negative Clipping of 16-bit Integer
-#define Inte_Lim_32_Negative_(Output,Input) {(Output)=((inte_32)(Input))>>31;(Output)&=(Input);}																						//BitClip : Negative Clipping of 32-bit Integer
-#define Inte_Lim_64_Negative_(Output,Input) {(Output)=((inte_64)(Input))>>63;(Output)&=(Input);}																						//BitClip : Negative Clipping of 64-bit Integer
-
-#define Real_Max_32_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(*(inte_32*)&(Output))&=((*(inte_32*)&(Output))>>31);(Output)=(InputB)-(Output);}								//BitClip : Maximum of 32-bit Real
-#define Real_Max_64_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(*(inte_64*)&(Output))&=((*(inte_64*)&(Output))>>63);(Output)=(InputB)-(Output);}								//BitClip : Maximum of 64-bit Real
-
-#define Real_Min_32_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(*(inte_32*)&(Output))&=((*(inte_32*)&(Output))>>31);(Output)+=(InputB);}										//BitClip : Minimum of 32-bit Real
-#define Real_Min_64_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(*(inte_64*)&(Output))&=((*(inte_64*)&(Output))>>63);(Output)+=(InputB);}										//BitClip : Minimum of 64-bit Real
-
-#define Real_Abs_32_Positive_(Output,Input) {*(inte_32*)&(Output)=(*(inte_32*)&(Input))&0x7FFFFFFF;}																					//BitClip : Positive Absolute of 32-bit Real
-#define Real_Abs_64_Positive_(Output,Input) {*(inte_64*)&(Output)=(*(inte_64*)&(Input))&0x7FFFFFFFFFFFFFFF;}																			//BitClip : Positive Absolute of 64-bit Real
-
-#define Real_Abs_32_Negative_(Output,Input) {*(inte_32*)&(Output)=(*(inte_32*)&(Input))|0x80000000;}																					//BitClip : Negative Absolute of 32-bit Real
-#define Real_Abs_64_Negative_(Output,Input) {*(inte_64*)&(Output)=(*(inte_64*)&(Input))|0x8000000000000000;}																			//BitClip : Negative Absolute of 64-bit Real
-
-#define Real_Lim_32_Positive_(Output,Input) {*(inte_32*)&(Output)=(*(inte_32*)&(Input))>>31;*(inte_32*)&(Output)=~(*(inte_32*)&(Output));*(inte_32*)&(Output)&=(*(inte_32*)&(Input));}	//BitClip : Positive Clipping of 32-bit Real
-#define Real_Lim_64_Positive_(Output,Input) {*(inte_64*)&(Output)=(*(inte_64*)&(Input))>>63;*(inte_64*)&(Output)=~(*(inte_64*)&(Output));*(inte_64*)&(Output)&=(*(inte_64*)&(Input));}	//BitClip : Positive Clipping of 64-bit Real
-
-#define Real_Lim_32_Negative_(Output,Input) {*(inte_32*)&(Output)=(*(inte_32*)&(Input))>>31;*(inte_32*)&(Output)&=(*(inte_32*)&(Input));}												//BitClip : Negative Clipping of 32-bit Real
-#define Real_Lim_64_Negative_(Output,Input) {*(inte_64*)&(Output)=(*(inte_64*)&(Input))>>63;*(inte_64*)&(Output)&=(*(inte_64*)&(Input));}												//BitClip : Negative Clipping of 64-bit Real
-
-#define Func_Declare_V_(Return,Func_,...) Return (*Func_)(__VA_ARGS__)																													//BitClip : Function Pointer Variable Declaration
-#define Func_Declare_C_(Return,Func_,...) Return (_PL_ Func_)(__VA_ARGS__)																												//BitClip : Function Pointer Constant Declaration
-#define Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)																													//BitClip : Function Pointer Casting
+#if(MemC_Fold_(Part:BitC_Max_T##_))
+#define BitC_Max_I08_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_08,Output)>>7);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 8-bit Integer - Only valid for Data Range under 0x40
+#define BitC_Max_I16_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_16,Output)>>15);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 16-bit Integer - Only valid for Data Range under 0x4000
+#define BitC_Max_I32_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 32-bit Integer - Only valid for Data Range under 0x40000000
+#define BitC_Max_I64_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 64-bit Integer - Only valid for Data Range under 0x4000000000000000
+#define BitC_Max_R32_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}	//BitClip : Maximum of 32-bit Real
+#define BitC_Max_R64_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}	//BitClip : Maximum of 64-bit Real
+#endif
+#if(MemC_Fold_(Part:BitC_Min_T##_))
+#define BitC_Min_I08_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_08,Output)>>7);(Output)+=(InputB);}				//BitClip : Minimum of 8-bit Integer - Only valid for Data Range under 0x40
+#define BitC_Min_I16_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_16,Output)>>15);(Output)+=(InputB);}				//BitClip : Minimum of 16-bit Integer - Only valid for Data Range under 0x4000
+#define BitC_Min_I32_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}				//BitClip : Minimum of 32-bit Integer - Only valid for Data Range under 0x40000000
+#define BitC_Min_I64_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}				//BitClip : Minimum of 64-bit Integer - Only valid for Data Range under 0x4000000000000000
+#define BitC_Min_R32_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}	//BitClip : Minimum of 32-bit Real
+#define BitC_Min_R64_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}	//BitClip : Minimum of 64-bit Real
+#endif
+#if(MemC_Fold_(Part:BitC_Abs_P_T##_))
+#define BitC_Abs_P_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 8-bit Integer
+#define BitC_Abs_P_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 16-bit Integer
+#define BitC_Abs_P_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 32-bit Integer
+#define BitC_Abs_P_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 64-bit Integer
+#define BitC_Abs_P_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)&0x7FFFFFFF;}			//BitClip : Positive Absolute of 32-bit Real
+#define BitC_Abs_P_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)&0x7FFFFFFFFFFFFFFF;}	//BitClip : Positive Absolute of 64-bit Real
+#endif
+#if(MemC_Fold_(Part:BitC_Abs_N_T##_))
+#define BitC_Abs_N_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 8-bit Integer
+#define BitC_Abs_N_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 16-bit Integer
+#define BitC_Abs_N_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 32-bit Integer
+#define BitC_Abs_N_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 64-bit Integer
+#define BitC_Abs_N_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)|0x80000000;}								//BitClip : Negative Absolute of 32-bit Real
+#define BitC_Abs_N_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)|0x8000000000000000;}						//BitClip : Negative Absolute of 64-bit Real
+#endif
+#if(MemC_Fold_(Part:BitC_Lim_P_T##_))
+#define BitC_Lim_P_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 8-bit Integer
+#define BitC_Lim_P_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 16-bit Integer
+#define BitC_Lim_P_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 32-bit Integer
+#define BitC_Lim_P_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 64-bit Integer
+#define BitC_Lim_P_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)=~Acs_(inte_32,Output);Acs_(inte_32,Output)&=Acs_(inte_32,Input);}	//BitClip : Positive Clipping of 32-bit Real
+#define BitC_Lim_P_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)=~Acs_(inte_64,Output);Acs_(inte_64,Output)&=Acs_(inte_64,Input);}	//BitClip : Positive Clipping of 64-bit Real
+#endif
+#if(MemC_Fold_(Part:BitC_Lim_N_T##_))
+#define BitC_Lim_N_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)&=(Input);}										//BitClip : Negative Clipping of 8-bit Integer
+#define BitC_Lim_N_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)&=(Input);}										//BitClip : Negative Clipping of 16-bit Integer
+#define BitC_Lim_N_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)&=(Input);}										//BitClip : Negative Clipping of 32-bit Integer
+#define BitC_Lim_N_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)&=(Input);}										//BitClip : Negative Clipping of 64-bit Integer
+#define BitC_Lim_N_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)&=Acs_(inte_32,Input);}	//BitClip : Negative Clipping of 32-bit Real
+#define BitC_Lim_N_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)&=Acs_(inte_64,Input);}	//BitClip : Negative Clipping of 64-bit Real
+#endif
+#if(MemC_Fold_(Part:BitC_Reform_D##_))
+#define BitC_Reform_(S,T,SShp,StoTAxis,Dims,type) _BitC_Reform_(S,T,SShp,StoTAxis,Dims,sizeof(type))	//BitClip : Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
+#define BitC_Reform_D08_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_08)			//BitClip : 8-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
+#define BitC_Reform_D16_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_16)			//BitClip : 16-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
+#define BitC_Reform_D32_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_32)			//BitClip : 32-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
+#define BitC_Reform_D64_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_64)			//BitClip : 64-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
+#endif
 #endif
 
 #if(MemC_Fold_(Declaration:Global Constants))
@@ -931,5 +927,10 @@ general BitC_CL_Delete_(bitc_cl *_PL_ KernelManager);
 //＊Return value is an error code.
 penc_eu BitC_CL_Action_(BITC_CL _PL_ KernelManager,MEMC_MS _PL_ KernelArgument,BITC_KI KernelIndicator);
 #endif
+#endif
+
+#if(MemC_Fold_(Declaration:Renamed Functions))
+//BitClip : See "BitC_Reform_D##_"
+boolean _BitC_Reform_(GENERAL _PL_ Source,general _PL_ Target,DATA_32 _PL_ SourceShape,DATA_32 _PL_ SourceTargetAxisMapping,data_32 Dimensions,data_32 TypeSize);
 #endif
 #endif
