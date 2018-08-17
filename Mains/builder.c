@@ -22,19 +22,19 @@ integer main(general)
 			if(Error.E==CLSuccess)
 			{
 				Error=BitC_CL_Binary_(QC->Queue,PathI,PathO,Option.String.N08);
-				Printer_Console_("\n");
+				PenC_String_Writer_("\n");
 				if(Error.E==CLSuccess)
 				{
 					Error=LinC_CL_Binary_(QC->Queue,PathI,PathO,Option.String.N08);
-					Printer_Console_("\n");
+					PenC_String_Writer_("\n");
 				}
 			}
 			else
-				Printer_Console_("Error Occurred during Parsing the Build Option\n");
+				PenC_String_Writer_("Error Occurred during Parsing the Build Option\n");
 		}
 		else
 		{
-			Printer_Console_("Invalid Platform or Device\n");
+			PenC_String_Writer_("Invalid Platform or Device\n");
 			Error.E=CLInvalidCommandQueue;
 		}
 		Devi_QC_Delete_(&QC);
@@ -53,7 +53,7 @@ static penc_eu _Main_Build_Option_(cl_device_id const Device,name_08 *Option,add
 		Error.I=Devi_Size_Info_Device_(Device,&Size,CL_DEVICE_EXTENSIONS);
 		if(Error.E==CLSuccess)
 		{
-			name_08 *Buffer=Line_Alloc_(Size,name_08);
+			name_08 *Buffer=MemC_Alloc_1D(Size,name_08);
 
 			if(Buffer)
 			{
@@ -61,12 +61,12 @@ static penc_eu _Main_Build_Option_(cl_device_id const Device,name_08 *Option,add
 				if(Error.E==CLSuccess)
 				{
 					{
-						Printer_Buffer_(Option,Count,"-D _ABLE_R16_=%d ",(Word_Finder_(Buffer,"cl_khr_fp16")!=NULL));
+						PenC_String_Writer_Buffer_(Option,Count,"-D _ABLE_R16_=%d ",(Word_Finder_(Buffer,"cl_khr_fp16")!=NULL));
 						Option+=16;
 						Count-=16;
 					}
 					{
-						Printer_Buffer_(Option,Count,"-D _ABLE_R64_=%d ",(Word_Finder_(Buffer,"cl_khr_fp64")!=NULL));
+						PenC_String_Writer_Buffer_(Option,Count,"-D _ABLE_R64_=%d ",(Word_Finder_(Buffer,"cl_khr_fp64")!=NULL));
 						Option+=16;
 						Count-=16;
 					}
