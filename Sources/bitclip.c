@@ -16,13 +16,14 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.08.14";
+static DATA_08 IdiomVersion[16]="Date:2018.08.17";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
 static INTE_32 ConstantInvalid32[4]={0x7F800000,0xFF800000,0x7FFFFFFF,0xFFFFFFFF};
 static INTE_32 ConstantPi32[4]={0x40490FDB,0x3EA2F983,0x402DF854,0x3EBC5AB2};
 
+static DATA_32 TableReform[8]={3,0,1,0,2,0,1,0};
 static DATA_64 TableShrink64[8]={0x0000000000000001,0x0000000000000002,0x0000000000000004,0x0000000000000008,0x0000000000000010,0x0000000000000020,0x0000000000000040,0x0000000000000080};
 static DATA_32 TableShrink32[8]={0x00000001,0x00000002,0x00000004,0x00000008,0x00000010,0x00000020,0x00000040,0x00000080};
 static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x0040,0x0080};
@@ -4523,6 +4524,231 @@ general BitC_RO_L_2_R64_(data_08 *_R_ DataC,REAL_64 *_R_ DataA,REAL_64 *_R_ Data
 }
 #endif
 
+#if(MemC_Fold_(Definition:Reformation Functions))
+static boolean _BitC_Reform_Valid_(DATA_32 *_R_ Map,DATA_32 Dims)
+{
+	boolean Table[MemC_Copy_Max_Dimension]={BitCNull};
+	boolean Flag;
+	data_32 Idx;
+
+	for(Idx=0;Idx<Dims;Idx++)
+		if(Map[Idx]<Dims)
+			Table[Map[Idx]]=BitCFull;
+		else
+		{
+			Flag=BitCNull;
+			goto ESCAPE;
+		}
+	for(Idx=0,Flag=BitCFull;Idx<Dims;Idx++)
+		Flag&=Table[Idx];
+ESCAPE:
+	return Flag;
+}
+static general _BitC_Reform_Short_(DATA_32 _PL_ Shape,DATA_32 _PL_ Map,data_32 _PL_ Dims,data_32 _PL_ Bytes)
+{
+	data_32 Temp;
+
+	for(Temp=(*Dims)-1;Temp;Temp--)
+		if(Map[Temp]==Temp)
+		{
+			(*Bytes)*=Shape[Temp];
+			(*Dims)=Temp;
+		}
+		else
+			break;
+}
+static general _BitC_Reform_Merge_(data_32 _PL_ Shape,data_32 _PL_ Map,data_32 _PL_ Dims)
+{
+	DATA_32 *End=Map+(*Dims);
+	DATA_32 *Last=End-1;
+	data_32 *MapA;
+	data_32 *MapB;
+	data_32 *MapC;
+	data_32 *ShpA;
+	data_32 *ShpB;
+	data_32 *ShpC;
+	data_32 Pull;
+
+	for(MapA=Map,ShpA=Shape;MapA<Last;MapA++,ShpA++)
+	{
+		for(MapB=MapA,ShpB=ShpA;MapB<Last;MapB++,ShpB++)
+			if((MapB[0]+1)==MapB[1])
+				ShpA[0]*=ShpB[1];
+			else
+				break;
+
+		if(MapA<MapB)
+		{
+			for(MapC=Map,Pull=(data_32)(MapB-MapA);MapC<MapA;MapC++)
+				if(MapC[0]>MapA[0])
+					MapC[0]-=Pull;
+
+			for(MapB++,MapC++,ShpB++,ShpC=ShpA+1;MapB<End;MapB++,MapC++,ShpB++,ShpC++)
+			{
+				MapC[0]=(MapA[0]<MapB[0])?(MapB[0]-Pull):(MapB[0]);
+				ShpC[0]=ShpB[0];
+			}
+
+			End=MapC;
+			Last=End-1;
+			*Dims=(data_32)(End-Map);
+		}
+	}
+}
+static data_32 _BitC_Reform_Total_(DATA_32 *_R_ Shape,DATA_32 Dims)
+{
+	DATA_32 _PL_ End=Shape+Dims;
+	data_32 Total;
+
+	for(Total=1;Shape<End;Shape++)
+		Total*=*Shape;
+
+	return Total;
+}
+static general _BitC_Reform_Order_(BITCLIP Source,BITCLIP Target,DATA_32 _PL_ Shape,DATA_32 _PL_ Map,DATA_32 Total,DATA_32 Dims,DATA_32 Bytes)
+{
+	DATA_32 Switch=Bytes&0x00000007;
+	DATA_32 Loop=Bytes>>TableReform[Switch];
+	DATA_32 Last=Dims-1;
+	data_32 Jump[MemC_Copy_Max_Dimension];
+	data_32 Prod;
+	data_32 IdxS;
+	data_32 IdxT;
+	data_32 IdxJ;
+
+	switch(Switch)
+	{
+	default:
+		for(IdxT=0;IdxT<Total;IdxT++)
+		{
+			for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+			{
+				IdxJ--;
+				Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+			}
+			for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+			{
+				IdxJ--;
+				IdxS+=Prod*Jump[IdxJ];
+			}
+			IdxS*=Loop;
+			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
+				Target.V.D08[IdxJ]=Source.C.D08[IdxS];
+		}
+		break;
+	case 2:case 6:
+		for(IdxT=0;IdxT<Total;IdxT++)
+		{
+			for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+			{
+				IdxJ--;
+				Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+			}
+			for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+			{
+				IdxJ--;
+				IdxS+=Prod*Jump[IdxJ];
+			}
+			IdxS*=Loop;
+			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
+				Target.V.D16[IdxJ]=Source.C.D16[IdxS];
+		}
+		break;
+	case 4:
+		for(IdxT=0;IdxT<Total;IdxT++)
+		{
+			for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+			{
+				IdxJ--;
+				Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+			}
+			for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+			{
+				IdxJ--;
+				IdxS+=Prod*Jump[IdxJ];
+			}
+			IdxS*=Loop;
+			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
+				Target.V.D32[IdxJ]=Source.C.D32[IdxS];
+		}
+		break;
+	case 0:
+		for(IdxT=0;IdxT<Total;IdxT++)
+		{
+			for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+			{
+				IdxJ--;
+				Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+			}
+			for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+			{
+				IdxJ--;
+				IdxS+=Prod*Jump[IdxJ];
+			}
+			IdxS*=Loop;
+			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
+				Target.V.D64[IdxJ]=Source.C.D64[IdxS];
+		}
+	}
+}
+boolean _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,DATA_32 _PL_ ShapeS,DATA_32 _PL_ AxisStoT,data_32 Dimensions,data_32 Bytes)
+{
+	if(Dimensions)
+	{
+		_BitC_Reform_Short_(ShapeS,AxisStoT,&Dimensions,&Bytes);
+		if(Dimensions>1)
+			if(Dimensions<MemC_Copy_Max_Dimension)
+				if(_BitC_Reform_Valid_(AxisStoT,Dimensions))
+				{
+					data_32 Total=_BitC_Reform_Total_(ShapeS,Dimensions);
+
+					if(Total)
+					{
+						data_32 ShapeSNew[MemC_Copy_Max_Dimension];
+						data_32 MapTNew[MemC_Copy_Max_Dimension];
+
+						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions,data_32))
+							goto FAILURE;
+
+						if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions,data_32))
+							goto FAILURE;
+
+						_BitC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
+						_BitC_Reform_Order_(Acs_(bitclip,ArrayS),Acs_(bitclip,ArrayT),ShapeSNew,MapTNew,Total,Dimensions,Bytes);
+						goto SUCCESS;
+					}
+					else
+						goto SUCCESS;
+				}
+				else
+					goto FAILURE;
+			else
+				goto FAILURE;
+		else
+			if(AxisStoT[0])
+				goto FAILURE;
+			else
+			{
+				const size_t Copy=ShapeS[0]*Bytes;
+
+				if(Copy)
+					if(MemC_Copy_Byte_(ArrayS,ArrayT,Copy))
+						goto FAILURE;
+					else
+						goto SUCCESS;
+				else
+					goto SUCCESS;
+			}
+	}
+	else
+		goto SUCCESS;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
+}
+#endif
+
 #if(MemC_Fold_(Definition:BitClip Managed Functions))
 #ifdef __OPENCL_H
 static NAME_08 *_BitC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_ Name,ADDRESS Capacity)
@@ -4530,10 +4756,10 @@ static NAME_08 *_BitC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 	NAME_08 *Return;
 
 	if(Prefix)
-		if(Word_Copier_(Buffer,Prefix,Capacity))
+		if(PenC_String_Copier_(Buffer,Prefix,Capacity))
 			Return=NULL;
 		else
-			if(Word_Concat_(Buffer,Name,Capacity))
+			if(PenC_String_Concat_(Buffer,Name,Capacity))
 				Return=NULL;
 			else
 				Return=Buffer;
@@ -4545,7 +4771,7 @@ static NAME_08 *_BitC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
 {
 	ADDRESS Length=1024;
-	name_08 _PL_ _PL_ Buffer=Rect_Alloc_(3,Length,name_08);
+	name_08 _PL_ _PL_ Buffer=MemC_Alloc_2D_(3,Length,name_08);
 	penc_eu Error;
 
 	if(Buffer)
@@ -4652,12 +4878,12 @@ static devi_km *_BitC_Create_KM_(cl_kernel const Kernel,BITC_KI Switch)
 
 bitc_cl *BitC_CL_Create_(general)
 {
-	bitc_cl *Manager=Byte_Alloc_(sizeof(bitc_cl)+MemC_Size_(devi_km*,BitCKernels));
+	bitc_cl *Manager=MemC_Alloc_Byte_(sizeof(bitc_cl)+MemC_Size_(devi_km*,BitCKernels));
 
 	if(Manager)
 	{
 		Acs_(GENERAL*,Manager->Helper)=NULL;
-		Acs_(devi_km**,Manager->KMSet)=Line_Clear_(Manager+1,BitCKernels,devi_km*);
+		Acs_(devi_km**,Manager->KMSet)=MemC_Clear_1D_(Manager+1,BitCKernels,devi_km*);
 	}
 
 	return Manager;
@@ -4703,7 +4929,7 @@ penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_0
 			if(Count)
 			{
 				ADDRESS Length=1024;
-				name_08 *Buffer=Line_Alloc_(Length,name_08);
+				name_08 *Buffer=MemC_Alloc_1D_(Length,name_08);
 
 				if(Buffer)
 				{

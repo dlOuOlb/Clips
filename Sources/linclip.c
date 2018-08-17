@@ -1,10 +1,6 @@
 ﻿#include "linclip.h"
 
 #if(MemC_Fold_(Definition:Macros))
-#ifdef __OPENCL_H
-#define _LinC_Total_Kernels 132
-#define _LinC_Kernel_Name_Length 16
-#endif
 #define _LinC_Pattern_1_Safe_(C,A,E,V,op) do{for(;(A)<(E);(A)+=8,(C)+=8){(C)[0]=(A)[0]op(V);(C)[1]=(A)[1]op(V);(C)[2]=(A)[2]op(V);(C)[3]=(A)[3]op(V);(C)[4]=(A)[4]op(V);(C)[5]=(A)[5]op(V);(C)[6]=(A)[6]op(V);(C)[7]=(A)[7]op(V);}}while(0)
 #define _LinC_Pattern_1_Rest_(C,A,E,V,op) do{for(;(A)<(E);(A)++,(C)++){(C)[0]=(A)[0]op(V);}}while(0)
 
@@ -13,12 +9,12 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.07.25";
+static DATA_08 IdiomVersion[16]="Date:2018.08.17";
 static ADDRESS ConstantSize[2]={sizeof(real_32),sizeof(real_64)};
 
 #ifdef __OPENCL_H
 static NAME_08 IdiomFileName[40]="ouoclip.cl\0\0linclip.cl\0\0linclip.obj";
-static NAME_08 IdiomKernelName[_LinC_Total_Kernels][_LinC_Kernel_Name_Length]=
+static NAME_08 IdiomKernelName[LinCKernels][16]=
 {
 	"LinC_Ari_0_I08_",	"LinC_Ari_0_I16_",	"LinC_Ari_0_I32_",	"LinC_Ari_0_I64_",
 	"",					"LinC_Ari_0_R16_",	"LinC_Ari_0_R32_",	"LinC_Ari_0_R64_",
@@ -56,7 +52,7 @@ static NAME_08 IdiomKernelName[_LinC_Total_Kernels][_LinC_Kernel_Name_Length]=
 };
 
 static NAME_08 _PL_ AddressFileName[4]={IdiomFileName+0,IdiomFileName+12,IdiomFileName+24,NULL};
-static NAME_08 _PL_ AddressKernelName[_LinC_Total_Kernels]=
+static NAME_08 _PL_ AddressKernelName[LinCKernels]=
 {
 	IdiomKernelName[0],IdiomKernelName[1],IdiomKernelName[2],IdiomKernelName[3],
 	IdiomKernelName[4],IdiomKernelName[5],IdiomKernelName[6],IdiomKernelName[7],
@@ -2057,7 +2053,7 @@ static general _LinC_Sort_2_Move_D64_(data_64 _PL_ ValueA,data_64 _PL_ ValueB,da
 		IndexB[1]=IndexA[T[1]];
 	}
 }
-static general _LinC_Recur_D08_(data_08 *ValueSource,data_32 *IndexSource,data_08 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
+static general _LinC_Recur_D08_(data_08 *ValueSource,data_32 *IndexSource,data_08 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,integer Bits)
 {
 	data_32 Offset=(data_32)(_LinC_Radix_D08_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_08)1)<<((data_08)Bits))-ValueTarget);
 
@@ -2127,7 +2123,7 @@ JUMP_B:
 			}
 	}
 }
-static general _LinC_Recur_D16_(data_16 *ValueSource,data_32 *IndexSource,data_16 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
+static general _LinC_Recur_D16_(data_16 *ValueSource,data_32 *IndexSource,data_16 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,integer Bits)
 {
 	data_32 Offset=(data_32)(_LinC_Radix_D16_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_16)1)<<((data_16)Bits))-ValueTarget);
 
@@ -2197,7 +2193,7 @@ JUMP_B:
 			}
 	}
 }
-static general _LinC_Recur_D32_(data_32 *ValueSource,data_32 *IndexSource,data_32 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
+static general _LinC_Recur_D32_(data_32 *ValueSource,data_32 *IndexSource,data_32 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,integer Bits)
 {
 	data_32 Offset=(data_32)(_LinC_Radix_D32_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_32)1)<<((data_32)Bits))-ValueTarget);
 
@@ -2267,7 +2263,7 @@ JUMP_B:
 			}
 	}
 }
-static general _LinC_Recur_D64_(data_64 *ValueSource,data_32 *IndexSource,data_64 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,natural Bits)
+static general _LinC_Recur_D64_(data_64 *ValueSource,data_32 *IndexSource,data_64 *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,integer Bits)
 {
 	data_32 Offset=(data_32)(_LinC_Radix_D64_(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((data_64)1)<<((data_64)Bits))-ValueTarget);
 
@@ -2337,25 +2333,6 @@ JUMP_B:
 			}
 	}
 }
-static general _LinC_Index_(data_32 _PL_ _R_ Index,DATA_32 Length)
-{
-	DATA_32 Safe=Length&0xFFFFFFF8;
-	data_32 Temp=0;
-
-	while(Temp<Safe)
-	{
-		Index[Temp]=Temp;Temp++;
-		Index[Temp]=Temp;Temp++;
-		Index[Temp]=Temp;Temp++;
-		Index[Temp]=Temp;Temp++;
-		Index[Temp]=Temp;Temp++;
-		Index[Temp]=Temp;Temp++;
-		Index[Temp]=Temp;Temp++;
-		Index[Temp]=Temp;Temp++;
-	}
-	for(;Temp<Length;Temp++)
-		Index[Temp]=Temp;
-}
 #endif
 general LinC_Order_D08_(data_08 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode)
 {
@@ -2364,7 +2341,6 @@ general LinC_Order_D08_(data_08 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 _PL_ IndexTemp=(data_32*)Buffer;
 		data_08 _PL_ ValueTemp=(data_08*)(IndexTemp+Length);
 
-		_LinC_Index_(Index,Length);
 		_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],7);
 	}
 }
@@ -2375,7 +2351,6 @@ general LinC_Order_D16_(data_16 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 _PL_ IndexTemp=(data_32*)Buffer;
 		data_16 _PL_ ValueTemp=(data_16*)(IndexTemp+Length);
 
-		_LinC_Index_(Index,Length);
 		_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],15);
 	}
 }
@@ -2386,7 +2361,6 @@ general LinC_Order_D32_(data_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 _PL_ IndexTemp=(data_32*)Buffer;
 		data_32 _PL_ ValueTemp=(data_32*)(IndexTemp+Length);
 
-		_LinC_Index_(Index,Length);
 		_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],31);
 	}
 }
@@ -2397,7 +2371,6 @@ general LinC_Order_D64_(data_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		data_32 _PL_ IndexTemp=(data_32*)Buffer;
 		data_64 _PL_ ValueTemp=(data_64*)(IndexTemp+Length);
 
-		_LinC_Index_(Index,Length);
 		_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,~BitCBool[Mode&1],63);
 	}
 }
@@ -2409,7 +2382,6 @@ general LinC_Order_I08_(inte_08 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		inte_08 _PL_ ValueTemp=(inte_08*)(IndexTemp+Length);
 		data_32 Offset;
 
-		_LinC_Index_(Index,Length);
 		Offset=(data_32)((inte_08*)_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,~BitCBool[Mode&1],0x80)-ValueTemp);
 		if(Offset)
 			_LinC_Recur_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,Mode,6);
@@ -2425,7 +2397,6 @@ general LinC_Order_I16_(inte_16 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		inte_16 _PL_ ValueTemp=(inte_16*)(IndexTemp+Length);
 		data_32 Offset;
 
-		_LinC_Index_(Index,Length);
 		Offset=(data_32)((inte_16*)_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,~BitCBool[Mode&1],0x8000)-ValueTemp);
 		if(Offset)
 			_LinC_Recur_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,Mode,14);
@@ -2441,7 +2412,6 @@ general LinC_Order_I32_(inte_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		inte_32 _PL_ ValueTemp=(inte_32*)(IndexTemp+Length);
 		data_32 Offset;
 
-		_LinC_Index_(Index,Length);
 		Offset=(data_32)((inte_32*)_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitCBool[Mode&1],0x80000000U)-ValueTemp);
 		if(Offset)
 			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,Mode,30);
@@ -2457,7 +2427,6 @@ general LinC_Order_I64_(inte_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		inte_64 _PL_ ValueTemp=(inte_64*)(IndexTemp+Length);
 		data_32 Offset;
 
-		_LinC_Index_(Index,Length);
 		Offset=(data_32)((inte_64*)_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitCBool[Mode&1],0x8000000000000000UL)-ValueTemp);
 		if(Offset)
 			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,Mode,62);
@@ -2473,7 +2442,6 @@ general LinC_Order_R32_(real_32 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		real_32 _PL_ ValueTemp=(real_32*)(IndexTemp+Length);
 		data_32 Offset;
 
-		_LinC_Index_(Index,Length);
 		Offset=(data_32)((real_32*)_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitCBool[Mode&1],0x80000000U)-ValueTemp);
 		if(Offset)
 			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,BitCFull,30);
@@ -2489,7 +2457,6 @@ general LinC_Order_R64_(real_64 _PL_ Line,data_32 _PL_ Index,general _PL_ Buffer
 		real_64 _PL_ ValueTemp=(real_64*)(IndexTemp+Length);
 		data_32 Offset;
 		
-		_LinC_Index_(Index,Length);
 		Offset=(data_32)((real_64*)_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitCBool[Mode&1],0x8000000000000000UL)-ValueTemp);
 		if(Offset)
 			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,BitCFull,62);
@@ -2580,10 +2547,10 @@ static NAME_08 *_LinC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 	NAME_08 *Return;
 
 	if(Prefix)
-		if(Word_Copier_(Buffer,Prefix,Capacity))
+		if(PenC_String_Copier_(Buffer,Prefix,Capacity))
 			Return=NULL;
 		else
-			if(Word_Concat_(Buffer,Name,Capacity))
+			if(PenC_String_Concat_(Buffer,Name,Capacity))
 				Return=NULL;
 			else
 				Return=Buffer;
@@ -2595,7 +2562,7 @@ static NAME_08 *_LinC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 penc_eu LinC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
 {
 	ADDRESS Length=1024;
-	name_08 _PL_ _PL_ Buffer=Rect_Alloc_(3,Length,name_08);
+	name_08 _PL_ _PL_ Buffer=MemC_Alloc_2D_(3,Length,name_08);
 	penc_eu Error;
 
 	if(Buffer)
@@ -2771,12 +2738,12 @@ static devi_km *_LinC_Create_KM_(cl_kernel const Kernel,LINC_KI Switch)
 }
 linc_cl *LinC_CL_Create_(general)
 {
-	linc_cl *Manager=Byte_Alloc_(sizeof(linc_cl)+MemC_Size_(devi_km*,_LinC_Total_Kernels));
+	linc_cl *Manager=MemC_Alloc_Byte_(sizeof(linc_cl)+MemC_Size_(devi_km*,LinCKernels));
 
 	if(Manager)
 	{
 		Acs_(GENERAL*,Manager->Helper)=NULL;
-		Acs_(devi_km**,Manager->KMSet)=Line_Clear_(Manager+1,_LinC_Total_Kernels,devi_km*);
+		Acs_(devi_km**,Manager->KMSet)=MemC_Clear_1D_(Manager+1,LinCKernels,devi_km*);
 	}
 
 	return Manager;
@@ -2804,14 +2771,14 @@ penc_eu LinC_CL_Launch_(cl_command_queue const Queue,LINC_CL _PL_ Manager,NAME_0
 			Error.E=CLInvalidHostPtr;
 		else
 		{
-			GENERAL *Slot[_LinC_Total_Kernels];
-			linc_ki Link[_LinC_Total_Kernels];
+			GENERAL *Slot[LinCKernels];
+			linc_ki Link[LinCKernels];
 			cl_uint Count=0;
 
 			{
 				bitc_ki Index;
 
-				for(Index=0;Index<_LinC_Total_Kernels;Index++)
+				for(Index=0;Index<LinCKernels;Index++)
 					if(Manager->KMSet[Index])
 					{
 						Slot[Count]=LinCKernel[Index];
@@ -2822,7 +2789,7 @@ penc_eu LinC_CL_Launch_(cl_command_queue const Queue,LINC_CL _PL_ Manager,NAME_0
 			if(Count)
 			{
 				ADDRESS Length=1024;
-				name_08 *Buffer=Line_Alloc_(Length,name_08);
+				name_08 *Buffer=MemC_Alloc_1D_(Length,name_08);
 
 				if(Buffer)
 				{
@@ -2885,7 +2852,7 @@ general LinC_CL_Delete_(linc_cl *_PL_ Manager)
 	{
 		if((*Manager)->Helper)
 		{
-			devi_km **Ptr=(devi_km**)((*Manager)->KMSet+_LinC_Total_Kernels);
+			devi_km **Ptr=(devi_km**)((*Manager)->KMSet+LinCKernels);
 
 			for(Ptr--;Ptr>=(*Manager)->KMSet;Ptr--)
 				Devi_KM_Delete_(Ptr);
@@ -3027,7 +2994,7 @@ penc_eu LinC_CL_Action_(LINC_CL _PL_ Manager,MEMC_MS _PL_ Argument,LINC_KI Indic
 				if(Indicator<0)
 					Error.E=CLInvalidKernelName;
 				else
-					if(Indicator<_LinC_Total_Kernels)
+					if(Indicator<LinCKernels)
 						if(Manager->KMSet[Indicator])
 							if((Argument->Nums)<((address)(Manager->KMSet[Indicator]->KArgs)))
 								Error.E=CLInvalidKernelArgs;
@@ -3058,8 +3025,4 @@ penc_eu LinC_CL_Action_(LINC_CL _PL_ Manager,MEMC_MS _PL_ Argument,LINC_KI Indic
 #undef _LinC_Pattern_2_Safe_
 #undef _LinC_Pattern_1_Rest_
 #undef _LinC_Pattern_1_Safe_
-#ifdef __OPENCL_H
-#undef _LinC_Kernel_Name_Length
-#undef _LinC_Total_Kernels
-#endif
 #endif
