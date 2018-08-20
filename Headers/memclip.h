@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.17	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.20	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -67,6 +67,8 @@ static_assert((sizeof(cl_int)<=sizeof(size_t)),"sizeof(cl_int) > sizeof(size_t)"
 #define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)	//MemClip : Function Pointer Casting
 
 #define MemC_Type_Func_Declare_(Return,func_type_,FUNC_TYPE_,...) typedef MemC_Func_Declare_V_(Return,func_type_,__VA_ARGS__);typedef MemC_Func_Declare_C_(Return,FUNC_TYPE_,__VA_ARGS__);	//MemClip : Macro for Function Type Declaration
+
+#define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
 #endif
 
 #if(MemC_Fold_(Definition:Types))
@@ -219,116 +221,12 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #endif
 
 #if(MemC_Fold_(Definition:Macros))
-#if(MemC_Fold_(Part:Memory))
 #define MemC_Mute_(Argument) ((general)(Argument))			//MemClip : Unused Argument Warning Mute
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))	//MemClip : Byte Size of Elements
 
-#define MemC_Deloc_(Memory) do{if(Memory){free(Memory);(Memory)=NULL;}}while(0)			//MemClip : Memory Deallocation
-#define MemC_Alloc_Unit_(type) (type*)MemC_Alloc_Byte_(sizeof(type))					//MemClip : Unit Memory Allocation
-#define MemC_Alloc_1D_(Z,type) (type*)_MemC_Alloc_1D_(Z,sizeof(type))					//MemClip : 1D Array Memory Allocation
-#define MemC_Alloc_2D_(Y,Z,type) (type**)_MemC_Alloc_2D_(Y,Z,sizeof(type))				//MemClip : 2D Array Memory Allocation
-#define MemC_Alloc_3D_(X,Y,Z,type) (type***)_MemC_Alloc_3D_(X,Y,Z,sizeof(type))			//MemClip : 3D Array Memory Allocation
-#define MemC_Alloc_4D_(W,X,Y,Z,type) (type****)_MemC_Alloc_4D_(W,X,Y,Z,sizeof(type))	//MemClip : 4D Array Memory Allocation
-
-#define MemC_Clear_Byte_(Memory,ByteSize) memset(Memory,0,ByteSize)							//MemClip : Data Reset in Byte Size
-#define MemC_Copy_Byte_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)	//MemClip : Data Copy in Byte Size
-#define MemC_Compare_Byte_(MemoryA,MemoryB,ByteSize) memcmp(MemoryA,MemoryB,ByteSize)		//MemClip : Data Compare in Byte Size
-
-#define MemC_Clear_Unit_(Unit,type) (type*)memset(Unit,0,sizeof(type))			//MemClip : Unit Data Reset
-#define MemC_Compare_Unit_(UnitA,UnitB,type) memcmp(UnitA,UnitB,sizeof(type))	//MemClip : Unit Data Compare
-
-#define MemC_Clear_1D_(Line,Elements,type) (type*)memset(Line,0,(Elements)*sizeof(type))									//MemClip : 1D Array Data Reset
-#define MemC_Copy_1D_(Source,Target,Elements,type) memcpy_s(Target,(Elements)*sizeof(type),Source,(Elements)*sizeof(type))	//MemClip : 1D Array Data Copy
-#define MemC_Compare_1D_(LineA,LineB,Elements,type) memcmp(LineA,LineB,(Elements)*sizeof(type))								//MemClip : 1D Array Data Compare
-
-#define MemC_Init_1D_(Memory,Tile,Elements,type) _MemC_Init_1D_(Memory,Tile,Elements,sizeof(type))							//MemClip : 1D Array Data Preset
-#define MemC_Pick_1D_(Source,Target,Channels,Elements,type) _MemC_Pick_1D_(Source,Target,Channels,Elements,sizeof(type))	//MemClip : 1D Array Channel Pick
-#define MemC_Fill_1D_(Source,Target,Channels,Elements,type) _MemC_Fill_1D_(Source,Target,Channels,Elements,sizeof(type))	//MemClip : 1D Array Channel Fill
-
-#define MemC_Assign_1D_U_(Address,Line,Jump,Number,type) _MemC_Assign_1D_(Address,Line,Jump,Number,sizeof(type),0)				//MemClip : 1D Array Uniform Interval Addressing
-#define MemC_Assign_1D_N_(Address,Line,Jump,Number,type) _MemC_Assign_1D_(Address,Line,(address)(Jump),Number,sizeof(type),1)	//MemClip : 1D Array Non-Uniform Interval Addressing
-
-#define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,type) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(type))	//MemClip : Key Finding for Switch Operation
-#define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))	//MemClip : Array Data Copy
-#define MemC_Reform_(S,T,SShp,Axis,Dims,type) _MemC_Reform_(S,T,SShp,Axis,Dims,sizeof(type))							//MemClip : Array Data Reshape for SShp[Dim] == TShp[Axis[Dim]]
-
-#define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
-#endif
-#if(MemC_Fold_(Part:OpenCL))
-#ifdef __OPENCL_H
-#define Devi_Numb_Platforms_(Num) clGetPlatformIDs(0,NULL,Num)													//MemC_CL : Platform Number Get
-#define Devi_List_Platforms_(List,Listed,Entries) clGetPlatformIDs(Entries,List,Listed)							//MemC_CL : Platform List Get
-#define Devi_Info_Platform_(Pltf,List,Num,type,Flag) clGetPlatformInfo(Pltf,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Platform Information Get
-#define Devi_Size_Info_Platform_(Pltf,Size,Flag) clGetPlatformInfo(Pltf,Flag,0,NULL,Size)						//MemC_CL : Platform Information Size Get
-
-#define Devi_Numb_Devices_(Pltf,Num) clGetDeviceIDs(Pltf,CL_DEVICE_TYPE_ALL,0,NULL,Num)								//MemC_CL : Device Number Get
-#define Devi_List_Devices_(Pltf,List,Listed,Entries) clGetDeviceIDs(Pltf,CL_DEVICE_TYPE_ALL,Entries,List,Listed)	//MemC_CL : Device List Get
-#define Devi_Info_Device_(Devi,List,Num,type,Flag) clGetDeviceInfo(Devi,Flag,(Num)*sizeof(type),List,NULL)			//MemC_CL : Device Information Get
-#define Devi_Size_Info_Device_(Devi,Size,Flag) clGetDeviceInfo(Devi,Flag,0,NULL,Size)								//MemC_CL : Device Information Size Get
-
-#define Devi_Create_Context_(DeviceList,Number,Error) clCreateContext(NULL,Number,DeviceList,NULL,NULL,Error)	//MemC_CL : Context Memory Allocation - Deallocate with "Devi_Delete_Context_"
-#define Devi_Delete_Context_(Context) do{if(Context){clReleaseContext(Context);(Context)=NULL;}}while(0)		//MemC_CL : Context Memory Deallocation
-#define Devi_Info_Context_(Cntx,List,Num,type,Flag) clGetContextInfo(Cntx,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Context Information Get
-#define Devi_Size_Info_Context_(Cntx,Size,Flag) clGetContextInfo(Cntx,Flag,0,NULL,Size)							//MemC_CL : Context Information Size Get
-
-#define Devi_Create_Program_Source_(Cntx,SrcList,SrcLng,SrcNum,Error) clCreateProgramWithSource(Cntx,SrcNum,SrcList,SrcLng,Error)							//MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
-#define Devi_Create_Program_Binary_(DeviList,Cntx,BinList,BinLng,BinNum,Error) clCreateProgramWithBinary(Cntx,BinNum,DeviList,BinLng,BinList,NULL,Error)	//MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
-#define Devi_Delete_Program_(Program) do{if(Program){clReleaseProgram(Program);(Program)=NULL;}}while(0)													//MemC_CL : Program Memory Deallocation
-#define Devi_Info_Program_(Prgm,List,Num,type,Flag) clGetProgramInfo(Prgm,Flag,(Num)*sizeof(type),List,NULL)												//MemC_CL : Program Information Get
-#define Devi_Size_Info_Program_(Prgm,Size,Flag) clGetProgramInfo(Prgm,Flag,0,NULL,Size)																		//MemC_CL : Program Information Size Get
-
-#define Devi_Build_(Program,Option) clBuildProgram(Program,0,NULL,Option,NULL,NULL)											//MemC_CL : Program Build
-#define Devi_Info_Build_(Devi,Prgm,List,Num,type,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Program Build Information Get
-#define Devi_Size_Info_Build_(Devi,Prgm,Size,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,0,NULL,Size)						//MemC_CL : Program Build Information Size Get
-
-#define Devi_Create_Kernel_(Program,KernelName,Error) clCreateKernel(Program,KernelName,Error)								//MemC_CL : Kernel Memory Allocation - Deallocate with "Devi_Delete_Kernel_"
-#define Devi_Create_Kernel_Set_(Program,Set,Created,Entries) clCreateKernelsInProgram(Program,Entries,Set,Created)			//MemC_CL : Multiple Kernels Memory Allocation
-#define Devi_Delete_Kernel_(Kernel) do{if(Kernel){clReleaseKernel(Kernel);(Kernel)=NULL;}}while(0)							//MemC_CL : Kernel Memory Deallocation
-#define Devi_Info_Kernel_(Krnl,List,Num,type,Flag) clGetKernelInfo(Krnl,Flag,(Num)*sizeof(type),List,NULL)					//MemC_CL : Kernel Information Get
-#define Devi_Size_Info_Kernel_(Krnl,Size,Flag) clGetKernelInfo(Krnl,Flag,0,NULL,Size)										//MemC_CL : Kernel Information Size Get
-#define Devi_Info_Work_(Devi,Krnl,List,Num,type,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Kernel Work Group Information Get
-#define Devi_Size_Info_Work_(Devi,Krnl,Size,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,0,NULL,Size)						//MemC_CL : Kernel Work Group Information Size Get
-
-#define Devi_Create_Queue_(Context,Device,Error) clCreateCommandQueueWithProperties(Context,Device,NULL,Error)		//MemC_CL : Command Queue Memory Allocation - Deallocate with "Devi_Delete_Queue_"
-#define Devi_Delete_Queue_(Queue) do{if(Queue){clReleaseCommandQueue(Queue);(Queue)=NULL;}}while(0)					//MemC_CL : Command Queue Memory Deallocation
-#define Devi_Info_Queue_(Queue,List,Num,type,Flag) clGetCommandQueueInfo(Queue,Flag,(Num)*sizeof(type),List,NULL)	//MemC_CL : Command Queue Information Get
-#define Devi_Size_Info_Queue_(Queue,Size,Flag) clGetCommandQueueInfo(Queue,Flag,0,NULL,Size)						//MemC_CL : Command Queue Information Size Get
-
-#define Devi_Create_Buffer_(Context,Elements,type,Error) _Devi_Create_Buffer_(Context,Elements,sizeof(type),Error)					//MemC_CL : Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
-#define Devi_Create_Buffer_GL_(Context,GLBuffer,Error) _Devi_Create_Buffer_GL_(Context,GLBuffer,Error)								//MemC_CL : OpenGL Shared Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
-#define Devi_Create_Buffer_Sub_(Root,Offset,Elements,type,Error) _Devi_Create_Buffer_Sub_(Root,Offset,Elements,sizeof(type),Error)	//MemC_CL : Sub-Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
-#define Devi_Delete_Buffer_(Memory) do{if(Memory){clReleaseMemObject(Memory);(Memory)=NULL;}}while(0)								//MemC_CL : Buffer or Sub-Buffer Object Memory Deallocation
-#define Devi_Info_Buffer_(Bf,List,Num,type,Flag) clGetMemObjectInfo(Bf,Flag,(Num)*sizeof(type),List,NULL)							//MemC_CL : Buffer or Sub-Buffer Object Information Get
-#define Devi_Size_Info_Buffer_(Bf,Size,Flag) clGetMemObjectInfo(Bf,Flag,0,NULL,Size)												//MemC_CL : Buffer or Sub-Buffer Object Information Size Get
-
-#define Devi_Create_Event_(Context,Error) clCreateUserEvent(Context,Error)														//MemC_CL : Event Object Memory Allocation - Deallocate with "Devi_Delete_Event_"
-#define Devi_Delete_Event_(Event,Error) do{(Error)=_Devi_Delete_Event_(Event);if((Error)==CL_SUCCESS){(Event)=NULL;}}while(0)	//MemC_CL : Event Object Memory Deallocation
-#define Devi_Event_Inc_(Event) clRetainEvent(Event)																				//MemC_CL : Event Count Increase
-#define Devi_Event_Dec_(Event) clReleaseEvent(Event)																			//MemC_CL : Event Count Decrease
-#define Devi_Info_Event_(Event,List,Num,type,Flag) clGetEventInfo(Event,Flag,(Num)*sizeof(type),List,NULL)						//MemC_CL : Event Object Information Get
-#define Devi_Size_Info_Event_(Event,Size,Flag) clGetEventInfo(Event,Flag,0,NULL,Size)											//MemC_CL : Event Object Information Size Get
-#define Devi_Wait_Event_(EventList,Number) clWaitForEvents(Number,EventList)													//MemC_CL : Waiting for Events to Complete
-
-#define Devi_Init_(Q,Bf,Val,Ofs,Lng,type) clEnqueueFillBuffer(Q,Bf,Val,sizeof(type),(Ofs)*sizeof(type),(Lng)*sizeof(type),0,NULL,NULL)	//MemC_CL : Buffer Object Memory Initialization
-#define Devi_Copy_(Q,S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type,Flag) _Devi_Copy_(Q,S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type),Flag)		//MemC_CL : Buffer Object Memory Copy
-#define Devi_Copy_1D_(Q,S,T,SOfs,TOfs,Lng,type,Flag) _Devi_Copy_1D_(Q,S,T,SOfs,TOfs,Lng,sizeof(type),Flag)								//MemC_CL : Buffer Object Memory 1D Copy
-
-#define Devi_Flush_(Queue) clFlush(Queue)	//MemC_CL : Command Queue Flush
-#define Devi_Finish_(Queue) clFinish(Queue)	//MemC_CL : Command Queue Finish
-
-#define Devi_Karg_(Kernel,Order,Address,ByteSize) clSetKernelArg(Kernel,Order,ByteSize,Address)	//MemC_CL : Kernel Argument Set
-
-#define Devi_KM_Type_C_(KM,Index) _Devi_KM_Type_(KM,Index,0,DeviDomainConstant)					//MemC_CL : Kernel Manager Argument Type Setting (Constant Domain)
-#define Devi_KM_Type_G_(KM,Index) _Devi_KM_Type_(KM,Index,0,DeviDomainGlobal)					//MemC_CL : Kernel Manager Argument Type Setting (Global Domain)
-#define Devi_KM_Type_L_(KM,Index,type) _Devi_KM_Type_(KM,Index,sizeof(type),DeviDomainLocal)	//MemC_CL : Kernel Manager Argument Type Setting (Local Domain)
-#define Devi_KM_Type_P_(KM,Index,type) _Devi_KM_Type_(KM,Index,sizeof(type),DeviDomainPrivate)	//MemC_CL : Kernel Manager Argument Type Setting (Private Domain)
-#endif
-#endif
-#if(MemC_Fold_(Part:Literals))
 #define MemC_Copy_Max_Dimension 8	//MemClip : Maximum Copy Dimension of "MemC_Copy_"
 #ifdef __OPENCL_H
 #define Devi_Copy_Max_Dimension 3	//MemC_CL : Maximum Copy Dimension of "Devi_Copy_"
-#endif
 #endif
 #endif
 
@@ -346,16 +244,86 @@ extern MEMC_DT _PL_ _PL_ MemCType;
 //MemClip : Memory Allocation Check
 //＊Return value is 0 for failure, 1 for success.
 integer MemC_Check_(GENERAL _PL_ *MemorySet,ADDRESS Count);
-//MemClip : Memory Allocation - Deallocate with "MemC_Deloc_"
-general *MemC_Alloc_Byte_(ADDRESS ByteSize);
+
+//MemClip : Memory Deallocation
+#define MemC_Deloc_(Memory) do{if(Memory){free(Memory);(Memory)=NULL;}}while(0)
+//MemClip : Batch Memory Deallocation
+general MemC_Deloc_Set_(general **MemorySet,ADDRESS Count);
+
 //MemClip : Array Memory Allocation - Deallocate with "MemC_Deloc_"
 //＊Return value is the allocated memory address.
 general *MemC_Alloc_(ADDRESS _PL_ ArraySize,ADDRESS DimensionsNumber,ADDRESS ElementSize);
-//MemClip : Batch Memory Deallocation
-general MemC_Deloc_Set_(general **MemorySet,ADDRESS Count);
+//MemClip : Memory Allocation - Deallocate with "MemC_Deloc_"
+general *MemC_Alloc_Byte_(ADDRESS ByteSize);
+//MemClip : Unit Memory Allocation - Deallocate with "MemC_Deloc_"
+#define MemC_Alloc_Unit_(type) (type*)MemC_Alloc_Byte_(sizeof(type))
+//MemClip : 1D Array Memory Allocation - Deallocate with "MemC_Deloc_
+general *_MemC_Alloc_1D_(ADDRESS,ADDRESS);
+#define MemC_Alloc_1D_(Z,type) (type*)_MemC_Alloc_1D_(Z,sizeof(type))
+//MemClip : 2D Array Memory Allocation - Deallocate with "MemC_Deloc_
+general *_MemC_Alloc_2D_(ADDRESS,ADDRESS,ADDRESS);
+#define MemC_Alloc_2D_(Y,Z,type) (type**)_MemC_Alloc_2D_(Y,Z,sizeof(type))
+//MemClip : 3D Array Memory Allocation - Deallocate with "MemC_Deloc_
+general *_MemC_Alloc_3D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS);
+#define MemC_Alloc_3D_(X,Y,Z,type) (type***)_MemC_Alloc_3D_(X,Y,Z,sizeof(type))
+//MemClip : 4D Array Memory Allocation - Deallocate with "MemC_Deloc_
+general *_MemC_Alloc_4D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS,ADDRESS);
+#define MemC_Alloc_4D_(W,X,Y,Z,type) (type****)_MemC_Alloc_4D_(W,X,Y,Z,sizeof(type))
+
+//MemClip : Data Reset in Byte Size
+#define MemC_Clear_Byte_(Memory,ByteSize) memset(Memory,0,ByteSize)
+//MemClip : Unit Data Reset
+#define MemC_Clear_Unit_(Unit,type) (type*)memset(Unit,0,sizeof(type))
+//MemClip : 1D Array Data Reset
+#define MemC_Clear_1D_(Line,Elements,type) (type*)memset(Line,0,(Elements)*sizeof(type))
+
+//MemClip : Data Copy in Byte Size
+#define MemC_Copy_Byte_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)
+//MemClip : Unit Data Copy
+#define MemC_Copy_Unit_(Source,Target,type) memcpy_s(Target,sizeof(type),Source,sizeof(type))
+//MemClip : 1D Array Data Copy
+#define MemC_Copy_1D_(Source,Target,Elements,type) memcpy_s(Target,(Elements)*sizeof(type),Source,(Elements)*sizeof(type))
+
+//MemClip : Data Compare in Byte Size
+#define MemC_Compare_Byte_(MemoryA,MemoryB,ByteSize) memcmp(MemoryA,MemoryB,ByteSize)
+//MemClip : Unit Data Compare
+#define MemC_Compare_Unit_(UnitA,UnitB,type) memcmp(UnitA,UnitB,sizeof(type))
+//MemClip : 1D Array Data Compare
+#define MemC_Compare_1D_(LineA,LineB,Elements,type) memcmp(LineA,LineB,(Elements)*sizeof(type))
+
+//MemClip : Array Data Copy
+errno_t _MemC_Copy_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
+#define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))
+
+//MemClip : Array Data Reshape for TargetShape[dim] == SourceShape[ReformingAxis[dim]]
+errno_t _MemC_Reform_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
+#define MemC_Reform_(S,T,SShp,Axis,Dims,type) _MemC_Reform_(S,T,SShp,Axis,Dims,sizeof(type))
+
+//MemClip : Object Sorting
+//＊Required ReferTable size is Count×sizeof(general*) bytes.
+//＊If IndexTable is not NULL, then its required size is Count×sizeof(address) bytes.
+//＊Required BufferSpace size is 2×Count×sizeof(address) bytes.
+//＊If Comp_(ReferTable[m],ReferTable[n]) is not 0, then those two will be swapped during the process.
+errno_t MemC_Sort_(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ ReferTable,address _PL_ IndexTable,address _PL_ BufferSpace,ADDRESS Count);
+
+//MemClip : 1D Array Data Preset
+errno_t _MemC_Init_1D_(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS Number,ADDRESS TypeSize);
+#define MemC_Init_1D_(Memory,Tile,Elements,type) _MemC_Init_1D_(Memory,Tile,Elements,sizeof(type))
+//MemClip : 1D Array Channel Pick
+errno_t _MemC_Pick_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS Channels,ADDRESS Number,ADDRESS TypeSize);
+#define MemC_Pick_1D_(Source,Target,Channels,Elements,type) _MemC_Pick_1D_(Source,Target,Channels,Elements,sizeof(type))
+//MemClip : 1D Array Channel Fill
+errno_t _MemC_Fill_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS Channels,ADDRESS Number,ADDRESS TypeSize);
+#define MemC_Fill_1D_(Source,Target,Channels,Elements,type) _MemC_Fill_1D_(Source,Target,Channels,Elements,sizeof(type))
+
+//MemClip :  1D Array Uniform or Non-Uniform Interval Addressing
+address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,INTEGER Mode);
+#define MemC_Assign_1D_U_(Address,Line,Jump,Number,type) _MemC_Assign_1D_(Address,Line,Jump,Number,sizeof(type),0)
+#define MemC_Assign_1D_N_(Address,Line,Jump,Number,type) _MemC_Assign_1D_(Address,Line,(address)(Jump),Number,sizeof(type),1)
 #endif
 
 #if(MemC_Fold_(Declaration:MemClip Structure Functions))
+#if(MemC_Fold_(Part:MemC_MS))
 //MemClip : Memory Slot Memory Allocation - Deallocate with "MemC_MS_Delete_"
 //＊Nums = SlotsNumber
 memc_ms *MemC_MS_Create_(GENERAL _PL_ Identification,ADDRESS SlotsNumber);
@@ -380,7 +348,8 @@ integer MemC_MS_Null_(MEMC_MS _PL_ MemorySlot,INTEGER CheckMode);
 integer MemC_MS_Joke_(MEMC_MS _PL_ MemorySlot);
 //MemClip : Oops!
 integer MemC_MS_Oops_(MEMC_MS _PL_ MemorySlot);
-
+#endif
+#if(MemC_Fold_(Part:MemC_MC))
 //MemClip : Memory Container Memory Allocation - Deallocate with "MemC_MC_Delete_"
 //＊Unit = TypeInfo -> SizeType
 //　Dims = ShapeInfo -> Slot.V[0]
@@ -398,27 +367,164 @@ integer MemC_MC_Form_(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ ShapeInfo);
 //MemClip : Memory Container Data Type Change
 integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 #endif
+#endif
 
 #if(MemC_Fold_(Declaration:OpenCL Functions))
 #ifdef __OPENCL_H
+#if(MemC_Fold_(Part:Platform))
+//MemC_CL : Platform Number Get
+#define Devi_Numb_Platforms_(Num) clGetPlatformIDs(0,NULL,Num)
+//MemC_CL : Platform List Get
+#define Devi_List_Platforms_(List,Listed,Entries) clGetPlatformIDs(Entries,List,Listed)
+//MemC_CL : Platform Information Get
+#define Devi_Info_Platform_(Pltf,List,Num,type,Flag) clGetPlatformInfo(Pltf,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Platform Information Size Get
+#define Devi_Size_Info_Platform_(Pltf,Size,Flag) clGetPlatformInfo(Pltf,Flag,0,NULL,Size)
+#endif
+#if(MemC_Fold_(Part:Device))
+//MemC_CL : Device Number Get
+#define Devi_Numb_Devices_(Pltf,Num) clGetDeviceIDs(Pltf,CL_DEVICE_TYPE_ALL,0,NULL,Num)
+//MemC_CL : Device List Get
+#define Devi_List_Devices_(Pltf,List,Listed,Entries) clGetDeviceIDs(Pltf,CL_DEVICE_TYPE_ALL,Entries,List,Listed)
+//MemC_CL : Device Information Get
+#define Devi_Info_Device_(Devi,List,Num,type,Flag) clGetDeviceInfo(Devi,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Device Information Size Get
+#define Devi_Size_Info_Device_(Devi,Size,Flag) clGetDeviceInfo(Devi,Flag,0,NULL,Size)
+#endif
+#if(MemC_Fold_(Part:Context))
+//MemC_CL : Context Memory Allocation - Deallocate with "Devi_Delete_Context_"
+#define Devi_Create_Context_(DeviceList,Number,Error) clCreateContext(NULL,Number,DeviceList,NULL,NULL,Error)
+//MemC_CL : Context Memory Deallocation
+#define Devi_Delete_Context_(Context) do{if(Context){clReleaseContext(Context);(Context)=NULL;}}while(0)
+//MemC_CL : Context Information Get
+#define Devi_Info_Context_(Cntx,List,Num,type,Flag) clGetContextInfo(Cntx,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Context Information Size Get
+#define Devi_Size_Info_Context_(Cntx,Size,Flag) clGetContextInfo(Cntx,Flag,0,NULL,Size)
+#endif
+#if(MemC_Fold_(Part:Program))
+//MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
+#define Devi_Create_Program_Source_(Cntx,SrcList,SrcLng,SrcNum,Error) clCreateProgramWithSource(Cntx,SrcNum,SrcList,SrcLng,Error)
+//MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
+#define Devi_Create_Program_Binary_(DeviList,Cntx,BinList,BinLng,BinNum,Error) clCreateProgramWithBinary(Cntx,BinNum,DeviList,BinLng,BinList,NULL,Error)
+//MemC_CL : Program Memory Deallocation
+#define Devi_Delete_Program_(Program) do{if(Program){clReleaseProgram(Program);(Program)=NULL;}}while(0)
+//MemC_CL : Program Information Get
+#define Devi_Info_Program_(Prgm,List,Num,type,Flag) clGetProgramInfo(Prgm,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Program Information Size Get
+#define Devi_Size_Info_Program_(Prgm,Size,Flag) clGetProgramInfo(Prgm,Flag,0,NULL,Size)
+
+//MemC_CL : Program Build
+#define Devi_Build_(Program,Option) clBuildProgram(Program,0,NULL,Option,NULL,NULL)
+//MemC_CL : Program Build Information Get
+#define Devi_Info_Build_(Devi,Prgm,List,Num,type,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Program Build Information Size Get
+#define Devi_Size_Info_Build_(Devi,Prgm,Size,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,0,NULL,Size)
+#endif
+#if(MemC_Fold_(Part:Command Queue))
+//MemC_CL : Command Queue Memory Allocation - Deallocate with "Devi_Delete_Queue_"
+#define Devi_Create_Queue_(Context,Device,Error) clCreateCommandQueueWithProperties(Context,Device,NULL,Error)
+//MemC_CL : Command Queue Memory Deallocation
+#define Devi_Delete_Queue_(Queue) do{if(Queue){clReleaseCommandQueue(Queue);(Queue)=NULL;}}while(0)
+//MemC_CL : Command Queue Information Get
+#define Devi_Info_Queue_(Queue,List,Num,type,Flag) clGetCommandQueueInfo(Queue,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Command Queue Information Size Get
+#define Devi_Size_Info_Queue_(Queue,Size,Flag) clGetCommandQueueInfo(Queue,Flag,0,NULL,Size)
+
+//MemC_CL : Command Queue Flush
+#define Devi_Flush_(Queue) clFlush(Queue)
+//MemC_CL : Command Queue Finish
+#define Devi_Finish_(Queue) clFinish(Queue)
+#endif
+#if(MemC_Fold_(Part:Kernel))
+//MemC_CL : Kernel Memory Allocation - Deallocate with "Devi_Delete_Kernel_"
+#define Devi_Create_Kernel_(Program,KernelName,Error) clCreateKernel(Program,KernelName,Error)
+//MemC_CL : Multiple Kernels Memory Allocation
+#define Devi_Create_Kernel_Set_(Program,Set,Created,Entries) clCreateKernelsInProgram(Program,Entries,Set,Created)
+//MemC_CL : Kernel Memory Deallocation
+#define Devi_Delete_Kernel_(Kernel) do{if(Kernel){clReleaseKernel(Kernel);(Kernel)=NULL;}}while(0)
+//MemC_CL : Kernel Information Get
+#define Devi_Info_Kernel_(Krnl,List,Num,type,Flag) clGetKernelInfo(Krnl,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Kernel Information Size Get
+#define Devi_Size_Info_Kernel_(Krnl,Size,Flag) clGetKernelInfo(Krnl,Flag,0,NULL,Size)
+//MemC_CL : Kernel Work Group Information Get
+#define Devi_Info_Work_(Devi,Krnl,List,Num,type,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Kernel Work Group Information Size Get
+#define Devi_Size_Info_Work_(Devi,Krnl,Size,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,0,NULL,Size)
+
+//MemC_CL : Kernel Argument Set
+#define Devi_Karg_(Kernel,Order,Address,ByteSize) clSetKernelArg(Kernel,Order,ByteSize,Address)
+
 //MemC_CL : Kernel Enqueue
 //＊Maximum dimension is 3.
 cl_int Devi_Kenq_(cl_command_queue const,cl_kernel const,ADDRESS _PL_ WorkGroups,ADDRESS _PL_ LocalWorkers,ADDRESS _PL_ GlobalOffset,const cl_uint Dimensions);
+#endif
+#if(MemC_Fold_(Part:Buffer))
+//MemC_CL : Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
+cl_mem _Devi_Create_Buffer_(cl_context const,ADDRESS,ADDRESS,cl_int _PL_ Err);
+#define Devi_Create_Buffer_(Context,Elements,type,Error) _Devi_Create_Buffer_(Context,Elements,sizeof(type),Error)
+//MemC_CL : OpenGL Shared Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
+cl_mem _Devi_Create_Buffer_GL_(cl_context const,const cl_GLuint,cl_int _PL_ Err);
+#define Devi_Create_Buffer_GL_(Context,GLBuffer,Error) _Devi_Create_Buffer_GL_(Context,GLBuffer,Error)
+//MemC_CL : Sub-Buffer Object Memory Allocation - Deallocate with "Devi_Delete_Buffer_"
+cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,ADDRESS,ADDRESS,ADDRESS,cl_int _PL_ Err);
+#define Devi_Create_Buffer_Sub_(Root,Offset,Elements,type,Error) _Devi_Create_Buffer_Sub_(Root,Offset,Elements,sizeof(type),Error)
+//MemC_CL : Buffer or Sub-Buffer Object Memory Deallocation
+#define Devi_Delete_Buffer_(Memory) do{if(Memory){clReleaseMemObject(Memory);(Memory)=NULL;}}while(0)
+//MemC_CL : Buffer or Sub-Buffer Object Information Get
+#define Devi_Info_Buffer_(Bf,List,Num,type,Flag) clGetMemObjectInfo(Bf,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Buffer or Sub-Buffer Object Information Size Get
+#define Devi_Size_Info_Buffer_(Bf,Size,Flag) clGetMemObjectInfo(Bf,Flag,0,NULL,Size)
 
+//MemC_CL : Buffer Object Memory Initialization
+#define Devi_Init_(Q,Bf,Val,Ofs,Lng,type) clEnqueueFillBuffer(Q,Bf,Val,sizeof(type),(Ofs)*sizeof(type),(Lng)*sizeof(type),0,NULL,NULL)
+//MemC_CL : Buffer Object Memory Copy
+cl_int _Devi_Copy_(cl_command_queue const Queue,general _PL_ SourceBuffer,general _PL_ TargetBuffer,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,const cl_uint Dimensions,ADDRESS TypeSize,DEVI_CF Mode);
+#define Devi_Copy_(Q,S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type,Flag) _Devi_Copy_(Q,S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type),Flag)
+//MemC_CL : Buffer Object Memory 1D Copy
+cl_int _Devi_Copy_1D_(cl_command_queue const Queue,general _PL_ SourceBuffer,general _PL_ TargetBuffer,ADDRESS SourceOffset,ADDRESS TargetOffset,ADDRESS CopyLength,ADDRESS TypeSize,DEVI_CF Mode);
+#define Devi_Copy_1D_(Q,S,T,SOfs,TOfs,Lng,type,Flag) _Devi_Copy_1D_(Q,S,T,SOfs,TOfs,Lng,sizeof(type),Flag)
+#endif
+#if(MemC_Fold_(Part:Event))
+//MemC_CL : Event Object Memory Allocation - Deallocate with "Devi_Delete_Event_"
+#define Devi_Create_Event_(Context,Error) clCreateUserEvent(Context,Error)
+//MemC_CL : Event Object Memory Deallocation
+cl_int _Devi_Delete_Event_(cl_event const);
+#define Devi_Delete_Event_(Event,Error) do{(Error)=_Devi_Delete_Event_(Event);if((Error)==CL_SUCCESS){(Event)=NULL;}}while(0)
+//MemC_CL : Event Count Increase
+#define Devi_Event_Inc_(Event) clRetainEvent(Event)
+//MemC_CL : Event Count Decrease
+#define Devi_Event_Dec_(Event) clReleaseEvent(Event)
+//MemC_CL : Event Object Information Get
+#define Devi_Info_Event_(Event,List,Num,type,Flag) clGetEventInfo(Event,Flag,(Num)*sizeof(type),List,NULL)
+//MemC_CL : Event Object Information Size Get
+#define Devi_Size_Info_Event_(Event,Size,Flag) clGetEventInfo(Event,Flag,0,NULL,Size)
+//MemC_CL : Waiting for Events to Complete
+#define Devi_Wait_Event_(EventList,Number) clWaitForEvents(Number,EventList)
+#endif
+
+#if(MemC_Fold_(Part:Devi_QC))
 //MemC_CL : Queue Container Memory Allocation - Deallocate with "Devi_QC_Delete_"
 devi_qc *Devi_QC_Create_(const cl_uint PlatformSelect,const cl_uint DeviceSelect);
 //MemC_CL : Queue Container Memory Deallocation
 general Devi_QC_Delete_(devi_qc *_PL_ QueueContainer);
-
+#endif
+#if(MemC_Fold_(Part:Devi_MC))
 //MemC_CL : Memory Container Memory Allocation - Deallocate with "Devi_MC_Delete_"
 devi_mc *Devi_MC_Create_(GENERAL _PL_ Identification,cl_context const Context,ADDRESS BuffersNumber,ADDRESS EachLength,MEMC_DT _PL_ TypeInfo,cl_int *Error);
 //MemC_CL : Memory Container Memory Deallocation
 general Devi_MC_Delete_(devi_mc *_PL_ MemoryContainer);
 //MemClip : Memory Container Data Type Change
 integer Devi_MC_Change_(DEVI_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
-
+#endif
+#if(MemC_Fold_(Part:Devi_KM))
 //MemC_CL : Kernel Manager Memory Allocation - Deallocate with "Devi_KM_Delete_"
 devi_km *Devi_KM_Create_(GENERAL _PL_ Identification,ADDRESS KernelArguments,ADDRESS WorkDimension);
+//MemC_CL : Kernel Manager Argument Type Setting for Constant, Global, Local, or Private Domain
+cl_int _Devi_KM_Type_(DEVI_KM _PL_ KernelManager,ADDRESS Index,ADDRESS TypeSize,DEVI_DF Mode);
+#define Devi_KM_Type_C_(KM,Index) _Devi_KM_Type_(KM,Index,0,DeviDomainConstant)
+#define Devi_KM_Type_G_(KM,Index) _Devi_KM_Type_(KM,Index,0,DeviDomainGlobal)
+#define Devi_KM_Type_L_(KM,Index,type) _Devi_KM_Type_(KM,Index,sizeof(type),DeviDomainLocal)
+#define Devi_KM_Type_P_(KM,Index,type) _Devi_KM_Type_(KM,Index,sizeof(type),DeviDomainPrivate)
 //MemC_CL : Kernel Manager Initialization
 //＊Execute only one time for one kernel manager, after type setting with "Devi_KM_Type_*_".
 cl_int Devi_KM_Init_(devi_km _PL_ KernelManager,cl_kernel const Kernel);
@@ -430,9 +536,9 @@ general Devi_KM_Delete_(devi_km *_PL_ KernelManager);
 //　then pass the number of local buffer elements as the token,
 //　otherwise pass the address of the argument as the token.
 cl_int Devi_KM_Save_(DEVI_KM _PL_ KM,ADDRESS Order,ADDRESS Token);
-
 //MemC_CL : Kernel Enqueue with Kernel Manager
 cl_int Devi_KM_Enqueue_(cl_command_queue const Queue,DEVI_KM _PL_ KernelManager);
+#endif
 #endif
 #endif
 
@@ -500,57 +606,8 @@ general MemC_Void_(general);
 //＊Table[idx]＝Mode？＆(Table[idx])：idx
 general MemC_Self_(address *_R_ Table,ADDRESS Count,INTEGER Mode);
 
-//MemClip : Object Sorting
-//＊Required ReferTable size is Count×sizeof(general*) bytes.
-//＊If IndexTable is not NULL, then its required size is Count×sizeof(address) bytes.
-//＊Required BufferSpace size is 2×Count×sizeof(address) bytes.
-//＊If Comp_(ReferTable[m],ReferTable[n]) is not 0, then those two will be swapped during the process.
-errno_t MemC_Sort_(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ ReferTable,address _PL_ IndexTable,address _PL_ BufferSpace,ADDRESS Count);
-#endif
-
-#if(MemC_Fold_(Declaration:Redefined Functions))
-//MemClip : See "MemC_Alloc_1D_".
-general *_MemC_Alloc_1D_(ADDRESS,ADDRESS);
-//MemClip : See "MemC_Alloc_2D_".
-general *_MemC_Alloc_2D_(ADDRESS,ADDRESS,ADDRESS);
-//MemClip : See "MemC_Alloc_3D_".
-general *_MemC_Alloc_3D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS);
-//MemClip : See "MemC_Alloc_4D_".
-general *_MemC_Alloc_4D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS,ADDRESS);
-
-//MemClip : See "MemC_Init_1D_".
-errno_t _MemC_Init_1D_(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS Number,ADDRESS TypeSize);
-//MemClip : See "MemC_Pick_1D_".
-errno_t _MemC_Pick_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS Channels,ADDRESS Number,ADDRESS TypeSize);
-//MemClip : See "MemC_Fill_1D_".
-errno_t _MemC_Fill_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS Channels,ADDRESS Number,ADDRESS TypeSize);
-
-//MemClip : See "MemC_Copy_".
-errno_t _MemC_Copy_(GENERAL _PL_ S,general _PL_ T,ADDRESS _PL_ OfsS,ADDRESS _PL_ OfsT,ADDRESS _PL_ Lng,ADDRESS _PL_ ShpS,ADDRESS _PL_ ShpT,ADDRESS Dims,ADDRESS TypeSize);
-//MemClip : See "MemC_Reform_".
-errno_t _MemC_Reform_(GENERAL _PL_ S,general _PL_ T,ADDRESS _PL_ ShpS,ADDRESS _PL_ AxisStoT,address Dims,address TypeSize);
-
-//MemClip : See "MemC_Assign_1D_N_" or "MemC_Assign_1D_U_".
-address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,INTEGER Mode);
-//MemClip : See "MemC_Switch_".
+//MemClip : Key Finding for Switch Operation
 address _MemC_Switch_(GENERAL _PL_ Key,GENERAL _PL_ _PL_ TblRf,ADDRESS* LngRf,ADDRESS LngKey,ADDRESS NumRf,ADDRESS TypeSize);
-
-#ifdef __OPENCL_H
-//MemC_CL : See "Devi_Create_Buffer_".
-cl_mem _Devi_Create_Buffer_(cl_context const,ADDRESS,ADDRESS,cl_int _PL_ Err);
-//MemC_CL : See "Devi_Create_Buffer_GL_".
-cl_mem _Devi_Create_Buffer_GL_(cl_context const,const cl_GLuint,cl_int _PL_ Err);
-//MemC_CL : See "Devi_Create_Buffer_Sub_".
-cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,ADDRESS,ADDRESS,ADDRESS,cl_int _PL_ Err);
-//MemC_CL : See "Devi_Delete_Event_".
-cl_int _Devi_Delete_Event_(cl_event const);
-
-//MemC_CL : See "Devi_Copy_".
-cl_int _Devi_Copy_(cl_command_queue const Q,general _PL_ S,general _PL_ T,ADDRESS _PL_ OfsS,ADDRESS _PL_ OfsT,ADDRESS _PL_ Lng,ADDRESS _PL_ ShpS,ADDRESS _PL_ ShpT,const cl_uint Dims,ADDRESS TypeSize,DEVI_CF Mode);
-//MemC_CL : See "Devi_Copy_1D_".
-cl_int _Devi_Copy_1D_(cl_command_queue const Q,general _PL_ S,general _PL_ T,ADDRESS OfsS,ADDRESS OfsT,ADDRESS Lng,ADDRESS TypeSize,DEVI_CF Mode);
-//MemC_CL : See "Devi_KM_Type_C_", "Devi_KM_Type_G_", "Devi_KM_Type_L_", or "Devi_KM_Type_P_".
-cl_int _Devi_KM_Type_(DEVI_KM _PL_ KM,ADDRESS Idx,ADDRESS TypeSize,DEVI_DF Mode);
-#endif
+#define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,type) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(type))
 #endif
 #endif
