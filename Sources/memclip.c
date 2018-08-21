@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.08.20";
+static BYTE_08 IdiomVersion[16]="Date:2018.08.21";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -1529,10 +1529,10 @@ cl_int _Devi_Copy_1D_(cl_command_queue const Queue,general _PL_ MemoryS,general 
 	switch(Mode)
 	{
 	case DeviCopyHtoD:
-		ErrorCode=clEnqueueWriteBuffer(Queue,MemoryT,CL_TRUE,Bytes*OriginT,Bytes*Length,((byte_08*)MemoryS)+(Bytes*OriginS),0,NULL,NULL);
+		ErrorCode=clEnqueueWriteBuffer(Queue,MemoryT,CL_FALSE,Bytes*OriginT,Bytes*Length,((byte_08*)MemoryS)+(Bytes*OriginS),0,NULL,NULL);
 		break;
 	case DeviCopyDtoH:
-		ErrorCode=clEnqueueReadBuffer(Queue,MemoryS,CL_TRUE,Bytes*OriginS,Bytes*Length,((byte_08*)MemoryT)+(Bytes*OriginT),0,NULL,NULL);
+		ErrorCode=clEnqueueReadBuffer(Queue,MemoryS,CL_FALSE,Bytes*OriginS,Bytes*Length,((byte_08*)MemoryT)+(Bytes*OriginT),0,NULL,NULL);
 		break;
 	case DeviCopyDtoD:
 		ErrorCode=clEnqueueCopyBuffer(Queue,MemoryS,MemoryT,Bytes*OriginS,Bytes*OriginT,Bytes*Length,0,NULL,NULL);
@@ -1571,10 +1571,10 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,general _PL_ MemoryS,general _PL
 			switch(Mode)
 			{
 			case DeviCopyHtoD:
-				ErrorCode=clEnqueueWriteBuffer(Queue,MemoryT,CL_TRUE,BufferB[1],BufferB[2],((byte_08*)MemoryS)+BufferB[0],0,NULL,NULL);
+				ErrorCode=clEnqueueWriteBuffer(Queue,MemoryT,CL_FALSE,BufferB[1],BufferB[2],((byte_08*)MemoryS)+BufferB[0],0,NULL,NULL);
 				break;
 			case DeviCopyDtoH:
-				ErrorCode=clEnqueueReadBuffer(Queue,MemoryS,CL_TRUE,BufferB[0],BufferB[2],((byte_08*)MemoryT)+BufferB[1],0,NULL,NULL);
+				ErrorCode=clEnqueueReadBuffer(Queue,MemoryS,CL_FALSE,BufferB[0],BufferB[2],((byte_08*)MemoryT)+BufferB[1],0,NULL,NULL);
 				break;
 			case DeviCopyDtoD:
 				ErrorCode=clEnqueueCopyBuffer(Queue,MemoryS,MemoryT,BufferB[0],BufferB[1],BufferB[2],0,NULL,NULL);
@@ -1624,10 +1624,10 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,general _PL_ MemoryS,general _PL
 			switch(Mode)
 			{
 			case DeviCopyHtoD:
-				ErrorCode=clEnqueueWriteBufferRect(Queue,MemoryT,CL_TRUE,BufferT,BufferS,Region,BufferT[3],ShapeTValid[0]*BufferT[3],BufferS[3],ShapeSValid[0]*BufferS[3],MemoryS,0,NULL,NULL);
+				ErrorCode=clEnqueueWriteBufferRect(Queue,MemoryT,CL_FALSE,BufferT,BufferS,Region,BufferT[3],ShapeTValid[0]*BufferT[3],BufferS[3],ShapeSValid[0]*BufferS[3],MemoryS,0,NULL,NULL);
 				break;
 			case DeviCopyDtoH:
-				ErrorCode=clEnqueueReadBufferRect(Queue,MemoryS,CL_TRUE,BufferS,BufferT,Region,BufferS[3],ShapeSValid[0]*BufferS[3],BufferT[3],ShapeTValid[0]*BufferT[3],MemoryT,0,NULL,NULL);
+				ErrorCode=clEnqueueReadBufferRect(Queue,MemoryS,CL_FALSE,BufferS,BufferT,Region,BufferS[3],ShapeSValid[0]*BufferS[3],BufferT[3],ShapeTValid[0]*BufferT[3],MemoryT,0,NULL,NULL);
 				break;
 			case DeviCopyDtoD:
 				ErrorCode=clEnqueueCopyBufferRect(Queue,MemoryS,MemoryT,BufferS,BufferT,Region,BufferS[3],ShapeSValid[0]*BufferS[3],BufferT[3],ShapeTValid[0]*BufferT[3],0,NULL,NULL);
@@ -1678,10 +1678,10 @@ cl_int _Devi_Copy_(cl_command_queue const Queue,general _PL_ MemoryS,general _PL
 			switch(Mode)
 			{
 			case DeviCopyHtoD:
-				ErrorCode=clEnqueueWriteBufferRect(Queue,MemoryT,CL_TRUE,BufferT,BufferS,Region,BufferT[3],ShapeTValid[1]*BufferT[3],BufferS[3],ShapeSValid[1]*BufferS[3],MemoryS,0,NULL,NULL);
+				ErrorCode=clEnqueueWriteBufferRect(Queue,MemoryT,CL_FALSE,BufferT,BufferS,Region,BufferT[3],ShapeTValid[1]*BufferT[3],BufferS[3],ShapeSValid[1]*BufferS[3],MemoryS,0,NULL,NULL);
 				break;
 			case DeviCopyDtoH:
-				ErrorCode=clEnqueueReadBufferRect(Queue,MemoryS,CL_TRUE,BufferS,BufferT,Region,BufferS[3],ShapeSValid[1]*BufferS[3],BufferT[3],ShapeTValid[1]*BufferT[3],MemoryT,0,NULL,NULL);
+				ErrorCode=clEnqueueReadBufferRect(Queue,MemoryS,CL_FALSE,BufferS,BufferT,Region,BufferS[3],ShapeSValid[1]*BufferS[3],BufferT[3],ShapeTValid[1]*BufferT[3],MemoryT,0,NULL,NULL);
 				break;
 			case DeviCopyDtoD:
 				ErrorCode=clEnqueueCopyBufferRect(Queue,MemoryS,MemoryT,BufferS,BufferT,Region,BufferS[3],ShapeSValid[1]*BufferS[3],BufferT[3],ShapeTValid[1]*BufferT[3],0,NULL,NULL);
