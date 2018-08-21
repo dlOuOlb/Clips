@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.21	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -432,7 +432,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 
 //MemC_CL : Command Queue Flush
 #define Devi_Flush_(Queue) clFlush(Queue)
-//MemC_CL : Command Queue Finish
+//MemC_CL : Command Queue Finish - Use for Synchronization
 #define Devi_Finish_(Queue) clFinish(Queue)
 #endif
 #if(MemC_Fold_(Part:Kernel))
@@ -475,12 +475,12 @@ cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,ADDRESS,ADDRESS,ADDRESS,cl_int _PL_
 //MemC_CL : Buffer or Sub-Buffer Object Information Size Get
 #define Devi_Size_Info_Buffer_(Bf,Size,Flag) clGetMemObjectInfo(Bf,Flag,0,NULL,Size)
 
-//MemC_CL : Buffer Object Memory Initialization
+//MemC_CL : Buffer Object Asynchronous Memory Initialization - Synchronize with "Devi_Finish_"
 #define Devi_Init_(Q,Bf,Val,Ofs,Lng,type) clEnqueueFillBuffer(Q,Bf,Val,sizeof(type),(Ofs)*sizeof(type),(Lng)*sizeof(type),0,NULL,NULL)
-//MemC_CL : Buffer Object Memory Copy
+//MemC_CL : Buffer Object Asynchronous Memory Copy - Synchronize with "Devi_Finish_"
 cl_int _Devi_Copy_(cl_command_queue const Queue,general _PL_ SourceBuffer,general _PL_ TargetBuffer,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,const cl_uint Dimensions,ADDRESS TypeSize,DEVI_CF Mode);
 #define Devi_Copy_(Q,S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type,Flag) _Devi_Copy_(Q,S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type),Flag)
-//MemC_CL : Buffer Object Memory 1D Copy
+//MemC_CL : Buffer Object Asynchronous Memory 1D Copy - Synchronize with "Devi_Finish_"
 cl_int _Devi_Copy_1D_(cl_command_queue const Queue,general _PL_ SourceBuffer,general _PL_ TargetBuffer,ADDRESS SourceOffset,ADDRESS TargetOffset,ADDRESS CopyLength,ADDRESS TypeSize,DEVI_CF Mode);
 #define Devi_Copy_1D_(Q,S,T,SOfs,TOfs,Lng,type,Flag) _Devi_Copy_1D_(Q,S,T,SOfs,TOfs,Lng,sizeof(type),Flag)
 #endif
