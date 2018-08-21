@@ -78,7 +78,7 @@ MemC_Type_Rename_(int,integer,INTEGER)						//MemClip : Integer Type
 MemC_Type_Rename_(size_t,address,ADDRESS)					//MemClip : Address Type
 MemC_Type_Func_Declare_(general,func_p_,FUNC_P_,general)	//MemClip : Function Pointer Type
 
-struct _memc_dt					//MemClip : Data Type Structure
+struct _memc_dt				//MemClip : Data Type Structure
 {
 	GENERAL _PL_ Scope;		//MemClip : Type Scope
 	ADDRESS Index;			//MemClip : Index in Scope
@@ -295,7 +295,7 @@ general *_MemC_Alloc_4D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS,ADDRESS);
 errno_t _MemC_Copy_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
 #define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))
 
-//MemClip : Array Data Reshape for TargetShape[dim] == SourceShape[ReformingAxis[dim]]
+//MemClip : Array Data Reshape for SourceShape[dim] == TargetShape[ReformingAxis[dim]]
 errno_t _MemC_Reform_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
 #define MemC_Reform_(S,T,SShp,Axis,Dims,type) _MemC_Reform_(S,T,SShp,Axis,Dims,sizeof(type))
 
