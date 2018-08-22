@@ -16,7 +16,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.08.17";
+static DATA_08 IdiomVersion[16]="Date:2018.08.22";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -30,7 +30,7 @@ static DATA_16 TableShrink16[8]={0x0001,0x0002,0x0004,0x0008,0x0010,0x0020,0x004
 static DATA_08 TableShrink08[8]={0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 static BOOLEAN TableBool[4]={!1,!0,BitCNull,BitCFull};
 #ifdef __OPENCL_H
-static INTE_08 TableSwitch[BitCKernels]={0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,-1,-1,-1,-1};
+static INTE_08 TableSwitch[BitCKernels]={0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,5,5,5,5};
 #endif
 
 #if(MemC_Fold_(Type Descriptors))
@@ -128,7 +128,7 @@ static NAME_08 IdiomKernelName[BitCKernels][24]=
 	"BitC_RO_L_2_D08_",		"BitC_RO_L_2_D16_",		"BitC_RO_L_2_D32_",		"BitC_RO_L_2_D64_",
 	"BitC_RO_L_2_I08_",		"BitC_RO_L_2_I16_",		"BitC_RO_L_2_I32_",		"BitC_RO_L_2_I64_",
 	"",						"BitC_RO_L_2_R16_",		"BitC_RO_L_2_R32_",		"BitC_RO_L_2_R64_",
-	"",						"",						"",						""
+	"BitC_Reform_D08_",		"BitC_Reform_D16_",		"BitC_Reform_D32_",		"BitC_Reform_D64_"
 };
 
 static NAME_08 _PL_ AddressFileName[4]={IdiomFileName+0,IdiomFileName+12,IdiomFileName+24,NULL};
@@ -4848,6 +4848,24 @@ static devi_km *_BitC_Create_KM_Op_(cl_kernel const Kernel,GENERAL _PL_ ID,ADDRE
 
 	return KM;
 }
+static devi_km *_BitC_Create_KM_Reform_(cl_kernel const Kernel,GENERAL _PL_ ID)
+{
+	devi_km *KM=Devi_KM_Create_(ID,3,1);
+
+	if(KM)
+	{
+		penc_eu Error={.E=CLSuccess};
+
+		Error.I|=Devi_KM_Type_G_(KM,0);
+		Error.I|=Devi_KM_Type_G_(KM,1);
+		Error.I|=Devi_KM_Type_C_(KM,2);
+		Error.I|=Devi_KM_Init_(KM,Kernel);
+		if(Error.E!=CLSuccess)
+			Devi_KM_Delete_(&KM);
+	}
+
+	return KM;
+}
 static devi_km *_BitC_Create_KM_(cl_kernel const Kernel,BITC_KI Switch)
 {
 	devi_km *KM;
@@ -4868,6 +4886,9 @@ static devi_km *_BitC_Create_KM_(cl_kernel const Kernel,BITC_KI Switch)
 		break;
 	case 4:
 		KM=_BitC_Create_KM_Op_(Kernel,BitCKernel[Switch],sizeof(inte_32));
+		break;
+	case 5:
+		KM=_BitC_Create_KM_Reform_(Kernel,BitCKernel[Switch]);
 		break;
 	default:
 		KM=NULL;
@@ -5002,6 +5023,70 @@ general BitC_CL_Delete_(bitc_cl *_PL_ Manager)
 	}
 }
 
+static penc_eu _BitC_Worker_KM_Default_(PENC_CL _PL_ Helper,DEVI_KM _PL_ KM,ADDRESS _PL_ Token)
+{
+	penc_eu Error={.E=CLSuccess};
+	address Index;
+
+	for(Index=0;Index<KM->KArgs;Index++)
+		Error.I|=Devi_KM_Save_(KM,Index,Token[Index]);
+
+	if(Error.E==CLSuccess)
+	{
+		KM->WGroups[0]=Helper->Cores;
+		KM->WLocals[0]=Helper->SizeWorker[0];
+	}
+
+	return Error;
+}
+static penc_eu _BitC_Worker_KM_Reform_(PENC_CL _PL_ Helper,DEVI_KM _PL_ KM,ADDRESS _PL_ Token)
+{
+	data_32 ParamHost[2+(Devi_Copy_Max_Dimension<<1)];
+	cl_mem const ArrayS=*((cl_mem*)(Token[0]));
+	cl_mem const ArrayT=*((cl_mem*)(Token[1]));
+	cl_mem const ParamDevice=*((cl_mem*)(Token[2]));
+	DATA_32 _PL_ ShapeS=*((data_32**)(Token[3]));
+	DATA_32 _PL_ AxisStoT=*((data_32**)(Token[4]));
+	data_32 Dimensions=*((data_32*)(Token[5]));
+	penc_eu Error;
+
+	ParamHost[0]=Dimensions;
+	ParamHost[1]=_BitC_Reform_Total_(ShapeS,Dimensions);
+	if(MemC_Copy_1D_(ShapeS,ParamHost+2,Dimensions,data_32))
+		Error.E=CLInvalidArgValue;
+	else
+		if(MemC_Copy_1D_(AxisStoT,ParamHost+(2+Devi_Copy_Max_Dimension),Dimensions,data_32))
+			Error.E=CLInvalidArgValue;
+		else
+		{
+			Error.I=Devi_Copy_1D_(Helper->Queue,ParamHost,ParamDevice,0,0,2+(Devi_Copy_Max_Dimension<<1),data_32,DeviCopyHtoD);
+			Error.I|=Devi_KM_Save_(KM,0,(address)(&ArrayS));
+			Error.I|=Devi_KM_Save_(KM,1,(address)(&ArrayT));
+			Error.I|=Devi_KM_Save_(KM,2,(address)(&ParamDevice));
+			if(Error.E==CLSuccess)
+			{
+				KM->WGroups[0]=Helper->Cores;
+				KM->WLocals[0]=Helper->SizeWorker[0];
+			}
+		}
+
+	return Error;
+}
+static penc_eu _BitC_Worker_KM_(PENC_CL _PL_ Helper,DEVI_KM _PL_ KM,ADDRESS _PL_ Token,BITC_KI Switch)
+{
+	penc_eu Error;
+
+	switch(TableSwitch[Switch])
+	{
+	case 5:
+		Error=_BitC_Worker_KM_Reform_(Helper,KM,Token);
+		break;
+	default:
+		Error=_BitC_Worker_KM_Default_(Helper,KM,Token);
+	}
+
+	return Error;
+}
 penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indicator)
 {
 	penc_eu Error;
@@ -5018,27 +5103,9 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indic
 								Error.E=CLInvalidKernelArgs;
 							else
 							{
-								DEVI_KM _PL_ KM=Manager->KMSet[Indicator];
-
-								{
-									cl_uint Index=0;
-
-									Error.E=CLSuccess;
-									while(Index<KM->KArgs)
-									{
-										Error.I=Devi_KM_Save_(KM,Index,Argument->Slot.V[Index]);
-										if(Error.E==CLSuccess)
-											Index++;
-										else
-											break;
-									}
-								}
+								Error=_BitC_Worker_KM_(Manager->Helper,Manager->KMSet[Indicator],Argument->Slot.V,Indicator);
 								if(Error.E==CLSuccess)
-								{
-									KM->WGroups[0]=Manager->Helper->Cores;
-									KM->WLocals[0]=Manager->Helper->SizeWorker[0];
-									Error.I=Devi_KM_Enqueue_(Manager->Helper->Queue,KM);
-								}
+									Error.I=Devi_KM_Enqueue_(Manager->Helper->Queue,Manager->KMSet[Indicator]);
 							}
 						else
 							Error.E=CLInvalidKernelName;
