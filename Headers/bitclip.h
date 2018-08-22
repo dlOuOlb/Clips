@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.17	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.22	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -301,6 +301,28 @@ enum _bitc_ki				//BitC_CL : BitCKernel Indicator Enumeration
 	BitCROL2R16=241,		//BitC_CL : BitC_RO_L_2_R16_(_G_ data_08 *_R_ DataC,_G_ REAL_16 *_R_ DataA,_G_ REAL_16 *_R_ DataB,_P_ DATA_32 Length)
 	BitCROL2R32=242,		//BitC_CL : BitC_RO_L_2_R32_(_G_ data_08 *_R_ DataC,_G_ REAL_32 *_R_ DataA,_G_ REAL_32 *_R_ DataB,_P_ DATA_32 Length)
 	BitCROL2R64=243,		//BitC_CL : BitC_RO_L_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *_R_ DataB,_P_ DATA_32 Length)
+
+	//BitC_CL : BitC_Reform_D08_(_G_ DATA_08 _PL_ Source,_G_ data_08 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+	//＊Pass arguments as
+	//　{ &(cl_mem)(SourceArray), &(cl_mem)(TargetArray), &(cl_mem)(Buffer), &(data_32*)(SourceShape), &(data_32*)(ReformingAxis), &(data_32)(Dimensions) }
+	//＊Required (Buffer) size is (((Devi_Copy_Max_Dimension)×2)＋2)×4 bytes.
+	BitCReformD08=244,
+	//BitC_CL : BitC_Reform_D08_(_G_ DATA_08 _PL_ Source,_G_ data_08 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+	//＊Pass arguments as
+	//　{ &(cl_mem)(SourceArray), &(cl_mem)(TargetArray), &(cl_mem)(Buffer), &(data_32*)(SourceShape), &(data_32*)(ReformingAxis), &(data_32)(Dimensions) }
+	//＊Required (Buffer) size is (((Devi_Copy_Max_Dimension)×2)＋2)×4 bytes.
+	BitCReformD16=245,
+	//BitC_CL : BitC_Reform_D08_(_G_ DATA_08 _PL_ Source,_G_ data_08 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+	//＊Pass arguments as
+	//　{ &(cl_mem)(SourceArray), &(cl_mem)(TargetArray), &(cl_mem)(Buffer), &(data_32*)(SourceShape), &(data_32*)(ReformingAxis), &(data_32)(Dimensions) }
+	//＊Required (Buffer) size is (((Devi_Copy_Max_Dimension)×2)＋2)×4 bytes.
+	BitCReformD32=246,
+	//BitC_CL : BitC_Reform_D08_(_G_ DATA_08 _PL_ Source,_G_ data_08 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+	//＊Pass arguments as
+	//　{ &(cl_mem)(SourceArray), &(cl_mem)(TargetArray), &(cl_mem)(Buffer), &(data_32*)(SourceShape), &(data_32*)(ReformingAxis), &(data_32)(Dimensions) }
+	//＊Required (Buffer) size is (((Devi_Copy_Max_Dimension)×2)＋2)×4 bytes.
+	BitCReformD64=247,
+
 	BitCKernels=248			//BitC_CL : The Number of Kernels
 };
 MemC_Type_Declare_(enum,bitc_ki,BITC_KI);	//BitC_CL : BitCKernel Indicator Enumeration
@@ -370,13 +392,6 @@ static_assert(sizeof(data_32)<=sizeof(address),"The size of an address value mus
 #define BitC_Lim_N_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)&=(Input);}										//BitClip : Negative Clipping of 64-bit Integer
 #define BitC_Lim_N_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)&=Acs_(inte_32,Input);}	//BitClip : Negative Clipping of 32-bit Real
 #define BitC_Lim_N_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)&=Acs_(inte_64,Input);}	//BitClip : Negative Clipping of 64-bit Real
-#endif
-#if(MemC_Fold_(Part:BitC_Reform_D##_))
-#define BitC_Reform_(S,T,SShp,StoTAxis,Dims,type) _BitC_Reform_(S,T,SShp,StoTAxis,Dims,sizeof(type))	//BitClip : Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
-#define BitC_Reform_D08_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_08)			//BitClip : 8-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
-#define BitC_Reform_D16_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_16)			//BitClip : 16-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
-#define BitC_Reform_D32_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_32)			//BitClip : 32-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
-#define BitC_Reform_D64_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_64)			//BitClip : 64-bit Array Reformation for SShp[Dim] == TShp[Axis[Dim]]
 #endif
 #endif
 
@@ -929,8 +944,13 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ KernelManager,MEMC_MS _PL_ KernelArgument,B
 #endif
 #endif
 
-#if(MemC_Fold_(Declaration:Renamed Functions))
-//BitClip : See "BitC_Reform_D##_"
-boolean _BitC_Reform_(GENERAL _PL_ Source,general _PL_ Target,DATA_32 _PL_ SourceShape,DATA_32 _PL_ SourceTargetAxisMapping,data_32 Dimensions,data_32 TypeSize);
+#if(MemC_Fold_(Declaration:Array Reformation Functions))
+//BitClip : Array Reformation for SourceShape[dim] == TargetShape[ReformingAxis[dim]]
+boolean _BitC_Reform_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,DATA_32 _PL_ SourceShape,DATA_32 _PL_ ReformingAxis,data_32 Dimensions,data_32 TypeSize);
+#define BitC_Reform_(S,T,SShp,StoTAxis,Dims,type) _BitC_Reform_(S,T,SShp,StoTAxis,Dims,sizeof(type))
+#define BitC_Reform_D08_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_08)
+#define BitC_Reform_D16_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_16)
+#define BitC_Reform_D32_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_32)
+#define BitC_Reform_D64_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_64)
 #endif
 #endif
