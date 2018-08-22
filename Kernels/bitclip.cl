@@ -1,8 +1,8 @@
-/*------------------------------------------------------------------*/
+﻿/*------------------------------------------------------------------*/
 /*	BitClip's OpenCL Source Parts.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.07.23	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.22	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -6678,4 +6678,226 @@ _K_ BitC_RO_L_2_R64_(_G_ data_08 *_R_ DataC,_G_ REAL_64 *_R_ DataA,_G_ REAL_64 *
 	}
 }
 #endif
+#endif
+
+#if(Fold_(Reformation))
+#define _BitC_Reform_Max_Dimensions 3
+//These work well on an NVIDIA device but not on Intel device... wondering why. Maybe a bug?
+_K_ BitC_Reform_D08_(_G_ DATA_08 _PL_ Source,_G_ data_08 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+{
+	_P_ DATA_32 Dims=Parameter[0];
+	_P_ DATA_32 Total=Parameter[1];
+	_C_ DATA_32 _PL_ Shape=Parameter+2;
+	_C_ DATA_32 _PL_ Map=Shape+_BitC_Reform_Max_Dimensions;
+	_P_ DATA_32 Step=Work_SGX_;
+	_P_ DATA_32 Start=Work_IGX_;
+	_P_ DATA_32 Rest=Total%Step;
+	_P_ DATA_32 Safe=Total-Rest;
+	_P_ DATA_32 Last=Dims-1;
+	_P_ data_32 Jump[_BitC_Reform_Max_Dimensions];
+	_P_ data_32 Prod;
+	_P_ data_32 IdxS;
+	_P_ data_32 IdxT;
+	_P_ data_32 IdxJ;
+
+	for(IdxT=Start;IdxT<Safe;IdxT+=Step)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	if(Start<Rest)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	else
+		Wait_L_;
+}
+_K_ BitC_Reform_D16_(_G_ DATA_16 _PL_ Source,_G_ data_16 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+{
+	_P_ DATA_32 Dims=Parameter[0];
+	_P_ DATA_32 Total=Parameter[1];
+	_C_ DATA_32 _PL_ Shape=Parameter+2;
+	_C_ DATA_32 _PL_ Map=Shape+_BitC_Reform_Max_Dimensions;
+	_P_ DATA_32 Step=Work_SGX_;
+	_P_ DATA_32 Start=Work_IGX_;
+	_P_ DATA_32 Rest=Total%Step;
+	_P_ DATA_32 Safe=Total-Rest;
+	_P_ DATA_32 Last=Dims-1;
+	_P_ data_32 Jump[_BitC_Reform_Max_Dimensions];
+	_P_ data_32 Prod;
+	_P_ data_32 IdxS;
+	_P_ data_32 IdxT;
+	_P_ data_32 IdxJ;
+
+	for(IdxT=Start;IdxT<Safe;IdxT+=Step)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	if(Start<Rest)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	else
+		Wait_L_;
+}
+_K_ BitC_Reform_D32_(_G_ DATA_32 _PL_ Source,_G_ data_32 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+{
+	_P_ DATA_32 Dims=Parameter[0];
+	_P_ DATA_32 Total=Parameter[1];
+	_C_ DATA_32 _PL_ Shape=Parameter+2;
+	_C_ DATA_32 _PL_ Map=Shape+_BitC_Reform_Max_Dimensions;
+	_P_ DATA_32 Step=Work_SGX_;
+	_P_ DATA_32 Start=Work_IGX_;
+	_P_ DATA_32 Rest=Total%Step;
+	_P_ DATA_32 Safe=Total-Rest;
+	_P_ DATA_32 Last=Dims-1;
+	_P_ data_32 Jump[_BitC_Reform_Max_Dimensions];
+	_P_ data_32 Prod;
+	_P_ data_32 IdxS;
+	_P_ data_32 IdxT=Start;
+	_P_ data_32 IdxJ;
+
+	for(IdxT=Start;IdxT<Safe;IdxT+=Step)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	if(Start<Rest)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	else
+		Wait_L_;
+}
+_K_ BitC_Reform_D64_(_G_ DATA_64 _PL_ Source,_G_ data_64 _PL_ Target,_C_ DATA_32 _PL_ Parameter)
+{
+	_P_ DATA_32 Dims=Parameter[0];
+	_P_ DATA_32 Total=Parameter[1];
+	_C_ DATA_32 _PL_ Shape=Parameter+2;
+	_C_ DATA_32 _PL_ Map=Shape+_BitC_Reform_Max_Dimensions;
+	_P_ DATA_32 Step=Work_SGX_;
+	_P_ DATA_32 Start=Work_IGX_;
+	_P_ DATA_32 Rest=Total%Step;
+	_P_ DATA_32 Safe=Total-Rest;
+	_P_ DATA_32 Last=Dims-1;
+	_P_ data_32 Jump[_BitC_Reform_Max_Dimensions];
+	_P_ data_32 Prod;
+	_P_ data_32 IdxS;
+	_P_ data_32 IdxT;
+	_P_ data_32 IdxJ;
+
+	for(IdxT=Start;IdxT<Safe;IdxT+=Step)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	if(Start<Rest)
+	{
+		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
+		{
+			IdxJ--;
+			Jump[Map[IdxJ]]=Prod%Shape[Map[IdxJ]];
+		}
+		for(IdxJ=Last,IdxS=Jump[Last],Prod=Shape[Last];IdxJ;Prod*=Shape[IdxJ])
+		{
+			IdxJ--;
+			IdxS+=Prod*Jump[IdxJ];
+		}
+		{
+			Wait_L_;
+			Target[IdxT]=Source[IdxS];
+		}
+	}
+	else
+		Wait_L_;
+}
+#undef _BitC_Reform_Max_Dimensions
 #endif
