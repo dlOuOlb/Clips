@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.08.21";
+static BYTE_08 IdiomVersion[16]="Date:2018.08.24";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -561,16 +561,16 @@ static errno_t _MemC_Reform_Order_(BYTE_08 _PL_ Source,byte_08 _PL_ Target,ADDRE
 
 	return ErrorCode;
 }
-errno_t _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ ShapeS,ADDRESS _PL_ MapT,address Dimensions,address Bytes)
+errno_t _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,address Dimensions,address Bytes)
 {
 	errno_t ErrorCode;
 
 	if(Dimensions)
 	{
-		_MemC_Reform_Short_(ShapeS,MapT,&Dimensions,&Bytes);
+		_MemC_Reform_Short_(ShapeS,AxisStoT,&Dimensions,&Bytes);
 		if(Dimensions>1)
 			if(Dimensions<MemC_Copy_Max_Dimension)
-				if(_MemC_Reform_Valid_(MapT,Dimensions))
+				if(_MemC_Reform_Valid_(AxisStoT,Dimensions))
 				{
 					ADDRESS Total=_MemC_Array_Prod_(ShapeS,Dimensions);
 
@@ -583,7 +583,7 @@ errno_t _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ Sha
 						if(ErrorCode)
 							goto ESCAPE;
 
-						ErrorCode=MemC_Copy_1D_(MapT,MapTNew,Dimensions,address);
+						ErrorCode=MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions,address);
 						if(ErrorCode)
 							goto ESCAPE;
 
@@ -598,7 +598,7 @@ errno_t _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ Sha
 			else
 				goto INVALID;
 		else
-			if(MapT[0])
+			if(AxisStoT[0])
 			{
 INVALID:
 				ErrorCode=EINVAL;
@@ -620,6 +620,31 @@ NO_OPERATION:
 	}
 ESCAPE:
 	return ErrorCode;
+}
+
+integer MemC_Reform_Shape_(ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,address _PL_ ShapeT,ADDRESS Dimensions)
+{
+	if(Dimensions)
+		if(Dimensions<MemC_Copy_Max_Dimension)
+			if(_MemC_Reform_Valid_(AxisStoT,Dimensions))
+			{
+				address Index;
+				
+				for(Index=0;Index<Dimensions;Index++)
+					ShapeT[AxisStoT[Index]]=ShapeS[Index];
+
+				goto SUCCESS;
+			}
+			else
+				goto FAILURE;
+		else
+			goto FAILURE;
+	else
+		goto SUCCESS;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 #endif
 #if(MemC_Fold_(Part:Object Sorting))
