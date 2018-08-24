@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.24	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -295,9 +295,12 @@ general *_MemC_Alloc_4D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS,ADDRESS);
 errno_t _MemC_Copy_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
 #define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))
 
-//MemClip : Array Data Reshape for SourceShape[dim] == TargetShape[ReformingAxis[dim]]
+//MemClip : Array Data Reformation - See also "MemC_Reform_Shape_"
 errno_t _MemC_Reform_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
 #define MemC_Reform_(S,T,SShp,Axis,Dims,type) _MemC_Reform_(S,T,SShp,Axis,Dims,sizeof(type))
+//MemClip : Reformed Target Shape Calculation
+//＊TargetShape[ReformingAxis[dim]] = SourceShape[dim]
+integer MemC_Reform_Shape_(ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address _PL_ TargetShape,ADDRESS Dimensions);
 
 //MemClip : Object Sorting
 //＊Required ReferTable size is Count×sizeof(general*) bytes.
