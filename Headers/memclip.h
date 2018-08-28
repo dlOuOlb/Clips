@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.24	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.28	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -57,6 +57,17 @@ static_assert((sizeof(cl_int)<=sizeof(size_t)),"sizeof(cl_int) > sizeof(size_t)"
 #error The macro "Acs_" is already defined.
 #else
 #define Acs_(type,Data) (*((type*)(&(Data))))	//MemClip : Indirect Memory Access
+#endif
+
+#ifdef __dl
+#error The macro "__dl" is already defined.
+#else
+#define __dl do			//MemClip : Macro Block Opening
+#endif
+#ifdef lb__
+#error The macro "lb__" is already defined.
+#else
+#define lb__ while(0)	//MemClip : Macro Block Closing
 #endif
 
 #define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;	//MemClip : Macro for Type Renaming
@@ -246,7 +257,7 @@ extern MEMC_DT _PL_ _PL_ MemCType;
 integer MemC_Check_(GENERAL _PL_ *MemorySet,ADDRESS Count);
 
 //MemClip : Memory Deallocation
-#define MemC_Deloc_(Memory) do{if(Memory){free(Memory);(Memory)=NULL;}}while(0)
+#define MemC_Deloc_(Memory) __dl{if(Memory){free(Memory);(Memory)=NULL;}}lb__
 //MemClip : Batch Memory Deallocation
 general MemC_Deloc_Set_(general **MemorySet,ADDRESS Count);
 
@@ -351,6 +362,15 @@ integer MemC_MS_Null_(MEMC_MS _PL_ MemorySlot,INTEGER CheckMode);
 integer MemC_MS_Joke_(MEMC_MS _PL_ MemorySlot);
 //MemClip : Oops!
 integer MemC_MS_Oops_(MEMC_MS _PL_ MemorySlot);
+
+#define MemC_MS_Dims_0_(MS) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=0;}lb__
+#define MemC_MS_Dims_1_(MS,D0) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=1;_V[1]=(D0);}lb__
+#define MemC_MS_Dims_2_(MS,D0,D1) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=2;_V[1]=(D0);_V[2]=(D1);}lb__
+#define MemC_MS_Dims_3_(MS,D0,D1,D2) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=3;_V[1]=(D0);_V[2]=(D1);_V[3]=(D2);}lb__
+#define MemC_MS_Dims_4_(MS,D0,D1,D2,D3) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=4;_V[1]=(D0);_V[2]=(D1);_V[3]=(D2);_V[4]=(D3);}lb__
+#define MemC_MS_Dims_5_(MS,D0,D1,D2,D3,D4) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=5;_V[1]=(D0);_V[2]=(D1);_V[3]=(D2);_V[4]=(D3);_V[5]=(D4);}lb__
+#define MemC_MS_Dims_6_(MS,D0,D1,D2,D3,D4,D5) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=6;_V[1]=(D0);_V[2]=(D1);_V[3]=(D2);_V[4]=(D3);_V[5]=(D4);_V[6]=(D5);}lb__
+#define MemC_MS_Dims_7_(MS,D0,D1,D2,D3,D4,D5,D6) __dl{address _PL_ _V=(MS)->Slot.V;_V[0]=7;_V[1]=(D0);_V[2]=(D1);_V[3]=(D2);_V[4]=(D3);_V[5]=(D4);_V[6]=(D5);_V[7]=(D6);}lb__
 #endif
 #if(MemC_Fold_(Part:MemC_MC))
 //MemClip : Memory Container Memory Allocation - Deallocate with "MemC_MC_Delete_"
@@ -398,7 +418,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Context Memory Allocation - Deallocate with "Devi_Delete_Context_"
 #define Devi_Create_Context_(DeviceList,Number,Error) clCreateContext(NULL,Number,DeviceList,NULL,NULL,Error)
 //MemC_CL : Context Memory Deallocation
-#define Devi_Delete_Context_(Context) do{if(Context){clReleaseContext(Context);(Context)=NULL;}}while(0)
+#define Devi_Delete_Context_(Context) __dl{if(Context){clReleaseContext(Context);(Context)=NULL;}}lb__
 //MemC_CL : Context Information Get
 #define Devi_Info_Context_(Cntx,List,Num,type,Flag) clGetContextInfo(Cntx,Flag,(Num)*sizeof(type),List,NULL)
 //MemC_CL : Context Information Size Get
@@ -410,7 +430,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Program Memory Allocation - Deallocate with "Devi_Delete_Program_"
 #define Devi_Create_Program_Binary_(DeviList,Cntx,BinList,BinLng,BinNum,Error) clCreateProgramWithBinary(Cntx,BinNum,DeviList,BinLng,BinList,NULL,Error)
 //MemC_CL : Program Memory Deallocation
-#define Devi_Delete_Program_(Program) do{if(Program){clReleaseProgram(Program);(Program)=NULL;}}while(0)
+#define Devi_Delete_Program_(Program) __dl{if(Program){clReleaseProgram(Program);(Program)=NULL;}}lb__
 //MemC_CL : Program Information Get
 #define Devi_Info_Program_(Prgm,List,Num,type,Flag) clGetProgramInfo(Prgm,Flag,(Num)*sizeof(type),List,NULL)
 //MemC_CL : Program Information Size Get
@@ -427,7 +447,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Command Queue Memory Allocation - Deallocate with "Devi_Delete_Queue_"
 #define Devi_Create_Queue_(Context,Device,Error) clCreateCommandQueueWithProperties(Context,Device,NULL,Error)
 //MemC_CL : Command Queue Memory Deallocation
-#define Devi_Delete_Queue_(Queue) do{if(Queue){clReleaseCommandQueue(Queue);(Queue)=NULL;}}while(0)
+#define Devi_Delete_Queue_(Queue) __dl{if(Queue){clReleaseCommandQueue(Queue);(Queue)=NULL;}}lb__
 //MemC_CL : Command Queue Information Get
 #define Devi_Info_Queue_(Queue,List,Num,type,Flag) clGetCommandQueueInfo(Queue,Flag,(Num)*sizeof(type),List,NULL)
 //MemC_CL : Command Queue Information Size Get
@@ -444,7 +464,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Multiple Kernels Memory Allocation
 #define Devi_Create_Kernel_Set_(Program,Set,Created,Entries) clCreateKernelsInProgram(Program,Entries,Set,Created)
 //MemC_CL : Kernel Memory Deallocation
-#define Devi_Delete_Kernel_(Kernel) do{if(Kernel){clReleaseKernel(Kernel);(Kernel)=NULL;}}while(0)
+#define Devi_Delete_Kernel_(Kernel) __dl{if(Kernel){clReleaseKernel(Kernel);(Kernel)=NULL;}}lb__
 //MemC_CL : Kernel Information Get
 #define Devi_Info_Kernel_(Krnl,List,Num,type,Flag) clGetKernelInfo(Krnl,Flag,(Num)*sizeof(type),List,NULL)
 //MemC_CL : Kernel Information Size Get
@@ -472,7 +492,7 @@ cl_mem _Devi_Create_Buffer_GL_(cl_context const,const cl_GLuint,cl_int _PL_ Err)
 cl_mem _Devi_Create_Buffer_Sub_(cl_mem const,ADDRESS,ADDRESS,ADDRESS,cl_int _PL_ Err);
 #define Devi_Create_Buffer_Sub_(Root,Offset,Elements,type,Error) _Devi_Create_Buffer_Sub_(Root,Offset,Elements,sizeof(type),Error)
 //MemC_CL : Buffer or Sub-Buffer Object Memory Deallocation
-#define Devi_Delete_Buffer_(Memory) do{if(Memory){clReleaseMemObject(Memory);(Memory)=NULL;}}while(0)
+#define Devi_Delete_Buffer_(Memory) __dl{if(Memory){clReleaseMemObject(Memory);(Memory)=NULL;}}lb__
 //MemC_CL : Buffer or Sub-Buffer Object Information Get
 #define Devi_Info_Buffer_(Bf,List,Num,type,Flag) clGetMemObjectInfo(Bf,Flag,(Num)*sizeof(type),List,NULL)
 //MemC_CL : Buffer or Sub-Buffer Object Information Size Get
@@ -492,7 +512,7 @@ cl_int _Devi_Copy_1D_(cl_command_queue const Queue,general _PL_ SourceBuffer,gen
 #define Devi_Create_Event_(Context,Error) clCreateUserEvent(Context,Error)
 //MemC_CL : Event Object Memory Deallocation
 cl_int _Devi_Delete_Event_(cl_event const);
-#define Devi_Delete_Event_(Event,Error) do{(Error)=_Devi_Delete_Event_(Event);if((Error)==CL_SUCCESS){(Event)=NULL;}}while(0)
+#define Devi_Delete_Event_(Event,Error) __dl{(Error)=_Devi_Delete_Event_(Event);if((Error)==CL_SUCCESS){(Event)=NULL;}}lb__
 //MemC_CL : Event Count Increase
 #define Devi_Event_Inc_(Event) clRetainEvent(Event)
 //MemC_CL : Event Count Decrease
