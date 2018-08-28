@@ -1,5 +1,11 @@
 root=true
 
+[*.md]
+indent_style=space
+indent_size=2
+insert_final_newline=true
+charset=utf-8
+
 [*.{h,c,cl,txt}]
 indent_style=tab
 indent_size=4
