@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.08.28";
+static BYTE_08 IdiomVersion[16]="Date:2018.08.29";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -281,60 +281,39 @@ errno_t _MemC_Init_1D_(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS NumberEleme
 		address Copy=SizeElement;
 
 		ErrorCode=MemC_Copy_Byte_(Tile,Ptr,Copy);
-		if(!ErrorCode)
+		if(ErrorCode==MemC_Errno_0)
 		{
 			for(Ptr+=Copy;Ptr<End;Copy<<=1)
 			{
 				ErrorCode=MemC_Copy_Byte_(Memory,Ptr,Copy);
-				if(ErrorCode)
-					break;
-				else
+				if(ErrorCode==MemC_Errno_0)
 					Ptr+=Copy;
+				else
+					goto ESCAPE;
 			}
-			if(!ErrorCode)
 			{
 				Copy=Safe^NumberElement;
 				Copy*=SizeElement;
 				ErrorCode=MemC_Copy_Byte_(Memory,Ptr,Copy);
 			}
 		}
+		else
+			goto ESCAPE;
 	}
 	else
 		ErrorCode=EINVAL;
-
+ESCAPE:
 	return ErrorCode;
 }
-errno_t _MemC_Pick_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS NumberChannel,ADDRESS NumberElement,ADDRESS SizeElement)
+errno_t MemC_Copy_Step_(GENERAL _PL_ Source,general _PL_ Target,ADDRESS Nums,ADDRESS StepS,ADDRESS StepT,ADDRESS Copy)
 {
-	ADDRESS Step=NumberChannel*SizeElement;
-	BYTE_08 _PL_ End=((byte_08*)Input)+(Step*NumberElement);
-	BYTE_08 *PtrI=(byte_08*)Input;
-	byte_08 *PtrO=(byte_08*)Output;
-	errno_t ErrorCode=EINVAL;
-	
-	for(;PtrI<End;PtrI+=Step,PtrO+=SizeElement)
-	{
-		ErrorCode=MemC_Copy_Byte_(PtrI,PtrO,SizeElement);
-		if(ErrorCode)
-			break;
-	}
+	BYTE_08 _PL_ End=(byte_08*)Source+(Nums*StepS);
+	BYTE_08 *PtrS;
+	byte_08 *PtrT;
+	errno_t ErrorCode;
 
-	return ErrorCode;
-}
-errno_t _MemC_Fill_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS NumberChannel,ADDRESS NumberElement,ADDRESS SizeElement)
-{
-	ADDRESS Step=NumberChannel*SizeElement;
-	BYTE_08 _PL_ End=((byte_08*)Input)+(SizeElement*NumberElement);
-	BYTE_08 *PtrI=(byte_08*)Input;
-	byte_08 *PtrO=(byte_08*)Output;
-	errno_t ErrorCode=EINVAL;
-
-	for(;PtrI<End;PtrI+=SizeElement,PtrO+=Step)
-	{
-		ErrorCode=MemC_Copy_Byte_(PtrI,PtrO,SizeElement);
-		if(ErrorCode)
-			break;
-	}
+	for(PtrS=Source,PtrT=Target,ErrorCode=MemC_Errno_0;(ErrorCode==MemC_Errno_0)&&(PtrS<End);PtrS+=StepS,PtrT+=StepT)
+		ErrorCode=MemC_Copy_Byte_(PtrS,PtrT,Copy);
 
 	return ErrorCode;
 }
@@ -355,20 +334,16 @@ static errno_t _MemC_Copy_2D_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,ADDRESS 
 	BYTE_08 *End=MemoryS+((JumpS[0]*OriginS[0])+(JumpS[1]*OriginS[1]));
 	BYTE_08 *PointerS=End;
 	byte_08 *PointerT=MemoryT+((JumpT[0]*OriginT[0])+(JumpT[1]*OriginT[1]));
-	errno_t ErrorCode=EINVAL;
+	errno_t ErrorCode;
 
-	for(End+=(JumpS[0]*Length[0]);PointerS<End;PointerS+=JumpS[0],PointerT+=JumpT[0])
-	{
+	for(End+=(JumpS[0]*Length[0]),ErrorCode=MemC_Errno_0;(ErrorCode==MemC_Errno_0)&&(PointerS<End);PointerS+=JumpS[0],PointerT+=JumpT[0])
 		ErrorCode=MemC_Copy_Byte_(PointerS,PointerT,Copy);
-		if(ErrorCode)
-			break;
-	}
 
 	return ErrorCode;
 }
 static errno_t _MemC_Copy_Recursive_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,ADDRESS _PL_ JumpS,ADDRESS _PL_ JumpT,ADDRESS _PL_ OriginS,ADDRESS _PL_ OriginT,ADDRESS _PL_ Length,ADDRESS Dimensions,ADDRESS Bytes)
 {
-	errno_t ErrorCode=EINVAL;
+	errno_t ErrorCode;
 
 	if(Dimensions>2)
 	{
@@ -382,12 +357,8 @@ static errno_t _MemC_Copy_Recursive_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,A
 		BYTE_08 *PointerS=End;
 		byte_08 *PointerT=MemoryT+(JumpT[0]*OriginT[0]);
 
-		for(End+=(JumpS[0]*Length[0]);PointerS<End;PointerS+=JumpS[0],PointerT+=JumpT[0])
-		{
+		for(End+=(JumpS[0]*Length[0]),ErrorCode=MemC_Errno_0;(ErrorCode==MemC_Errno_0)&&(PointerS<End);PointerS+=JumpS[0],PointerT+=JumpT[0])
 			ErrorCode=_MemC_Copy_Recursive_(PointerS,PointerT,NextJumpS,NextJumpT,NextOriginS,NextOriginT,NextLength,NextDimensions,Bytes);
-			if(ErrorCode)
-				break;
-		}
 	}
 	else
 		ErrorCode=_MemC_Copy_2D_(MemoryS,MemoryT,JumpS,JumpT,OriginS,OriginT,Length,Bytes);
@@ -420,7 +391,7 @@ errno_t _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ Origi
 		switch(Dimensions)
 		{
 		case 0:
-			ErrorCode=0;
+			ErrorCode=MemC_Errno_0;
 			break;
 		case 1:
 			{
@@ -429,7 +400,7 @@ errno_t _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ Origi
 				if(Copy)
 					ErrorCode=MemC_Copy_Byte_(((BYTE_08*)MemoryS)+(OffsetS[0]*Bytes),((byte_08*)MemoryT)+(OffsetT[0]*Bytes),Copy);
 				else
-					ErrorCode=0;
+					ErrorCode=MemC_Errno_0;
 			}
 			break;
 		default:
@@ -454,9 +425,9 @@ errno_t _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ Origi
 						ErrorCode=_MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
 					}
 				else
-					ErrorCode=0;
+					ErrorCode=MemC_Errno_0;
 			else
-				ErrorCode=0;
+				ErrorCode=MemC_Errno_0;
 		}
 	else
 		ErrorCode=EINVAL;
@@ -540,9 +511,9 @@ static errno_t _MemC_Reform_Order_(BYTE_08 _PL_ Source,byte_08 _PL_ Target,ADDRE
 	address IdxS;
 	address IdxT;
 	address IdxJ;
-	errno_t ErrorCode=0;
+	errno_t ErrorCode;
 
-	for(IdxT=0;IdxT<Total;IdxT++)
+	for(IdxT=0,ErrorCode=MemC_Errno_0;(ErrorCode==MemC_Errno_0)&&(IdxT<Total);IdxT++)
 	{
 		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
 		{
@@ -555,8 +526,6 @@ static errno_t _MemC_Reform_Order_(BYTE_08 _PL_ Source,byte_08 _PL_ Target,ADDRE
 			IdxS+=Prod*Jump[IdxJ];
 		}
 		ErrorCode=MemC_Copy_Byte_(Source+(IdxS*Bytes),Target+(IdxT*Bytes),Bytes);
-		if(ErrorCode)
-			break;
 	}
 
 	return ErrorCode;
@@ -580,11 +549,11 @@ errno_t _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ Sha
 						address MapTNew[MemC_Copy_Max_Dimension];
 
 						ErrorCode=MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions,address);
-						if(ErrorCode)
+						if(ErrorCode!=MemC_Errno_0)
 							goto ESCAPE;
 
 						ErrorCode=MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions,address);
-						if(ErrorCode)
+						if(ErrorCode!=MemC_Errno_0)
 							goto ESCAPE;
 
 						_MemC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
@@ -616,7 +585,7 @@ INVALID:
 	else
 	{
 NO_OPERATION:
-		ErrorCode=0;
+		ErrorCode=MemC_Errno_0;
 	}
 ESCAPE:
 	return ErrorCode;
@@ -747,7 +716,7 @@ static errno_t _MemC_Sort_Table_(address *IdxO,address *IdxA,ADDRESS *PtrT,ADDRE
 {
 	errno_t Error=MemC_Copy_1D_(IdxO,IdxA,Copy,address);
 
-	if(!Error)
+	if(Error==MemC_Errno_0)
 	{
 		for(;IdxO<MatchB;IdxA++,IdxO++,PtrT++)
 			IdxO[PtrT[0]]=IdxA[0];
@@ -1246,7 +1215,7 @@ memc_mc *MemC_MC_Create_(GENERAL _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 								if(Dimensions>1)
 								{
 									Acs_(address*,MC->LngND)=(address*)(MC+1);
-									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions,address))
+									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions,address)!=MemC_Errno_0)
 										MemC_Deloc_(MC);
 								}
 								else
@@ -1294,7 +1263,7 @@ INVADE:
 									Acs_(address*,MC->LngND)=(address*)(MC+1);
 									Acs_(general*,MC->AcsND)=(general*)(MC->LngND+Dimensions);
 									Acs_(general*,MC->Acs1D)=_MemC_Assign_Loop_((general**)(MC->AcsND),Shape,Dimensions,DT->SizeType);
-									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions,address))
+									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions,address)!=MemC_Errno_0)
 										MemC_Deloc_(MC);
 								}
 								else
@@ -1375,10 +1344,10 @@ integer MemC_MC_Form_(MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
 			{
 				MS->Slot.V[0]=MC->Dims;
 				if(MC->Dims)
-					if(MemC_Copy_1D_(MC->LngND,MS->Slot.V+1,MC->Dims,address))
-						goto FAILURE;
-					else
+					if(MemC_Copy_1D_(MC->LngND,MS->Slot.V+1,MC->Dims,address)==MemC_Errno_0)
 						goto SUCCESS;
+					else
+						goto FAILURE;
 				else
 					goto SUCCESS;
 			}
@@ -2055,10 +2024,7 @@ cl_int Devi_KM_Save_(DEVI_KM _PL_ KM,ADDRESS Order,ADDRESS Thing)
 					Error=CL_SUCCESS;
 					break;
 				case DeviDomainPrivate:
-					if(MemC_Copy_Byte_((GENERAL*)Thing,(general*)(KM->ArgAccess.P[Order]),KM->ArgSize[Order]))
-						Error=CL_INVALID_ARG_VALUE;
-					else
-						Error=CL_SUCCESS;
+					Error=(MemC_Copy_Byte_((GENERAL*)Thing,(general*)(KM->ArgAccess.P[Order]),KM->ArgSize[Order])==MemC_Errno_0)?(CL_SUCCESS):(CL_INVALID_ARG_VALUE);
 					break;
 				default:
 					Error=CL_INVALID_ARG_VALUE;
@@ -2438,13 +2404,13 @@ ESCAPE:
 			if(VC->Dims>1)
 			{
 				Acs_(address*,VC->LngND)=(address*)(VC+1);
-				if(MemC_Copy_1D_(MS->Slot.V+1,(address*)(VC->LngND),MS->Slot.V[0],address))
+				if(MemC_Copy_1D_(MS->Slot.V+1,(address*)(VC->LngND),MS->Slot.V[0],address)==MemC_Errno_0)
+					Acs_(address,VC->Lng1D)=_MemC_Array_Prod_(VC->LngND,VC->Dims);
+				else
 				{
 					MemC_Deloc_(VC);
 					goto RETURN;
 				}
-				else
-					Acs_(address,VC->Lng1D)=_MemC_Array_Prod_(VC->LngND,VC->Dims);
 			}
 			else
 			{
@@ -2644,8 +2610,10 @@ static integer _MemC_VC_Copy_Check_(ADDRESS _PL_ OffsetData,ADDRESS _PL_ LengthD
 
 	return Return;
 }
-static general _MemC_VC_Copy_New_Size_(address _PL_ LengthNew,address _PL_ OffsetNew,ADDRESS *_R_ OffsetData,ADDRESS *_R_ LengthData,ADDRESS JumpData,ADDRESS DimsCopy)
+static errno_t _MemC_VC_Copy_New_Size_(address _PL_ LengthNew,address _PL_ OffsetNew,ADDRESS *_R_ OffsetData,ADDRESS *_R_ LengthData,ADDRESS JumpData,ADDRESS DimsCopy)
 {
+	errno_t ErrorCode;
+
 	{
 		ADDRESS _PL_ End=OffsetData+JumpData;
 
@@ -2663,39 +2631,12 @@ static general _MemC_VC_Copy_New_Size_(address _PL_ LengthNew,address _PL_ Offse
 	{
 		ADDRESS Rest=DimsCopy-1;
 
-		MemC_Copy_1D_(LengthData+1,LengthNew+1,Rest,address);
-		MemC_Copy_1D_(OffsetData+1,OffsetNew+1,Rest,address);
+		ErrorCode=MemC_Copy_1D_(LengthData+1,LengthNew+1,Rest,address);
+		if(ErrorCode==MemC_Errno_0)
+			ErrorCode=MemC_Copy_1D_(OffsetData+1,OffsetNew+1,Rest,address);
 	}
-}
-integer MemC_VC_Init_(general _PL_ Queue,MEMC_VC _PL_ VC)
-{
-	if(VC)
-		if(VC->Hidden)
-			switch(VC->Domain.E)
-			{
-			case MemCDomainHost:
-				MemC_Clear_Byte_(_MemC_VC_Direct_((general*)(VC->Hidden),VC->Dims-1),(VC->Lng1D)*(VC->Unit));
-				goto SUCCESS;
-#ifdef __OPENCL_H
-			case MemCDomainDevice:
-				if(Devi_Init_(Queue,(cl_mem)(VC->Hidden),ConstantZero,0,(VC->Lng1D)*(VC->Unit),byte_08)==CL_SUCCESS)
-					goto SUCCESS;
-				else
-					goto FAILURE;
-#else
-				MemC_Mute_(Queue);
-#endif
-			default:
-				goto FAILURE;
-			}
-		else
-			goto SUCCESS;
-	else
-		goto FAILURE;
-FAILURE:
-	return 0;
-SUCCESS:
-	return 1;
+
+	return ErrorCode;
 }
 integer MemC_VC_Copy_(general _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target,MEMC_MS _PL_ Copy)
 {
@@ -2799,9 +2740,13 @@ integer MemC_VC_Copy_(general _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target
 										address _PL_ LngSNew=SizeNew;
 										address _PL_ OfsSNew=LngSNew+Devi_Copy_Max_Dimension;
 
-										_MemC_VC_Copy_New_Size_(LngSNew,OfsSNew,OfsS,LngS,PreS,DimC);
-										OfsS=OfsSNew;
-										LngS=LngSNew;
+										if(_MemC_VC_Copy_New_Size_(LngSNew,OfsSNew,OfsS,LngS,PreS,DimC)==MemC_Errno_0)
+										{
+											OfsS=OfsSNew;
+											LngS=LngSNew;
+										}
+										else
+											goto FAILURE;
 									}
 								if(Flag&0x1)
 									if(PreT)
@@ -2809,9 +2754,13 @@ integer MemC_VC_Copy_(general _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target
 										address _PL_ LngTNew=SizeNew+(Devi_Copy_Max_Dimension<<1);
 										address _PL_ OfsTNew=LngTNew+Devi_Copy_Max_Dimension;
 
-										_MemC_VC_Copy_New_Size_(LngTNew,OfsTNew,OfsT,LngT,PreT,DimC);
-										OfsT=OfsTNew;
-										LngT=LngTNew;
+										if(_MemC_VC_Copy_New_Size_(LngTNew,OfsTNew,OfsT,LngT,PreT,DimC)==MemC_Errno_0)
+										{
+											OfsT=OfsTNew;
+											LngT=LngTNew;
+										}
+										else
+											goto FAILURE;
 									}
 								if(_Devi_Copy_(Queue,MemS,MemT,OfsS,OfsT,LngC,LngS,LngT,(cl_uint)DimC,Source->Unit,(devi_cf)Flag)==CL_SUCCESS)
 									goto SUCCESS;
@@ -2821,10 +2770,10 @@ integer MemC_VC_Copy_(general _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target
 						else
 #endif
 						{
-							if(_MemC_Copy_(MemS,MemT,OfsS+PreS,OfsT+PreT,LngC,LngS+PreS,LngT+PreT,DimC,Source->Unit))
-								goto FAILURE;
-							else
+							if(_MemC_Copy_(MemS,MemT,OfsS+PreS,OfsT+PreT,LngC,LngS+PreS,LngT+PreT,DimC,Source->Unit)==MemC_Errno_0)
 								goto SUCCESS;
+							else
+								goto FAILURE;
 						}
 					}
 					else
@@ -2894,10 +2843,10 @@ integer MemC_VC_Copy_(general _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target
 							else
 #endif
 							{
-								if(MemC_Copy_Byte_(MemoryS,MemoryT,(Source->Lng1D)*(Source->Unit)))
-									goto FAILURE;
-								else
+								if(MemC_Copy_Byte_(MemoryS,MemoryT,(Source->Lng1D)*(Source->Unit))==MemC_Errno_0)
 									goto SUCCESS;
+								else
+									goto FAILURE;
 							}
 						}
 						else
@@ -2911,6 +2860,36 @@ integer MemC_VC_Copy_(general _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target
 				goto SUCCESS;
 		else
 			goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
+integer MemC_VC_Init_(general _PL_ Queue,MEMC_VC _PL_ VC)
+{
+	if(VC)
+		if(VC->Hidden)
+			switch(VC->Domain.E)
+			{
+			case MemCDomainHost:
+				MemC_Clear_Byte_(_MemC_VC_Direct_((general*)(VC->Hidden),VC->Dims-1),(VC->Lng1D)*(VC->Unit));
+				goto SUCCESS;
+#ifdef __OPENCL_H
+			case MemCDomainDevice:
+				if(Devi_Init_(Queue,(cl_mem)(VC->Hidden),ConstantZero,0,(VC->Lng1D)*(VC->Unit),byte_08)==CL_SUCCESS)
+					goto SUCCESS;
+				else
+					goto FAILURE;
+#else
+				MemC_Mute_(Queue);
+#endif
+			default:
+				goto FAILURE;
+			}
+		else
+			goto SUCCESS;
+	else
+		goto FAILURE;
 FAILURE:
 	return 0;
 SUCCESS:
