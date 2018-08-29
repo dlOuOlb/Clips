@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.28	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.29	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -235,6 +235,7 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #define MemC_Mute_(Argument) ((general)(Argument))			//MemClip : Unused Argument Warning Mute
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))	//MemClip : Byte Size of Elements
 
+#define MemC_Errno_0 0				//MemClip : <No Error> Flag for "errno_t"
 #define MemC_Copy_Max_Dimension 8	//MemClip : Maximum Copy Dimension of "MemC_Copy_"
 #ifdef __OPENCL_H
 #define Devi_Copy_Max_Dimension 3	//MemC_CL : Maximum Copy Dimension of "Devi_Copy_"
@@ -305,6 +306,8 @@ general *_MemC_Alloc_4D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS,ADDRESS);
 //MemClip : Array Data Copy
 errno_t _MemC_Copy_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
 #define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))
+//MemClip : Array Data Copy with Step
+errno_t MemC_Copy_Step_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS CopyNums,ADDRESS SourceStepBytes,ADDRESS TargetStepBytes,ADDRESS EachCopyBytes);
 
 //MemClip : Array Data Reformation - See also "MemC_Reform_Shape_"
 errno_t _MemC_Reform_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
@@ -323,12 +326,6 @@ errno_t MemC_Sort_(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_)
 //MemClip : 1D Array Data Preset
 errno_t _MemC_Init_1D_(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS Number,ADDRESS TypeSize);
 #define MemC_Init_1D_(Memory,Tile,Elements,type) _MemC_Init_1D_(Memory,Tile,Elements,sizeof(type))
-//MemClip : 1D Array Channel Pick
-errno_t _MemC_Pick_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS Channels,ADDRESS Number,ADDRESS TypeSize);
-#define MemC_Pick_1D_(Source,Target,Channels,Elements,type) _MemC_Pick_1D_(Source,Target,Channels,Elements,sizeof(type))
-//MemClip : 1D Array Channel Fill
-errno_t _MemC_Fill_1D_(GENERAL _PL_ Input,general _PL_ Output,ADDRESS Channels,ADDRESS Number,ADDRESS TypeSize);
-#define MemC_Fill_1D_(Source,Target,Channels,Elements,type) _MemC_Fill_1D_(Source,Target,Channels,Elements,sizeof(type))
 
 //MemClip :  1D Array Uniform or Non-Uniform Interval Addressing
 address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,INTEGER Mode);
