@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.22	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.31	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -919,7 +919,7 @@ general BitC_RO_L_2_R64_(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,DATA_32 N)
 #ifdef __OPENCL_H
 //BitC_CL : Program Build
 //＊Return value is an error code.
-penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ SourceDirectory,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption);
+penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ SourceDirectory,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption,FILE _PL_ MessageStream);
 
 //BitC_CL : Kernel Manager Set Memory Allocation - Deallocate with "BitC_CL_Delete_"
 bitc_cl *BitC_CL_Create_(general);
@@ -931,7 +931,7 @@ address *BitC_CL_Choice_(BITC_CL _PL_ KernelManager);
 //BitC_CL : OpenCL Program Build with Specified Kernels
 //＊Execute only one time.
 //＊Return value is an error code.
-penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ KernelManager,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption);
+penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ KernelManager,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption,FILE _PL_ MessageStream);
 //BitC_CL : Kernel Manager Set Memory Deallocation
 general BitC_CL_Delete_(bitc_cl *_PL_ KernelManager);
 

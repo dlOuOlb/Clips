@@ -2,7 +2,7 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.17	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.08.31	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -710,7 +710,7 @@ general LinC_Map_1_D64_(data_64 *_R_ C,DATA_32 *_R_ I,DATA_64 _PL_ T,DATA_32 N);
 #ifdef __OPENCL_H
 //LinC_CL : Program Build
 //＊Return value is an error code.
-penc_eu LinC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ SourceDirectory,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption);
+penc_eu LinC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ SourceDirectory,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption,FILE _PL_ MessageStream);
 
 //LinC_CL : Kernel Manager Set Memory Allocation - Deallocate with "LinC_CL_Delete_"
 linc_cl *LinC_CL_Create_(general);
@@ -722,7 +722,7 @@ address *LinC_CL_Choice_(LINC_CL _PL_ KernelManager);
 //LinC_CL : OpenCL Program Build with Specified Kernels
 //＊Execute only one time.
 //＊Return value is an error code.
-penc_eu LinC_CL_Launch_(cl_command_queue const Queue,LINC_CL _PL_ KernelManager,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption);
+penc_eu LinC_CL_Launch_(cl_command_queue const Queue,LINC_CL _PL_ KernelManager,NAME_08 _PL_ ObjectDirectory,NAME_08 _PL_ BuildOption,FILE _PL_ MessageStream);
 //LinC_CL : Kernel Manager Set Memory Deallocation
 general LinC_CL_Delete_(linc_cl *_PL_ KernelManager);
 
