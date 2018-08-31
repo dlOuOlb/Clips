@@ -1,44 +1,46 @@
-﻿Build Guide
-===========
+﻿## Build Guide
 
-* Make Build Directory
+---
+#### Make Build Directory
+```
+mkdir build
+cd build
+```
+
+---
+#### CMake Command Examples
+* 32-bit Platform without OpenCL
   ```
-  mkdir build
-  cd build
+  cmake .. -A "Win32"
   ```
 
-* CMake Command Examples
-  * 32-bit Platform without OpenCL
-    ```
-    cmake .. -A "Win32"
-    ```
+* 64-bit Platform without OpenCL
+  ```
+  cmake .. -A "x64"
+  ```
 
-  * 64-bit Platform without OpenCL
-    ```
-    cmake .. -A "x64"
-    ```
+* 32-bit Platform with Intel OpenCL
+  ```
+  cmake .. -A "Win32" -DCL_ENV:STRING=INTELOCLSDKROOT -DCL_INC:STRING=include -DCL_LIB:STRING=lib/x86
+  ```
 
-  * 32-bit Platform with Intel OpenCL
-    ```
-    cmake .. -A "Win32" -DCL_ENV:STRING=INTELOCLSDKROOT -DCL_INC:STRING=include -DCL_LIB:STRING=lib/x86
-    ```
+* 64-bit Platform with Intel OpenCL
+  ```
+  cmake .. -A "x64" -DCL_ENV:STRING=INTELOCLSDKROOT -DCL_INC:STRING=include -DCL_LIB:STRING=lib/x64
+  ```
 
-  * 64-bit Platform with Intel OpenCL
-    ```
-    cmake .. -A "x64" -DCL_ENV:STRING=INTELOCLSDKROOT -DCL_INC:STRING=include -DCL_LIB:STRING=lib/x64
-    ```
+* 32-bit Platform with NVIDIA OpenCL
+  ```
+  cmake .. -A "Win32" -DCL_ENV:STRING=CUDA_PATH -DCL_INC:STRING=include -DCL_LIB:STRING=lib/Win32
+  ```
 
-  * 32-bit Platform with NVIDIA OpenCL
-    ```
-    cmake .. -A "Win32" -DCL_ENV:STRING=CUDA_PATH -DCL_INC:STRING=include -DCL_LIB:STRING=lib/Win32
-    ```
+* 64-bit Platform with NVIDIA OpenCL
+  ```
+  cmake .. -A "x64" -DCL_ENV:STRING=CUDA_PATH -DCL_INC:STRING=include -DCL_LIB:STRING=lib/x64
+  ```
 
-  * 64-bit Platform with NVIDIA OpenCL
-    ```
-    cmake .. -A "x64" -DCL_ENV:STRING=CUDA_PATH -DCL_INC:STRING=include -DCL_LIB:STRING=lib/x64
-    ```
-
-* Build Process
-  Build "ALL_BUILD" Project in "Clips" Solution
-  Execute "builder.exe" in "Release" Folder for OpenCL
-  Take Output Object Files
+---
+#### Build Process
+1. Build "ALL_BUILD" Project in "Clips" Solution
+2. Execute "builder.exe" in "Release" Folder for OpenCL
+3. Take Output Object Files
