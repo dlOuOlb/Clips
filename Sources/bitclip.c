@@ -16,7 +16,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.08.22";
+static DATA_08 IdiomVersion[16]="Date:2018.08.31";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -4707,14 +4707,15 @@ boolean _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,DATA_32 _PL_ Shape
 						data_32 ShapeSNew[MemC_Copy_Max_Dimension];
 						data_32 MapTNew[MemC_Copy_Max_Dimension];
 
-						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions,data_32))
+						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions,data_32)!=MemC_Errno_0)
 							goto FAILURE;
 
-						if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions,data_32))
+						if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions,data_32)!=MemC_Errno_0)
 							goto FAILURE;
 
 						_BitC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
 						_BitC_Reform_Order_(Acs_(bitclip,ArrayS),Acs_(bitclip,ArrayT),ShapeSNew,MapTNew,Total,Dimensions,Bytes);
+
 						goto SUCCESS;
 					}
 					else
@@ -4732,10 +4733,10 @@ boolean _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,DATA_32 _PL_ Shape
 				const size_t Copy=ShapeS[0]*Bytes;
 
 				if(Copy)
-					if(MemC_Copy_Byte_(ArrayS,ArrayT,Copy))
-						goto FAILURE;
-					else
+					if(MemC_Copy_Byte_(ArrayS,ArrayT,Copy)==MemC_Errno_0)
 						goto SUCCESS;
+					else
+						goto FAILURE;
 				else
 					goto SUCCESS;
 			}
@@ -4756,10 +4757,10 @@ static NAME_08 *_BitC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 	NAME_08 *Return;
 
 	if(Prefix)
-		if(PenC_String_Copier_(Buffer,Prefix,Capacity))
+		if(PenC_String_Copier_N08_(Buffer,Prefix,Capacity))
 			Return=NULL;
 		else
-			if(PenC_String_Concat_(Buffer,Name,Capacity))
+			if(PenC_String_Concat_N08_(Buffer,Name,Capacity))
 				Return=NULL;
 			else
 				Return=Buffer;
@@ -4768,7 +4769,7 @@ static NAME_08 *_BitC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 
 	return Return;
 }
-penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
+penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option,FILE _PL_ Stream)
 {
 	ADDRESS Length=1024;
 	name_08 _PL_ _PL_ Buffer=MemC_Alloc_2D_(3,Length,name_08);
@@ -4782,7 +4783,7 @@ penc_eu BitC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08
 		Name[1]=_BitC_Path_(Buffer[1],DirSrc,BitCFile[1],Length);
 		Name[2]=_BitC_Path_(Buffer[2],DirBin,BitCFile[2],Length);
 		if(MemC_Check_(Name,3))
-			Error=PenC_CL_Binary_(Queue,Name[2],Name,Option,2);
+			Error=PenC_CL_Binary_(Queue,Name[2],Name,Option,2,Stream);
 		else
 			Error.E=CLOutOfHostMemory;
 	}
@@ -4923,7 +4924,7 @@ address *BitC_CL_Choice_(BITC_CL _PL_ Manager)
 
 	return Table;
 }
-penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
+penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option,FILE _PL_ Stream)
 {
 	penc_eu Error;
 
@@ -4958,7 +4959,7 @@ penc_eu BitC_CL_Launch_(cl_command_queue const Queue,BITC_CL _PL_ Manager,NAME_0
 
 					if(Name)
 					{
-						penc_cl *Helper=PenC_CL_Create_(Queue,Name,(name_08**)Slot,Option,Count,&Error);
+						penc_cl *Helper=PenC_CL_Create_(Queue,Name,(name_08**)Slot,Option,Count,&Error,Stream);
 
 						if(Helper)
 						{
@@ -5052,12 +5053,8 @@ static penc_eu _BitC_Worker_KM_Reform_(PENC_CL _PL_ Helper,DEVI_KM _PL_ KM,ADDRE
 
 	ParamHost[0]=Dimensions;
 	ParamHost[1]=_BitC_Reform_Total_(ShapeS,Dimensions);
-	if(MemC_Copy_1D_(ShapeS,ParamHost+2,Dimensions,data_32))
-		Error.E=CLInvalidArgValue;
-	else
-		if(MemC_Copy_1D_(AxisStoT,ParamHost+(2+Devi_Copy_Max_Dimension),Dimensions,data_32))
-			Error.E=CLInvalidArgValue;
-		else
+	if(MemC_Copy_1D_(ShapeS,ParamHost+2,Dimensions,data_32)==MemC_Errno_0)
+		if(MemC_Copy_1D_(AxisStoT,ParamHost+(2+Devi_Copy_Max_Dimension),Dimensions,data_32)==MemC_Errno_0)
 		{
 			Error.I=Devi_Copy_1D_(Helper->Queue,ParamHost,ParamDevice,0,0,2+(Devi_Copy_Max_Dimension<<1),data_32,DeviCopyHtoD);
 			Error.I|=Devi_KM_Save_(KM,0,(address)(&ArrayS));
@@ -5069,6 +5066,10 @@ static penc_eu _BitC_Worker_KM_Reform_(PENC_CL _PL_ Helper,DEVI_KM _PL_ KM,ADDRE
 				KM->WLocals[0]=Helper->SizeWorker[0];
 			}
 		}
+		else
+			Error.E=CLInvalidArgValue;
+	else
+		Error.E=CLInvalidArgValue;
 
 	return Error;
 }

@@ -1,7 +1,7 @@
-#include "penclip.h"
+﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.08.17";
+static NAME_08 IdiomVersion[16]="Date:2018.08.31";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -89,24 +89,43 @@ address PenC_File_Length_(NAME_08 _PL_ Name)
 	return Length;
 }
 
-integer PenC_Pipe_Action_(NAME_08 _PL_ Command)
+integer PenC_Pipe_Action_(NAME_08 _PL_ Command,FILE _PL_ Stream)
 {
 	name_08 Buffer[1024];
+	PENC_SC SC=PenC_SC_Assign_(Buffer,1024);
 	FILE *ProgramPointer=NULL;
 	integer Return=-1;
-
+	
 	PenC_Pipe_Opener_(ProgramPointer,Command,AddressOpen[0]);
 	if(ProgramPointer)
-		while(PenC_String_Reader_Stream_(Buffer,1024,ProgramPointer))
+		while(PenC_SC_Stream_N08_(1,SC,ProgramPointer))
 		{
-			PenC_String_Writer_(Buffer);
+			Return=PenC_Stream_Format_N08_(0,Stream,Buffer);
+			if(Return<0)
+				break;
+
 			Return=PenC_File_Washer_(ProgramPointer);
 			if(Return)
 				break;
 		}
 	PenC_Pipe_Closer_(ProgramPointer,Return);
-
+	
 	return Return;
+}
+
+errno_t PenC_String_Caster_N08_N16_(NAME_08 *StringS,name_16 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
+{
+	mbstate_t State={._Wchar=0,._Byte=0,._State=0};
+	size_t Length;
+
+	return mbsrtowcs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State);
+}
+errno_t PenC_String_Caster_N16_N08_(NAME_16 *StringS,name_08 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
+{
+	mbstate_t State={._Wchar=0,._Byte=0,._State=0};
+	size_t Length;
+
+	return wcsrtombs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State);
 }
 
 general PenC_Name_Deci_(name_08 _PL_ Line,ADDRESS Number,ADDRESS Count)
@@ -170,7 +189,7 @@ address PenC_Name_Extend_(NAME_08 _PL_ Line,ADDRESS Length)
 	if(Line)
 	{
 		NAME_08 *End=Line;
-		NAME_08 *Pointer=(name_08*)PenC_Finder_Byte_(Line,'\0',Length);
+		NAME_08 *Pointer=(name_08*)PenC_Finder_N08_(Line,'\0',Length);
 
 		for(;Pointer>End;Pointer--)
 			if((*Pointer)=='.')
@@ -186,6 +205,16 @@ address PenC_Name_Extend_(NAME_08 _PL_ Line,ADDRESS Length)
 #endif
 
 #if(MemC_Fold_(Definition:PenClip Managed Functions))
+penc_sc PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity)
+{
+	penc_sc SC;
+
+	Acs_(address,SC.Capacity)=Capacity;
+	Acs_(GENERAL*,SC.String.X)=String;
+
+	return SC;
+}
+
 static address _PenC_Overflow_Add_(ADDRESS A,ADDRESS B)
 {
 	ADDRESS Return=A+B;
@@ -225,23 +254,26 @@ static general _PenC_SC_Bound_(PENC_SC _PL_ SC)
 penc_sc *PenC_SC_Create_(ADDRESS Capacity)
 {
 	penc_sc *SC;
-
-	if(Capacity)
-	{
-		SC=MemC_Alloc_Byte_(_PenC_Overflow_Add_(Capacity,sizeof(penc_sc)));
-		if(SC)
-		{
-			Acs_(address,SC->Capacity)=Capacity;
-			Acs_(name_08*,SC->String.N08)=(name_08*)(SC+1);
-			_PenC_SC_Bound_(SC);
-		}
-	}
+	
+	if(Capacity>RSIZE_MAX)
+		SC=NULL;
 	else
-	{
-		SC=MemC_Alloc_Unit_(penc_sc);
-		if(SC)
-			MemC_Clear_Unit_(SC,penc_sc);
-	}
+		if(Capacity)
+		{
+			SC=MemC_Alloc_Byte_(_PenC_Overflow_Add_(Capacity,sizeof(penc_sc)));
+			if(SC)
+			{
+				Acs_(address,SC->Capacity)=Capacity;
+				Acs_(name_08*,SC->String.N08)=(name_08*)(SC+1);
+				_PenC_SC_Bound_(SC);
+			}
+		}
+		else
+		{
+			SC=MemC_Alloc_Unit_(penc_sc);
+			if(SC)
+				MemC_Clear_Unit_(SC,penc_sc);
+		}
 
 	return SC;
 }
@@ -288,192 +320,79 @@ general PenC_SC_Delete_(penc_sc *_PL_ SC)
 {
 	MemC_Deloc_(*SC);
 }
-integer PenC_SC_Init_(PENC_SC _PL_ SC)
-{
-	if(SC)
-	{
-		MemC_Clear_1D_(SC->String.N08,SC->Capacity,name_08);
-		goto SUCCESS;
-	}
-	else
-		goto FAILURE;
-FAILURE:
-	return 0;
-SUCCESS:
-	return 1;
-}
-
-static address _PenC_SC_Length_N08_(PENC_SC _PL_ SC)
-{
-	NAME_08 _PL_ Pointer=(SC->Capacity)?(PenC_Finder_Byte_(SC->String.N08,'\0',SC->Capacity)):(NULL);
-
-	return ((Pointer)?(Pointer-SC->String.N08):(SC->Capacity));
-}
-address PenC_SC_Length_N08_(PENC_SC _PL_ SC)
-{
-	address Return;
-
-	if(SC)
-		Return=_PenC_SC_Length_N08_(SC);
-	else
-		Return=0;
-
-	return Return;
-}
-integer PenC_SC_Copy_N08_(PENC_SC _PL_ Target,PENC_SC _PL_ Source)
-{
-	if(Source)
-		if(Target)
-		{
-			ADDRESS Copy=_PenC_SC_Length_N08_(Source);
-
-			if(Copy)
-				if(Copy<Source->Capacity)
-					if(Copy<Target->Capacity)
-						if(MemC_Copy_1D_(Source->String.N08,Target->String.N08,Copy,name_08))
-							goto FAILURE;
-						else
-						{
-							Target->String.N08[Copy]='\0';
-							goto SUCCESS;
-						}
-					else
-						goto FAILURE;
-				else
-					goto FAILURE;
-			else
-			{
-				if(Target->Capacity)
-					Target->String.N08[0]='\0';
-				goto SUCCESS;
-			}
-		}
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
-FAILURE:
-	return 0;
-SUCCESS:
-	return 1;
-}
-integer PenC_SC_Concat_N08_(PENC_SC _PL_ Target,PENC_SC _PL_ Source)
-{
-	if(Source)
-		if(Target)
-		{
-			ADDRESS LngS=_PenC_SC_Length_N08_(Source);
-
-			if(LngS<Source->Capacity)
-			{
-				ADDRESS LngT=_PenC_SC_Length_N08_(Target);
-
-				if(LngT<Target->Capacity)
-					if(LngS)
-					{
-						ADDRESS Sum=_PenC_Overflow_Add_(LngS,LngT);
-
-						if(Sum)
-							if(Sum<Target->Capacity)
-								if(MemC_Copy_1D_(Source->String.N08,Target->String.N08+LngT,LngS,name_08))
-									goto FAILURE;
-								else
-								{
-									Target->String.N08[Sum]='\0';
-									goto SUCCESS;
-								}
-							else
-								goto FAILURE;
-						else
-							goto FAILURE;
-					}
-					else
-						goto SUCCESS;
-				else
-					goto FAILURE;
-			}
-			else
-				goto FAILURE;
-		}
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
-FAILURE:
-	return 0;
-SUCCESS:
-	return 1;
-}
 
 penc_ss *PenC_SS_Create_(ADDRESS Parts,ADDRESS Total)
 {
 	penc_ss *SS;
 
-	if(Parts)
-		if(Total)
-		{
-			address Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
-
-			if(Size)
+	if(Total>RSIZE_MAX)
+		SS=NULL;
+	else
+		if(Parts)
+			if(Total)
 			{
-				Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
+				address Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
+
 				if(Size)
 				{
-					Size=_PenC_Overflow_Add_(Size,Total);
-					SS=MemC_Alloc_Byte_(Size);
-					if(SS)
+					Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
+					if(Size)
 					{
-						Acs_(address,SS->Root.Capacity)=Total;
-						Acs_(address,SS->Nums)=Parts;
-						Acs_(penc_sc*,SS->Part)=MemC_Clear_1D_(SS+1,Parts,penc_sc);
-						Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS->Part+Parts);
-						_PenC_SC_Bound_(&(SS->Root));
+						Size=_PenC_Overflow_Add_(Size,Total);
+						SS=MemC_Alloc_Byte_(Size);
+						if(SS)
+						{
+							Acs_(address,SS->Root.Capacity)=Total;
+							Acs_(address,SS->Nums)=Parts;
+							Acs_(penc_sc*,SS->Part)=MemC_Clear_1D_(SS+1,Parts,penc_sc);
+							Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS->Part+Parts);
+							_PenC_SC_Bound_(&(SS->Root));
+						}
 					}
+					else
+						SS=NULL;
 				}
 				else
 					SS=NULL;
 			}
 			else
-				SS=NULL;
-		}
-		else
-		{
-			address Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
-
-			if(Size)
 			{
-				Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
-				SS=MemC_Alloc_Byte_(Size);
+				address Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
+
+				if(Size)
+				{
+					Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
+					SS=MemC_Alloc_Byte_(Size);
+					if(SS)
+					{
+						Acs_(address,SS->Root.Capacity)=0;
+						Acs_(name_08*,SS->Root.String.N08)=NULL;
+						Acs_(address,SS->Nums)=Parts;
+						Acs_(penc_sc*,SS->Part)=MemC_Clear_1D_(SS+1,Parts,penc_sc);
+					}
+				}
+				else
+					SS=NULL;
+			}
+		else
+			if(Total)
+			{
+				SS=MemC_Alloc_Byte_(_PenC_Overflow_Add_(Total,sizeof(penc_ss)));
 				if(SS)
 				{
-					Acs_(address,SS->Root.Capacity)=0;
-					Acs_(name_08*,SS->Root.String.N08)=NULL;
-					Acs_(address,SS->Nums)=Parts;
-					Acs_(penc_sc*,SS->Part)=MemC_Clear_1D_(SS+1,Parts,penc_sc);
+					Acs_(address,SS->Root.Capacity)=Total;
+					Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS+1);
+					Acs_(address,SS->Nums)=0;
+					Acs_(penc_sc*,SS->Part)=NULL;
+					_PenC_SC_Bound_(&(SS->Root));
 				}
 			}
 			else
-				SS=NULL;
-		}
-	else
-		if(Total)
-		{
-			SS=MemC_Alloc_Byte_(_PenC_Overflow_Add_(Total,sizeof(penc_ss)));
-			if(SS)
 			{
-				Acs_(address,SS->Root.Capacity)=Total;
-				Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS+1);
-				Acs_(address,SS->Nums)=0;
-				Acs_(penc_sc*,SS->Part)=NULL;
-				_PenC_SC_Bound_(&(SS->Root));
+				SS=MemC_Alloc_Unit_(penc_ss);
+				if(SS)
+					MemC_Clear_Unit_(SS,penc_ss);
 			}
-		}
-		else
-		{
-			SS=MemC_Alloc_Unit_(penc_ss);
-			if(SS)
-				MemC_Clear_Unit_(SS,penc_ss);
-		}
 
 	return SS;
 }
@@ -560,7 +479,7 @@ static integer _PenC_Line_Reader_S_(name_08 *Line,NAME_08 _PL_ *FileName,ADDRESS
 
 	return Success;
 }
-static general _PenC_Build_Log_CL_(cl_device_id const Device,cl_program const Program)
+static general _PenC_Build_Log_CL_(cl_device_id const Device,cl_program const Program,FILE _PL_ Stream)
 {
 	{
 		cl_build_status Status;
@@ -569,16 +488,16 @@ static general _PenC_Build_Log_CL_(cl_device_id const Device,cl_program const Pr
 			switch(Status)
 			{
 			case CL_BUILD_SUCCESS:
-				PenC_String_Writer_(AddressBuild[0]);
+				PenC_Stream_Format_N08_(0,Stream,AddressBuild[0]);
 				break;
 			case CL_BUILD_NONE:
-				PenC_String_Writer_(AddressBuild[1]);
+				PenC_Stream_Format_N08_(0,Stream,AddressBuild[1]);
 				break;
 			case CL_BUILD_ERROR:
-				PenC_String_Writer_(AddressBuild[2]);
+				PenC_Stream_Format_N08_(0,Stream,AddressBuild[2]);
 				break;
 			case CL_BUILD_IN_PROGRESS:
-				PenC_String_Writer_(AddressBuild[3]);
+				PenC_Stream_Format_N08_(0,Stream,AddressBuild[3]);
 				break;
 			default:;
 			}
@@ -592,13 +511,13 @@ static general _PenC_Build_Log_CL_(cl_device_id const Device,cl_program const Pr
 
 			if(String)
 				if(Devi_Info_Build_(Device,Program,String,StringSize,name_08,CL_PROGRAM_BUILD_LOG)==CL_SUCCESS)
-					PenC_String_Writer_(String);
+					PenC_Stream_Format_N08_(0,Stream,String);
 
 			MemC_Deloc_(String);
 		}
 	}
 }
-penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ PathOut,NAME_08 _PL_ _PL_ ListPathIn,NAME_08 _PL_ Option,ADDRESS Files)
+penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ PathOut,NAME_08 _PL_ _PL_ ListPathIn,NAME_08 _PL_ Option,ADDRESS Files,FILE _PL_ Stream)
 {
 	cl_device_id Device;
 	penc_eu Error;
@@ -634,7 +553,7 @@ penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ PathOut,NAME_0
 								if(Error.E==CLSuccess)
 								{
 									Error.I=Devi_Build_(Program,Option);
-									_PenC_Build_Log_CL_(Device,Program);
+									_PenC_Build_Log_CL_(Device,Program,Stream);
 									if(Error.E==CLSuccess)
 									{
 										address SizeBinary;
@@ -682,7 +601,7 @@ penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ PathOut,NAME_0
 
 	return Error;
 }
-penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ PathObj,NAME_08 _PL_ _PL_ SetIndicator,NAME_08 _PL_ Option,const cl_uint Kernels,penc_eu _PL_ Error)
+penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ PathObj,NAME_08 _PL_ _PL_ SetIndicator,NAME_08 _PL_ Option,const cl_uint Kernels,penc_eu _PL_ Error,FILE _PL_ Stream)
 {
 	penc_cl *Helper=NULL;
 	
@@ -746,7 +665,7 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ PathObj,NAME_
 												if(Helper->Program)
 												{
 													Error->I=Devi_Build_(Helper->Program,Option);
-													_PenC_Build_Log_CL_(Device,Helper->Program);
+													_PenC_Build_Log_CL_(Device,Helper->Program,Stream);
 													if(Error->E==CLSuccess)
 													{
 														NAME_08 _PL_ _PL_ End=SetIndicator+Kernels;
@@ -826,55 +745,55 @@ general PenC_CL_Delete_(penc_cl *_PL_ Helper)
 	}
 }
 
-static cl_uint _PenC_Select_Key_CL_(general)
+static cl_uint _PenC_Select_Key_CL_(FILE _PL_ Stream)
 {
 	cl_uint Key;
 
-	PenC_String_Writer_("Select: ");
-	PenC_String_Reader_("%d",&Key);
-	PenC_String_Writer_("\n");
+	PenC_Stream_Format_N08_(0,Stream,"Select: ");
+	PenC_Stream_Format_N08_(1,Stream,"%d",&Key);
+	PenC_Stream_Format_N08_(0,Stream,"\n");
 
 	return Key;
 }
-static general _PenC_Show_Platform_CL_(cl_platform_id const Platform,name_08 *Buffer)
+static general _PenC_Show_Platform_CL_(cl_platform_id const Platform,name_08 *Buffer,FILE _PL_ Stream)
 {
 	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_NAME)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[4],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[4],Buffer);
 	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_VENDOR)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[2],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[2],Buffer);
 	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_VERSION)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[5],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[5],Buffer);
 	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_PROFILE)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[6],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[6],Buffer);
 	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_EXTENSIONS)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[7],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[7],Buffer);
 	if(Devi_Info_Platform_(Platform,Buffer,1024,name_08,CL_PLATFORM_ICD_SUFFIX_KHR)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[8],Buffer);
-	PenC_String_Writer_(AddressMessage[7]);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[8],Buffer);
+	PenC_Stream_Format_N08_(0,Stream,AddressMessage[7]);
 }
-static general _PenC_Show_Device_CL_(cl_device_id const Device,name_08 *Buffer)
+static general _PenC_Show_Device_CL_(cl_device_id const Device,name_08 *Buffer,FILE _PL_ Stream)
 {
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_NAME)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[4],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[4],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_VENDOR)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[2],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[2],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_VERSION)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[5],AddressInfo[1],AddressInfo[5],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[5],AddressInfo[1],AddressInfo[5],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DRIVER_VERSION)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[5],AddressInfo[3],AddressInfo[5],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[5],AddressInfo[3],AddressInfo[5],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_OPENCL_C_VERSION)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[5],AddressInfo[4],AddressInfo[5],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[5],AddressInfo[4],AddressInfo[5],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_PROFILE)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[6],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[6],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_EXTENSIONS)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[7],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[7],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_SPIR_VERSIONS)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[9],Buffer);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[9],Buffer);
 	if(Devi_Info_Device_(Device,Buffer,1024,name_08,CL_DEVICE_BUILT_IN_KERNELS)==CL_SUCCESS)
-		PenC_String_Writer_(AddressMessage[6],AddressInfo[10],Buffer);
-	PenC_String_Writer_(AddressMessage[7]);
+		PenC_Stream_Format_N08_(0,Stream,AddressMessage[6],AddressInfo[10],Buffer);
+	PenC_Stream_Format_N08_(0,Stream,AddressMessage[7]);
 }
-penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
+penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice,FILE _PL_ Stream)
 {
 	name_08 Buffer[1024];
 	cl_uint Platforms;
@@ -895,24 +814,24 @@ penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 						NAME_08 *Plural=(Platforms>1)?(IdiomInfo+102):(IdiomInfo+103);
 						cl_uint Index;
 
-						PenC_String_Writer_(AddressMessage[2],Platforms,AddressInfo[0],Plural);
+						PenC_Stream_Format_N08_(0,Stream,AddressMessage[2],Platforms,AddressInfo[0],Plural);
 						for(Index=0;Index<Platforms;Index++)
 						{
 							ErrorCode.I=Devi_Info_Platform_(Platform[Index],Buffer,1024,name_08,CL_PLATFORM_NAME);
 							if(ErrorCode.E==CLSuccess)
-								PenC_String_Writer_(AddressMessage[3],Index,Buffer);
+								PenC_Stream_Format_N08_(0,Stream,AddressMessage[3],Index,Buffer);
 							else
 								break;
 						}
 						if(ErrorCode.E==CLSuccess)
 						{
-							Index=_PenC_Select_Key_CL_();
+							Index=_PenC_Select_Key_CL_(Stream);
 							if(Index<Platforms)
 							{
 								cl_uint Devices;
 
 								(*SelectPlatform)=Index;
-								_PenC_Show_Platform_CL_(Platform[*SelectPlatform],Buffer);
+								_PenC_Show_Platform_CL_(Platform[*SelectPlatform],Buffer,Stream);
 								ErrorCode.I=Devi_Numb_Devices_(Platform[*SelectPlatform],&Devices);
 								if(ErrorCode.E==CLSuccess)
 									if(Devices)
@@ -926,33 +845,33 @@ penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 												if(Devices)
 												{
 													Plural=(Devices>1)?(IdiomInfo+102):(IdiomInfo+103);
-													PenC_String_Writer_(AddressMessage[2],Devices,AddressInfo[1],Plural);
+													PenC_Stream_Format_N08_(0,Stream,AddressMessage[2],Devices,AddressInfo[1],Plural);
 													for(Index=0;Index<Devices;Index++)
 													{
 														ErrorCode.I=Devi_Info_Device_(Device[Index],Buffer,1024,name_08,CL_DEVICE_NAME);
 														if(ErrorCode.E==CLSuccess)
-															PenC_String_Writer_(AddressMessage[3],Index,Buffer);
+															PenC_Stream_Format_N08_(0,Stream,AddressMessage[3],Index,Buffer);
 														else
 															break;
 													}
 													if(ErrorCode.E==CLSuccess)
 													{
-														Index=_PenC_Select_Key_CL_();
+														Index=_PenC_Select_Key_CL_(Stream);
 														if(Index<Devices)
 														{
 															(*SelectDevice)=Index;
-															_PenC_Show_Device_CL_(Device[*SelectDevice],Buffer);
+															_PenC_Show_Device_CL_(Device[*SelectDevice],Buffer,Stream);
 														}
 														else
 														{
-															PenC_String_Writer_(AddressMessage[1]);
+															PenC_Stream_Format_N08_(0,Stream,AddressMessage[1]);
 															ErrorCode.E=CLInvalidDevice;
 														}
 													}
 												}
 												else
 												{
-													PenC_String_Writer_(AddressMessage[0],AddressInfo[1]);
+													PenC_Stream_Format_N08_(0,Stream,AddressMessage[0],AddressInfo[1]);
 													ErrorCode.E=CLInvalidDevice;
 												}
 										}
@@ -963,20 +882,20 @@ penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 									}
 									else
 									{
-										PenC_String_Writer_(AddressMessage[0],AddressInfo[1]);
+										PenC_Stream_Format_N08_(0,Stream,AddressMessage[0],AddressInfo[1]);
 										ErrorCode.E=CLInvalidDevice;
 									}
 							}
 							else
 							{
-								PenC_String_Writer_(AddressMessage[1]);
+								PenC_Stream_Format_N08_(0,Stream,AddressMessage[1]);
 								ErrorCode.E=CLInvalidPlatform;
 							}
 						}
 					}
 					else
 					{
-						PenC_String_Writer_(AddressMessage[0],AddressInfo[0]);
+						PenC_Stream_Format_N08_(0,Stream,AddressMessage[0],AddressInfo[0]);
 						ErrorCode.E=CLInvalidPlatform;
 					}
 			}
@@ -987,7 +906,7 @@ penc_eu PenC_CL_Identify_(cl_uint _PL_ SelectPlatform,cl_uint _PL_ SelectDevice)
 		}
 		else
 		{
-			PenC_String_Writer_(AddressMessage[0],AddressInfo[0]);
+			PenC_Stream_Format_N08_(0,Stream,AddressMessage[0],AddressInfo[0]);
 			ErrorCode.E=CLInvalidPlatform;
 		}
 	

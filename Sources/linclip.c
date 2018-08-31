@@ -9,7 +9,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.08.17";
+static DATA_08 IdiomVersion[16]="Date:2018.08.31";
 static ADDRESS ConstantSize[2]={sizeof(real_32),sizeof(real_64)};
 
 #ifdef __OPENCL_H
@@ -2547,10 +2547,10 @@ static NAME_08 *_LinC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 	NAME_08 *Return;
 
 	if(Prefix)
-		if(PenC_String_Copier_(Buffer,Prefix,Capacity))
+		if(PenC_String_Copier_N08_(Buffer,Prefix,Capacity))
 			Return=NULL;
 		else
-			if(PenC_String_Concat_(Buffer,Name,Capacity))
+			if(PenC_String_Concat_N08_(Buffer,Name,Capacity))
 				Return=NULL;
 			else
 				Return=Buffer;
@@ -2559,7 +2559,7 @@ static NAME_08 *_LinC_Path_(name_08 _PL_ Buffer,NAME_08 _PL_ Prefix,NAME_08 _PL_
 
 	return Return;
 }
-penc_eu LinC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
+penc_eu LinC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option,FILE _PL_ Stream)
 {
 	ADDRESS Length=1024;
 	name_08 _PL_ _PL_ Buffer=MemC_Alloc_2D_(3,Length,name_08);
@@ -2573,7 +2573,7 @@ penc_eu LinC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ DirSrc,NAME_08
 		Name[1]=_LinC_Path_(Buffer[1],DirSrc,LinCFile[1],Length);
 		Name[2]=_LinC_Path_(Buffer[2],DirBin,LinCFile[2],Length);
 		if(MemC_Check_(Name,3))
-			Error=PenC_CL_Binary_(Queue,Name[2],Name,Option,2);
+			Error=PenC_CL_Binary_(Queue,Name[2],Name,Option,2,Stream);
 		else
 			Error.E=CLOutOfHostMemory;
 	}
@@ -2762,7 +2762,7 @@ address *LinC_CL_Choice_(LINC_CL _PL_ Manager)
 
 	return Table;
 }
-penc_eu LinC_CL_Launch_(cl_command_queue const Queue,LINC_CL _PL_ Manager,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option)
+penc_eu LinC_CL_Launch_(cl_command_queue const Queue,LINC_CL _PL_ Manager,NAME_08 _PL_ DirBin,NAME_08 _PL_ Option,FILE _PL_ Stream)
 {
 	penc_eu Error;
 
@@ -2797,7 +2797,7 @@ penc_eu LinC_CL_Launch_(cl_command_queue const Queue,LINC_CL _PL_ Manager,NAME_0
 
 					if(Name)
 					{
-						penc_cl *Helper=PenC_CL_Create_(Queue,Name,(name_08**)Slot,Option,Count,&Error);
+						penc_cl *Helper=PenC_CL_Create_(Queue,Name,(name_08**)Slot,Option,Count,&Error,Stream);
 
 						if(Helper)
 						{
