@@ -7,7 +7,7 @@
   cd build
   ```
 
-* CMake Build
+* CMake Command Examples
   * 32-bit Platform without OpenCL
     ```
     cmake .. -A "Win32"
@@ -37,3 +37,8 @@
     ```
     cmake .. -A "x64" -DCL_ENV:STRING=CUDA_PATH -DCL_INC:STRING=include -DCL_LIB:STRING=lib/x64
     ```
+
+* Build Process
+  Build "ALL_BUILD" Project in "Clips" Solution
+  Execute "builder.exe" in "Release" Folder for OpenCL
+  Take Output Object Files
