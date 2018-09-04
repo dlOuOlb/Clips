@@ -2,7 +2,7 @@
 /*	PenClip is a file I/O header.									*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.31	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.04	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -149,9 +149,11 @@ static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(in
 #endif
 
 #if(MemC_Fold_(Definition:Macros))
-#define PenC_Prefix_N08_(String) u8##String	//PenClip : 8-bit String Literal Prefix
-#define PenC_Prefix_N16_(String) u##String	//PenClip : 16-bit String Literal Prefix
-#define PenC_Prefix_N32_(String) U##String	//PenClip : 32-bit String Literal Prefix
+#define PenC_Prefix_N08_N_(String) String		//PenClip : Narrow Multi-byte String Literal Prefix
+#define PenC_Prefix_N16_W_(String) L##String	//PenClip : Wide String Literal Prefix
+#define PenC_Prefix_N08_U_(String) u8##String	//PenClip : UTF-8 Encoded String Literal Prefix
+#define PenC_Prefix_N16_U_(String) u##String	//PenClip : UTF-16 Encoded String Literal Prefix
+#define PenC_Prefix_N32_U_(String) U##String	//PenClip : UTF-32 Encoded String Literal Prefix
 
 #define PenC_Setter_N08_(Buffer,Value,Count) (name_08*)memset(Buffer,Value,Count)	//PenClip : 8-bit Character Setting
 #define PenC_Setter_N16_(Buffer,Value,Count) (name_16*)wmemset(Buffer,Value,Count)	//PenClip : 16-bit Character Setting
@@ -226,9 +228,9 @@ integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSiz
 integer PenC_Pipe_Action_(NAME_08 _PL_ Command,FILE _PL_ MsgStream);
 #endif
 #if(MemC_Fold_(Part:String))
-//PenClip : multi-byte to 2-byte String Conversion
+//PenClip : Narrow Multi-byte to Wide String Conversion
 errno_t PenC_String_Caster_N08_N16_(NAME_08 *SourceString,name_16 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
-//PenClip : 2-byte to multi-byte String Conversion
+//PenClip : Wide to Narrow Multi-byte String Conversion
 errno_t PenC_String_Caster_N16_N08_(NAME_16 *SourceString,name_08 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
 
 //PenClip : 8-bit String Length
