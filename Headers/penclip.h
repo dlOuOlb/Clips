@@ -1,8 +1,8 @@
 ﻿/*------------------------------------------------------------------*/
-/*	PenClip is a file I/O header.									*/
+/*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.04	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.05	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -253,18 +253,6 @@ errno_t PenC_String_Caster_N16_N08_(NAME_16 *SourceString,name_08 _PL_ TargetStr
 //PenClip : 16-bit String Copy
 #define PenC_String_Copier_N16_(Buffer,Source,Capacity) wcscpy_s(Buffer,Capacity,Source)
 #endif
-#if(MemC_Fold_(Part:Time))
-//PenClip : Current Clocks
-#define PenC_Time_Clocks_ clock()
-//PenClip : Clock Measure from Start
-#define PenC_Time_Elapse_(Start) (PenC_Time_Clocks_-(Start))
-//PenClip : Print current date.
-//＊Required buffer size is 10 bytes for ( yyyy.mm.dd ).
-general PenC_Time_Record_Date_(name_08 _PL_ Buffer);
-//PenClip : Print current time.
-//＊Requried buffer size is 8 bytes for ( hh:mm:ss ).
-general PenC_Time_Record_Hour_(name_08 _PL_ Buffer);
-#endif
 #if(MemC_Fold_(Part:Name))
 //PenClip : Print an integer in decimal form.
 //＊Required buffer size is count bytes.
@@ -283,8 +271,9 @@ address PenC_Name_Extend_(NAME_08 _PL_ Buffer,ADDRESS Length);
 #if(MemC_Fold_(Part:PenC_SC))
 //PenClip : String Container Static Definition
 #define PenC_SC_Define_(IString) {.Capacity=sizeof(IString),.String.X=(IString)}
-//PenClip : String Container Variable Assignment without Memory Allocation
-penc_sc PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity);
+//PenClip : String Container Local Variable Assignment without Heap Allocation
+penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity);
+#define PenC_SC_Assign_(Buffer) _PenC_SC_Assign_(Buffer,sizeof(Buffer))
 
 //PenClip : String Container Memory Allocation - Deallocate with "PenC_SC_Delete_"
 penc_sc *PenC_SC_Create_(ADDRESS CapacityBytes);
@@ -340,7 +329,7 @@ integer PenC_SS_Assign_(PENC_SS _PL_ SS,ADDRESS Index,ADDRESS Offset,ADDRESS Len
 #if(MemC_Fold_(Declaration:OpenCL Functions))
 #ifdef __OPENCL_H
 //PenC_CL : Select Platform and Device with Console Interface
-penc_eu PenC_CL_Identify_(cl_uint _PL_ PlatformSelect,cl_uint _PL_ DeviceSelect,FILE _PL_ MsgStream);
+penc_eu PenC_CL_Identify_(cl_uint _PL_ PlatformSelect,cl_uint _PL_ DeviceSelect,FILE _PL_ InputMessageStream,FILE _PL_ OutputMessageStream);
 //PenC_CL : Program Build from Source Files to an Object File
 penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ SourceFileNameSet,NAME_08 _PL_ BuildOption,ADDRESS SourceFilesNumber,FILE _PL_ MsgStream);
 
