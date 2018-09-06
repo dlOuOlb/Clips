@@ -9,7 +9,7 @@ integer main(general)
 	NAME_08 PathO[16]="..\\Release\\";
 	NAME_08 NameL[24]="..\\Release\\log.txt";
 	cl_uint Select[2];
-	penc_eu Error=PenC_CL_Identify_(Select+0,Select+1,NULL);
+	penc_eu Error=PenC_CL_Identify_(Select+0,Select+1,NULL,NULL);
 
 	if(Error.E==CLSuccess)
 	{
@@ -18,7 +18,7 @@ integer main(general)
 		if(PenC_File_Opener_(Log,NameL,PenCOpen[3])==MemC_Errno_0)
 		{
 			name_08 Buffer[64];
-			penc_sc Option=PenC_SC_Assign_(Buffer,sizeof(Buffer));
+			PENC_SC Option=PenC_SC_Assign_(Buffer);
 			devi_qc *QC=Devi_QC_Create_(Select[0],Select[1]);
 
 			if(QC)
