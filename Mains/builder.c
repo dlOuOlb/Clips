@@ -13,14 +13,12 @@ integer main(general)
 
 	if(Error.E==CLSuccess)
 	{
-		Error.I=EOF;
 		PenC_File_Region_(Log,NameL,PenCOpen[3],Error.I)
 		{
 			name_08 Buffer[64];
 			PENC_SC Option=PenC_SC_Assign_(Buffer);
-			devi_qc *QC=Devi_QC_Create_(Select[0],Select[1]);
-
-			if(QC)
+			
+			MemC_Region_(devi_qc,QC,Devi_QC_Create_(Select[0],Select[1]),Devi_QC_Delete_)
 			{
 				Error=_Main_Build_Option_(QC->Device,Option);
 				if(Error.E==CLSuccess)
@@ -40,12 +38,11 @@ integer main(general)
 				else
 					PenC_Stream_Format_N08_(0,NULL,"Error Occurred during Parsing the Build Option\n");
 			}
-			else
+			MemC_Failed_
 			{
 				PenC_Stream_Format_N08_(0,NULL,"Invalid Platform or Device\n");
 				Error.E=CLInvalidCommandQueue;
 			}
-			Devi_QC_Delete_(&QC);
 		}
 		if(Error.I)
 			PenC_Stream_Format_N08_(0,NULL,"File Open Failure\n");
