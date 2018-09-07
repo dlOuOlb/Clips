@@ -13,9 +13,8 @@ integer main(general)
 
 	if(Error.E==CLSuccess)
 	{
-		FILE *Log=NULL;
-
-		if(PenC_File_Opener_(Log,NameL,PenCOpen[3])==MemC_Errno_0)
+		Error.I=EOF;
+		PenC_File_Region_(Log,NameL,PenCOpen[3],Error.I)
 		{
 			name_08 Buffer[64];
 			PENC_SC Option=PenC_SC_Assign_(Buffer);
@@ -48,10 +47,8 @@ integer main(general)
 			}
 			Devi_QC_Delete_(&QC);
 		}
-		else
+		if(Error.I)
 			PenC_Stream_Format_N08_(0,NULL,"File Open Failure\n");
-
-		PenC_File_Closer_(Log);
 	}
 	else
 		PenC_Stream_Format_N08_(0,NULL,"Platform or Device Select Failure\n");
