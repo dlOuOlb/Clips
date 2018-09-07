@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.05	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.07	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -186,9 +186,12 @@ extern NAME_08 _PL_ _PL_ PenCOpen;
 #if(MemC_Fold_(Declaration:I/O Functions))
 #if(MemC_Fold_(Part:File))
 //PenClip : File Open
-#define PenC_File_Opener_(FilePointer,FileName,Mode) fopen_s(&(FilePointer),FileName,Mode)
+FILE *PenC_File_Opener_(NAME_08 _PL_ FileName,NAME_08 _PL_ OpeningMode);
 //PenClip : File Close
-#define PenC_File_Closer_(FilePointer) __dl{if(FilePointer){if(!fclose(FilePointer)){(FilePointer)=NULL;}}}lb__
+//＊Return value is 0 for success, an error code for failure.
+integer PenC_File_Closer_(FILE *_PL_ FilePointer);
+//PenClip : File Pointer Usage in Local Scope
+#define PenC_File_Region_(File,Name,Mode,Error) for(FILE _PL_ (File)=PenC_File_Opener_(Name,Mode);File;(Error)=PenC_File_Closer_((FILE**)&(File)))
 //PenClip : File Write
 #define PenC_File_Writer_(FilePointer,Buffer,Elements,type) fwrite(Buffer,sizeof(type),Elements,FilePointer)
 //PenClip : File Read
@@ -213,17 +216,21 @@ extern NAME_08 _PL_ _PL_ PenCOpen;
 address PenC_File_Length_(NAME_08 _PL_ FileName);
 
 //PenClip : 1D Array Data Read
+//＊Return value is 1 for success, 0 for failure.
 integer _PenC_Reader_1D_(general _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 #define PenC_Reader_1D_(Line,FileName,Elements,type) _PenC_Reader_1D_(Line,FileName,sizeof(type),Elements)
 //PenClip : 1D Array Data Write
+//＊Return value is 1 for success, 0 for failure.
 integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 #define PenC_Writer_1D_(Line,FileName,Elements,type) _PenC_Writer_1D_(Line,FileName,sizeof(type),Elements)
 #endif
 #if(MemC_Fold_(Part:Pipe))
 //PenClip : Pipe Open
-#define PenC_Pipe_Opener_(PipePointer,Command,Mode) __dl{(PipePointer)=_popen(Command,Mode);}lb__
+#define PenC_Pipe_Opener_(Command,Mode) _popen(Command,Mode)
 //PenClip : Pipe Close
-#define PenC_Pipe_Closer_(PipePointer,Return) __dl{if(PipePointer){(Return)=_pclose(PipePointer);(PipePointer)=NULL;}}lb__
+integer PenC_Pipe_Closer_(FILE *_PL_ Pipe);
+//PenClip : Pipe Pointer Usage in Local Scope
+#define PenC_Pipe_Region_(Pipe,Command,Mode,Return) for(FILE _PL_ (Pipe)=PenC_Pipe_Opener_(Command,Mode);Pipe;(Return)=PenC_Pipe_Closer_((FILE**)&(Pipe)))
 //PenClip : Execute a command.
 integer PenC_Pipe_Action_(NAME_08 _PL_ Command,FILE _PL_ MsgStream);
 #endif
