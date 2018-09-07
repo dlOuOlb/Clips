@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.29	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.07	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -80,6 +80,9 @@ static_assert((sizeof(cl_int)<=sizeof(size_t)),"sizeof(cl_int) > sizeof(size_t)"
 #define MemC_Type_Func_Declare_(Return,func_type_,FUNC_TYPE_,...) typedef MemC_Func_Declare_V_(Return,func_type_,__VA_ARGS__);typedef MemC_Func_Declare_C_(Return,FUNC_TYPE_,__VA_ARGS__);	//MemClip : Macro for Function Type Declaration
 
 #define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
+
+#define MemC_Region_(type,Object,Creation,Deleter_) for(type *(_Temp)=FULL,_PL_ (Object)=(Creation);_Temp;(_Temp)=NULL,(Deleter_)((type**)&(Object)))if(Object)	//MemClip : Object Pointer Variable Use in Local Scope
+#define MemC_Failed_ else																																		//MemClip : Failure Case for "MemC_Region_"
 #endif
 
 #if(MemC_Fold_(Definition:Types))

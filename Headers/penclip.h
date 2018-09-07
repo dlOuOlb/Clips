@@ -190,8 +190,8 @@ FILE *PenC_File_Opener_(NAME_08 _PL_ FileName,NAME_08 _PL_ OpeningMode);
 //PenClip : File Close
 //＊Return value is 0 for success, an error code for failure.
 integer PenC_File_Closer_(FILE *_PL_ FilePointer);
-//PenClip : File Pointer Usage in Local Scope
-#define PenC_File_Region_(File,Name,Mode,Error) for(FILE _PL_ (File)=PenC_File_Opener_(Name,Mode);File;(Error)=PenC_File_Closer_((FILE**)&(File)))
+//PenClip : File Pointer Usage in Local Scope - Handle with "MemC_Failed_"
+#define PenC_File_Region_(File,Name,Mode,Error) for(FILE *(_Temp)=FULL,_PL_ (File)=PenC_File_Opener_(Name,Mode);_Temp;(_Temp)=NULL,(Error)=PenC_File_Closer_((FILE**)&(File)))if(File)
 //PenClip : File Write
 #define PenC_File_Writer_(FilePointer,Buffer,Elements,type) fwrite(Buffer,sizeof(type),Elements,FilePointer)
 //PenClip : File Read
@@ -229,8 +229,8 @@ integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSiz
 #define PenC_Pipe_Opener_(Command,Mode) _popen(Command,Mode)
 //PenClip : Pipe Close
 integer PenC_Pipe_Closer_(FILE *_PL_ Pipe);
-//PenClip : Pipe Pointer Usage in Local Scope
-#define PenC_Pipe_Region_(Pipe,Command,Mode,Return) for(FILE _PL_ (Pipe)=PenC_Pipe_Opener_(Command,Mode);Pipe;(Return)=PenC_Pipe_Closer_((FILE**)&(Pipe)))
+//PenClip : Pipe Pointer Usage in Local Scope - Handle with "MemC_Failed_"
+#define PenC_Pipe_Region_(Pipe,Command,Mode,Return) for(FILE *(_Temp)=FULL,_PL_ (Pipe)=PenC_Pipe_Opener_(Command,Mode);_Temp;(_Temp)=NULL,(Return)=PenC_Pipe_Closer_((FILE**)&(Pipe)))if(Pipe)
 //PenClip : Execute a command.
 integer PenC_Pipe_Action_(NAME_08 _PL_ Command,FILE _PL_ MsgStream);
 #endif
