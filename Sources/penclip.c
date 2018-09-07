@@ -21,11 +21,11 @@ NAME_08 _PL_ _PL_ PenCOpen=AddressOpen;
 #if(MemC_Fold_(Definition:I/O Functions))
 integer _PenC_Reader_1D_(general _PL_ Line,NAME_08 _PL_ Name,ADDRESS Size,ADDRESS Count)
 {
-	integer Success=0;
+	integer Success;
 
 	if(Line)
 	{
-		integer Error=EOF;
+		integer Error;
 
 		PenC_File_Region_(File,Name,AddressOpen[0],Error)
 		{
@@ -33,20 +33,27 @@ integer _PenC_Reader_1D_(general _PL_ Line,NAME_08 _PL_ Name,ADDRESS Size,ADDRES
 
 			if(Bytes==PenC_File_Reader_(File,Line,Bytes,name_08))
 				Success=1;
+			else
+				Success=0;
 		}
+		MemC_Failed_
+			Success=0;
+
 		if(Error)
 			Success=0;
 	}
+	else
+		Success=0;
 
 	return Success;
 }
 integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ Name,ADDRESS Size,ADDRESS Count)
 {
-	integer Success=0;
+	integer Success;
 
 	if(Line)
 	{
-		integer Error=EOF;
+		integer Error;
 
 		PenC_File_Region_(File,Name,AddressOpen[1],Error)
 		{
@@ -54,10 +61,17 @@ integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ Name,ADDRESS Size,ADDRES
 
 			if(Bytes==PenC_File_Writer_(File,Line,Bytes,name_08))
 				Success=1;
+			else
+				Success=0;
 		}
+		MemC_Failed_
+			Success=0;
+
 		if(Error)
 			Success=0;
 	}
+	else
+		Success=0;
 
 	return Success;
 }
@@ -86,12 +100,16 @@ integer PenC_File_Closer_(FILE *_PL_ File)
 }
 address PenC_File_Length_(NAME_08 _PL_ Name)
 {
-	address Length=0;
-	integer Error=EOF;
+	address Length;
+	integer Error;
 
 	PenC_File_Region_(File,Name,AddressOpen[0],Error)
-		if(!fseek(File,0,SEEK_END))
+		if(fseek(File,0,SEEK_END))
+			Length=0;
+		else
 			Length=(address)ftell(File);
+	MemC_Failed_
+		Length=0;
 
 	if(Error)
 		Length=0;
@@ -117,7 +135,7 @@ integer PenC_Pipe_Action_(NAME_08 _PL_ Command,FILE _PL_ Stream)
 {
 	name_08 Buffer[1024];
 	PENC_SC SC=PenC_SC_Assign_(Buffer);
-	integer Return=EOF;
+	integer Return;
 	
 	PenC_Pipe_Region_(Pipe,Command,AddressOpen[0],Return)
 		while(PenC_SC_Stream_N08_(1,SC,Pipe))

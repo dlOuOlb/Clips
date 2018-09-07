@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.08.29";
+static BYTE_08 IdiomVersion[16]="Date:2018.09.07";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
