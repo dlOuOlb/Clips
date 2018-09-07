@@ -1,7 +1,7 @@
 ﻿#include "penclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.09.05";
+static NAME_08 IdiomVersion[16]="Date:2018.09.07";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -21,96 +21,116 @@ NAME_08 _PL_ _PL_ PenCOpen=AddressOpen;
 #if(MemC_Fold_(Definition:I/O Functions))
 integer _PenC_Reader_1D_(general _PL_ Line,NAME_08 _PL_ Name,ADDRESS Size,ADDRESS Count)
 {
-	integer Success;
+	integer Success=0;
 
 	if(Line)
 	{
-		FILE *FilePointer=NULL;
+		integer Error=EOF;
 
-		if(PenC_File_Opener_(FilePointer,Name,AddressOpen[0]))
-			Success=0;
-		else
+		PenC_File_Region_(File,Name,AddressOpen[0],Error)
 		{
 			ADDRESS Bytes=Count*Size;
 
-			if(Bytes==PenC_File_Reader_(FilePointer,Line,Bytes,name_08))
+			if(Bytes==PenC_File_Reader_(File,Line,Bytes,name_08))
 				Success=1;
-			else
-				Success=0;
 		}
-		PenC_File_Closer_(FilePointer);
+		if(Error)
+			Success=0;
 	}
-	else
-		Success=0;
 
 	return Success;
 }
 integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ Name,ADDRESS Size,ADDRESS Count)
 {
-	integer Success;
+	integer Success=0;
 
 	if(Line)
 	{
-		FILE *FilePointer=NULL;
+		integer Error=EOF;
 
-		if(PenC_File_Opener_(FilePointer,Name,AddressOpen[1]))
-			Success=0;
-		else
+		PenC_File_Region_(File,Name,AddressOpen[1],Error)
 		{
 			ADDRESS Bytes=Count*Size;
 
-			if(Bytes==PenC_File_Writer_(FilePointer,Line,Bytes,name_08))
+			if(Bytes==PenC_File_Writer_(File,Line,Bytes,name_08))
 				Success=1;
-			else
-				Success=0;
 		}
-		PenC_File_Closer_(FilePointer);
+		if(Error)
+			Success=0;
 	}
-	else
-		Success=0;
 
 	return Success;
 }
 
+FILE *PenC_File_Opener_(NAME_08 _PL_ Name,NAME_08 _PL_ Mode)
+{
+	FILE *File=NULL;
+	
+	fopen_s(&File,Name,Mode);
+	
+	return File;
+}
+integer PenC_File_Closer_(FILE *_PL_ File)
+{
+	integer Return;
+	
+	if(*File)
+	{
+		Return=fclose(*File);
+		*File=NULL;
+	}
+	else
+		Return=EOF;
+
+	return Return;
+}
 address PenC_File_Length_(NAME_08 _PL_ Name)
 {
-	FILE *FilePointer=NULL;
 	address Length=0;
+	integer Error=EOF;
 
-	if(PenC_File_Opener_(FilePointer,Name,AddressOpen[0]))
+	PenC_File_Region_(File,Name,AddressOpen[0],Error)
+		if(!fseek(File,0,SEEK_END))
+			Length=(address)ftell(File);
+
+	if(Error)
 		Length=0;
-	else
-		if(fseek(FilePointer,0,SEEK_END))
-			Length=0;
-		else
-			Length=(address)ftell(FilePointer);
-
-	PenC_File_Closer_(FilePointer);
 
 	return Length;
 }
 
+integer PenC_Pipe_Closer_(FILE *_PL_ Pipe)
+{
+	integer Return;
+
+	if(*Pipe)
+	{
+		Return=_pclose(*Pipe);
+		*Pipe=NULL;
+	}
+	else
+		Return=EOF;
+
+	return Return;
+}
 integer PenC_Pipe_Action_(NAME_08 _PL_ Command,FILE _PL_ Stream)
 {
 	name_08 Buffer[1024];
 	PENC_SC SC=PenC_SC_Assign_(Buffer);
-	FILE *ProgramPointer=NULL;
-	integer Return=-1;
+	integer Return=EOF;
 	
-	PenC_Pipe_Opener_(ProgramPointer,Command,AddressOpen[0]);
-	if(ProgramPointer)
-		while(PenC_SC_Stream_N08_(1,SC,ProgramPointer))
+	PenC_Pipe_Region_(Pipe,Command,AddressOpen[0],Return)
+		while(PenC_SC_Stream_N08_(1,SC,Pipe))
 		{
 			Return=PenC_Stream_Format_N08_(0,Stream,Buffer);
 			if(Return<0)
 				break;
 
-			Return=PenC_File_Washer_(ProgramPointer);
+			Return=PenC_File_Washer_(Pipe);
 			if(Return)
 				break;
 		}
-	PenC_Pipe_Closer_(ProgramPointer,Return);
-	
+
 	return Return;
 }
 
