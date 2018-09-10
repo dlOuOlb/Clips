@@ -6,7 +6,7 @@
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
-#define _INC_TIMCLIP
+#define _INC_TIMCLIP	//TimClip : Header Declaration
 
 #include <time.h>
 #include <limits.h>
