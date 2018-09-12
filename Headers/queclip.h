@@ -2,7 +2,7 @@
 /*	QueClip is a simple queue structure library.					*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.11	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.12	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_QUECLIP
