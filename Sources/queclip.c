@@ -2,7 +2,7 @@
 
 struct _quec_l2 { quec_l2 *L[2]; };
 
-static BYTE_08 IdiomVersion[16]="Date:2018.09.11";
+static BYTE_08 IdiomVersion[16]="Date:2018.09.12";
 BYTE_08 _PL_ QueClip=IdiomVersion;
 
 static address _QueC_Overflow_Add_(ADDRESS A,ADDRESS B)
@@ -42,6 +42,23 @@ static general _QueC_Initialize_(quec_l2 _PL_ Queue,ADDRESS Nums,ADDRESS Caps)
 		Ptr++;
 
 	Ptr[0].L[1]=NULL;
+}
+static general _QueC_Setup_(QUEC_QS _PL_ Q)
+{
+	if(Q->Nums)
+	{
+		MemC_Clear_1D_(Q->Queue,Q->Nums,quec_l2);
+		MemC_Clear_1D_((address*)(Q->Lngs),Q->Nums,address);
+	}
+	((address*)(Q->Lngs))[-1]=Q->Caps;
+
+	if(Q->Caps)
+		_QueC_Initialize_(Q->Queue,Q->Nums,Q->Caps);
+	else
+	{
+		Q->Queue[-1].L[0]=NULL;
+		Q->Queue[-1].L[1]=NULL;
+	}
 }
 quec_qs *QueC_QS_Create_(ADDRESS Nums,ADDRESS Caps)
 {
@@ -86,7 +103,7 @@ quec_qs *QueC_QS_Create_(ADDRESS Nums,ADDRESS Caps)
 		Acs_(address,Q->Nums)=Nums;
 		Acs_(address,Q->Caps)=Caps;
 
-		QueC_QS_Reset_All_(Q);
+		_QueC_Setup_(Q);
 	}
 
 	return Q;
@@ -187,29 +204,36 @@ general *QueC_QS_Deque_(QUEC_QS _PL_ Q,ADDRESS Select)
 	return Return;
 }
 
+static general _QueC_Reset_(quec_l2 *_PL_ Source,quec_l2 *_PL_ Target)
+{
+	if(Target[1])
+		Target[1]->L[1]=Source[0];
+	else
+		Target[0]=Source[0];
+	{
+		Target[1]=Source[1];
+
+		Source[0]=NULL;
+		Source[1]=NULL;
+	}
+}
 integer QueC_QS_Reset_(QUEC_QS _PL_ Q,ADDRESS Select)
 {
 	integer Return;
 
 	if(Q)
 		if(Select<Q->Nums)
-		{
-			if(Q->Queue[-1].L[1])
+			if(Q->Lngs[Select])
 			{
-				Q->Queue[-1].L[1]->L[1]=Q->Queue[Select].L[0];
-				Q->Queue[-1].L[1]=Q->Queue[Select].L[1];
+				_QueC_Reset_(Q->Queue[Select].L,Q->Queue[-1].L);
+
+				((address*)(Q->Lngs))[-1]+=Q->Lngs[Select];
+				((address*)(Q->Lngs))[Select]=0;
+
+				Return=1;
 			}
 			else
-				Q->Queue[-1]=Q->Queue[Select];
-
-			Q->Queue[Select].L[0]=NULL;
-			Q->Queue[Select].L[1]=NULL;
-
-			((address*)(Q->Lngs))[-1]+=Q->Lngs[Select];
-			((address*)(Q->Lngs))[Select]=0;
-
-			Return=1;
-		}
+				Return=1;
 		else
 			Return=0;
 	else
@@ -223,21 +247,16 @@ integer QueC_QS_Reset_All_(QUEC_QS _PL_ Q)
 
 	if(Q)
 	{
-		if(Q->Nums)
-		{
-			MemC_Clear_1D_(Q->Queue,Q->Nums,quec_l2);
-			MemC_Clear_1D_((address*)(Q->Lngs),Q->Nums,address);
-		}
-		((address*)(Q->Lngs))[-1]=Q->Caps;
+		address Select;
 
-		if(Q->Caps)
-			_QueC_Initialize_(Q->Queue,Q->Nums,Q->Caps);
-		else
-		{
-			Q->Queue[-1].L[0]=NULL;
-			Q->Queue[-1].L[1]=NULL;
-		}
+		for(Select=0;Select<Q->Nums;Select++)
+			if(Q->Lngs[Select])
+			{
+				_QueC_Reset_(Q->Queue[Select].L,Q->Queue[-1].L);
 
+				((address*)(Q->Lngs))[-1]+=Q->Lngs[Select];
+				((address*)(Q->Lngs))[Select]=0;
+			}
 		Return=1;
 	}
 	else
