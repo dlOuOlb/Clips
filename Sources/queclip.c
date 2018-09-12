@@ -111,9 +111,7 @@ quec_qs *QueC_QS_Create_(ADDRESS Nums,ADDRESS Caps)
 general QueC_QS_Delete_(quec_qs *_PL_ Q)
 {
 	if(*Q)
-	{
 		MemC_Deloc_(*Q);
-	}
 }
 address QueC_QS_Size_(QUEC_QS _PL_ Q)
 {
