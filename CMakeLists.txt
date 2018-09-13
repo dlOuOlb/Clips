@@ -87,6 +87,12 @@ add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
+# StaClip
+set(NAME staclip)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
+target_include_directories(${NAME} PUBLIC ${DIR_INC})
+target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
+
 # OpenCL Kernel Builder
 if(FLAG_CL)
 	set(NAME builder)
