@@ -1,8 +1,9 @@
 ﻿#include "staclip.h"
 
+MemC_Type_Declare_(struct,stac_l2,STAC_L2);
 struct _stac_l2 { stac_l2 *L[2]; };
 
-static BYTE_08 IdiomVersion[16]="Date:2018.09.13";
+static BYTE_08 IdiomVersion[16]="Date:2018.09.14";
 BYTE_08 _PL_ StaClip=IdiomVersion;
 
 static address _StaC_Overflow_Add_(ADDRESS A,ADDRESS B)
@@ -40,33 +41,36 @@ static general _StaC_Initialize_(stac_l2 *_R_ Ptr,STAC_L2 _PL_ Last)
 }
 static general _StaC_Setup_(STAC_SS _PL_ S)
 {
-	if(S->Nums)
-	{
-		MemC_Clear_1D_(S->Stack,S->Nums,stac_l2*);
-		MemC_Clear_1D_((address*)(S->Lngs),S->Nums,address);
-	}
-	((address*)(S->Lngs))[-1]=S->Caps;
+	stac_l2 *_PL_ Stack=(stac_l2**)(S->Stack);
+	address _PL_ Count=(address*)(S->Count);
 
-	if(S->Caps)
+	if(S->Number)
 	{
-		S->Stack[-1]=(stac_l2*)(S->Stack+S->Nums);
-		_StaC_Initialize_(S->Stack[-1],S->Stack[-1]+(S->Caps-1));
+		MemC_Clear_1D_(Stack,S->Number,stac_l2*);
+		MemC_Clear_1D_(Count,S->Number,address);
+	}
+	Count[-1]=S->Capacity;
+
+	if(S->Capacity)
+	{
+		Stack[-1]=(stac_l2*)(Stack+S->Number);
+		_StaC_Initialize_(Stack[-1],Stack[-1]+(S->Capacity-1));
 	}
 	else
-		S->Stack[-1]=NULL;
+		Stack[-1]=NULL;
 }
-stac_ss *StaC_SS_Create_(ADDRESS Nums,ADDRESS Caps)
+stac_ss *StaC_SS_Create_(ADDRESS Number,ADDRESS Capacity)
 {
 	stac_ss *S;
 
 	{
-		address TempA=_StaC_Overflow_Add_(Nums,1);
+		address TempA=_StaC_Overflow_Add_(Number,1);
 
 		TempA=_StaC_Overflow_Mul_(TempA,sizeof(stac_l2*)+sizeof(address));
 		if(TempA)
-			if(Caps)
+			if(Capacity)
 			{
-				address TempB=_StaC_Overflow_Mul_(Caps,sizeof(stac_l2));
+				address TempB=_StaC_Overflow_Mul_(Capacity,sizeof(stac_l2));
 
 				if(TempB)
 				{
@@ -92,11 +96,11 @@ stac_ss *StaC_SS_Create_(ADDRESS Nums,ADDRESS Caps)
 	}
 	if(S)
 	{
-		Acs_(address*,S->Lngs)=(address*)(S+1)+1;
-		Acs_(stac_l2**,S->Stack)=(stac_l2**)(S->Lngs+Nums)+1;
+		Acs_(address*,S->Count)=(address*)(S+1)+1;
+		Acs_(stac_l2**,S->Stack)=(stac_l2**)(S->Count+Number)+1;
 
-		Acs_(address,S->Nums)=Nums;
-		Acs_(address,S->Caps)=Caps;
+		Acs_(address,S->Number)=Number;
+		Acs_(address,S->Capacity)=Capacity;
 
 		_StaC_Setup_(S);
 	}
@@ -114,8 +118,8 @@ address StaC_SS_Size_(STAC_SS _PL_ S)
 
 	if(S)
 	{
-		Temp=S->Nums+1;
-		Temp=MemC_Size_(stac_ss,1)+MemC_Size_(stac_l2*,Temp)+MemC_Size_(address,Temp)+MemC_Size_(stac_l2,S->Caps);
+		Temp=S->Number+1;
+		Temp=MemC_Size_(stac_ss,1)+MemC_Size_(stac_l2*,Temp)+MemC_Size_(address,Temp)+MemC_Size_(stac_l2,S->Capacity);
 	}
 	else
 		Temp=0;
@@ -144,13 +148,16 @@ integer StaC_SS_Push_(STAC_SS _PL_ S,ADDRESS Select,GENERAL *Contents)
 	integer Return;
 
 	if(S)
-		if(Select<S->Nums)
-			if(S->Lngs[-1])
+		if(Select<S->Number)
+			if(S->Count[-1])
 			{
-				_StaC_Swap_(S->Stack-1,S->Stack+Select,(general**)(&Contents));
+				stac_l2 *_PL_ Stack=(stac_l2**)(S->Stack);
+				address _PL_ Count=(address*)(S->Count);
 
-				((address*)(S->Lngs))[-1]--;
-				((address*)(S->Lngs))[Select]++;
+				_StaC_Swap_(Stack-1,Stack+Select,(general**)(&Contents));
+
+				Count[-1]--;
+				Count[Select]++;
 
 				Return=1;
 			}
@@ -168,13 +175,16 @@ general *StaC_SS_Pop_(STAC_SS _PL_ S,ADDRESS Select)
 	general *Return;
 
 	if(S)
-		if(Select<S->Nums)
-			if(S->Lngs[Select])
+		if(Select<S->Number)
+			if(S->Count[Select])
 			{
-				_StaC_Swap_(S->Stack+Select,S->Stack-1,&Return);
+				stac_l2 *_PL_ Stack=(stac_l2**)(S->Stack);
+				address _PL_ Count=(address*)(S->Count);
 
-				((address*)(S->Lngs))[-1]++;
-				((address*)(S->Lngs))[Select]--;
+				_StaC_Swap_(Stack+Select,Stack-1,&Return);
+
+				Count[-1]++;
+				Count[Select]--;
 			}
 			else
 				Return=NULL;
@@ -201,13 +211,16 @@ integer StaC_SS_Reset_(STAC_SS _PL_ S,ADDRESS Select)
 	integer Return;
 
 	if(S)
-		if(Select<S->Nums)
-			if(S->Lngs[Select])
+		if(Select<S->Number)
+			if(S->Count[Select])
 			{
-				_StaC_Reset_(S->Stack+Select,S->Stack-1);
+				stac_l2 *_PL_ Stack=(stac_l2**)(S->Stack);
+				address _PL_ Count=(address*)(S->Count);
 
-				((address*)(S->Lngs))[-1]+=S->Lngs[Select];
-				((address*)(S->Lngs))[Select]=0;
+				_StaC_Reset_(Stack+Select,Stack-1);
+
+				Count[-1]+=Count[Select];
+				Count[Select]=0;
 
 				Return=1;
 			}
@@ -232,6 +245,56 @@ integer StaC_SS_Reset_All_(STAC_SS _PL_ S)
 	}
 	else
 		Return=0;
+
+	return Return;
+}
+
+static integer _StaC_Check_(STAC_L2 *_R_ Ptr)
+{
+	while(Ptr)
+		if(Ptr->L[0])
+			Ptr=Ptr->L[1];
+		else
+			break;
+
+	return (Ptr==NULL);
+}
+integer StaC_SS_Check_(STAC_SS _PL_ S,ADDRESS Select)
+{
+	integer Return;
+
+	if(S)
+		if(Select<S->Number)
+			Return=_StaC_Check_(((stac_l2**)(S->Stack))[Select]);
+		else
+			Return=0;
+	else
+		Return=0;
+
+	return Return;
+}
+
+static general *_StaC_Peek_(STAC_L2 *_R_ Ptr,address Index)
+{
+	while(Index--)
+		Ptr=Ptr->L[1];
+
+	return Ptr->L[0];
+}
+general *StaC_SS_Peek_(STAC_SS _PL_ S,ADDRESS Select,ADDRESS Index)
+{
+	general *Return;
+
+	if(S)
+		if(Select<S->Number)
+			if(Index<S->Count[Select])
+				Return=_StaC_Peek_(((stac_l2**)(S->Stack))[Select],Index);
+			else
+				Return=NULL;
+		else
+			Return=NULL;
+	else
+		Return=NULL;
 
 	return Return;
 }
