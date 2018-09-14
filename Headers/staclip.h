@@ -2,7 +2,7 @@
 /*	StaClip is a simple stack structure library.					*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.13	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.14	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_STACLIP
@@ -10,14 +10,12 @@
 
 #include <memclip.h>
 
-MemC_Type_Declare_(struct,stac_l2,STAC_L2);	//StaClip : Opaque Stack Element
-
-struct _stac_ss				//StaClip : Stack Set Structure
+struct _stac_ss			//StaClip : Stack Set Structure
 {
-	stac_l2 *_PL_ Stack;	//StaClip : Internal Stack Set
-	ADDRESS _PL_ Lngs;		//StaClip : Length of Stacks where Lngs[-1] means Empty Length
-	ADDRESS Nums;			//StaClip : Number of Stacks
-	ADDRESS Caps;			//StaClip : Maximum Total Stack Length
+	GENERAL _PL_ Stack;	//StaClip : Internal Stack Set
+	ADDRESS _PL_ Count;	//StaClip : Length of Stacks where Count[-1] means Empty Length
+	ADDRESS Number;		//StaClip : Number of Stacks
+	ADDRESS Capacity;	//StaClip : Maximum Total Stack Length
 };
 MemC_Type_Declare_(struct,stac_ss,STAC_SS);	//StaClip : Stack Set Structure
 
@@ -44,4 +42,11 @@ integer StaC_SS_Push_(STAC_SS _PL_ SSet,ADDRESS SSelect,GENERAL *Object);
 //StaClip : Pop an Object from the Selected Stack
 //＊Return value is the stored address.
 general *StaC_SS_Pop_(STAC_SS _PL_ SSet,ADDRESS SSelect);
+
+//StaClip : Check the Selected Stack
+//＊Return value is 1 only if the selected stack has no NULL object, otherwise 0.
+integer StaC_SS_Check_(STAC_SS _PL_ SSet,ADDRESS SSelect);
+//StaClip : Peek an Object in the Seleted Stack without Change
+//＊Return value is the stored address.
+general *StaC_SS_Peek_(STAC_SS _PL_ SSet,ADDRESS SSelect,ADDRESS Depth);
 #endif
