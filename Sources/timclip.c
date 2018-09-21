@@ -1,17 +1,12 @@
 ﻿#include "timclip.h"
 
 #if(MemC_Fold_(Definition:Opaque Types))
-struct _timc_te
-{
-	clock_t Sum;
-	clock_t Mark;
-	timc_sf State;
-	integer Count;
-};
+struct _timc_te { clock_t Sum;clock_t Mark;timc_sf State;integer Count; };
+MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static BYTE_08 IdiomVersion[16]="Date:2018.09.06";
+static BYTE_08 IdiomVersion[16]="Date:2018.09.20";
 static REAL_32 ConstantClocks[2]={(real_32)(CLOCKS_PER_SEC),1.0F/(real_32)(CLOCKS_PER_SEC)};
 
 BYTE_08 _PL_ TimClip=IdiomVersion;
@@ -19,50 +14,24 @@ REAL_32 _PL_ TimClocks=ConstantClocks;
 #endif
 
 #if(MemC_Fold_(Definition:Functions))
-static address _TimC_Overflow_Add_(ADDRESS A,ADDRESS B)
-{
-	address C=A+B;
-
-	if(C<A)
-		C=0;
-	else
-		if(C<B)
-			C=0;
-
-	return C;
-}
-static address _TimC_Overflow_Mul_(ADDRESS A,ADDRESS B)
-{
-	address C[2];
-
-	C[0]=A*B;
-	if(C[0])
-	{
-		C[1]=C[0]/B;
-		if(C[1]!=A)
-			C[0]=0;
-	}
-
-	return C[0];
-}
 timc_sw *TimC_SW_Create_(ADDRESS Timers)
 {
 	timc_sw *SW;
 
 	if(Timers)
 	{
-		address Size=_TimC_Overflow_Mul_(Timers,sizeof(timc_te));
+		address Size=_MemC_Size_Mul_(Timers,sizeof(timc_te));
 
 		if(Size)
 		{
-			Size=_TimC_Overflow_Add_(Size,sizeof(timc_sw));
+			Size=_MemC_Size_Add_(Size,sizeof(timc_sw));
 			if(Size)
 			{
 				SW=MemC_Alloc_Byte_(Size);
 				if(SW)
 				{
-					Acs_(address,SW->Nums)=Timers;
 					Acs_(timc_te*,SW->Timer)=(timc_te*)(SW+1);
+					Acs_(address,SW->Nums)=Timers;
 				}
 			}
 			else
@@ -95,7 +64,7 @@ timc_sf TimC_SW_Reset_All_(TIMC_SW _PL_ SW)
 	if(SW)
 	{
 		if(SW->Nums)
-			MemC_Clear_1D_(SW->Timer,SW->Nums,timc_te);
+			MemC_Clear_1D_((timc_te*)(SW->Timer),SW->Nums,timc_te);
 
 		goto SUCCESS;
 	}
@@ -110,10 +79,10 @@ timc_sf TimC_SW_Stop_All_(TIMC_SW _PL_ SW)
 {
 	if(SW)
 	{
-		TIMC_TE _PL_ End=SW->Timer+SW->Nums;
+		TIMC_TE _PL_ End=(timc_te*)(SW->Timer)+SW->Nums;
 		timc_te *_R_ Ptr;
 
-		for(Ptr=SW->Timer;Ptr<End;Ptr++)
+		for(Ptr=(timc_te*)(SW->Timer);Ptr<End;Ptr++)
 			switch(Ptr->State)
 			{
 			default:
@@ -141,7 +110,7 @@ timc_sf TimC_SW_Reset_(TIMC_SW _PL_ SW,ADDRESS Select)
 	if(SW)
 		if(Select<SW->Nums)
 		{
-			MemC_Clear_Unit_(SW->Timer+Select,timc_te);
+			MemC_Clear_Unit_((timc_te*)(SW->Timer)+Select,timc_te);
 
 			goto SUCCESS;
 		}
@@ -161,7 +130,7 @@ timc_sf TimC_SW_Toggle_(TIMC_SW _PL_ SW,ADDRESS Select)
 	if(SW)
 		if(Select<SW->Nums)
 		{
-			timc_te _PL_ Timer=SW->Timer+Select;
+			timc_te _PL_ Timer=(timc_te*)(SW->Timer)+Select;
 
 			switch(Timer->State)
 			{
@@ -204,7 +173,7 @@ timc_sf TimC_SW_Read_State_(TIMC_SW _PL_ SW,ADDRESS Select)
 
 	if(SW)
 		if(Select<SW->Nums)
-			Flag=SW->Timer[Select].State;
+			Flag=((timc_te*)(SW->Timer))[Select].State;
 		else
 			Flag=TimCStateUnknown;
 	else
@@ -218,7 +187,7 @@ integer TimC_SW_Read_Count_(TIMC_SW _PL_ SW,ADDRESS Select)
 
 	if(SW)
 		if(Select<SW->Nums)
-			Count=SW->Timer[Select].Count;
+			Count=((timc_te*)(SW->Timer))[Select].Count;
 		else
 			Count=-1;
 	else
@@ -234,7 +203,7 @@ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
 	if(SW)
 		if(Select<SW->Nums)
 		{
-			TIMC_TE _PL_ Timer=SW->Timer+Select;
+			TIMC_TE _PL_ Timer=(timc_te*)(SW->Timer)+Select;
 
 			switch(Timer->State)
 			{
@@ -262,7 +231,7 @@ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ SW,ADDRESS Select)
 	if(SW)
 		if(Select<SW->Nums)
 		{
-			TIMC_TE _PL_ Timer=SW->Timer+Select;
+			TIMC_TE _PL_ Timer=(timc_te*)(SW->Timer)+Select;
 
 			switch(Timer->State)
 			{

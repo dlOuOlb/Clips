@@ -3,35 +3,9 @@
 MemC_Type_Declare_(struct,stac_l2,STAC_L2);
 struct _stac_l2 { stac_l2 *L[2]; };
 
-static BYTE_08 IdiomVersion[16]="Date:2018.09.14";
+static BYTE_08 IdiomVersion[16]="Date:2018.09.20";
 BYTE_08 _PL_ StaClip=IdiomVersion;
 
-static address _StaC_Overflow_Add_(ADDRESS A,ADDRESS B)
-{
-	address C=A+B;
-
-	if(C<A)
-		C=0;
-	else
-		if(C<B)
-			C=0;
-
-	return C;
-}
-static address _StaC_Overflow_Mul_(ADDRESS A,ADDRESS B)
-{
-	address C[2];
-
-	C[0]=A*B;
-	if(C[0])
-	{
-		C[1]=C[0]/B;
-		if(C[1]!=A)
-			C[0]=0;
-	}
-
-	return C[0];
-}
 static general _StaC_Initialize_(stac_l2 *_R_ Ptr,STAC_L2 _PL_ Last)
 {
 	for(;Ptr<Last;Ptr[-1].L[1]=Ptr)
@@ -64,20 +38,20 @@ stac_ss *StaC_SS_Create_(ADDRESS Number,ADDRESS Capacity)
 	stac_ss *S;
 
 	{
-		address TempA=_StaC_Overflow_Add_(Number,1);
+		address TempA=_MemC_Size_Add_(Number,1);
 
-		TempA=_StaC_Overflow_Mul_(TempA,sizeof(stac_l2*)+sizeof(address));
+		TempA=_MemC_Size_Mul_(TempA,sizeof(stac_l2*)+sizeof(address));
 		if(TempA)
 			if(Capacity)
 			{
-				address TempB=_StaC_Overflow_Mul_(Capacity,sizeof(stac_l2));
+				address TempB=_MemC_Size_Mul_(Capacity,sizeof(stac_l2));
 
 				if(TempB)
 				{
-					TempA=_StaC_Overflow_Add_(TempA,TempB);
+					TempA=_MemC_Size_Add_(TempA,TempB);
 					if(TempA)
 					{
-						TempA=_StaC_Overflow_Add_(TempA,sizeof(stac_ss));
+						TempA=_MemC_Size_Add_(TempA,sizeof(stac_ss));
 						S=MemC_Alloc_Byte_(TempA);
 					}
 					else
@@ -88,7 +62,7 @@ stac_ss *StaC_SS_Create_(ADDRESS Number,ADDRESS Capacity)
 			}
 			else
 			{
-				TempA=_StaC_Overflow_Add_(TempA,sizeof(stac_ss));
+				TempA=_MemC_Size_Add_(TempA,sizeof(stac_ss));
 				S=MemC_Alloc_Byte_(TempA);
 			}
 		else

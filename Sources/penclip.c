@@ -1,7 +1,13 @@
 ﻿#include "penclip.h"
 
+#if(MemC_Fold_(Definition:Opaque Types))
+MemC_Type_Declare_(struct,penc_sn,PENC_SN);
+struct _penc_sn { penc_sn *Link[2];penc_sc Data; };
+static_assert((sizeof(penc_sn)==sizeof(penc_sl)),"sizeof(penc_sn) != sizeof(penc_sl)");
+#endif
+
 #if(MemC_Fold_(Definition:Global Constants))
-static NAME_08 IdiomVersion[16]="Date:2018.09.07";
+static NAME_08 IdiomVersion[16]="Date:2018.09.21";
 static NAME_08 IdiomOpen[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static NAME_08 _PL_ AddressOpen[4]={IdiomOpen+0,IdiomOpen+4,IdiomOpen+8,IdiomOpen+12};
 #ifdef __OPENCL_H
@@ -213,6 +219,7 @@ address PenC_Name_Extend_(NAME_08 _PL_ Line,ADDRESS Length)
 #endif
 
 #if(MemC_Fold_(Definition:PenClip Managed Functions))
+#if(MemC_Fold_(Part:PenC_SC))
 penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity)
 {
 	penc_sc SC;
@@ -223,18 +230,6 @@ penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity)
 	return SC;
 }
 
-static address _PenC_Overflow_Add_(ADDRESS A,ADDRESS B)
-{
-	ADDRESS Return=A+B;
-
-	return ((Return<A)?(0):(Return));
-}
-static address _PenC_Overflow_Mul_(ADDRESS A,ADDRESS B)
-{
-	ADDRESS Return=A*B;
-
-	return (((Return/B)==A)?(Return):(0));
-}
 static general _PenC_SC_Bound_(PENC_SC _PL_ SC)
 {
 	address Temp=SC->Capacity;
@@ -268,7 +263,7 @@ penc_sc *PenC_SC_Create_(ADDRESS Capacity)
 	else
 		if(Capacity)
 		{
-			SC=MemC_Alloc_Byte_(_PenC_Overflow_Add_(Capacity,sizeof(penc_sc)));
+			SC=MemC_Alloc_Byte_(_MemC_Size_Add_(Capacity,sizeof(penc_sc)));
 			if(SC)
 			{
 				Acs_(address,SC->Capacity)=Capacity;
@@ -285,167 +280,260 @@ penc_sc *PenC_SC_Create_(ADDRESS Capacity)
 
 	return SC;
 }
-penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ Root,ADDRESS Offset,ADDRESS Length)
+general PenC_SC_Delete_(penc_sc *_PL_ SC)
+{
+	MemC_Deloc_(*SC);
+}
+#endif
+#if(MemC_Fold_(Part:PenC_SL))
+penc_sl *PenC_SL_Create_(ADDRESS Chunks)
+{
+	penc_sl *SL=MemC_Alloc_Byte_(_MemC_Size_Mul_(Chunks+1,sizeof(penc_sn)));
+
+	if(SL)
+		if(Chunks)
+		{
+			penc_sn _PL_ Node=(penc_sn*)(SL+1);
+
+			Acs_(penc_sn*,SL->Node)=Node;
+			Acs_(address,SL->Chunks)=Chunks;
+			Acs_(address,SL->Nodes)=1;
+			Acs_(address,SL->Capable)=MemC_Size_(penc_sn,Chunks-1);
+
+			Node->Link[0]=NULL;
+			Node->Link[1]=NULL;
+			Acs_(address,Node->Data.Capacity)=SL->Capable;
+			Acs_(general*,Node->Data.String.X)=NULL;
+		}
+		else
+			MemC_Clear_Unit_(SL,penc_sl);
+
+	return SL;
+}
+general PenC_SL_Delete_(penc_sl *_PL_ SL)
+{
+	if(*SL)
+		MemC_Deloc_(*SL);
+}
+address PenC_SL_Size_(PENC_SL _PL_ SL)
+{
+	return ((SL)?(MemC_Size_(penc_sn,SL->Chunks+1)):(0));
+}
+integer PenC_SL_Reset_(penc_sl _PL_ SL)
+{
+	integer Return;
+
+	if(SL)
+	{
+		if(SL->Chunks)
+		{
+			{
+				Acs_(address,SL->Nodes)=1;
+				Acs_(address,SL->Capable)=MemC_Size_(penc_sn,SL->Chunks-1);
+			}
+			{
+				penc_sn _PL_ Node=(penc_sn*)(SL->Node);
+
+				Node->Link[0]=NULL;
+				Node->Link[1]=NULL;
+				Acs_(address,Node->Data.Capacity)=SL->Capable;
+				Acs_(general*,Node->Data.String.X)=NULL;
+			}
+		}
+		else
+			MemC_Clear_Unit_(SL,penc_sl);
+
+		Return=1;
+	}
+	else
+		Return=0;
+
+	return Return;
+}
+
+static address _PenC_SN_Margin_(address Number)
+{
+	Number+=sizeof(penc_sn);
+	Number--;
+	Number/=sizeof(penc_sn);
+	Number*=sizeof(penc_sn);
+
+	return Number;
+}
+static penc_sn *_PenC_SN_Search_Space_(penc_sn *_R_ Ptr,ADDRESS Demand)
+{
+	penc_sn *Mark;
+	address Temp;
+
+	for(Mark=NULL,Temp=(address)FULL;Ptr;Ptr=Ptr->Link[1])
+		if(!(Ptr->Data.String.X))
+			if(Demand<=Ptr->Data.Capacity)
+				if(Temp>Ptr->Data.Capacity)
+				{
+					Temp=Ptr->Data.Capacity;
+					Mark=Ptr;
+				}
+
+	return Mark;
+}
+static address _PenC_SN_Search_Size_(penc_sn *_R_ Ptr)
+{
+	address Temp;
+
+	for(Temp=0;Ptr;Ptr=Ptr->Link[1])
+		if(!(Ptr->Data.String.X))
+			if(Temp<Ptr->Data.Capacity)
+				Temp=Ptr->Data.Capacity;
+
+	return Temp;
+}
+static penc_sn *_PenC_SN_Search_Node_(penc_sn *_R_ Ptr,PENC_SC _PL_ SC)
+{
+	for(;Ptr;Ptr=Ptr->Link[1])
+		if(&(Ptr->Data)==SC)
+			break;
+
+	return Ptr;
+}
+static address _PenC_SN_Borrow_(penc_sn _PL_ Node,ADDRESS Demand)
+{
+	address Return;
+	
+	if(Demand<Node->Data.Capacity)
+	{
+		if(Node->Link[1])
+		{
+			Node->Link[1]->Link[0]=(penc_sn*)((address)(Node+1)+Demand);
+			Node->Link[1]->Link[0]->Link[1]=Node->Link[1];
+			Node->Link[1]=Node->Link[1]->Link[0];
+		}
+		else
+		{
+			Node->Link[1]=(penc_sn*)((address)(Node+1)+Demand);
+			Node->Link[1]->Link[1]=NULL;
+		}
+		{
+			Node->Link[1]->Link[0]=Node;
+
+			Acs_(address,Node->Link[1]->Data.Capacity)=Node->Data.Capacity-Demand-sizeof(penc_sn);
+			Acs_(general*,Node->Link[1]->Data.String.X)=NULL;
+
+			Acs_(address,Node->Data.Capacity)=Demand;
+			Return=1;
+		}
+	}
+	else
+		Return=0;
+
+	if(Node->Data.Capacity)
+	{
+		Acs_(general*,Node->Data.String.X)=Node+1;
+		((address*)(Node->Data.String.X))[0]=0;
+		((address*)(Node->Data.String.X))[(Node->Data.Capacity/sizeof(size_t))-1]=0;
+	}
+	else
+		Acs_(general*,Node->Data.String.X)=FULL;
+
+	return Return;
+}
+static general _PenC_SN_Attach_(penc_sn _PL_ Node)
+{
+	Acs_(address,Node->Data.Capacity)+=sizeof(penc_sn);
+	Acs_(address,Node->Data.Capacity)+=Node->Link[1]->Data.Capacity;
+
+	Node->Link[1]=Node->Link[1]->Link[1];
+	if(Node->Link[1])
+		Node->Link[1]->Link[0]=Node;
+}
+static address _PenC_SN_Return_(penc_sn *_PL_ Node)
+{
+	address Return=0;
+
+	if((*Node)->Link[0])
+		if(!((*Node)->Link[0]->Data.String.X))
+		{
+			*Node=(*Node)->Link[0];
+			_PenC_SN_Attach_(*Node);
+			Return+=1;
+		}
+	if((*Node)->Link[1])
+		if(!((*Node)->Link[1]->Data.String.X))
+		{
+			_PenC_SN_Attach_(*Node);
+			Return+=1;
+		}
+	Acs_(general*,(*Node)->Data.String.X)=NULL;
+
+	return Return;
+}
+penc_sc *PenC_SL_Borrow_(PENC_SL _PL_ SL,ADDRESS Demand)
 {
 	penc_sc *SC;
 
-	if(Root)
-		if(Length)
+	if(SL)
+		if(Demand<RSIZE_MAX)
 		{
-			ADDRESS Bound=_PenC_Overflow_Add_(Offset,Length);
+			penc_sn _PL_ Node=(penc_sn*)(SL->Node);
+			ADDRESS Margin=_PenC_SN_Margin_(Demand);
 
-			if(Bound)
-				if(Bound>Root->Capacity)
-					SC=NULL;
-				else
-				{
-					SC=MemC_Alloc_Unit_(penc_sc);
-					if(SC)
-					{
-						Acs_(address,SC->Capacity)=Length;
-						Acs_(name_08*,SC->String.N08)=Root->String.N08+Offset;
-						_PenC_SC_Bound_(SC);
-					}
-				}
-			else
-				SC=NULL;
-		}
-		else
-			if(Offset>Root->Capacity)
+			if(Margin>SL->Capable)
 				SC=NULL;
 			else
 			{
-				SC=MemC_Alloc_Unit_(penc_sc);
-				if(SC)
-					MemC_Clear_Unit_(SC,penc_sc);
+				penc_sn _PL_ This=_PenC_SN_Search_Space_(Node,Margin);
+
+				if(This)
+				{
+					if(This->Data.Capacity==SL->Capable)
+					{
+						Acs_(address,SL->Nodes)+=_PenC_SN_Borrow_(This,Margin);
+						Acs_(address,SL->Capable)=_PenC_SN_Search_Size_(Node);
+					}
+					else
+						Acs_(address,SL->Nodes)+=_PenC_SN_Borrow_(This,Margin);
+
+					SC=&(This->Data);
+				}
+				else
+					SC=NULL;
 			}
+		}
+		else
+			SC=NULL;
 	else
 		SC=NULL;
 
 	return SC;
 }
-general PenC_SC_Delete_(penc_sc *_PL_ SC)
+integer PenC_SL_Return_(PENC_SL _PL_ SL,PENC_SC *_PL_ SC)
 {
-	MemC_Deloc_(*SC);
-}
+	integer Return;
 
-penc_ss *PenC_SS_Create_(ADDRESS Parts,ADDRESS Total)
-{
-	penc_ss *SS;
+	if(SL)
+		if(*SC)
+		{
+			penc_sn *Node=_PenC_SN_Search_Node_((penc_sn*)(SL->Node),*SC);
 
-	if(Total>RSIZE_MAX)
-		SS=NULL;
-	else
-		if(Parts)
-			if(Total)
+			if(Node)
 			{
-				address Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
+				Acs_(address,SL->Nodes)-=_PenC_SN_Return_(&Node);
+				if(Node->Data.Capacity>SL->Capable)
+					Acs_(address,SL->Capable)=Node->Data.Capacity;
 
-				if(Size)
-				{
-					Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
-					if(Size)
-					{
-						Size=_PenC_Overflow_Add_(Size,Total);
-						SS=MemC_Alloc_Byte_(Size);
-						if(SS)
-						{
-							Acs_(address,SS->Root.Capacity)=Total;
-							Acs_(address,SS->Nums)=Parts;
-							Acs_(penc_sc*,SS->Part)=MemC_Clear_1D_(SS+1,Parts,penc_sc);
-							Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS->Part+Parts);
-							_PenC_SC_Bound_(&(SS->Root));
-						}
-					}
-					else
-						SS=NULL;
-				}
-				else
-					SS=NULL;
+				*SC=NULL;
+				Return=1;
 			}
 			else
-			{
-				address Size=_PenC_Overflow_Mul_(Parts,sizeof(penc_sc));
-
-				if(Size)
-				{
-					Size=_PenC_Overflow_Add_(Size,sizeof(penc_ss));
-					SS=MemC_Alloc_Byte_(Size);
-					if(SS)
-					{
-						Acs_(address,SS->Root.Capacity)=0;
-						Acs_(name_08*,SS->Root.String.N08)=NULL;
-						Acs_(address,SS->Nums)=Parts;
-						Acs_(penc_sc*,SS->Part)=MemC_Clear_1D_(SS+1,Parts,penc_sc);
-					}
-				}
-				else
-					SS=NULL;
-			}
+				Return=0;
+		}
 		else
-			if(Total)
-			{
-				SS=MemC_Alloc_Byte_(_PenC_Overflow_Add_(Total,sizeof(penc_ss)));
-				if(SS)
-				{
-					Acs_(address,SS->Root.Capacity)=Total;
-					Acs_(name_08*,SS->Root.String.N08)=(name_08*)(SS+1);
-					Acs_(address,SS->Nums)=0;
-					Acs_(penc_sc*,SS->Part)=NULL;
-					_PenC_SC_Bound_(&(SS->Root));
-				}
-			}
-			else
-			{
-				SS=MemC_Alloc_Unit_(penc_ss);
-				if(SS)
-					MemC_Clear_Unit_(SS,penc_ss);
-			}
-
-	return SS;
-}
-general PenC_SS_Delete_(penc_ss *_PL_ SS)
-{
-	MemC_Deloc_(*SS);
-}
-integer PenC_SS_Assign_(PENC_SS _PL_ SS,ADDRESS Index,ADDRESS Offset,ADDRESS Length)
-{
-	if(SS)
-		if(Index<SS->Nums)
-			if(Offset>SS->Root.Capacity)
-				goto FAILURE;
-			else
-				if(Length)
-				{
-					ADDRESS Bound=_PenC_Overflow_Add_(Offset,Length);
-
-					if(Bound>SS->Root.Capacity)
-						goto FAILURE;
-					else
-					{
-						Acs_(address,SS->Part[Index].Capacity)=Length;
-						Acs_(name_08*,SS->Part[Index].String.N08)=SS->Root.String.N08+Offset;
-						_PenC_SC_Bound_(SS->Part+Index);
-
-						goto SUCCESS;
-					}
-				}
-				else
-				{
-					Acs_(address,SS->Part[Index].Capacity)=0;
-					Acs_(name_08*,SS->Part[Index].String.N08)=NULL;
-
-					goto SUCCESS;
-				}
-		else
-			goto FAILURE;
+			Return=0;
 	else
-		goto FAILURE;
-FAILURE:
-	return 0;
-SUCCESS:
-	return 1;
+		Return=0;
+
+	return Return;
 }
+#endif
 #endif
 
 #if(MemC_Fold_(Definition:OpenCL Functions))
@@ -642,15 +730,14 @@ penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ PathObj,NAME_
 							if(PenC_Reader_1D_(Binary,PathObj,SizeBinary,name_08))
 							{
 								{
-									address SizeTemp;
+									address SizeTemp=_MemC_Size_Mul_(Kernels,sizeof(cl_kernel));
 
-									SizeTemp=_PenC_Overflow_Mul_(Kernels,sizeof(cl_kernel));
 									if(SizeTemp)
 									{
-										SizeTemp=_PenC_Overflow_Add_(SizeTemp,MemC_Size_(address,Dimensions));
+										SizeTemp=_MemC_Size_Add_(SizeTemp,MemC_Size_(address,Dimensions));
 										if(SizeTemp)
 										{
-											SizeTemp=_PenC_Overflow_Add_(SizeTemp,sizeof(penc_cl));
+											SizeTemp=_MemC_Size_Add_(SizeTemp,sizeof(penc_cl));
 											Helper=MemC_Alloc_Byte_(SizeTemp);
 										}
 									}

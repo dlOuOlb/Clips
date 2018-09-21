@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.09.07";
+static BYTE_08 IdiomVersion[16]="Date:2018.09.20";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -97,30 +97,24 @@ general MemC_Deloc_Set_(general **Memory,ADDRESS Sets)
 }
 #endif
 #if(MemC_Fold_(Part:ND Array Memory Allocation))
-static address _MemC_Origin_(ADDRESS Number,ADDRESS SizeElement)
+address _MemC_Size_Add_(ADDRESS A,ADDRESS B)
 {
-	volatile address New=Number*SizeElement;
+	volatile ADDRESS Return=A+B;
 	
-	if((New/SizeElement)!=Number)
-		New=0;
+	return ((Return<A)?(0):(Return));
+}
+address _MemC_Size_Mul_(ADDRESS A,ADDRESS B)
+{
+	volatile ADDRESS Return=A*B;
 
-	return New;
+	return (((Return/B)==A)?(Return):(0));
 }
 static address _MemC_Bigger_(ADDRESS Number,ADDRESS Old)
 {
-	volatile address New=sizeof(general*)+Old;
+	address New=_MemC_Size_Add_(Old,sizeof(general*));
 
-	if(New>Old)
-	{
-		volatile address Temporary=Number*New;
-
-		if((Temporary/New)==Number)
-			New=Temporary;
-		else
-			New=0;
-	}
-	else
-		New=0;
+	if(New)
+		New=_MemC_Size_Mul_(Number,New);
 
 	return New;
 }
@@ -159,7 +153,7 @@ general *MemC_Alloc_(ADDRESS _PL_ Size,ADDRESS NumberDimension,ADDRESS SizeEleme
 			{
 				ADDRESS _PL_ End=Size+(NumberDimension-1);
 				ADDRESS *PtrS=End;
-				address Temporary=_MemC_Origin_(*PtrS,SizeElement);
+				address Temporary=_MemC_Size_Mul_(*PtrS,SizeElement);
 
 				for(PtrS--;PtrS>=Size;PtrS--)
 					if(Temporary)
@@ -180,36 +174,10 @@ general *MemC_Alloc_(ADDRESS _PL_ Size,ADDRESS NumberDimension,ADDRESS SizeEleme
 }
 #endif
 #if(MemC_Fold_(Part:1D, 2D, 3D, and 4D Array Memory Allocations))
-static address _MemC_Overflow_Add_(ADDRESS A,ADDRESS B)
-{
-	address C=A+B;
-
-	if(C<A)
-		C=0;
-	else
-		if(C<B)
-			C=0;
-
-	return C;
-}
-static address _MemC_Overflow_Mul_(ADDRESS A,ADDRESS B)
-{
-	address C[2];
-
-	C[0]=A*B;
-	if(C[0])
-	{
-		C[1]=C[0]/B;
-		if(C[1]!=A)
-			C[0]=0;
-	}
-
-	return C[0];
-}
 general *MemC_Alloc_Byte_(ADDRESS S)
 {
 	ADDRESS T=sizeof(address);
-	ADDRESS N=_MemC_Overflow_Mul_((S+T-1)/T,T);
+	ADDRESS N=_MemC_Size_Mul_((S+T-1)/T,T);
 	general _PL_ Memory=(N)?(malloc(N)):(NULL);
 
 	return Memory;
@@ -273,7 +241,7 @@ errno_t _MemC_Init_1D_(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS NumberEleme
 {
 	errno_t ErrorCode;
 
-	if(_MemC_Origin_(NumberElement,SizeElement))
+	if(_MemC_Size_Mul_(NumberElement,SizeElement))
 	{
 		ADDRESS Safe=_MemC_Safe_2_(NumberElement);
 		BYTE_08 _PL_ End=((byte_08*)Memory)+(Safe*SizeElement);
@@ -876,11 +844,11 @@ memc_ms *MemC_MS_Create_(GENERAL _PL_ ID,ADDRESS Slots)
 
 	if(Slots)
 	{
-		address Size=_MemC_Overflow_Mul_(Slots,sizeof(general*));
+		address Size=_MemC_Size_Mul_(Slots,sizeof(general*));
 
 		if(Size)
 		{
-			Size=_MemC_Overflow_Add_(Size,sizeof(memc_ms));
+			Size=_MemC_Size_Add_(Size,sizeof(memc_ms));
 			if(Size)
 			{
 				MS=MemC_Alloc_Byte_(Size);
@@ -1114,7 +1082,7 @@ static address _MemC_Shape_Overflow_(ADDRESS _PL_ Shape,ADDRESS Dims)
 	address Total=1;
 
 	for(;Ptr<End;Ptr++)
-		Total=_MemC_Overflow_Mul_(Total,*Ptr);
+		Total=_MemC_Size_Mul_(Total,*Ptr);
 
 	return Total;
 }
@@ -1129,20 +1097,20 @@ static address _MemC_Space_Required_(ADDRESS _PL_ Shape,ADDRESS Dims,ADDRESS Siz
 
 		for(Size[0]=1,Size[1]=0;Ptr<Last;Ptr++)
 		{
-			Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
-			Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
+			Size[0]=_MemC_Size_Mul_(Size[0],*Ptr);
+			Size[1]=_MemC_Size_Add_(Size[0],Size[1]);
 			if(!(Size[1]))
 				break;
 		}
 		if(Ptr==Last)
 		{
-			Size[0]=_MemC_Overflow_Mul_(Size[0],*Ptr);
-			Size[0]=_MemC_Overflow_Mul_(Size[0],SizeType);
+			Size[0]=_MemC_Size_Mul_(Size[0],*Ptr);
+			Size[0]=_MemC_Size_Mul_(Size[0],SizeType);
 			if(Size[0])
 			{
-				Size[1]=_MemC_Overflow_Mul_(Size[1],sizeof(address));
+				Size[1]=_MemC_Size_Mul_(Size[1],sizeof(address));
 				if(Size[1])
-					Size[1]=_MemC_Overflow_Add_(Size[0],Size[1]);
+					Size[1]=_MemC_Size_Add_(Size[0],Size[1]);
 				else
 					Size[1]=0;
 			}
@@ -1153,7 +1121,7 @@ static address _MemC_Space_Required_(ADDRESS _PL_ Shape,ADDRESS Dims,ADDRESS Siz
 			Size[1]=0;
 	}
 	else
-		Size[1]=_MemC_Overflow_Mul_(Shape[0],SizeType);
+		Size[1]=_MemC_Size_Mul_(Shape[0],SizeType);
 
 	return Size[1];
 }
@@ -1190,11 +1158,11 @@ memc_mc *MemC_MC_Create_(GENERAL _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 						case 0x6:
 							if(Dimensions>1)
 							{
-								address Size=_MemC_Overflow_Mul_(Dimensions,sizeof(address));
+								address Size=_MemC_Size_Mul_(Dimensions,sizeof(address));
 
 								if(Size)
 								{
-									Size=_MemC_Overflow_Add_(Size,sizeof(memc_mc));
+									Size=_MemC_Size_Add_(Size,sizeof(memc_mc));
 									MC=MemC_Alloc_Byte_(Size);
 								}
 								else
@@ -1228,9 +1196,9 @@ memc_mc *MemC_MC_Create_(GENERAL _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 
 								if(Dimensions>1)
 								{
-									Size[0]=_MemC_Overflow_Mul_(Dimensions,sizeof(address));
+									Size[0]=_MemC_Size_Mul_(Dimensions,sizeof(address));
 									if(Size[0])
-										Size[0]=_MemC_Overflow_Add_(Size[0],sizeof(memc_mc));
+										Size[0]=_MemC_Size_Add_(Size[0],sizeof(memc_mc));
 									else
 										goto ESCAPE;
 									if(Size[0])
@@ -1245,7 +1213,7 @@ INVADE:
 									Size[1]=_MemC_Space_Required_(Shape,Dimensions,DT->SizeType);
 								}
 								if(Size[1])
-									Size[0]=_MemC_Overflow_Add_(Size[0],Size[1]);
+									Size[0]=_MemC_Size_Add_(Size[0],Size[1]);
 								else
 									goto ESCAPE;
 
@@ -1390,7 +1358,7 @@ SUCCESS:
 #if(MemC_Fold_(Part:OpenCL Object Handle))
 cl_mem _Devi_Create_Buffer_(cl_context const Context,ADDRESS Elements,ADDRESS SizeElement,cl_int _PL_ Error)
 {
-	ADDRESS Bytes=(SizeElement)?(_MemC_Overflow_Mul_(Elements,SizeElement)):(0);
+	ADDRESS Bytes=(SizeElement)?(_MemC_Size_Mul_(Elements,SizeElement)):(0);
 	cl_mem Return;
 	cl_int Local;
 
@@ -1427,7 +1395,7 @@ cl_mem _Devi_Create_Buffer_Sub_(cl_mem const Root,ADDRESS Offset,ADDRESS Element
 OFFSET:
 	if(Offset)
 	{
-		Info.origin=_MemC_Overflow_Mul_(Offset,SizeElement);
+		Info.origin=_MemC_Size_Mul_(Offset,SizeElement);
 		if(Info.origin)
 			goto LENGTH;
 		else
@@ -1445,7 +1413,7 @@ OFFSET:
 LENGTH:
 	if(Elements)
 	{
-		Info.size=_MemC_Overflow_Mul_(Elements,SizeElement);
+		Info.size=_MemC_Size_Mul_(Elements,SizeElement);
 		if(Info.size)
 			Return=clCreateSubBuffer(Root,CL_MEM_READ_WRITE,CL_BUFFER_CREATE_TYPE_REGION,&Info,&Local);
 		else
@@ -1813,27 +1781,27 @@ ESCAPE:
 	{
 		address Temp[2];
 
-		Temp[0]=_MemC_Overflow_Mul_(Dims,sizeof(address)<<2);
+		Temp[0]=_MemC_Size_Mul_(Dims,sizeof(address)<<2);
 		if(!(Temp[0]))
 			goto ESCAPE;
 
-		Temp[1]=_MemC_Overflow_Mul_(Args,sizeof(address)<<1);
+		Temp[1]=_MemC_Size_Mul_(Args,sizeof(address)<<1);
 		if(!(Temp[1]))
 			goto ESCAPE;
 
-		Temp[0]=_MemC_Overflow_Add_(Temp[0],Temp[1]);
+		Temp[0]=_MemC_Size_Add_(Temp[0],Temp[1]);
 		if(!(Temp[0]))
 			goto ESCAPE;
 
-		Temp[1]=_MemC_Overflow_Mul_(Args,sizeof(devi_df));
+		Temp[1]=_MemC_Size_Mul_(Args,sizeof(devi_df));
 		if(!(Temp[1]))
 			goto ESCAPE;
 
-		Temp[0]=_MemC_Overflow_Add_(Temp[0],Temp[1]);
+		Temp[0]=_MemC_Size_Add_(Temp[0],Temp[1]);
 		if(!(Temp[0]))
 			goto ESCAPE;
 
-		Temp[0]=_MemC_Overflow_Add_(Temp[0],sizeof(devi_km));
+		Temp[0]=_MemC_Size_Add_(Temp[0],sizeof(devi_km));
 		KM=MemC_Alloc_Byte_(Temp[0]);
 	}
 	if(KM)
@@ -1921,7 +1889,7 @@ cl_int Devi_KM_Init_(devi_km _PL_ KM,cl_kernel const Kernel)
 						case DeviDomainGlobal:
 							if((*PtrS)==sizeof(cl_mem))
 							{
-								Total=_MemC_Overflow_Add_(Total,*PtrS);
+								Total=_MemC_Size_Add_(Total,*PtrS);
 								if(Total)
 									break;
 								else
@@ -1938,7 +1906,7 @@ cl_int Devi_KM_Init_(devi_km _PL_ KM,cl_kernel const Kernel)
 							Temp=_Devi_KM_Arg_Size_Padding_(*PtrS);
 							if(Temp)
 							{
-								Total=_MemC_Overflow_Add_(Total,Temp);
+								Total=_MemC_Size_Add_(Total,Temp);
 								if(Total)
 									break;
 								else
@@ -2117,9 +2085,9 @@ devi_mc *Devi_MC_Create_(GENERAL _PL_ ID,cl_context const Context,ADDRESS Number
 
 				if(Number)
 				{
-					Size=_MemC_Overflow_Mul_(Number,sizeof(cl_mem));
+					Size=_MemC_Size_Mul_(Number,sizeof(cl_mem));
 					if(Size)
-						Size=_MemC_Overflow_Add_(Size,sizeof(devi_mc));
+						Size=_MemC_Size_Add_(Size,sizeof(devi_mc));
 				}
 				else
 					Size=sizeof(devi_mc);
@@ -2137,11 +2105,11 @@ devi_mc *Devi_MC_Create_(GENERAL _PL_ ID,cl_context const Context,ADDRESS Number
 				if(DT->SizeType)
 					if(Length)
 					{
-						Acs_(address,MC->AlignS)=_Devi_MC_Length_Padded_(_MemC_Overflow_Mul_(Length,DT->SizeType),Align);
+						Acs_(address,MC->AlignS)=_Devi_MC_Length_Padded_(_MemC_Size_Mul_(Length,DT->SizeType),Align);
 						if(MC->AlignS)
 							if(Number)
 							{
-								ADDRESS Size=_MemC_Overflow_Mul_(Number,MC->AlignS);
+								ADDRESS Size=_MemC_Size_Mul_(Number,MC->AlignS);
 
 								Acs_(cl_mem,MC->BufT)=Devi_Create_Buffer_(Context,Size,byte_08,Error);
 								Acs_(cl_mem*,MC->BufS)=(cl_mem*)(MC+1);
@@ -2337,7 +2305,7 @@ memc_vc *Devi_VC_Create_(GENERAL _PL_ ID,DEVI_MC _PL_ MC,ADDRESS Select,MEMC_MS 
 						default:
 							if(MC->Unit)
 								if(_MemC_Array_Non_Zero_(MS->Slot.V+1,MS->Slot.V[0]))
-									if(_MemC_Overflow_Mul_(_MemC_Shape_Overflow_(MS->Slot.V+1,MS->Slot.V[0]),MC->Unit))
+									if(_MemC_Size_Mul_(_MemC_Shape_Overflow_(MS->Slot.V+1,MS->Slot.V[0]),MC->Unit))
 										goto ALLOC_EXTEN;
 									else
 										goto ESCAPE;
@@ -2346,11 +2314,11 @@ memc_vc *Devi_VC_Create_(GENERAL _PL_ ID,DEVI_MC _PL_ MC,ADDRESS Select,MEMC_MS 
 							else
 							{
 ALLOC_EXTEN:;
-								address Size=_MemC_Overflow_Mul_(MS->Slot.V[0],sizeof(address));
+								address Size=_MemC_Size_Mul_(MS->Slot.V[0],sizeof(address));
 
 								if(Size)
 								{
-									Size=_MemC_Overflow_Add_(Size,sizeof(memc_vc));
+									Size=_MemC_Size_Add_(Size,sizeof(memc_vc));
 									VC=MemC_Alloc_Byte_(Size);
 									break;
 								}
@@ -2361,7 +2329,7 @@ ALLOC_EXTEN:;
 							if(MC->Unit)
 								if(MS->Slot.V[1])
 								{
-									ADDRESS Size=_MemC_Overflow_Mul_(MS->Slot.V[1],MC->Unit);
+									ADDRESS Size=_MemC_Size_Mul_(MS->Slot.V[1],MC->Unit);
 
 									if(Size)
 										if(Size>MC->AlignS)

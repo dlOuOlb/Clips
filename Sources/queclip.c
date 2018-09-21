@@ -3,35 +3,9 @@
 MemC_Type_Declare_(struct,quec_l2,QUEC_L2);
 struct _quec_l2 { quec_l2 *L[2]; };
 
-static BYTE_08 IdiomVersion[16]="Date:2018.09.14";
+static BYTE_08 IdiomVersion[16]="Date:2018.09.20";
 BYTE_08 _PL_ QueClip=IdiomVersion;
 
-static address _QueC_Overflow_Add_(ADDRESS A,ADDRESS B)
-{
-	address C=A+B;
-
-	if(C<A)
-		C=0;
-	else
-		if(C<B)
-			C=0;
-
-	return C;
-}
-static address _QueC_Overflow_Mul_(ADDRESS A,ADDRESS B)
-{
-	address C[2];
-
-	C[0]=A*B;
-	if(C[0])
-	{
-		C[1]=C[0]/B;
-		if(C[1]!=A)
-			C[0]=0;
-	}
-
-	return C[0];
-}
 static general _QueC_Initialize_(quec_l2 _PL_ Queue,ADDRESS Number,ADDRESS Capacity)
 {
 	quec_l2 *_R_ Ptr=Queue-1;
@@ -69,20 +43,20 @@ quec_qs *QueC_QS_Create_(ADDRESS Number,ADDRESS Capacity)
 	quec_qs *Q;
 
 	{
-		address TempA=_QueC_Overflow_Add_(Number,1);
+		address TempA=_MemC_Size_Add_(Number,1);
 
-		TempA=_QueC_Overflow_Mul_(TempA,sizeof(quec_l2)+sizeof(address));
+		TempA=_MemC_Size_Mul_(TempA,sizeof(quec_l2)+sizeof(address));
 		if(TempA)
 			if(Capacity)
 			{
-				address TempB=_QueC_Overflow_Mul_(Capacity,sizeof(quec_l2));
+				address TempB=_MemC_Size_Mul_(Capacity,sizeof(quec_l2));
 
 				if(TempB)
 				{
-					TempA=_QueC_Overflow_Add_(TempA,TempB);
+					TempA=_MemC_Size_Add_(TempA,TempB);
 					if(TempA)
 					{
-						TempA=_QueC_Overflow_Add_(TempA,sizeof(quec_qs));
+						TempA=_MemC_Size_Add_(TempA,sizeof(quec_qs));
 						Q=MemC_Alloc_Byte_(TempA);
 					}
 					else
@@ -93,7 +67,7 @@ quec_qs *QueC_QS_Create_(ADDRESS Number,ADDRESS Capacity)
 			}
 			else
 			{
-				TempA=_QueC_Overflow_Add_(TempA,sizeof(quec_qs));
+				TempA=_MemC_Size_Add_(TempA,sizeof(quec_qs));
 				Q=MemC_Alloc_Byte_(TempA);
 			}
 		else
