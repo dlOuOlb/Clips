@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.20	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -632,5 +632,13 @@ general MemC_Self_(address *_R_ Table,ADDRESS Count,INTEGER Mode);
 //MemClip : Key Finding for Switch Operation
 address _MemC_Switch_(GENERAL _PL_ Key,GENERAL _PL_ _PL_ TblRf,ADDRESS* LngRf,ADDRESS LngKey,ADDRESS NumRf,ADDRESS TypeSize);
 #define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,type) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(type))
+
+//MemClip : Two Number Addition
+//＊Return value is A＋B for no overflow, 0 for overflow.
+address _MemC_Size_Add_(ADDRESS A,ADDRESS B);
+//MemClip : Two Number Multiplication
+//＊Return value is A×B for no overflow, 0 for overflow.
+//＊B must not be zero.
+address _MemC_Size_Mul_(ADDRESS A,ADDRESS B);
 #endif
 #endif

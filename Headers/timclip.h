@@ -2,7 +2,7 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.06	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.20	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
@@ -20,12 +20,11 @@ enum _timc_sf				//TimClip : Timer State Flag Enumeration
 	TimCStateRunning=+1		//TimClip : Running State
 };
 MemC_Type_Declare_(enum,timc_sf,TIMC_SF);	//TimClip : Timer State Flag Enumeration
-MemC_Type_Declare_(struct,timc_te,TIMC_TE);	//TimClip : Opaque Timer Structure
 
 struct _timc_sw			//TimClip : Stopwatch Structure
 {
+	GENERAL _PL_ Timer;	//TimClip : Internal Timer Set
 	ADDRESS Nums;		//TimClip : Number of Timers
-	timc_te _PL_ Timer;	//TimClip : Internal Timer Set
 };
 MemC_Type_Declare_(struct,timc_sw,TIMC_SW);	//TimClip : Stopwatch Structure
 #endif

@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.09.21	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -49,13 +49,14 @@ struct _penc_sc				//PenClip : String Container Structure
 };
 MemC_Type_Declare_(struct,penc_sc,PENC_SC);	//PenClip : String Container Structure
 
-struct _penc_ss			//PenClip : Sub-Container Set Structure
+struct _penc_sl			//PenClip : String Container Lender Structure
 {
-	PENC_SC Root;		//PenClip : Root-Container
-	ADDRESS Nums;		//PenClip : Number of Sub-Containers
-	PENC_SC _PL_ Part;	//PenClip : Sub-Container Set
+	GENERAL _PL_ Node;	//PenClip : Internal Node Set
+	ADDRESS Chunks;		//PenClip : Total Number of Internal Memory Chunks
+	ADDRESS Nodes;		//PenClip : Current Number of Internal Nodes
+	ADDRESS Capable;	//PenClip : Current Lendable String Size in Bytes
 };
-MemC_Type_Declare_(struct,penc_ss,PENC_SS);	//PenClip : Sub-Container Set Structure
+MemC_Type_Declare_(struct,penc_sl,PENC_SL);	//PenClip : String Container Lender Structure
 
 #ifdef __OPENCL_H
 struct _penc_cl						//PenC_CL : OpenCL Program Resource Structure
@@ -160,6 +161,8 @@ static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(in
 
 #define PenC_Finder_N08_(Buffer,Value,Count) (name_08*)memchr(Buffer,Value,Count)	//PenClip : 8-bit Character Finding
 #define PenC_Finder_N16_(Buffer,Value,Count) (name_16*)wmemchr(Buffer,Value,Count)	//PenClip : 16-bit Character Finding
+
+#define PenC_Format_Length_N08_(...) snprintf(NULL,0,__VA_ARGS__)	//PenClip : 8-bit Format String Length Expectation
 
 #define PenC_Buffer_Format_N08_(Mode,Buffer,Capacity,...) ((Mode)?(sscanf_s(Buffer,__VA_ARGS__)):(sprintf_s(Buffer,Capacity,__VA_ARGS__)))		//PenClip : 8-bit Buffer Print (Mode 0) or Scan (Mode 1)
 #define PenC_Buffer_Format_N16_(Mode,Buffer,Capacity,...) ((Mode)?(swscanf_s(Buffer,__VA_ARGS__)):(swprintf_s(Buffer,Capacity,__VA_ARGS__)))	//PenClip : 16-bit Buffer Print (Mode 0) or Scan (Mode 1)
@@ -284,8 +287,6 @@ penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity);
 
 //PenClip : String Container Memory Allocation - Deallocate with "PenC_SC_Delete_"
 penc_sc *PenC_SC_Create_(ADDRESS CapacityBytes);
-//PenClip : Sub-Container Memory Allocation from a Root-Container - Deallocate with "PenC_SC_Delete_"
-penc_sc *PenC_SC_Create_Sub_(PENC_SC _PL_ RootContainer,ADDRESS OffsetBytes,ADDRESS LengthBytes);
 //PenClip : String Container Memory Deallocation
 general PenC_SC_Delete_(penc_sc *_PL_ StringContainer);
 
@@ -322,14 +323,29 @@ general PenC_SC_Delete_(penc_sc *_PL_ StringContainer);
 //PenClip : 16-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
 #define PenC_SC_Stream_N16_(Mode,SC,Stream) PenC_Stream_Buffer_N16_(Mode,Stream,(SC).String.N16,(SC).Capacity>>1)
 #endif
-#if(MemC_Fold_(Part:PenC_SS))
-//PenClip : Sub-Container Set Memory Allocation - Deallocate with "PenC_SS_Delete_"
-penc_ss *PenC_SS_Create_(ADDRESS SubBufferNumbers,ADDRESS TotalCapacityBytes);
-//PenClip : Sub-Container Set Memory Deallocation
-general PenC_SS_Delete_(penc_ss *_PL_ StringContainerSet);
-//PenClip : Sub-Container Assign from the Root-Container
-//＊Return value is 1 for success, 0 for failure.
-integer PenC_SS_Assign_(PENC_SS _PL_ SS,ADDRESS Index,ADDRESS Offset,ADDRESS Length);
+#if(MemC_Fold_(Part:PenC_SL))
+//PenClip : SC Lender Memory Allocation - Deallocate with "PenC_SL_Delete_"
+//＊1 chunk is equal to 4×sizeof(size_t) bytes.
+//＊Each SC node's head occupies 1 chunk.
+penc_sl *PenC_SL_Create_(ADDRESS ChunksNumber);
+//PenClip : SC Lender Memory Deallocation
+general PenC_SL_Delete_(penc_sl *_PL_ SCLender);
+
+//PenClip : SC Lender Memory Occupation
+address PenC_SL_Size_(PENC_SL _PL_ SCLender);
+//PenClip : Kill all SCs in the SC Lender
+integer PenC_SL_Reset_(penc_sl _PL_ SCLender);
+
+//PenClip : Borrow an SC from the SC Lender - Return with "PenC_SL_Return_"
+penc_sc *PenC_SL_Borrow_(PENC_SL _PL_ SCLender,ADDRESS DemandBytes);
+//PenClip : Borrow an SC from the SC Lender with the Specified 8-bit Format - Return with "PenC_SL_Return_"
+#define PenC_SL_Borrow_Format_N08_(SL,SC,...) __dl{PenC_SL_Return_(SL,&(SC));(SC)=PenC_SL_Borrow_(SL,PenC_Format_Length_N08_(__VA_ARGS__)+1);if(SC){PenC_SC_Format_N08_(0,*(SC),__VA_ARGS__);}}lb__
+//PenClip : Borrow an SC from the SC Lender Copying another SC - Return with "PenC_SL_Return_"
+#define PenC_SL_Borrow_Copier_N08_(SL,SCTarget,SCSource) __dl{PenC_SL_Return_(SL,&(SCTarget));(SCTarget)=PenC_SL_Borrow_(SL,PenC_SC_Length_N08_(*(SCSource))+1);if(SCTarget){PenC_SC_Copier_N08_(*(SCTarget),*(SCSource));}}lb__
+//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs - Return with "PenC_SL_Return_"
+#define PenC_SL_Borrow_Concat_N08_(SL,SCConcat,SCFormer,SCLatter) __dl{PenC_SL_Return_(SL,&(SCConcat));(SCConcat)=PenC_SL_Borrow_(SL,PenC_SC_Length_N08_(*(SCFormer))+PenC_SC_Length_N08_(*(SCLatter))+1);if(SCConcat){PenC_SC_Copier_N08_(*(SCConcat),*(SCFormer));PenC_SC_Concat_N08_(*(SCConcat),*(SCLatter));}}lb__
+//PenClip : Return the SC to the SC Lender
+integer PenC_SL_Return_(PENC_SL _PL_ SCLender,PENC_SC *_PL_ StringContainer);
 #endif
 #endif
 
