@@ -81,14 +81,8 @@ add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
-# QueClip
-set(NAME queclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
-target_include_directories(${NAME} PUBLIC ${DIR_INC})
-target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
-
-# StaClip
-set(NAME staclip)
+# BoxClip
+set(NAME boxclip)
 add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
