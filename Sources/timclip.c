@@ -6,7 +6,7 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static BYTE_08 IdiomVersion[16]="Date:2018.09.20";
+static BYTE_08 IdiomVersion[16]="Date:2018.10.04";
 static REAL_32 ConstantClocks[2]={(real_32)(CLOCKS_PER_SEC),1.0F/(real_32)(CLOCKS_PER_SEC)};
 
 BYTE_08 _PL_ TimClip=IdiomVersion;
@@ -20,22 +20,16 @@ timc_sw *TimC_SW_Create_(ADDRESS Timers)
 
 	if(Timers)
 	{
-		address Size=_MemC_Size_Mul_(Timers,sizeof(timc_te));
+		ADDRESS Temp=_MemC_Size_Mul_(Timers,sizeof(timc_te));
 
-		if(Size)
+		if(Temp)
 		{
-			Size=_MemC_Size_Add_(Size,sizeof(timc_sw));
-			if(Size)
+			SW=MemC_Alloc_Byte_(_MemC_Size_Add_(Temp,sizeof(timc_sw)));
+			if(SW)
 			{
-				SW=MemC_Alloc_Byte_(Size);
-				if(SW)
-				{
-					Acs_(timc_te*,SW->Timer)=(timc_te*)(SW+1);
-					Acs_(address,SW->Nums)=Timers;
-				}
+				Acs_(timc_te*,SW->Timer)=MemC_Clear_1D_(SW+1,Timers,timc_te);
+				Acs_(address,SW->Nums)=Timers;
 			}
-			else
-				SW=NULL;
 		}
 		else
 			SW=NULL;
@@ -53,7 +47,6 @@ general TimC_SW_Delete_(timc_sw *_PL_ SW)
 {
 	MemC_Deloc_(*SW);
 }
-
 address TimC_SW_Size_(TIMC_SW _PL_ SW)
 {
 	return ((SW)?(sizeof(timc_sw)+MemC_Size_(timc_te,SW->Nums)):(0));
