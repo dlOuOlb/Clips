@@ -1,21 +1,15 @@
 ﻿#include "boxclip.h"
 
-#if(MemC_Fold_(Definition:Internal Opaque Types))
-MemC_Type_Declare_(struct,boxc_l2,BOXC_L2);
-struct _boxc_l2 { boxc_l2 *L[2]; };
-#endif
-
-#if(MemC_Fold_(Definition:Internal Macros))
-#define _BoxC_L2_Twist_(A,B) ((boxc_l2*)(((address)(A))^((address)(B))))
-#endif
-
 #if(MemC_Fold_(Definition:Global Constants))
-static BYTE_08 IdiomVersion[16]="Date:2018.09.27";
+static BYTE_08 IdiomVersion[16]="Date:2018.10.19";
 BYTE_08 _PL_ BoxClip=IdiomVersion;
 #endif
 
 #if(MemC_Fold_(Definition:BoxClip Structure Functions))
 #if(MemC_Fold_(Part:BoxC_L2))
+MemC_Type_Declare_(struct,boxc_l2,BOXC_L2);
+struct _boxc_l2 { boxc_l2 *L[2]; };
+
 static general _BoxC_L2_Assign_(boxc_l2 *_R_ Ptr,BOXC_L2 _PL_ Last)
 {
 	for(;Ptr<Last;Ptr[-1].L[1]=Ptr)
@@ -23,7 +17,7 @@ static general _BoxC_L2_Assign_(boxc_l2 *_R_ Ptr,BOXC_L2 _PL_ Last)
 
 	Ptr[0].L[1]=NULL;
 }
-static integer _BoxC_L2_Check_(BOXC_L2 *_R_ Ptr)
+static boolean _BoxC_L2_Check_(BOXC_L2 *_R_ Ptr)
 {
 	while(Ptr)
 		if(Ptr->L[0])
@@ -31,7 +25,7 @@ static integer _BoxC_L2_Check_(BOXC_L2 *_R_ Ptr)
 		else
 			break;
 
-	return (Ptr==NULL);
+	return BitCBool[Ptr==NULL];
 }
 static general *_BoxC_L2_Peek_(BOXC_L2 *_R_ Ptr,address Index)
 {
@@ -41,6 +35,7 @@ static general *_BoxC_L2_Peek_(BOXC_L2 *_R_ Ptr,address Index)
 	return Ptr->L[0];
 }
 #endif
+
 #if(MemC_Fold_(Part:BoxC_SS))
 static general _BoxC_SS_Setup_(BOXC_SS _PL_ S)
 {
@@ -49,8 +44,8 @@ static general _BoxC_SS_Setup_(BOXC_SS _PL_ S)
 
 	if(S->Number)
 	{
-		MemC_Clear_1D_(Stack,S->Number,boxc_l2*);
-		MemC_Clear_1D_(Count,S->Number,address);
+		MemC_Clear_1D_(Stack,S->Number);
+		MemC_Clear_1D_(Count,S->Number);
 	}
 	Count[-1]=S->Capacity;
 
@@ -137,10 +132,8 @@ static general _BoxC_SS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 		(*Target)->L[0]=Temp;
 	}
 }
-integer BoxC_SS_Push_(BOXC_SS _PL_ S,ADDRESS Select,general *Contents)
+boolean BoxC_SS_Push_(BOXC_SS _PL_ S,ADDRESS Select,general *Contents)
 {
-	integer Return;
-
 	if(S)
 		if(Select<S->Number)
 			if(S->Count[-1])
@@ -153,16 +146,18 @@ integer BoxC_SS_Push_(BOXC_SS _PL_ S,ADDRESS Select,general *Contents)
 				Count[-1]--;
 				Count[Select]++;
 
-				Return=1;
+				goto SUCCESS;
 			}
 			else
-				Return=0;
+				goto FAILURE;
 		else
-			Return=0;
+			goto FAILURE;
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
 general *BoxC_SS_Pop_(BOXC_SS _PL_ S,ADDRESS Select)
 {
@@ -200,10 +195,8 @@ static general _BoxC_SS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
 	*Target=*Source;
 	*Source=NULL;
 }
-integer BoxC_SS_Reset_(BOXC_SS _PL_ S,ADDRESS Select)
+boolean BoxC_SS_Reset_(BOXC_SS _PL_ S,ADDRESS Select)
 {
-	integer Return;
-
 	if(S)
 		if(Select<S->Number)
 			if(S->Count[Select])
@@ -216,65 +209,34 @@ integer BoxC_SS_Reset_(BOXC_SS _PL_ S,ADDRESS Select)
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
 
-				Return=1;
+				goto SUCCESS;
 			}
 			else
-				Return=1;
+				goto SUCCESS;
 		else
-			Return=0;
+			goto FAILURE;
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
-integer BoxC_SS_Reset_All_(BOXC_SS _PL_ S)
+boolean BoxC_SS_Reset_All_(BOXC_SS _PL_ S)
 {
-	integer Return;
-
-	if(S)
-	{
-		_BoxC_SS_Setup_(S);
-
-		Return=1;
-	}
-	else
-		Return=0;
-
-	return Return;
+	return (S)?(_BoxC_SS_Setup_(S),BitCFull):(BitCNull);
 }
 
-integer BoxC_SS_Check_(BOXC_SS _PL_ S,ADDRESS Select)
+boolean BoxC_SS_Check_(BOXC_SS _PL_ S,ADDRESS Select)
 {
-	integer Return;
-
-	if(S)
-		if(Select<S->Number)
-			Return=_BoxC_L2_Check_(((boxc_l2**)(S->Stack))[Select]);
-		else
-			Return=0;
-	else
-		Return=0;
-
-	return Return;
+	return (S)?((Select<S->Number)?(_BoxC_L2_Check_(((boxc_l2**)(S->Stack))[Select])):(BitCNull)):(BitCNull);
 }
 general *BoxC_SS_Peek_(BOXC_SS _PL_ S,ADDRESS Select,ADDRESS Index)
 {
-	general *Return;
-
-	if(S)
-		if(Select<S->Number)
-			if(Index<S->Count[Select])
-				Return=_BoxC_L2_Peek_(((boxc_l2**)(S->Stack))[Select],Index);
-			else
-				Return=NULL;
-		else
-			Return=NULL;
-	else
-		Return=NULL;
-
-	return Return;
+	return (S)?((Select<S->Number)?((Index<S->Count[Select])?(_BoxC_L2_Peek_(((boxc_l2**)(S->Stack))[Select],Index)):(NULL)):(NULL)):(NULL);
 }
 #endif
+
 #if(MemC_Fold_(Part:BoxC_QS))
 static general _BoxC_QS_Setup_(BOXC_QS _PL_ Q)
 {
@@ -283,8 +245,8 @@ static general _BoxC_QS_Setup_(BOXC_QS _PL_ Q)
 
 	if(Q->Number)
 	{
-		MemC_Clear_1D_(Queue,Q->Number,boxc_l2);
-		MemC_Clear_1D_(Count,Q->Number,address);
+		MemC_Clear_1D_(Queue,Q->Number);
+		MemC_Clear_1D_(Count,Q->Number);
 	}
 	Count[-1]=Q->Capacity;
 
@@ -387,10 +349,8 @@ static general _BoxC_QS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 		Target[1]->L[1]=NULL;
 	}
 }
-integer BoxC_QS_Enque_(BOXC_QS _PL_ Q,ADDRESS Select,general *Contents)
+boolean BoxC_QS_Enque_(BOXC_QS _PL_ Q,ADDRESS Select,general *Contents)
 {
-	integer Return;
-
 	if(Q)
 		if(Select<Q->Number)
 			if(Q->Count[-1])
@@ -403,16 +363,18 @@ integer BoxC_QS_Enque_(BOXC_QS _PL_ Q,ADDRESS Select,general *Contents)
 				Count[-1]--;
 				Count[Select]++;
 
-				Return=1;
+				goto SUCCESS;
 			}
 			else
-				Return=0;
+				goto FAILURE;
 		else
-			Return=0;
+			goto FAILURE;
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
 general *BoxC_QS_Deque_(BOXC_QS _PL_ Q,ADDRESS Select)
 {
@@ -453,10 +415,8 @@ static general _BoxC_QS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
 		Source[1]=NULL;
 	}
 }
-integer BoxC_QS_Reset_(BOXC_QS _PL_ Q,ADDRESS Select)
+boolean BoxC_QS_Reset_(BOXC_QS _PL_ Q,ADDRESS Select)
 {
-	integer Return;
-
 	if(Q)
 		if(Select<Q->Number)
 			if(Q->Count[Select])
@@ -469,21 +429,21 @@ integer BoxC_QS_Reset_(BOXC_QS _PL_ Q,ADDRESS Select)
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
 
-				Return=1;
+				goto SUCCESS;
 			}
 			else
-				Return=1;
+				goto SUCCESS;
 		else
-			Return=0;
+			goto FAILURE;
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
-integer BoxC_QS_Reset_All_(BOXC_QS _PL_ Q)
+boolean BoxC_QS_Reset_All_(BOXC_QS _PL_ Q)
 {
-	integer Return;
-
 	if(Q)
 	{
 		boxc_l2 _PL_ Queue=(boxc_l2*)(Q->Queue);
@@ -498,47 +458,29 @@ integer BoxC_QS_Reset_All_(BOXC_QS _PL_ Q)
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
 			}
-		Return=1;
+		goto SUCCESS;
 	}
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
 
-integer BoxC_QS_Check_(BOXC_QS _PL_ Q,ADDRESS Select)
+boolean BoxC_QS_Check_(BOXC_QS _PL_ Q,ADDRESS Select)
 {
-	integer Return;
-
-	if(Q)
-		if(Select<Q->Number)
-			Return=_BoxC_L2_Check_(((boxc_l2*)(Q->Queue))[Select].L[0]);
-		else
-			Return=0;
-	else
-		Return=0;
-
-	return Return;
+	return (Q)?((Select<Q->Number)?(_BoxC_L2_Check_(((boxc_l2*)(Q->Queue))[Select].L[0])):(BitCNull)):(BitCNull);
 }
 general *BoxC_QS_Peek_(BOXC_QS _PL_ Q,ADDRESS Select,ADDRESS Index)
 {
-	general *Return;
-
-	if(Q)
-		if(Select<Q->Number)
-			if(Index<Q->Count[Select])
-				Return=_BoxC_L2_Peek_(((boxc_l2*)(Q->Queue))[Select].L[0],Index);
-			else
-				Return=NULL;
-		else
-			Return=NULL;
-	else
-		Return=NULL;
-
-	return Return;
+	return (Q)?((Select<Q->Number)?((Index<Q->Count[Select])?(_BoxC_L2_Peek_(((boxc_l2*)(Q->Queue))[Select].L[0],Index)):(NULL)):(NULL)):(NULL);
 }
 #endif
+
 #if(MemC_Fold_(Part:BoxC_RS))
+#define _BoxC_L2_Twist_(A,B) ((boxc_l2*)(((address)(A))^((address)(B))))
+
 static general _BoxC_RS_Assign_(boxc_l2 *_R_ Ptr,BOXC_L2 _PL_ Last)
 {
 	for(Ptr++;Ptr<Last;Ptr++)
@@ -551,8 +493,8 @@ static general _BoxC_RS_Setup_(BOXC_RS _PL_ R)
 
 	if(R->Number)
 	{
-		MemC_Clear_1D_(Ring,R->Number,boxc_l2);
-		MemC_Clear_1D_(Count,R->Number,address);
+		MemC_Clear_1D_(Ring,R->Number);
+		MemC_Clear_1D_(Count,R->Number);
 	}
 	Count[-1]=R->Capacity;
 
@@ -639,9 +581,10 @@ address BoxC_RS_Size_(BOXC_RS _PL_ R)
 	return Temp;
 }
 
-static general _BoxC_RS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general *_PL_ Port)
+static general _BoxC_RS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general *_PL_ Port,INTEGER Posi)
 {
-	boxc_l2 _PL_ Here=Source[1];
+	INTEGER Nega=Posi^1;
+	boxc_l2 _PL_ Here=Source[Posi];
 
 	if(Source[0]==Source[1])
 	{
@@ -650,13 +593,13 @@ static general _BoxC_RS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 	}
 	else
 	{
-		boxc_l2 _PL_ Next=_BoxC_L2_Twist_(Here->L[1],Source[0]);
-		boxc_l2 _PL_ Prev=_BoxC_L2_Twist_(Here->L[1],Next);
+		boxc_l2 _PL_ NearA=_BoxC_L2_Twist_(Here->L[1],Source[Nega]);
+		boxc_l2 _PL_ NearB=_BoxC_L2_Twist_(Here->L[1],NearA);
 
-		Next->L[1]=_BoxC_L2_Twist_(Next->L[1],_BoxC_L2_Twist_(Here,Prev));
-		Prev->L[1]=_BoxC_L2_Twist_(Prev->L[1],_BoxC_L2_Twist_(Here,Next));
+		NearA->L[1]=_BoxC_L2_Twist_(NearA->L[1],_BoxC_L2_Twist_(Here,NearB));
+		NearB->L[1]=_BoxC_L2_Twist_(NearB->L[1],_BoxC_L2_Twist_(Here,NearA));
 
-		Source[1]=Next;
+		Source[Posi]=NearA;
 	}
 	{
 		general _PL_ Temp=*Port;
@@ -665,19 +608,17 @@ static general _BoxC_RS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 		Here->L[0]=Temp;
 		Here->L[1]=_BoxC_L2_Twist_(Target[0],Target[1]);
 	}
-	if(Target[0])
+	if(Target[Nega])
 	{
-		Target[0]->L[1]=_BoxC_L2_Twist_(Target[0]->L[1],_BoxC_L2_Twist_(Here,Target[1]));
-		Target[1]->L[1]=_BoxC_L2_Twist_(Target[1]->L[1],_BoxC_L2_Twist_(Here,Target[0]));
+		Target[Nega]->L[1]=_BoxC_L2_Twist_(Target[Nega]->L[1],_BoxC_L2_Twist_(Here,Target[Posi]));
+		Target[Posi]->L[1]=_BoxC_L2_Twist_(Target[Posi]->L[1],_BoxC_L2_Twist_(Here,Target[Nega]));
 	}
 	else
-		Target[1]=Here;
-	Target[0]=Here;
+		Target[Posi]=Here;
+	Target[Nega]=Here;
 }
-integer BoxC_RS_Insert_(BOXC_RS _PL_ R,ADDRESS Select,general *Contents)
+boolean BoxC_RS_Insert_(BOXC_RS _PL_ R,ADDRESS Select,general *Contents,BOOLEAN Mode)
 {
-	integer Return;
-
 	if(R)
 		if(Select<R->Number)
 			if(R->Count[-1])
@@ -685,46 +626,51 @@ integer BoxC_RS_Insert_(BOXC_RS _PL_ R,ADDRESS Select,general *Contents)
 				boxc_l2 _PL_ Ring=(boxc_l2*)(R->Ring);
 				address _PL_ Count=(address*)(R->Count);
 
-				_BoxC_RS_Swap_(Ring[-1].L,Ring[Select].L,&Contents);
+				_BoxC_RS_Swap_(Ring[-1].L,Ring[Select].L,&Contents,Mode&1);
 
 				Count[-1]--;
 				Count[Select]++;
 
-				Return=1;
+				goto SUCCESS;
 			}
 			else
-				Return=0;
+				goto FAILURE;
 		else
-			Return=0;
+			goto FAILURE;
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
-general *BoxC_RS_Desert_(BOXC_RS _PL_ R,ADDRESS Select)
+boolean BoxC_RS_Desert_(BOXC_RS _PL_ R,ADDRESS Select,BOOLEAN Mode)
 {
-	general *Return;
-
 	if(R)
 		if(Select<R->Number)
 			if(R->Count[Select])
 			{
 				boxc_l2 _PL_ Ring=(boxc_l2*)(R->Ring);
 				address _PL_ Count=(address*)(R->Count);
+				general *Temp;
 
-				_BoxC_RS_Swap_(Ring[Select].L,Ring[-1].L,&Return);
+				_BoxC_RS_Swap_(Ring[Select].L,Ring[-1].L,&Temp,Mode&1);
 
 				Count[-1]++;
 				Count[Select]--;
+
+				goto SUCCESS;
 			}
 			else
-				Return=NULL;
+				goto FAILURE;
 		else
-			Return=NULL;
+			goto FAILURE;
 	else
-		Return=NULL;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
 
 static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ Ring,integer Rotation)
@@ -747,26 +693,26 @@ static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ Ring,integer Rotation)
 		Ring[Nega]=_BoxC_L2_Twist_(Prop,Here->L[1]);
 	}
 }
-integer BoxC_RS_Rotate_(BOXC_RS _PL_ R,ADDRESS Select,INTEGER Rotation)
+boolean BoxC_RS_Rotate_(BOXC_RS _PL_ R,ADDRESS Select,INTEGER Rotation)
 {
-	integer Return;
-
 	if(R)
 		if(Select<R->Number)
 			if(R->Count[Select])
 			{
 				_BoxC_RS_Rotate_(((boxc_l2*)(R->Ring))[Select].L,Rotation);
 
-				Return=1;
+				goto SUCCESS;
 			}
 			else
-				Return=1;
+				goto SUCCESS;
 		else
-			Return=0;
+			goto FAILURE;
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
 
 static general _BoxC_RS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
@@ -792,10 +738,8 @@ static general _BoxC_RS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
 		Source[1]=NULL;
 	}
 }
-integer BoxC_RS_Reset_(BOXC_RS _PL_ R,ADDRESS Select)
+boolean BoxC_RS_Reset_(BOXC_RS _PL_ R,ADDRESS Select)
 {
-	integer Return;
-
 	if(R)
 		if(Select<R->Number)
 			if(R->Count[Select])
@@ -808,21 +752,21 @@ integer BoxC_RS_Reset_(BOXC_RS _PL_ R,ADDRESS Select)
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
 
-				Return=1;
+				goto SUCCESS;
 			}
 			else
-				Return=1;
+				goto SUCCESS;
 		else
-			Return=0;
+			goto FAILURE;
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
-integer BoxC_RS_Reset_All_(BOXC_RS _PL_ R)
+boolean BoxC_RS_Reset_All_(BOXC_RS _PL_ R)
 {
-	integer Return;
-
 	if(R)
 	{
 		boxc_l2 _PL_ Ring=(boxc_l2*)(R->Ring);
@@ -837,20 +781,22 @@ integer BoxC_RS_Reset_All_(BOXC_RS _PL_ R)
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
 			}
-		Return=1;
+		goto SUCCESS;
 	}
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
 }
 
-static integer _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ Ring)
+static boolean _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ Ring)
 {
-	integer Return;
+	boolean Return;
 
 	if(Ring[0]==Ring[1])
-		Return=(Ring[0]->L[0]!=NULL);
+		Return=BitCBool[Ring[0]->L[0]!=NULL];
 	else
 	{
 		BOXC_L2 *Here=Ring[1];
@@ -867,42 +813,398 @@ static integer _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ Ring)
 			else
 				break;
 
-		Return=(Next==Ring[1]);
+		Return=BitCBool[Next==Ring[1]];
 	}
 
 	return Return;
 }
-integer BoxC_RS_Check_(BOXC_RS _PL_ R,ADDRESS Select)
+boolean BoxC_RS_Check_(BOXC_RS _PL_ R,ADDRESS Select)
 {
-	integer Return;
+	return (R)?((Select<R->Number)?(_BoxC_RS_Check_(((boxc_l2*)(R->Ring))[Select].L)):(BitCNull)):(BitCNull);
+}
+general *BoxC_RS_Read_(BOXC_RS _PL_ R,ADDRESS Select,BOOLEAN Mode)
+{
+	return (R)?((Select<R->Number)?((R->Count[Select])?(((boxc_l2*)(R->Ring))[Select].L[Mode&1]->L[0]):(NULL)):(NULL)):(NULL);
+}
 
-	if(R)
-		if(Select<R->Number)
-			Return=_BoxC_RS_Check_(((boxc_l2*)(R->Ring))[Select].L);
+#undef _BoxC_L2_Twist_
+#endif
+
+#if(MemC_Fold_(Part:BoxC_FS))
+boxc_fs *BoxC_FS_Create_(ADDRESS Number)
+{
+	boxc_fs *F;
+
+	{
+		ADDRESS Size=_MemC_Size_Add_(Number,7);
+
+		F=(Size)?(MemC_Alloc_Byte_(_MemC_Size_Add_(Size>>3,sizeof(boxc_fs)))):(NULL);
+	}
+	if(F)
+	{
+		Acs_(general*,F->Flag)=(Number)?(MemC_Clear_1D_((byte_08*)(F+1),(Number+7)>>3)):(NULL);
+		Acs_(address,F->Number)=Number;
+	}
+
+	return F;
+}
+general BoxC_FS_Delete_(boxc_fs *_PL_ F)
+{
+	if(*F)
+		MemC_Deloc_(*F);
+}
+address BoxC_FS_Size_(BOXC_FS _PL_ F)
+{
+	return (F)?(((F->Number+7)>>3)+sizeof(boxc_fs)):(0);
+}
+
+general BoxC_FS_Writer_(BOXC_FS _PL_ F,ADDRESS Select,BOOLEAN Bool)
+{
+	if(F)
+		if(Select<F->Number)
+		{
+			byte_08 _PL_ Flag=((byte_08*)(F->Flag))+(Select>>3);
+			byte_08 Mask=1<<(Select&7);
+
+			*Flag|=Mask;
+			Mask=~Mask;
+			Mask|=Bool;
+			*Flag&=Mask;
+		}
+}
+boolean BoxC_FS_Reader_(BOXC_FS _PL_ F,ADDRESS Select)
+{
+	return (F)?((Select<F->Number)?(BitCBool[(((byte_08*)(F->Flag))[Select>>3]>>(Select&7))&1]):(BitCNull)):(BitCNull);
+}
+general BoxC_FS_Toggle_(BOXC_FS _PL_ F,ADDRESS Select)
+{
+	if(F)
+		if(Select<F->Number)
+			((byte_08*)(F->Flag))[Select>>3]^=1<<(Select&7);
+}
+#endif
+
+#if(MemC_Fold_(Part:BoxC_Tr))
+static general _BoxC_Tr_Init_(boxc_tr _PL_ Root,ADDRESS Chunks)
+{
+	boxc_tr *_R_ Ptr=Root->Leaf;
+
+	if(Chunks>1)
+	{
+		boxc_tr _PL_ First=Ptr;
+		boxc_tr _PL_ Last=Ptr+(Chunks-1);
+
+		{
+			Acs_(boxc_tr*,Ptr->Root)=Root;
+			Acs_(boxc_tr*,Ptr->Leaf)=NULL;
+			Acs_(boxc_tr*,Ptr->Prev)=Last;
+			Acs_(boxc_tr*,Ptr->Next)=Ptr+1;
+			Acs_(address,Ptr->Count)=0;
+			Acs_(address,Ptr->Total)=0;
+		}
+		for(Ptr=Ptr->Next;Ptr<Last;Ptr=Ptr->Next)
+		{
+			Acs_(boxc_tr*,Ptr->Root)=Root;
+			Acs_(boxc_tr*,Ptr->Leaf)=NULL;
+			Acs_(boxc_tr*,Ptr->Prev)=Ptr-1;
+			Acs_(boxc_tr*,Ptr->Next)=Ptr+1;
+			Acs_(address,Ptr->Count)=0;
+			Acs_(address,Ptr->Total)=0;
+		}
+		{
+			Acs_(boxc_tr*,Ptr->Root)=Root;
+			Acs_(boxc_tr*,Ptr->Leaf)=NULL;
+			Acs_(boxc_tr*,Ptr->Prev)=Ptr-1;
+			Acs_(boxc_tr*,Ptr->Next)=First;
+			Acs_(address,Ptr->Count)=0;
+			Acs_(address,Ptr->Total)=0;
+		}
+	}
+	else
+	{
+		Acs_(boxc_tr*,Ptr->Root)=Root;
+		Acs_(boxc_tr*,Ptr->Leaf)=NULL;
+		Acs_(boxc_tr*,Ptr->Prev)=Ptr;
+		Acs_(boxc_tr*,Ptr->Next)=Ptr;
+		Acs_(address,Ptr->Count)=0;
+		Acs_(address,Ptr->Total)=0;
+	}
+}
+static boxc_tr *_BoxC_Tr_Most_Root_(boxc_tr *_R_ Ptr)
+{
+	for(;Ptr->Root;Ptr=Ptr->Root);
+
+	return Ptr;
+}
+static boxc_tr *_BoxC_Tr_Most_Leaf_(boxc_tr *_R_ Ptr)
+{
+	for(;Ptr->Leaf;Ptr=Ptr->Leaf);
+	Acs_(general*,Ptr->Link)=NULL;
+	Ptr->Object=NULL;
+
+	return Ptr;
+}
+static general _BoxC_Tr_Swap_(boxc_tr _PL_ This,boxc_tr _PL_ Root)
+{
+	if(This==This->Next)
+		Acs_(boxc_tr*,This->Root->Leaf)=NULL;
+	else
+	{
+		Acs_(boxc_tr*,This->Root->Leaf)=This->Next;
+		Acs_(boxc_tr*,This->Prev->Next)=This->Next;
+		Acs_(boxc_tr*,This->Next->Prev)=This->Prev;
+	}
+	if(Root->Leaf)
+	{
+		Acs_(boxc_tr*,This->Prev)=Root->Leaf->Prev;
+		Acs_(boxc_tr*,This->Next)=Root->Leaf;
+
+		Acs_(boxc_tr*,This->Prev->Next)=This;
+		Acs_(boxc_tr*,This->Next->Prev)=This;
+	}
+	else
+	{
+		Acs_(boxc_tr*,This->Prev)=This;
+		Acs_(boxc_tr*,This->Next)=This;
+	}
+	{
+		Acs_(boxc_tr*,This->Root)=Root;
+		Acs_(boxc_tr*,Root->Leaf)=This;
+	}
+}
+static general _BoxC_Tr_Numb_Inc_(boxc_tr *_R_ Ptr)
+{
+	ADDRESS Increment=Ptr->Total+1;
+
+	Ptr=Ptr->Root;
+	for(Acs_(address,Ptr->Count)++;Ptr;Ptr=Ptr->Root)
+		Acs_(address,Ptr->Total)+=Increment;
+}
+static general _BoxC_Tr_Numb_Dec_(boxc_tr *_R_ Ptr)
+{
+	ADDRESS Decrement=Ptr->Total+1;
+
+	Ptr=Ptr->Root;
+	for(Acs_(address,Ptr->Count)--;Ptr;Ptr=Ptr->Root)
+		Acs_(address,Ptr->Total)-=Decrement;
+}
+boxc_tr *BoxC_Tr_Create_(boxc_tr _PL_ Root,ADDRESS Capacity)
+{
+	boxc_tr *Tree;
+
+	if(Root)
+		if(Capacity)
+			Tree=NULL;
 		else
-			Return=0;
+		{
+			boxc_tr *Origin=_BoxC_Tr_Most_Root_(Root);
+
+			if(Origin<(boxc_tr*)(Origin->Link))
+			{
+				Origin=Origin->Link;
+				if(Origin->Count)
+				{
+					Tree=_BoxC_Tr_Most_Leaf_(Origin);
+
+					_BoxC_Tr_Numb_Dec_(Tree);
+					_BoxC_Tr_Swap_(Tree,Root);
+					_BoxC_Tr_Numb_Inc_(Tree);
+				}
+				else
+					Tree=NULL;
+			}
+			else
+				Tree=NULL;
+		}
+	else
+	{
+		Tree=MemC_Alloc_Byte_(_MemC_Size_Mul_(_MemC_Size_Add_(Capacity,2),sizeof(boxc_tr)));
+		if(Tree)
+		{
+			{
+				Acs_(boxc_tr*,Tree[0].Root)=NULL;
+				Acs_(boxc_tr*,Tree[0].Leaf)=NULL;
+				Acs_(boxc_tr*,Tree[0].Prev)=Tree;
+				Acs_(boxc_tr*,Tree[0].Next)=Tree;
+				Acs_(general*,Tree[0].Link)=Tree+1;
+				Tree[0].Object=NULL;
+				Acs_(address,Tree[0].Count)=0;
+				Acs_(address,Tree[0].Total)=0;
+			}
+			{
+				Acs_(boxc_tr*,Tree[1].Root)=NULL;
+				Acs_(BOXC_TR*,Tree[1].Prev)=Tree[0].Link;
+				Acs_(BOXC_TR*,Tree[1].Next)=Tree[0].Link;
+				Acs_(general*,Tree[1].Link)=Tree;
+				Tree[1].Object=NULL;
+				Acs_(address,Tree[1].Count)=Capacity;
+				Acs_(address,Tree[1].Total)=Capacity;
+			}
+			if(Capacity)
+			{
+				Acs_(boxc_tr*,Tree[1].Leaf)=Tree+2;
+				_BoxC_Tr_Init_(Tree+1,Capacity);
+			}
+			else
+				Acs_(boxc_tr*,Tree[1].Leaf)=NULL;
+		}
+	}
+
+	return Tree;
+}
+general BoxC_Tr_Delete_(boxc_tr *_PL_ Tree)
+{
+	if(*Tree)
+		if((*Tree)->Root)
+		{
+			boxc_tr _PL_ Root=(*Tree)->Root;
+			boxc_tr *Origin=_BoxC_Tr_Most_Root_(Root);
+
+			if(Origin<(boxc_tr*)(Origin->Link))
+			{
+				_BoxC_Tr_Numb_Dec_(*Tree);
+				_BoxC_Tr_Swap_(*Tree,Origin->Link);
+				_BoxC_Tr_Numb_Inc_(*Tree);
+				(*Tree)=Root;
+			}
+			else
+				(*Tree)=Origin->Link;
+		}
+		else
+		{
+			if((*Tree)>(boxc_tr*)((*Tree)->Link))
+				*Tree=(*Tree)->Link;
+			MemC_Deloc_(*Tree);
+		}
+}
+address BoxC_Tr_Size_(BOXC_TR *Tree)
+{
+	address Return;
+
+	if(Tree)
+	{
+		Tree=_BoxC_Tr_Most_Root_((boxc_tr*)Tree);
+		Return=MemC_Size_(boxc_tr,Tree->Total+((boxc_tr*)(Tree->Link))->Total+2);
+	}
 	else
 		Return=0;
 
 	return Return;
 }
-general *BoxC_RS_Read_(BOXC_RS _PL_ R,ADDRESS Select)
+address BoxC_Tr_Used_(BOXC_TR _PL_ Tree)
 {
-	general *Return;
+	address Return;
 
-	if(R)
-		if(Select<R->Number)
-			if(R->Count[Select])
-				Return=((boxc_l2*)(R->Ring))[Select].L[1]->L[0];
-			else
-				Return=NULL;
-		else
-			Return=NULL;
+	if(Tree)
+	{
+		BOXC_TR _PL_ Origin=_BoxC_Tr_Most_Root_((boxc_tr*)Tree);
+
+		Return=(Origin<(boxc_tr*)(Origin->Link))?(MemC_Size_(boxc_tr,Tree->Total+1)):(0);
+	}
+	else
+		Return=0;
+
+	return Return;
+}
+
+address BoxC_Tr_Left_(BOXC_TR _PL_ Tree)
+{
+	address Return;
+
+	if(Tree)
+	{
+		boxc_tr *Origin=_BoxC_Tr_Most_Root_((boxc_tr*)Tree);
+
+		if(Origin<(boxc_tr*)(Origin->Link))
+			Origin=Origin->Link;
+
+		Return=Origin->Total;
+	}
+	else
+		Return=0;
+
+	return Return;
+}
+boxc_tr *BoxC_Tr_Origin_(boxc_tr _PL_ Tree)
+{
+	boxc_tr *Return;
+
+	if(Tree)
+	{
+		Return=_BoxC_Tr_Most_Root_(Tree);
+		if(Return>(boxc_tr*)(Return->Link))
+			Return=Return->Link;
+	}
 	else
 		Return=NULL;
 
 	return Return;
 }
-#endif
-#endif
+address BoxC_Tr_Height_(BOXC_TR *Tree)
+{
+	address Return;
 
+	if(Tree)
+	{
+		for(Return=0;Tree->Root;Tree=Tree->Root,Return++);
+		if(Tree>(boxc_tr*)(Tree->Link))
+			Return=0;
+	}
+	else
+		Return=0;
+
+	return Return;
+}
+
+static boolean _BoxC_Tr_Okay_(BOXC_TR *Source,BOXC_TR *Target)
+{
+	if(Source)
+		if(Target)
+		{
+			while(Target->Root)
+				if(Source==Target)
+					goto FAILURE;
+				else
+					Target=Target->Root;
+
+			if(Source==Target)
+				goto FAILURE;
+
+			if(Target>(boxc_tr*)(Target->Link))
+				goto FAILURE;
+
+			for(;Source->Root;Source=Source->Root);
+
+			if(Source==Target)
+				goto SUCCESS;
+			else
+				goto FAILURE;
+		}
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
+}
+boolean BoxC_Tr_Move_(boxc_tr _PL_ Tree,boxc_tr _PL_ Root)
+{
+	if(_BoxC_Tr_Okay_(Tree,Root))
+	{
+		_BoxC_Tr_Numb_Dec_(Tree);
+		_BoxC_Tr_Swap_(Tree,Root);
+		_BoxC_Tr_Numb_Inc_(Tree);
+
+		goto SUCCESS;
+	}
+	else
+		goto FAILURE;
+FAILURE:
+	return BitCNull;
+SUCCESS:
+	return BitCFull;
+}
+#endif
+#endif

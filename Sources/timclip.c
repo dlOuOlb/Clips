@@ -6,7 +6,7 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static BYTE_08 IdiomVersion[16]="Date:2018.10.04";
+static BYTE_08 IdiomVersion[16]="Date:2018.10.16";
 static REAL_32 ConstantClocks[2]={(real_32)(CLOCKS_PER_SEC),1.0F/(real_32)(CLOCKS_PER_SEC)};
 
 BYTE_08 _PL_ TimClip=IdiomVersion;
@@ -27,7 +27,7 @@ timc_sw *TimC_SW_Create_(ADDRESS Timers)
 			SW=MemC_Alloc_Byte_(_MemC_Size_Add_(Temp,sizeof(timc_sw)));
 			if(SW)
 			{
-				Acs_(timc_te*,SW->Timer)=MemC_Clear_1D_(SW+1,Timers,timc_te);
+				Acs_(timc_te*,SW->Timer)=MemC_Clear_1D_((timc_te*)(SW+1),Timers);
 				Acs_(address,SW->Nums)=Timers;
 			}
 		}
@@ -38,7 +38,7 @@ timc_sw *TimC_SW_Create_(ADDRESS Timers)
 	{
 		SW=MemC_Alloc_Unit_(timc_sw);
 		if(SW)
-			MemC_Clear_Unit_(SW,timc_sw);
+			MemC_Clear_Unit_(SW);
 	}
 
 	return SW;
@@ -57,7 +57,7 @@ timc_sf TimC_SW_Reset_All_(TIMC_SW _PL_ SW)
 	if(SW)
 	{
 		if(SW->Nums)
-			MemC_Clear_1D_((timc_te*)(SW->Timer),SW->Nums,timc_te);
+			MemC_Clear_1D_((timc_te*)(SW->Timer),SW->Nums);
 
 		goto SUCCESS;
 	}
@@ -103,7 +103,7 @@ timc_sf TimC_SW_Reset_(TIMC_SW _PL_ SW,ADDRESS Select)
 	if(SW)
 		if(Select<SW->Nums)
 		{
-			MemC_Clear_Unit_((timc_te*)(SW->Timer)+Select,timc_te);
+			MemC_Clear_Unit_((timc_te*)(SW->Timer)+Select);
 
 			goto SUCCESS;
 		}

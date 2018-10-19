@@ -16,7 +16,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.08.31";
+static DATA_08 IdiomVersion[16]="Date:2018.10.16";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -1429,7 +1429,7 @@ general BitC_BO_A_1_D32_(data_32 _PL_ DataC,DATA_32 _PL_ DataA,DATA_32 Mask,DATA
 	for(End.C.D32+=(Length&0x00000001);PtrA.C.G<End.C.G;PtrA.C.D32++,PtrC.C.D32++)
 		PtrC.V.D32[0]=PtrA.C.D32[0]&Mask;
 }
-general BitC_BO_A_1_D64_(data_32 _PL_ DataC,DATA_32 _PL_ DataA,DATA_64 Mask,DATA_32 Length)
+general BitC_BO_A_1_D64_(data_64 _PL_ DataC,DATA_64 _PL_ DataA,DATA_64 Mask,DATA_32 Length)
 {
 	bitclip End;
 	bitclip PtrA;
@@ -1568,7 +1568,7 @@ general BitC_BO_O_1_D32_(data_32 _PL_ DataC,DATA_32 _PL_ DataA,DATA_32 Mask,DATA
 	for(End.C.D32+=(Length&0x00000001);PtrA.C.G<End.C.G;PtrA.C.D32++,PtrC.C.D32++)
 		PtrC.V.D32[0]=PtrA.C.D32[0]|Mask;
 }
-general BitC_BO_O_1_D64_(data_32 _PL_ DataC,DATA_32 _PL_ DataA,DATA_64 Mask,DATA_32 Length)
+general BitC_BO_O_1_D64_(data_64 _PL_ DataC,DATA_64 _PL_ DataA,DATA_64 Mask,DATA_32 Length)
 {
 	bitclip End;
 	bitclip PtrA;
@@ -1707,7 +1707,7 @@ general BitC_BO_X_1_D32_(data_32 _PL_ DataC,DATA_32 _PL_ DataA,DATA_32 Mask,DATA
 	for(End.C.D32+=(Length&0x00000001);PtrA.C.G<End.C.G;PtrA.C.D32++,PtrC.C.D32++)
 		PtrC.V.D32[0]=PtrA.C.D32[0]^Mask;
 }
-general BitC_BO_X_1_D64_(data_32 _PL_ DataC,DATA_32 _PL_ DataA,DATA_64 Mask,DATA_32 Length)
+general BitC_BO_X_1_D64_(data_64 _PL_ DataC,DATA_64 _PL_ DataA,DATA_64 Mask,DATA_32 Length)
 {
 	bitclip End;
 	bitclip PtrA;
@@ -4707,10 +4707,10 @@ boolean _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,DATA_32 _PL_ Shape
 						data_32 ShapeSNew[MemC_Copy_Max_Dimension];
 						data_32 MapTNew[MemC_Copy_Max_Dimension];
 
-						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions,data_32)!=MemC_Errno_0)
+						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions)!=MemC_Errno_0)
 							goto FAILURE;
 
-						if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions,data_32)!=MemC_Errno_0)
+						if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions)!=MemC_Errno_0)
 							goto FAILURE;
 
 						_BitC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
@@ -4747,6 +4747,19 @@ FAILURE:
 	return BitCNull;
 SUCCESS:
 	return BitCFull;
+}
+#endif
+
+#if(MemC_Fold_(Definition:Boolean Pointer Functions))
+bitc_bp BitC_BP_Assign_(general _PL_ Base,SINTPTR Offset)
+{
+	bitc_bp BP;
+
+	BP.Base=Base;
+	BP.Base+=Offset>>3;
+	BP.Offset=Offset&7;
+
+	return BP;
 }
 #endif
 
@@ -4905,7 +4918,7 @@ bitc_cl *BitC_CL_Create_(general)
 	if(Manager)
 	{
 		Acs_(GENERAL*,Manager->Helper)=NULL;
-		Acs_(devi_km**,Manager->KMSet)=MemC_Clear_1D_(Manager+1,BitCKernels,devi_km*);
+		Acs_(devi_km**,Manager->KMSet)=MemC_Clear_1D_((devi_km**)(Manager+1),BitCKernels);
 	}
 
 	return Manager;
@@ -5053,8 +5066,8 @@ static penc_eu _BitC_Worker_KM_Reform_(PENC_CL _PL_ Helper,DEVI_KM _PL_ KM,ADDRE
 
 	ParamHost[0]=Dimensions;
 	ParamHost[1]=_BitC_Reform_Total_(ShapeS,Dimensions);
-	if(MemC_Copy_1D_(ShapeS,ParamHost+2,Dimensions,data_32)==MemC_Errno_0)
-		if(MemC_Copy_1D_(AxisStoT,ParamHost+(2+Devi_Copy_Max_Dimension),Dimensions,data_32)==MemC_Errno_0)
+	if(MemC_Copy_1D_(ShapeS,ParamHost+2,Dimensions)==MemC_Errno_0)
+		if(MemC_Copy_1D_(AxisStoT,ParamHost+(2+Devi_Copy_Max_Dimension),Dimensions)==MemC_Errno_0)
 		{
 			Error.I=Devi_Copy_1D_(Helper->Queue,ParamHost,ParamDevice,0,0,2+(Devi_Copy_Max_Dimension<<1),data_32,DeviCopyHtoD);
 			Error.I|=Devi_KM_Save_(KM,0,(address)(&ArrayS));

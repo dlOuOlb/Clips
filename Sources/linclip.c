@@ -9,7 +9,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2018.08.31";
+static DATA_08 IdiomVersion[16]="Date:2018.10.16";
 static ADDRESS ConstantSize[2]={sizeof(real_32),sizeof(real_64)};
 
 #ifdef __OPENCL_H
@@ -2743,7 +2743,7 @@ linc_cl *LinC_CL_Create_(general)
 	if(Manager)
 	{
 		Acs_(GENERAL*,Manager->Helper)=NULL;
-		Acs_(devi_km**,Manager->KMSet)=MemC_Clear_1D_(Manager+1,LinCKernels,devi_km*);
+		Acs_(devi_km**,Manager->KMSet)=MemC_Clear_1D_((devi_km**)(Manager+1),LinCKernels);
 	}
 
 	return Manager;

@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.09.20";
+static BYTE_08 IdiomVersion[16]="Date:2018.10.16";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -516,11 +516,11 @@ errno_t _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ Sha
 						address ShapeSNew[MemC_Copy_Max_Dimension];
 						address MapTNew[MemC_Copy_Max_Dimension];
 
-						ErrorCode=MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions,address);
+						ErrorCode=MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions);
 						if(ErrorCode!=MemC_Errno_0)
 							goto ESCAPE;
 
-						ErrorCode=MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions,address);
+						ErrorCode=MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions);
 						if(ErrorCode!=MemC_Errno_0)
 							goto ESCAPE;
 
@@ -682,7 +682,7 @@ static general _MemC_Sort_Ord_B_(integer(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),
 }
 static errno_t _MemC_Sort_Table_(address *IdxO,address *IdxA,ADDRESS *PtrT,ADDRESS _PL_ MatchB,ADDRESS Copy,ADDRESS Step)
 {
-	errno_t Error=MemC_Copy_1D_(IdxO,IdxA,Copy,address);
+	errno_t Error=MemC_Copy_1D_(IdxO,IdxA,Copy);
 
 	if(Error==MemC_Errno_0)
 	{
@@ -857,7 +857,7 @@ memc_ms *MemC_MS_Create_(GENERAL _PL_ ID,ADDRESS Slots)
 					Acs_(GENERAL*,MS->ID)=ID;
 					Acs_(MEMC_DT*,MS->Type)=MemCType[MemCTypeAddress];
 					Acs_(address,MS->Nums)=Slots;
-					Acs_(address*,MS->Slot.V)=MemC_Clear_1D_(MS+1,Slots,address);
+					Acs_(address*,MS->Slot.V)=MemC_Clear_1D_((address*)(MS+1),Slots);
 				}
 			}
 			else
@@ -914,7 +914,7 @@ integer MemC_MS_Init_(MEMC_MS _PL_ MS)
 	if(MS)
 	{
 		if(MS->Nums)
-			MemC_Clear_1D_(MS->Slot.V,MS->Nums,address);
+			MemC_Clear_1D_(MS->Slot.V,MS->Nums);
 		goto SUCCESS;
 	}
 	else
@@ -1183,7 +1183,7 @@ memc_mc *MemC_MC_Create_(GENERAL _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 								if(Dimensions>1)
 								{
 									Acs_(address*,MC->LngND)=(address*)(MC+1);
-									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions,address)!=MemC_Errno_0)
+									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions)!=MemC_Errno_0)
 										MemC_Deloc_(MC);
 								}
 								else
@@ -1231,7 +1231,7 @@ INVADE:
 									Acs_(address*,MC->LngND)=(address*)(MC+1);
 									Acs_(general*,MC->AcsND)=(general*)(MC->LngND+Dimensions);
 									Acs_(general*,MC->Acs1D)=_MemC_Assign_Loop_((general**)(MC->AcsND),Shape,Dimensions,DT->SizeType);
-									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions,address)!=MemC_Errno_0)
+									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions)!=MemC_Errno_0)
 										MemC_Deloc_(MC);
 								}
 								else
@@ -1312,7 +1312,7 @@ integer MemC_MC_Form_(MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
 			{
 				MS->Slot.V[0]=MC->Dims;
 				if(MC->Dims)
-					if(MemC_Copy_1D_(MC->LngND,MS->Slot.V+1,MC->Dims,address)==MemC_Errno_0)
+					if(MemC_Copy_1D_(MC->LngND,MS->Slot.V+1,MC->Dims)==MemC_Errno_0)
 						goto SUCCESS;
 					else
 						goto FAILURE;
@@ -1439,12 +1439,12 @@ ESCAPE:
 cl_int _Devi_Delete_Event_(cl_event const Event)
 {
 	cl_int Status=0;
-	cl_int Error=Devi_Info_Event_(Event,&Status,1,cl_int,CL_EVENT_COMMAND_EXECUTION_STATUS);
+	cl_int Error=Devi_Info_Event_(Event,&Status,1,CL_EVENT_COMMAND_EXECUTION_STATUS);
 
 	if(Error==CL_SUCCESS)
 		if(Status==CL_COMPLETE)
 		{
-			Error=Devi_Info_Event_(Event,&Status,1,cl_int,CL_EVENT_REFERENCE_COUNT);
+			Error=Devi_Info_Event_(Event,&Status,1,CL_EVENT_REFERENCE_COUNT);
 			if(Error==CL_SUCCESS)
 				while(Status--)
 				{
@@ -1811,15 +1811,15 @@ ESCAPE:
 		Acs_(address,KM->WDims)=Dims;
 		Acs_(cl_kernel,KM->Kernel)=NULL;
 
-		Acs_(ADDRESS*,KM->ArgSize)=MemC_Clear_1D_(KM+1,Args<<1,address);
+		Acs_(ADDRESS*,KM->ArgSize)=MemC_Clear_1D_((address*)(KM+1),Args<<1);
 		Acs_(ADDRESS*,KM->ArgAccess.V)=KM->ArgSize+Args;
 
-		Acs_(address*,KM->WLocals)=MemC_Clear_1D_((address*)(KM->ArgAccess.V+Args),Dims<<2,address);
+		Acs_(address*,KM->WLocals)=MemC_Clear_1D_((address*)(KM->ArgAccess.V+Args),Dims<<2);
 		Acs_(address*,KM->WGroups)=KM->WLocals+Dims;
 		Acs_(address*,KM->WOffset)=KM->WGroups+Dims;
 		Acs_(address*,KM->WLength)=KM->WOffset+Dims;
 
-		Acs_(devi_df*,KM->ArgFlag)=MemC_Clear_1D_((devi_df*)(KM->WLength+Dims),Args,devi_df);
+		Acs_(devi_df*,KM->ArgFlag)=MemC_Clear_1D_((devi_df*)(KM->WLength+Dims),Args);
 		Acs_(general*,KM->ArgMemory)=NULL;
 	}
 
@@ -1872,7 +1872,7 @@ cl_int Devi_KM_Init_(devi_km _PL_ KM,cl_kernel const Kernel)
 		{
 			cl_uint Args;
 
-			Error=Devi_Info_Kernel_(Kernel,&Args,1,cl_uint,CL_KERNEL_NUM_ARGS);
+			Error=Devi_Info_Kernel_(Kernel,&Args,1,CL_KERNEL_NUM_ARGS);
 			if(Error==CL_SUCCESS)
 				if(((address)Args)==KM->KArgs)
 				{
@@ -2055,9 +2055,9 @@ static cl_uint _Devi_MC_Align_(cl_context const Context,cl_int *Error)
 	cl_device_id Device;
 	cl_uint Align=0;
 
-	*Error=Devi_Info_Context_(Context,&Device,1,cl_device_id,CL_CONTEXT_DEVICES);
+	*Error=Devi_Info_Context_(Context,&Device,1,CL_CONTEXT_DEVICES);
 	if((*Error)==CL_SUCCESS)
-		*Error=Devi_Info_Device_(Device,&Align,1,cl_uint,CL_DEVICE_MEM_BASE_ADDR_ALIGN);
+		*Error=Devi_Info_Device_(Device,&Align,1,CL_DEVICE_MEM_BASE_ADDR_ALIGN);
 
 	return Align;
 }
@@ -2159,7 +2159,7 @@ devi_mc *Devi_MC_Create_(GENERAL _PL_ ID,cl_context const Context,ADDRESS Number
 VACANT:
 					Acs_(address,MC->AlignS)=0;
 					Acs_(cl_mem,MC->BufT)=NULL;
-					Acs_(cl_mem*,MC->BufS)=(Number)?(MemC_Clear_1D_(MC+1,Number,cl_mem)):(NULL);
+					Acs_(cl_mem*,MC->BufS)=(Number)?(MemC_Clear_1D_((cl_mem*)(MC+1),Number)):(NULL);
 				}
 			}
 			else
@@ -2372,7 +2372,7 @@ ESCAPE:
 			if(VC->Dims>1)
 			{
 				Acs_(address*,VC->LngND)=(address*)(VC+1);
-				if(MemC_Copy_1D_(MS->Slot.V+1,(address*)(VC->LngND),MS->Slot.V[0],address)==MemC_Errno_0)
+				if(MemC_Copy_1D_(MS->Slot.V+1,(address*)(VC->LngND),MS->Slot.V[0])==MemC_Errno_0)
 					Acs_(address,VC->Lng1D)=_MemC_Array_Prod_(VC->LngND,VC->Dims);
 				else
 				{
@@ -2599,9 +2599,9 @@ static errno_t _MemC_VC_Copy_New_Size_(address _PL_ LengthNew,address _PL_ Offse
 	{
 		ADDRESS Rest=DimsCopy-1;
 
-		ErrorCode=MemC_Copy_1D_(LengthData+1,LengthNew+1,Rest,address);
+		ErrorCode=MemC_Copy_1D_(LengthData+1,LengthNew+1,Rest);
 		if(ErrorCode==MemC_Errno_0)
-			ErrorCode=MemC_Copy_1D_(OffsetData+1,OffsetNew+1,Rest,address);
+			ErrorCode=MemC_Copy_1D_(OffsetData+1,OffsetNew+1,Rest);
 	}
 
 	return ErrorCode;
@@ -2760,7 +2760,7 @@ integer MemC_VC_Copy_(general _PL_ Queue,MEMC_VC _PL_ Source,MEMC_VC _PL_ Target
 	else
 		if(Source->Dims==Target->Dims)
 			if(Source->Dims)
-				if(MemC_Compare_1D_(Source->LngND,Target->LngND,Source->Dims,address))
+				if(MemC_Compare_1D_(Source->LngND,Target->LngND,Source->Dims))
 					goto FAILURE;
 				else
 					if(Source->Hidden)
