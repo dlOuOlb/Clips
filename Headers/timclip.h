@@ -2,7 +2,7 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.10.04	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.10.16	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP

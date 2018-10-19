@@ -2,7 +2,7 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.31	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.10.16	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -298,6 +298,7 @@ general LinC_Ari_0_R32_(real_32 *_R_ C,REAL_32 S,REAL_32 K,DATA_32 N);
 //＊C[n]＝S＋(n×K)
 general LinC_Ari_0_R64_(real_64 *_R_ C,REAL_64 S,REAL_64 K,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Geometric Progression Functions))
 //LinClip : 8-bit Integer Line Geometric Progression
 //＊C[n]＝S×Kⁿ
@@ -318,6 +319,7 @@ general LinC_Geo_0_R32_(real_32 *_R_ C,REAL_32 S,REAL_32 K,DATA_32 N);
 //＊C[n]＝S×Kⁿ
 general LinC_Geo_0_R64_(real_64 *_R_ C,REAL_64 S,REAL_64 K,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Increment Functions))
 //LinClip : 8-bit Integer Line Increment
 //＊C[n]＝A[n]＋K
@@ -338,6 +340,7 @@ general LinC_Inc_1_R32_(real_32 *C,REAL_32 *A,REAL_32 K,DATA_32 N);
 //＊C[n]＝A[n]＋K
 general LinC_Inc_1_R64_(real_64 *C,REAL_64 *A,REAL_64 K,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Amplification Functions))
 //LinClip : 8-bit Integer Line Amplification
 //＊C[n]＝K×A[n]
@@ -358,6 +361,7 @@ general LinC_Amp_1_R32_(real_32 *C,REAL_32 *A,REAL_32 K,DATA_32 N);
 //＊C[n]＝K×A[n]
 general LinC_Amp_1_R64_(real_64 *C,REAL_64 *A,REAL_64 K,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Addition Functions))
 //LinClip : 8-bit Integer Line Addition
 //＊C[n]＝A[n]＋B[n]
@@ -378,6 +382,7 @@ general LinC_Add_2_R32_(real_32 *C,REAL_32 *A,REAL_32 *B,DATA_32 N);
 //＊C[n]＝A[n]＋B[n]
 general LinC_Add_2_R64_(real_64 *C,REAL_64 *A,REAL_64 *B,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Subtraction Functions))
 //LinClip : 8-bit Integer Line Subtraction
 //＊C[n]＝A[n]－B[n]
@@ -398,6 +403,7 @@ general LinC_Sub_2_R32_(real_32 *C,REAL_32 *A,REAL_32 *B,DATA_32 N);
 //＊C[n]＝A[n]－B[n]
 general LinC_Sub_2_R64_(real_64 *C,REAL_64 *A,REAL_64 *B,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Multiplication Functions))
 //LinClip : 8-bit Integer Line Multiplication
 //＊C[n]＝A[n]×B[n]
@@ -418,6 +424,7 @@ general LinC_Mul_2_R32_(real_32 *C,REAL_32 *A,REAL_32 *B,DATA_32 N);
 //＊C[n]＝A[n]×B[n]
 general LinC_Mul_2_R64_(real_64 *C,REAL_64 *A,REAL_64 *B,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Division Functions))
 //LinClip : 8-bit Integer Line Division
 //＊C[n]＝A[n]÷K
@@ -506,6 +513,7 @@ general LinC_Div_2_R32_(real_32 *C,REAL_32 *A,REAL_32 *B,DATA_32 N);
 //＊C[n]＝A[n]÷B[n]
 general LinC_Div_2_R64_(real_64 *C,REAL_64 *A,REAL_64 *B,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Summation Functions))
 //LinClip : 8-bit Integer Line Summation
 //＊S＝∑A[n]
@@ -526,6 +534,7 @@ real_32 LinC_Sum_1_R32_(REAL_32 *_R_ A,DATA_32 N);
 //＊S＝∑A[n]
 real_64 LinC_Sum_1_R64_(REAL_64 *_R_ A,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Dot-Product Functions))
 //LinClip : 8-bit Integer Line Dot Product
 //＊S＝∑A[n]×B[n]
@@ -546,6 +555,7 @@ real_32 LinC_Dot_2_R32_(REAL_32 *A,REAL_32 *B,DATA_32 N);
 //＊S＝∑A[n]×B[n]
 real_64 LinC_Dot_2_R64_(REAL_64 *A,REAL_64 *B,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Maximum Functions))
 //LinClip : 8-Bit Integer Line Maximum
 //＊n＝argmax{A}
@@ -578,6 +588,7 @@ data_32 LinC_Max_1_R32_(REAL_32 _PL_ A,DATA_32 N);
 //＊n＝argmax{A}
 data_32 LinC_Max_1_R64_(REAL_64 _PL_ A,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Minimum Functions))
 //LinClip : 8-Bit Integer Line Minimum
 //＊n＝argmin{A}
@@ -610,6 +621,7 @@ data_32 LinC_Min_1_R32_(REAL_32 _PL_ A,DATA_32 N);
 //＊n＝argmin{A}
 data_32 LinC_Min_1_R64_(REAL_64 _PL_ A,DATA_32 N);
 #endif
+
 #if(MemC_Fold_(Declaration:Sorting Functions))
 //LinClip : 8-Bit Integer Recursive Radix Sorting
 //＊Required (ValueLine) size is (Length)×1 bytes.
@@ -692,6 +704,7 @@ general LinC_Order_R32_(real_32 _PL_ ValueLine,data_32 _PL_ IndexLine,general _P
 //＊(ValueLine) and (IndexLine) should be initialized before processing.
 general LinC_Order_R64_(real_64 _PL_ ValueLine,data_32 _PL_ IndexLine,general _PL_ Buffer,DATA_32 Length,BOOLEAN Mode);
 #endif
+
 #if(MemC_Fold_(Declaration:Mapping Functions))
 //LinClip : 8-Bit Natural Line Mapping
 //＊C[n]＝T[I[n]]
@@ -705,7 +718,11 @@ general LinC_Map_1_D32_(data_32 *_R_ C,DATA_32 *_R_ I,DATA_32 _PL_ T,DATA_32 N);
 //LinClip : 64-Bit Natural Line Mapping
 //＊C[n]＝T[I[n]]
 general LinC_Map_1_D64_(data_64 *_R_ C,DATA_32 *_R_ I,DATA_64 _PL_ T,DATA_32 N);
+//LinClip : Redefined Natural Line Mapping
+//＊C[n]＝T[I[n]]
+#define LinC_Map_1_(C,I,T,N) __dl{switch(sizeof(*(T))){case 1:LinC_Map_1_D08_((data_08*)(C),I,(data_08*)(T),N);break;case 2:LinC_Map_1_D16_((data_16*)(C),I,(data_16*)(T),N);break;case 4:LinC_Map_1_D32_((data_32*)(C),I,(data_32*)(T),N);break;case 8:LinC_Map_1_D64_((data_64*)(C),I,(data_64*)(T),N);break;default:;static_assert((sizeof(*(C))==sizeof(*(T))),"Type Size Error");}}lb__
 #endif
+
 #if(MemC_Fold_(Definition:LinClip Kernel Manager Functions))
 #ifdef __OPENCL_H
 //LinC_CL : Program Build

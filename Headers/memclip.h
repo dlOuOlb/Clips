@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.09.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.10.16	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -81,16 +81,16 @@ static_assert((sizeof(cl_int)<=sizeof(size_t)),"sizeof(cl_int) > sizeof(size_t)"
 
 #define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
 
-#define MemC_Region_(type,Object,Creation,Deleter_) for(type *(_Temp)=FULL,_PL_ (Object)=(Creation);_Temp;(_Temp)=NULL,(Deleter_)((type**)&(Object)))if(Object)	//MemClip : Object Pointer Variable Use in Local Scope
-#define MemC_Failed_ else																																		//MemClip : Failure Case for "MemC_Region_"
+#define MemC_Using_(type,Object,Creation,Deleter_) for(type *(_Temp)=FULL,_PL_ (Object)=(Creation);_Temp;(_Temp)=NULL,(Deleter_)((type**)&(Object)))if(Object)	//MemClip : Object Pointer Variable Use in Local Scope
+#define MemC_Catch_ else																																		//MemClip : Failure Case for "MemC_Using_"
 #endif
 
 #if(MemC_Fold_(Definition:Types))
-MemC_Type_Rename_(void,general,GENERAL)						//MemClip : Void Type
-MemC_Type_Rename_(char,byte_08,BYTE_08)						//MemClip : Byte Type
-MemC_Type_Rename_(int,integer,INTEGER)						//MemClip : Integer Type
-MemC_Type_Rename_(size_t,address,ADDRESS)					//MemClip : Address Type
-MemC_Type_Func_Declare_(general,func_p_,FUNC_P_,general)	//MemClip : Function Pointer Type
+MemC_Type_Rename_(void,general,GENERAL);					//MemClip : Void Type
+MemC_Type_Rename_(char,byte_08,BYTE_08);					//MemClip : Byte Type
+MemC_Type_Rename_(int,integer,INTEGER);						//MemClip : Integer Type
+MemC_Type_Rename_(size_t,address,ADDRESS);					//MemClip : Address Type
+MemC_Type_Func_Declare_(general,func_p_,FUNC_P_,general);	//MemClip : Function Pointer Type
 
 struct _memc_dt				//MemClip : Data Type Structure
 {
@@ -288,33 +288,33 @@ general *_MemC_Alloc_4D_(ADDRESS,ADDRESS,ADDRESS,ADDRESS,ADDRESS);
 //MemClip : Data Reset in Byte Size
 #define MemC_Clear_Byte_(Memory,ByteSize) memset(Memory,0,ByteSize)
 //MemClip : Unit Data Reset
-#define MemC_Clear_Unit_(Unit,type) (type*)memset(Unit,0,sizeof(type))
+#define MemC_Clear_Unit_(Unit) memset(Unit,0,sizeof(*(Unit)))
 //MemClip : 1D Array Data Reset
-#define MemC_Clear_1D_(Line,Elements,type) (type*)memset(Line,0,(Elements)*sizeof(type))
+#define MemC_Clear_1D_(Line,Elements) memset(Line,0,(Elements)*sizeof(*(Line)))
 
 //MemClip : Data Copy in Byte Size
 #define MemC_Copy_Byte_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)
 //MemClip : Unit Data Copy
-#define MemC_Copy_Unit_(Source,Target,type) memcpy_s(Target,sizeof(type),Source,sizeof(type))
+#define MemC_Copy_Unit_(Source,Target) ((sizeof(*(Source))==sizeof(*(Target)))?(memcpy_s(Target,sizeof(*(Target)),Source,sizeof(*(Source)))):(EINVAL))
 //MemClip : 1D Array Data Copy
-#define MemC_Copy_1D_(Source,Target,Elements,type) memcpy_s(Target,(Elements)*sizeof(type),Source,(Elements)*sizeof(type))
+#define MemC_Copy_1D_(Source,Target,Elements) ((sizeof(*(Source))==sizeof(*(Target)))?(memcpy_s(Target,(Elements)*sizeof(*(Target)),Source,(Elements)*sizeof(*(Source)))):(EINVAL))
 
 //MemClip : Data Compare in Byte Size
 #define MemC_Compare_Byte_(MemoryA,MemoryB,ByteSize) memcmp(MemoryA,MemoryB,ByteSize)
 //MemClip : Unit Data Compare
-#define MemC_Compare_Unit_(UnitA,UnitB,type) memcmp(UnitA,UnitB,sizeof(type))
+#define MemC_Compare_Unit_(UnitA,UnitB) memcmp(UnitA,UnitB,sizeof(*(UnitA)))
 //MemClip : 1D Array Data Compare
-#define MemC_Compare_1D_(LineA,LineB,Elements,type) memcmp(LineA,LineB,(Elements)*sizeof(type))
+#define MemC_Compare_1D_(LineA,LineB,Elements) memcmp(LineA,LineB,(Elements)*sizeof(*(LineA)))
 
 //MemClip : Array Data Copy
 errno_t _MemC_Copy_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
-#define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,type) _MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(type))
+#define MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims) ((sizeof(*(S))==sizeof(*(T)))?(_MemC_Copy_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(*(S)))):(EINVAL))
 //MemClip : Array Data Copy with Step
 errno_t MemC_Copy_Step_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS CopyNums,ADDRESS SourceStepBytes,ADDRESS TargetStepBytes,ADDRESS EachCopyBytes);
 
 //MemClip : Array Data Reformation - See also "MemC_Reform_Shape_"
 errno_t _MemC_Reform_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
-#define MemC_Reform_(S,T,SShp,Axis,Dims,type) _MemC_Reform_(S,T,SShp,Axis,Dims,sizeof(type))
+#define MemC_Reform_(S,T,SShp,Axis,Dims) ((sizeof(*(S))==sizeof(*(T)))?(_MemC_Reform_(S,T,SShp,Axis,Dims,sizeof(*(S)))):(EINVAL))
 //MemClip : Reformed Target Shape Calculation
 //＊TargetShape[ReformingAxis[dim]] = SourceShape[dim]
 integer MemC_Reform_Shape_(ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address _PL_ TargetShape,ADDRESS Dimensions);
@@ -328,12 +328,12 @@ errno_t MemC_Sort_(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_)
 
 //MemClip : 1D Array Data Preset
 errno_t _MemC_Init_1D_(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS Number,ADDRESS TypeSize);
-#define MemC_Init_1D_(Memory,Tile,Elements,type) _MemC_Init_1D_(Memory,Tile,Elements,sizeof(type))
+#define MemC_Init_1D_(Memory,Tile,Elements) ((sizeof(*(Memory))==sizeof(*(Tile)))?(_MemC_Init_1D_(Memory,Tile,Elements,sizeof(*(Tile)))):(EINVAL))
 
 //MemClip :  1D Array Uniform or Non-Uniform Interval Addressing
 address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,INTEGER Mode);
-#define MemC_Assign_1D_U_(Address,Line,Jump,Number,type) _MemC_Assign_1D_(Address,Line,Jump,Number,sizeof(type),0)
-#define MemC_Assign_1D_N_(Address,Line,Jump,Number,type) _MemC_Assign_1D_(Address,Line,(address)(Jump),Number,sizeof(type),1)
+#define MemC_Assign_1D_U_(Address,Line,Jump,Number) _MemC_Assign_1D_(Address,Line,Jump,Number,sizeof(*(Line)),0)
+#define MemC_Assign_1D_N_(Address,Line,Jump,Number) _MemC_Assign_1D_(Address,Line,(address)(Jump),Number,sizeof(*(Line)),1)
 #endif
 
 #if(MemC_Fold_(Declaration:MemClip Structure Functions))
@@ -400,7 +400,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Platform List Get
 #define Devi_List_Platforms_(List,Listed,Entries) clGetPlatformIDs(Entries,List,Listed)
 //MemC_CL : Platform Information Get
-#define Devi_Info_Platform_(Pltf,List,Num,type,Flag) clGetPlatformInfo(Pltf,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Platform_(Pltf,List,Num,Flag) clGetPlatformInfo(Pltf,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Platform Information Size Get
 #define Devi_Size_Info_Platform_(Pltf,Size,Flag) clGetPlatformInfo(Pltf,Flag,0,NULL,Size)
 #endif
@@ -410,7 +410,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Device List Get
 #define Devi_List_Devices_(Pltf,List,Listed,Entries) clGetDeviceIDs(Pltf,CL_DEVICE_TYPE_ALL,Entries,List,Listed)
 //MemC_CL : Device Information Get
-#define Devi_Info_Device_(Devi,List,Num,type,Flag) clGetDeviceInfo(Devi,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Device_(Devi,List,Num,Flag) clGetDeviceInfo(Devi,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Device Information Size Get
 #define Devi_Size_Info_Device_(Devi,Size,Flag) clGetDeviceInfo(Devi,Flag,0,NULL,Size)
 #endif
@@ -420,7 +420,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Context Memory Deallocation
 #define Devi_Delete_Context_(Context) __dl{if(Context){clReleaseContext(Context);(Context)=NULL;}}lb__
 //MemC_CL : Context Information Get
-#define Devi_Info_Context_(Cntx,List,Num,type,Flag) clGetContextInfo(Cntx,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Context_(Cntx,List,Num,Flag) clGetContextInfo(Cntx,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Context Information Size Get
 #define Devi_Size_Info_Context_(Cntx,Size,Flag) clGetContextInfo(Cntx,Flag,0,NULL,Size)
 #endif
@@ -432,14 +432,14 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Program Memory Deallocation
 #define Devi_Delete_Program_(Program) __dl{if(Program){clReleaseProgram(Program);(Program)=NULL;}}lb__
 //MemC_CL : Program Information Get
-#define Devi_Info_Program_(Prgm,List,Num,type,Flag) clGetProgramInfo(Prgm,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Program_(Prgm,List,Num,Flag) clGetProgramInfo(Prgm,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Program Information Size Get
 #define Devi_Size_Info_Program_(Prgm,Size,Flag) clGetProgramInfo(Prgm,Flag,0,NULL,Size)
 
 //MemC_CL : Program Build
 #define Devi_Build_(Program,Option) clBuildProgram(Program,0,NULL,Option,NULL,NULL)
 //MemC_CL : Program Build Information Get
-#define Devi_Info_Build_(Devi,Prgm,List,Num,type,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Build_(Devi,Prgm,List,Num,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Program Build Information Size Get
 #define Devi_Size_Info_Build_(Devi,Prgm,Size,Flag) clGetProgramBuildInfo(Prgm,Devi,Flag,0,NULL,Size)
 #endif
@@ -449,7 +449,7 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Command Queue Memory Deallocation
 #define Devi_Delete_Queue_(Queue) __dl{if(Queue){clReleaseCommandQueue(Queue);(Queue)=NULL;}}lb__
 //MemC_CL : Command Queue Information Get
-#define Devi_Info_Queue_(Queue,List,Num,type,Flag) clGetCommandQueueInfo(Queue,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Queue_(Queue,List,Num,Flag) clGetCommandQueueInfo(Queue,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Command Queue Information Size Get
 #define Devi_Size_Info_Queue_(Queue,Size,Flag) clGetCommandQueueInfo(Queue,Flag,0,NULL,Size)
 
@@ -466,11 +466,11 @@ integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 //MemC_CL : Kernel Memory Deallocation
 #define Devi_Delete_Kernel_(Kernel) __dl{if(Kernel){clReleaseKernel(Kernel);(Kernel)=NULL;}}lb__
 //MemC_CL : Kernel Information Get
-#define Devi_Info_Kernel_(Krnl,List,Num,type,Flag) clGetKernelInfo(Krnl,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Kernel_(Krnl,List,Num,Flag) clGetKernelInfo(Krnl,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Kernel Information Size Get
 #define Devi_Size_Info_Kernel_(Krnl,Size,Flag) clGetKernelInfo(Krnl,Flag,0,NULL,Size)
 //MemC_CL : Kernel Work Group Information Get
-#define Devi_Info_Work_(Devi,Krnl,List,Num,type,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Work_(Devi,Krnl,List,Num,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Kernel Work Group Information Size Get
 #define Devi_Size_Info_Work_(Devi,Krnl,Size,Flag) clGetKernelWorkGroupInfo(Krnl,Devi,Flag,0,NULL,Size)
 
@@ -518,7 +518,7 @@ cl_int _Devi_Delete_Event_(cl_event const);
 //MemC_CL : Event Count Decrease
 #define Devi_Event_Dec_(Event) clReleaseEvent(Event)
 //MemC_CL : Event Object Information Get
-#define Devi_Info_Event_(Event,List,Num,type,Flag) clGetEventInfo(Event,Flag,(Num)*sizeof(type),List,NULL)
+#define Devi_Info_Event_(Event,List,Num,Flag) clGetEventInfo(Event,Flag,(Num)*sizeof(*(List)),List,NULL)
 //MemC_CL : Event Object Information Size Get
 #define Devi_Size_Info_Event_(Event,Size,Flag) clGetEventInfo(Event,Flag,0,NULL,Size)
 //MemC_CL : Waiting for Events to Complete
@@ -631,7 +631,7 @@ general MemC_Self_(address *_R_ Table,ADDRESS Count,INTEGER Mode);
 
 //MemClip : Key Finding for Switch Operation
 address _MemC_Switch_(GENERAL _PL_ Key,GENERAL _PL_ _PL_ TblRf,ADDRESS* LngRf,ADDRESS LngKey,ADDRESS NumRf,ADDRESS TypeSize);
-#define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,type) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(type))
+#define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs) _MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(**(RefBoook)))
 
 //MemClip : Two Number Addition
 //＊Return value is A＋B for no overflow, 0 for overflow.

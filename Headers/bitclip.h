@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.08.31	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.10.16	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -21,18 +21,24 @@
 #endif
 
 #if(MemC_Fold_(Definition:Types))
-MemC_Type_Rename_(uint8_t,data_08,DATA_08)	//BitClip : 8-bit Natural
-MemC_Type_Rename_(uint16_t,data_16,DATA_16)	//BitClip : 16-bit Natural
-MemC_Type_Rename_(uint32_t,data_32,DATA_32)	//BitClip : 32-bit Natural
-MemC_Type_Rename_(uint64_t,data_64,DATA_64)	//BitClip : 64-bit Natural
+MemC_Type_Rename_(uint8_t,data_08,DATA_08);		//BitClip : 8-bit Natural
+MemC_Type_Rename_(uint16_t,data_16,DATA_16);	//BitClip : 16-bit Natural
+MemC_Type_Rename_(uint32_t,data_32,DATA_32);	//BitClip : 32-bit Natural
+MemC_Type_Rename_(uint64_t,data_64,DATA_64);	//BitClip : 64-bit Natural
 
-MemC_Type_Rename_(int8_t,inte_08,INTE_08)	//BitClip : 8-bit Integer
-MemC_Type_Rename_(int16_t,inte_16,INTE_16)	//BitClip : 16-bit Integer
-MemC_Type_Rename_(int32_t,inte_32,INTE_32)	//BitClip : 32-bit Integer
-MemC_Type_Rename_(int64_t,inte_64,INTE_64)	//BitClip : 64-bit Integer
+MemC_Type_Rename_(int8_t,inte_08,INTE_08);		//BitClip : 8-bit Integer
+MemC_Type_Rename_(int16_t,inte_16,INTE_16);		//BitClip : 16-bit Integer
+MemC_Type_Rename_(int32_t,inte_32,INTE_32);		//BitClip : 32-bit Integer
+MemC_Type_Rename_(int64_t,inte_64,INTE_64);		//BitClip : 64-bit Integer
 
-MemC_Type_Rename_(float,real_32,REAL_32)	//BitClip : 32-bit Single Precision Floating Point
-MemC_Type_Rename_(double,real_64,REAL_64)	//BitClip : 64-bit Double Precision Floating Point
+MemC_Type_Rename_(float,real_32,REAL_32);		//BitClip : 32-bit Single Precision Floating Point
+MemC_Type_Rename_(double,real_64,REAL_64);		//BitClip : 64-bit Double Precision Floating Point
+
+MemC_Type_Rename_(intptr_t,sintptr,SINTPTR);	//BitClip : Signed Address
+MemC_Type_Rename_(uintptr_t,uintptr,UINTPTR);	//BitClip : Unsigned Address
+
+//BitClip : Arbitrary Type Declaration in Byte Size
+#define BitC_Type_Declare_(Size) struct _bitc_##Size##_bytes{data_08 Byte[Size];};MemC_Type_Declare_(struct,bitc_##Size##_bytes,BITC_##Size##_BYTES);static_assert((sizeof(bitc_##Size##_bytes)==Size),"Type size is not matched!");
 
 enum _boolean	//BitClip : Boolean Enumeration
 {
@@ -98,6 +104,13 @@ enum _bitc_dt		//BitClip : Data Type Enumeration
 	BitCTypes=12	//BitClip : The Number of Types
 };
 MemC_Type_Declare_(enum,bitc_dt,BITC_DT);	//BitClip : Data Type Enumeration
+
+struct _bitc_bp		//BitClip : Boolean Pointer Structure
+{
+	data_08 *Base;	//BitClip : Base Address
+	sintptr Offset;	//BitClip : Bit Offset (0~7)
+};
+MemC_Type_Declare_(struct,bitc_bp,BITC_BP);	//BitClip : Boolean Pointer Structure
 
 #ifdef __OPENCL_H
 enum _bitc_ki				//BitC_CL : BitCKernel Indicator Enumeration
@@ -453,6 +466,8 @@ general BitC_Endian_D16_(data_16 _PL_ Data,DATA_32 Length);
 general BitC_Endian_D32_(data_32 _PL_ Data,DATA_32 Length);
 //BitClip : 64-bit Natural Endian Flipping
 general BitC_Endian_D64_(data_64 _PL_ Data,DATA_32 Length);
+//BitClip : Redefined Natural Endian Flipping
+#define BitC_Endian_(Data,Length) __dl{switch(sizeof(*(Data))){case 2:BitC_Endian_D16_((data_16*)(Data),Length);break;case 4:BitC_Endian_D32_((data_32*)(Data),Length);break;case 8:BitC_Endian_D64_((data_64*)(Data),Length);break;default:;}}lb__
 #endif
 
 #if(MemC_Fold_(Declaration:Caster Functions))
@@ -676,7 +691,7 @@ general BitC_BO_A_1_D16_(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,DATA_32 N);
 general BitC_BO_A_1_D32_(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,DATA_32 N);
 //BitClip : 64-bit Natural AND Operation
 //＊C[n]＝A[n]&M
-general BitC_BO_A_1_D64_(data_32 _PL_ C,DATA_32 _PL_ A,DATA_64 M,DATA_32 N);
+general BitC_BO_A_1_D64_(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,DATA_32 N);
 //BitClip : 8-bit Natural AND Operation
 //＊C[n]＝A[n]&B[n]
 general BitC_BO_A_2_D08_(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,DATA_32 N);
@@ -692,7 +707,7 @@ general BitC_BO_O_1_D16_(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,DATA_32 N);
 general BitC_BO_O_1_D32_(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,DATA_32 N);
 //BitClip : 64-bit Natural OR Operation
 //＊C[n]＝A[n]|M
-general BitC_BO_O_1_D64_(data_32 _PL_ C,DATA_32 _PL_ A,DATA_64 M,DATA_32 N);
+general BitC_BO_O_1_D64_(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,DATA_32 N);
 //BitClip : 8-bit Natural OR Operation
 //＊C[n]＝A[n]|B[n]
 general BitC_BO_O_2_D08_(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,DATA_32 N);
@@ -708,7 +723,7 @@ general BitC_BO_X_1_D16_(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,DATA_32 N);
 general BitC_BO_X_1_D32_(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,DATA_32 N);
 //BitClip : 64-bit Natural XOR Operation
 //＊C[n]＝A[n]^M
-general BitC_BO_X_1_D64_(data_32 _PL_ C,DATA_32 _PL_ A,DATA_64 M,DATA_32 N);
+general BitC_BO_X_1_D64_(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,DATA_32 N);
 //BitClip : 8-bit Natural XOR Operation
 //＊C[n]＝A[n]^B[n]
 general BitC_BO_X_2_D08_(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,DATA_32 N);
@@ -727,6 +742,8 @@ general BitC_Expand_D32_(DATA_08 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : Bit Expansion to 64-bit Natural
 //＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFFFFFFFFFF):(0x0000000000000000)
 general BitC_Expand_D64_(DATA_08 *_R_ I,data_64 *_R_ O,DATA_32 N);
+//BitClip : Redefined Bit Expansion
+#define BitC_Expand_(I,O,N) __dl{switch(sizeof(*(O))){case 1:BitC_Expand_D08_(I,(data_08*)(O),N);break;case 2:BitC_Expand_D16_(I,(data_16*)(O),N);break;case 4:BitC_Expand_D32_(I,(data_32*)(O),N);break;case 8:BitC_Expand_D64_(I,(data_64*)(O),N);break;default:;}}lb__
 
 //BitClip : Bit Shrinkage from 8-bit Natural
 //＊O[n/8].bit[n%8]＝I[n].bit[n%8]
@@ -740,6 +757,8 @@ general BitC_Shrink_D32_(DATA_32 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : Bit Shrinkage from 64-bit Natural
 //＊O[n/8].bit[n%8]＝I[n].bit[n%8]
 general BitC_Shrink_D64_(DATA_64 *_R_ I,data_08 *_R_ O,DATA_32 N);
+//BitClip : Redefined Bit Shrinkage
+#define BitC_Shrink_(I,O,N) __dl{switch(sizeof(*(I))){case 1:BitC_Shrink_D08_((data_08*)(I),O,N);break;case 2:BitC_Shrink_D16_((data_16*)(I),O,N);break;case 4:BitC_Shrink_D32_((data_32*)(I),O,N);break;case 8:BitC_Shrink_D64_((data_64*)(I),O,N);break;default:;}}lb__
 
 //BitClip : 8-bit Natural EQ Operation
 //＊C[n/8].bit[n%8]＝(A[n]==V)
@@ -915,6 +934,19 @@ general BitC_RO_L_2_R32_(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 *_R_ B,DATA_32 N)
 general BitC_RO_L_2_R64_(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,DATA_32 N);
 #endif
 
+#if(MemC_Fold_(Declaration:Boolean Pointer Functions))
+//BitClip : Boolean Pointer Assign
+bitc_bp BitC_BP_Assign_(general _PL_ BaseAddress,SINTPTR BitOffset);
+//BitClip : Boolean Pointer Move
+#define BitC_BP_Jumper_(BP,Move) __dl{(BP).Offset+=(Move);(BP).Base+=(BP).Offset>>3;(BP).Offset&=7;}lb__
+//BitClip : Boolean Pointer Read
+//＊Return value is 0 or ~0.
+#define BitC_BP_Reader_(BP) BitCBool[((*((BP).Base))>>((BP).Offset))&1]
+//BitClip : Boolean Pointer Write
+//＊Bool value should be 0 or ~0.
+#define BitC_BP_Writer_(BP,Bool) __dl{data_08 _T=(data_08)(1<<((BP).Offset));(*((BP).Base))|=_T;_T=~_T;_T|=(Bool);(*((BP).Base))&=_T;}lb__
+#endif
+
 #if(MemC_Fold_(Declaration:BitClip Kernel Manager Functions))
 #ifdef __OPENCL_H
 //BitC_CL : Program Build
@@ -947,10 +979,6 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ KernelManager,MEMC_MS _PL_ KernelArgument,B
 #if(MemC_Fold_(Declaration:Array Reformation Functions))
 //BitClip : Array Reformation for SourceShape[dim] == TargetShape[ReformingAxis[dim]]
 boolean _BitC_Reform_(GENERAL _PL_ SourceArray,general _PL_ TargetArray,DATA_32 _PL_ SourceShape,DATA_32 _PL_ ReformingAxis,data_32 Dimensions,data_32 TypeSize);
-#define BitC_Reform_(S,T,SShp,StoTAxis,Dims,type) _BitC_Reform_(S,T,SShp,StoTAxis,Dims,sizeof(type))
-#define BitC_Reform_D08_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_08)
-#define BitC_Reform_D16_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_16)
-#define BitC_Reform_D32_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_32)
-#define BitC_Reform_D64_(S,T,SShp,StoTAxis,Dims) BitC_Reform_(S,T,SShp,StoTAxis,Dims,data_64)
+#define BitC_Reform_(S,T,SShp,StoTAxis,Dims) ((sizeof(*(S))==sizeof(*(T)))?(_BitC_Reform_(S,T,SShp,StoTAxis,Dims,sizeof(*(S)))):(BitCNull))
 #endif
 #endif
