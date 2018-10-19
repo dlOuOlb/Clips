@@ -13,12 +13,12 @@ integer main(general)
 
 	if(Error.E==CLSuccess)
 	{
-		PenC_File_Region_(Log,NameL,PenCOpen[3],Error.I)
+		PenC_File_Using_(Log,NameL,PenCOpen[3],Error.I)
 		{
 			name_08 Buffer[64];
 			PENC_SC Option=PenC_SC_Assign_(Buffer);
 			
-			MemC_Region_(devi_qc,QC,Devi_QC_Create_(Select[0],Select[1]),Devi_QC_Delete_)
+			MemC_Using_(devi_qc,QC,Devi_QC_Create_(Select[0],Select[1]),Devi_QC_Delete_)
 			{
 				Error=_Main_Build_Option_(QC->Device,Option);
 				if(Error.E==CLSuccess)
@@ -38,7 +38,7 @@ integer main(general)
 				else
 					PenC_Stream_Format_N08_(0,NULL,"Error Occurred during Parsing the Build Option\n");
 			}
-			MemC_Failed_
+			MemC_Catch_
 			{
 				PenC_Stream_Format_N08_(0,NULL,"Invalid Platform or Device\n");
 				Error.E=CLInvalidCommandQueue;
@@ -64,7 +64,7 @@ static penc_eu _Main_Build_Option_(cl_device_id const Device,PENC_SC Option)
 
 		if(Buffer)
 		{
-			Error.I=Devi_Info_Device_(Device,Buffer,Size,name_08,CL_DEVICE_EXTENSIONS);
+			Error.I=Devi_Info_Device_(Device,Buffer,Size,CL_DEVICE_EXTENSIONS);
 			if(Error.E==CLSuccess)
 				if(PenC_SC_Format_N08_(0,Option,"-D _ABLE_R16_=%d -D _ABLE_R64_=%d",(PenC_String_Finder_N08_(Buffer,"cl_khr_fp16")!=NULL),(PenC_String_Finder_N08_(Buffer,"cl_khr_fp64")!=NULL))<0)
 					Error.E=CLOutOfHostMemory;
