@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.10.16";
+static BYTE_08 IdiomVersion[16]="Date:2018.11.22";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -19,6 +19,10 @@ static MEMC_DT _PL_ AddressType[MemCTypes]={TableType+MemCTypeNone_00,TableType+
 BYTE_08 _PL_ MemClip=IdiomVersion;
 GENERAL _PL_ MemCrux=&MemCrux;
 MEMC_DT _PL_ _PL_ MemCType=AddressType;
+
+#if(MemC_ML_Static_Chunks_)
+MemC_ML_Define_(MemCustom,MemC_ML_Static_Chunks_);
+#endif
 
 #undef _MemC_DT_Parse_
 #endif
@@ -178,7 +182,7 @@ general *MemC_Alloc_Byte_(ADDRESS S)
 {
 	ADDRESS T=sizeof(address);
 	ADDRESS N=_MemC_Size_Mul_((S+T-1)/T,T);
-	general _PL_ Memory=(N)?(malloc(N)):(NULL);
+	general _PL_ Memory=(N)?(_MemC_Malloc_(N)):(NULL);
 
 	return Memory;
 }
@@ -1349,6 +1353,408 @@ FAILURE:
 	return 0;
 SUCCESS:
 	return 1;
+}
+#endif
+#if(MemC_Fold_(Part:MemC_ML))
+MemC_Type_Declare_(struct,memc_l2,MEMC_L2);
+struct _memc_l2 { general *L[2]; };
+
+MemC_Type_Declare_(struct,memc_mn,MEMC_MN);
+struct _memc_mn
+{
+	memc_ml *Home;
+	memc_mn *Prev;
+	memc_mn *Next;
+	address Size;
+};
+
+memc_ml *MemC_ML_Create_(memc_ml _PL_ Root,ADDRESS Chunks)
+{
+	memc_ml *ML;
+
+	if(Chunks>2)
+		if(Root)
+			if(Root==Root->LinkSelf)
+			{
+				ML=MemC_Alloc_Byte_(_MemC_Size_Mul_(Chunks,sizeof(memc_mn)));
+				if(ML)
+				{
+					Acs_(memc_ml*,ML->LinkSelf)=ML;
+					Acs_(memc_ml*,ML->LinkPrev)=Root;
+					Acs_(MEMC_ML*,ML->LinkNext)=Root->LinkNext;
+
+					Acs_(memc_ml*,Root->LinkNext->LinkPrev)=ML;
+					Acs_(memc_ml*,Root->LinkNext)=ML;
+
+					goto JUMP;
+				}
+			}
+			else
+				ML=NULL;
+		else
+		{
+			ML=MemC_Alloc_Byte_(_MemC_Size_Mul_(Chunks,sizeof(memc_mn)));
+			if(ML)
+			{
+				{
+					Acs_(memc_ml*,ML->LinkSelf)=ML;
+					Acs_(memc_ml*,ML->LinkPrev)=ML;
+					Acs_(memc_ml*,ML->LinkNext)=ML;
+				}
+JUMP:
+				{
+					memc_mn *MN=(memc_mn*)(ML+1);
+
+					MN->Home=NULL;
+					MN->Prev=NULL;
+					MN->Next=NULL;
+					MN->Size=MemC_Size_(memc_mn,Chunks-3);
+
+					Acs_(address,ML->SizeAble)=MN->Size;
+					Acs_(address,ML->SizeIdle)=MN->Size;
+					Acs_(address,ML->SizeUsed)=0;
+					Acs_(address,ML->NumsIdle)=1;
+					Acs_(address,ML->NumsUsed)=0;
+				}
+			}
+		}
+	else
+		ML=NULL;
+
+	return ML;
+}
+memc_ml *MemC_ML_Delete_(memc_ml *_PL_ ML)
+{
+	memc_ml *Return;
+
+	if(*ML)
+		if((*ML)==(*ML)->LinkSelf)
+		{
+			if((*ML)==(*ML)->LinkPrev)
+				Return=NULL;
+			else
+			{
+				Return=(*ML)->LinkPrev;
+
+				Acs_(memc_ml*,(*ML)->LinkPrev->LinkNext)=(*ML)->LinkNext;
+				Acs_(memc_ml*,(*ML)->LinkNext->LinkPrev)=(*ML)->LinkPrev;
+			}
+			MemC_Deloc_(*ML);
+		}
+		else
+			Return=NULL;
+	else
+		Return=NULL;
+
+	return Return;
+}
+address MemC_ML_Size_(MEMC_ML _PL_ ML)
+{
+	return ((ML)?(MemC_Size_(memc_ml,1)+MemC_Size_(memc_mn,ML->NumsIdle+ML->NumsUsed)+(ML->SizeIdle+ML->SizeUsed)):(0));
+}
+
+static address _MemC_MN_Margin_(address Size)
+{
+	Size+=sizeof(memc_mn);
+	Size--;
+	Size/=sizeof(memc_mn);
+	Size*=sizeof(memc_mn);
+
+	return Size;
+}
+static integer _MemC_MN_Scan_(memc_mn *_R_ Ptr)
+{
+	while(1)
+		if(Ptr->Next)
+			if(Ptr==Ptr->Next->Prev)
+				Ptr=Ptr->Next;
+			else
+				return 0;
+		else
+			return 1;
+}
+static memc_mn *_MemC_MN_Search_Space_(memc_mn *_R_ Ptr,ADDRESS Demand)
+{
+	memc_mn *Here=NULL;
+
+	for(address Size=(address)FULL;Ptr;Ptr=Ptr->Next)
+		if(!(Ptr->Home))
+			if(Demand<=Ptr->Size)
+				if(Size>Ptr->Size)
+				{
+					Size=Ptr->Size;
+					Here=Ptr;
+				}
+
+	return Here;
+}
+static address _MemC_MN_Search_Size_(memc_mn *_R_ Ptr)
+{
+	address Temp;
+
+	for(Temp=0;Ptr;Ptr=Ptr->Next)
+		if(!(Ptr->Home))
+			if(Temp<Ptr->Size)
+				Temp=Ptr->Size;
+
+	return Temp;
+}
+static memc_mn *_MemC_MN_Search_Node_(memc_mn *Node)
+{
+	if(Node)
+	{
+		Node--;
+		if(Node->Home)
+		{
+			if(Node->Home!=Node->Home->LinkSelf)
+				Node=NULL;
+		}
+		else
+			Node=NULL;
+	}
+
+	return Node;
+}
+static address _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
+{
+	address Return;
+
+	if(Demand<Node->Size)
+	{
+		if(Node->Next)
+		{
+			Node->Next->Prev=(memc_mn*)((address)(Node+1)+Demand);
+			Node->Next->Prev->Next=Node->Next;
+			Node->Next=Node->Next->Prev;
+		}
+		else
+		{
+			Node->Next=(memc_mn*)((address)(Node+1)+Demand);
+			Node->Next->Next=NULL;
+		}
+		{
+			Node->Next->Prev=Node;
+
+			Node->Next->Size=Node->Size-Demand-sizeof(memc_mn);
+			Node->Next->Home=NULL;
+
+			Node->Size=Demand;
+			Return=0;
+		}
+	}
+	else
+		Return=1;
+
+	return Return;
+}
+static general _MemC_MN_Attach_(memc_mn _PL_ Node)
+{
+	Node->Size+=sizeof(memc_mn);
+	Node->Size+=Node->Next->Size;
+
+	Node->Next=Node->Next->Next;
+	if(Node->Next)
+		Node->Next->Prev=Node;
+}
+static address _MemC_MN_Return_(memc_mn *_PL_ Node)
+{
+	address Return=0;
+
+	if((*Node)->Prev)
+		if(!((*Node)->Prev->Home))
+		{
+			*Node=(*Node)->Prev;
+			_MemC_MN_Attach_(*Node);
+			Return++;
+		}
+	if((*Node)->Next)
+		if(!((*Node)->Next->Home))
+		{
+			_MemC_MN_Attach_(*Node);
+			Return++;
+		}
+	(*Node)->Home=NULL;
+
+	return Return;
+}
+static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
+{
+	memc_ml *Here=ML;
+	memc_mn *Node;
+	address Size=(address)FULL;
+	memc_l2 Return={NULL,NULL};
+
+	do
+		if(Demand>Here->SizeAble)
+			Here=Here->LinkNext;
+		else
+		{
+			Node=(memc_mn*)(Here+1);
+			if(_MemC_MN_Scan_(Node))
+			{
+				memc_mn *Temp=_MemC_MN_Search_Space_(Node,Demand);
+
+				if(Temp)
+					if(Size>Temp->Size)
+					{
+						Size=Temp->Size;
+						Return.L[0]=Here;
+						Return.L[1]=Temp;
+					}
+				Here=Here->LinkNext;
+			}
+			else
+			{
+				Return.L[0]=NULL;
+				Return.L[1]=NULL;
+				break;
+			}
+		}
+	while(Here!=ML);
+
+	return Return;
+}
+static general _MemC_MN_Reset_(memc_mn *Node)
+{
+	for(Node=Node->Next;Node;Node=Node->Next)
+		Node->Home=NULL;
+}
+general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
+{
+	general *Memory;
+
+	if(ML)
+	{
+		ADDRESS Margin=_MemC_MN_Margin_(Demand);
+
+		if(Margin)
+		{
+			MEMC_L2 Select=_MemC_ML_Search_Home_(ML,Margin);
+
+			if(Select.L[0])
+			{
+				memc_ml _PL_ Home=Select.L[0];
+				memc_mn _PL_ Node=Select.L[1];
+
+				Node->Home=Home;
+				if(Node->Size==Home->SizeAble)
+				{
+					Acs_(address,Home->NumsIdle)-=_MemC_MN_Borrow_(Node,Margin);
+					Acs_(address,Home->SizeAble)=_MemC_MN_Search_Size_(Node);
+				}
+				else
+					Acs_(address,Home->NumsIdle)-=_MemC_MN_Borrow_(Node,Margin);
+				{
+					Acs_(address,Home->NumsUsed)++;
+
+					Acs_(address,Home->SizeIdle)-=sizeof(memc_mn);
+					Acs_(address,Home->SizeIdle)-=Margin;
+					Acs_(address,Home->SizeUsed)+=Margin;
+
+					Memory=Node+1;
+				}
+			}
+			else
+				Memory=NULL;
+		}
+		else
+			Memory=NULL;
+	}
+	else
+		Memory=NULL;
+
+	return Memory;
+}
+integer _MemC_ML_Return_(general _PL_ Memory)
+{
+	memc_mn *Node=_MemC_MN_Search_Node_(Memory);
+	integer Return;
+
+	if(Node)
+	{
+		memc_ml _PL_ Home=Node->Home;
+
+		Acs_(address,Home->SizeIdle)+=sizeof(memc_mn);
+		Acs_(address,Home->SizeIdle)+=Node->Size;
+		Acs_(address,Home->SizeUsed)-=Node->Size;
+
+		Acs_(address,Home->NumsIdle)-=_MemC_MN_Return_(&Node);
+		Acs_(address,Home->NumsIdle)++;
+		Acs_(address,Home->NumsUsed)--;
+
+		if(Home->SizeAble<Node->Size)
+			Acs_(address,Home->SizeAble)=Node->Size;
+
+		Return=1;
+	}
+	else
+		Return=0;
+
+	return Return;
+}
+integer MemC_ML_Kill_(memc_ml _PL_ ML)
+{
+	integer Return;
+
+	if(ML)
+	{
+		if(ML->NumsUsed)
+		{
+			memc_mn _PL_ MN=(memc_mn*)(ML+1);
+
+			_MemC_MN_Reset_(MN);
+
+			MN->Home=NULL;
+			MN->Prev=NULL;
+			MN->Next=NULL;
+			MN->Size=MemC_Size_(memc_mn,ML->NumsIdle+ML->NumsUsed-1)+(ML->SizeIdle+ML->SizeUsed);
+
+			Acs_(address,ML->SizeAble)=MN->Size;
+			Acs_(address,ML->SizeIdle)=MN->Size;
+			Acs_(address,ML->SizeUsed)=0;
+			Acs_(address,ML->NumsIdle)=1;
+			Acs_(address,ML->NumsUsed)=0;
+		}
+
+		Return=1;
+	}
+	else
+		Return=0;
+
+	return Return;
+}
+
+memc_ml *MemC_ML_Master_(GENERAL _PL_ Memory)
+{
+	memc_ml *Root;
+
+	if(Memory)
+	{
+		MEMC_MN *Node=Memory;
+
+		Node--;
+		Root=(Node->Home)?((Node->Home==Node->Home->LinkSelf)?(Node->Home):(NULL)):(NULL);
+	}
+	else
+		Root=NULL;
+
+	return Root;
+}
+address MemC_ML_Usable_(GENERAL _PL_ Memory)
+{
+	address Size;
+
+	if(Memory)
+	{
+		MEMC_MN *Node=Memory;
+
+		Node--;
+		Size=(Node->Home)?((Node->Home==Node->Home->LinkSelf)?(Node->Size):(0)):(0);
+	}
+	else
+		Size=0;
+
+	return Size;
 }
 #endif
 #endif
