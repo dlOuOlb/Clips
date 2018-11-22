@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.10.16	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.11.22	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -132,6 +132,19 @@ struct _memc_mc			//MemClip : Host Memory Container Structure
 };
 MemC_Type_Declare_(struct,memc_mc,MEMC_MC);	//MemClip : Host Memory Container Structure
 
+MemC_Type_Declare_(struct,memc_ml,MEMC_ML);	//MemClip : Memory Lender Structure
+struct _memc_ml				//MemClip : Memory Lender Structure
+{
+	memc_ml _PL_ LinkSelf;	//MemClip : Self Reference
+	memc_ml _PL_ LinkPrev;	//MemClip : Previous Linked Lender
+	memc_ml _PL_ LinkNext;	//MemClip : Next Linked Lender
+	ADDRESS SizeAble;		//MemClip : Current Lendable Memory Size in Bytes
+	ADDRESS SizeIdle;		//MemClip : Current Idle Memory Size
+	ADDRESS SizeUsed;		//MemClip : Current Used Memory Size
+	ADDRESS NumsIdle;		//MemClip : Current Number of Idle Nodes
+	ADDRESS NumsUsed;		//MemClip : Current Number of Used Nodes
+};
+
 enum _memc_df				//MemClip : Memory Domain Flag Enumeration
 {
 	MemCDomainHost=0x48,	//MemClip : Memory in Host Domain
@@ -243,6 +256,8 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #ifdef __OPENCL_H
 #define Devi_Copy_Max_Dimension 3	//MemC_CL : Maximum Copy Dimension of "Devi_Copy_"
 #endif
+
+#define MemC_ML_Static_Chunks_ 0	//MemClip : Custom Static Allocater's Chunk Number
 #endif
 
 #if(MemC_Fold_(Declaration:Global Constants))
@@ -253,6 +268,10 @@ extern GENERAL _PL_ MemCrux;
 //MemClip : Type Descriptor Set
 //＊Access with MemCTypeByte … MemCTypeAddress
 extern MEMC_DT _PL_ _PL_ MemCType;
+#if(MemC_ML_Static_Chunks_)
+//MemClip : Custom Static Allocater
+extern memc_ml _PL_ MemCustom;
+#endif
 #endif
 
 #if(MemC_Fold_(Declaration:Memory Functions))
@@ -261,7 +280,7 @@ extern MEMC_DT _PL_ _PL_ MemCType;
 integer MemC_Check_(GENERAL _PL_ *MemorySet,ADDRESS Count);
 
 //MemClip : Memory Deallocation
-#define MemC_Deloc_(Memory) __dl{if(Memory){free(Memory);(Memory)=NULL;}}lb__
+#define MemC_Deloc_(Memory) __dl{if(Memory){_MemC_Free_(Memory);(Memory)=NULL;}}lb__
 //MemClip : Batch Memory Deallocation
 general MemC_Deloc_Set_(general **MemorySet,ADDRESS Count);
 
@@ -389,6 +408,50 @@ address MemC_MC_Size_(MEMC_MC _PL_ MemoryContainer);
 integer MemC_MC_Form_(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ ShapeInfo);
 //MemClip : Memory Container Data Type Change
 integer MemC_MC_Change_(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
+#endif
+#if(MemC_Fold_(Part:MemC_ML))
+//MemClip : Memory Lender Static Definition
+//＊1 chunk is equal to 4×sizeof(size_t) bytes.
+//　The memory lender's head occupies 2 chunks.
+//　Each memory slice's head occupies 1 chunk.
+#define MemC_ML_Define_(LenderName,ChunksNumber) static address _##LenderName[(ChunksNumber)<<2]={(address)_##LenderName,(address)_##LenderName,(address)_##LenderName,((ChunksNumber)-3)<<4,((ChunksNumber)-3)<<4,0,1,0,(address)NULL,(address)NULL,(address)NULL,((ChunksNumber)-3)<<4};memc_ml _PL_ LenderName=(memc_ml*)_##LenderName;
+
+//MemClip : Memory Lender Memory Allocation - Deallocate with "MemC_ML_Delete_"
+//＊1 chunk is equal to 4×sizeof(size_t) bytes.
+//　The memory lender's head occupies 2 chunks.
+//　Each memory slice's head occupies 1 chunk.
+//＊The previous lender can be NULL, if linking is not wanted.
+memc_ml *MemC_ML_Create_(memc_ml _PL_ PreviousLender,ADDRESS ChunksNumber);
+//MemClip : Memory Lender Memory Deallocation
+//＊Return value is the memory lender's previous lender.
+memc_ml *MemC_ML_Delete_(memc_ml *_PL_ MemoryLender);
+
+//MemClip : Memory Lender Memory Occupation
+address MemC_ML_Size_(MEMC_ML _PL_ MemoryLender);
+//MemClip : Kill all memory slices in the Memory Lender
+//＊Return value is 0 for failure, 1 for success.
+integer MemC_ML_Kill_(memc_ml _PL_ MemoryLender);
+
+//MemClip : Borrow a memory slice from the memory lender - Return with "MemC_ML_Return_"
+general *MemC_ML_Borrow_(memc_ml _PL_ MemoryLender,ADDRESS SliceBytes);
+//MemClip : Return the memory slice to its master.
+//＊Return value is 0 for failure, 1 for success.
+integer _MemC_ML_Return_(general _PL_ MemorySlice);
+//MemClip : Redefined Memory Slice Return
+#define MemC_ML_Return_(MemorySlice) __dl{if(_MemC_ML_Return_(MemorySlice)){(MemorySlice)=NULL;}}lb__
+
+//MemClip : Get the master of the memory slice.
+memc_ml *MemC_ML_Master_(GENERAL _PL_ MemorySlice);
+//MemClip : Get the usable bytes of the memory slice.
+address MemC_ML_Usable_(GENERAL _PL_ MemorySlice);
+
+#if(MemC_ML_Static_Chunks_)
+#define _MemC_Malloc_(Size) MemC_ML_Borrow_(MemCustom,Size)	//MemClip : Redefined Custom Allocater
+#define _MemC_Free_(Memory) MemC_ML_Return_(Memory)			//MemClip : Redefined Custom Deallocater
+#else
+#define _MemC_Malloc_(Size) malloc(Size)	//MemClip : Redefined Default Allocater
+#define _MemC_Free_(Memory) free(Memory)	//MemClip : Redefined Default Deallocater
+#endif
 #endif
 #endif
 
