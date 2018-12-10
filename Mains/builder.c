@@ -77,3 +77,5 @@ static penc_eu _Main_Build_Option_(cl_device_id const Device,PENC_SC Option)
 
 	return Error;
 }
+general *_MemC_Malloc_(ADDRESS Size) { return malloc(Size); }
+general _MemC_Free_(general _PL_ Memory) { free(Memory); }
