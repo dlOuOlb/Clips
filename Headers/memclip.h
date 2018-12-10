@@ -2,7 +2,7 @@
 /*	MemClip provides some memory allocating functions.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.11.22	*/
+/*	http://github.com/dlOuOlb/Clips/					2018.12.10	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -256,8 +256,6 @@ MemC_Type_Declare_(enum,devi_cf,DEVI_CF);	//MemC_CL : Device Memory Copy Functio
 #ifdef __OPENCL_H
 #define Devi_Copy_Max_Dimension 3	//MemC_CL : Maximum Copy Dimension of "Devi_Copy_"
 #endif
-
-#define MemC_ML_Static_Chunks_ 0	//MemClip : Custom Static Allocater's Chunk Number
 #endif
 
 #if(MemC_Fold_(Declaration:Global Constants))
@@ -275,6 +273,15 @@ extern memc_ml _PL_ MemCustom;
 #endif
 
 #if(MemC_Fold_(Declaration:Memory Functions))
+//MemClip : Memory Allocator Declaration - Pair with "_MemC_Free_"
+//＊Unless there is any custom one, then define it somewhere once as
+//　general *_MemC_Malloc_(ADDRESS Size) { return malloc(Size); }
+general *_MemC_Malloc_(ADDRESS Size);
+//MemClip : Memory Deallocator Declaration - Pair with "_MemC_Malloc_"
+//＊Unless there is any custom one, then define it somewhere once as
+//　general _MemC_Free_(general _PL_ Memory) { free(Memory); }
+general _MemC_Free_(general _PL_ Memory);
+
 //MemClip : Memory Allocation Check
 //＊Return value is 0 for failure, 1 for success.
 integer MemC_Check_(GENERAL _PL_ *MemorySet,ADDRESS Count);
@@ -428,9 +435,16 @@ memc_ml *MemC_ML_Delete_(memc_ml *_PL_ MemoryLender);
 
 //MemClip : Memory Lender Memory Occupation
 address MemC_ML_Size_(MEMC_ML _PL_ MemoryLender);
-//MemClip : Kill all memory slices in the Memory Lender
+//MemClip : Kill all memory slices in the linked memory lenders.
 //＊Return value is 0 for failure, 1 for success.
 integer MemC_ML_Kill_(memc_ml _PL_ MemoryLender);
+//MemClip : Move all memory slices from the source lenders to the target lenders.
+//＊BufferSlot->Nums should not be less than the total number of the linked source and target lenders,
+//　and also should not be less than the 3×total number of the used slices in the linked source lenders.
+//＊Used slices in the source lenders will be overwritten with their corresponding new addresses.
+//　After you finish address mapping, reset the source lenders with "MemC_ML_Kill_"
+//＊Return value is 0 for failure, 1 for success.
+integer MemC_ML_Move_(memc_ml _PL_ SourceLender,memc_ml _PL_ TargetLender,memc_ms _PL_ BufferSlot);
 
 //MemClip : Borrow a memory slice from the memory lender - Return with "MemC_ML_Return_"
 general *MemC_ML_Borrow_(memc_ml _PL_ MemoryLender,ADDRESS SliceBytes);
@@ -444,14 +458,6 @@ integer _MemC_ML_Return_(general _PL_ MemorySlice);
 memc_ml *MemC_ML_Master_(GENERAL _PL_ MemorySlice);
 //MemClip : Get the usable bytes of the memory slice.
 address MemC_ML_Usable_(GENERAL _PL_ MemorySlice);
-
-#if(MemC_ML_Static_Chunks_)
-#define _MemC_Malloc_(Size) MemC_ML_Borrow_(MemCustom,Size)	//MemClip : Redefined Custom Allocater
-#define _MemC_Free_(Memory) MemC_ML_Return_(Memory)			//MemClip : Redefined Custom Deallocater
-#else
-#define _MemC_Malloc_(Size) malloc(Size)	//MemClip : Redefined Default Allocater
-#define _MemC_Free_(Memory) free(Memory)	//MemClip : Redefined Default Deallocater
-#endif
 #endif
 #endif
 
