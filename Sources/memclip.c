@@ -3,7 +3,7 @@
 #if(MemC_Fold_(Definition:Global Constants))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=IdiomVersion,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomVersion[16]="Date:2018.11.22";
+static BYTE_08 IdiomVersion[16]="Date:2018.12.10";
 static BYTE_08 IdiomType[4][8]={"none_00","byte_08","integer","address"};
 static ADDRESS ConstantZero[MemC_Copy_Max_Dimension]={0};
 
@@ -19,11 +19,6 @@ static MEMC_DT _PL_ AddressType[MemCTypes]={TableType+MemCTypeNone_00,TableType+
 BYTE_08 _PL_ MemClip=IdiomVersion;
 GENERAL _PL_ MemCrux=&MemCrux;
 MEMC_DT _PL_ _PL_ MemCType=AddressType;
-
-#if(MemC_ML_Static_Chunks_)
-MemC_ML_Define_(MemCustom,MemC_ML_Static_Chunks_);
-#endif
-
 #undef _MemC_DT_Parse_
 #endif
 
@@ -700,7 +695,7 @@ static errno_t _MemC_Sort_Table_(address *IdxO,address *IdxA,ADDRESS *PtrT,ADDRE
 }
 errno_t MemC_Sort_(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ Refer,address _PL_ Index,address _PL_ Buffer,ADDRESS Length)
 {
-	errno_t ErrorCode=0;
+	errno_t ErrorCode=MemC_Errno_0;
 
 	if(Length)
 	{
@@ -739,7 +734,7 @@ errno_t MemC_Sort_(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_)
 					_MemC_Sort_Ord_B_(Comp_,Table+(Jump[2]-1),Bound[2]-1,Bound[0],Bound[1]);
 
 					ErrorCode=_MemC_Sort_Table_((address*)(Bound[0]),Value,Table,(address*)(Bound[1]),Jump[2],Jump[3]);
-					if(ErrorCode)
+					if(ErrorCode!=MemC_Errno_0)
 						goto ESCAPE;
 				}
 	}
@@ -1668,7 +1663,6 @@ general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
 integer _MemC_ML_Return_(general _PL_ Memory)
 {
 	memc_mn *Node=_MemC_MN_Search_Node_(Memory);
-	integer Return;
 
 	if(Node)
 	{
@@ -1685,43 +1679,53 @@ integer _MemC_ML_Return_(general _PL_ Memory)
 		if(Home->SizeAble<Node->Size)
 			Acs_(address,Home->SizeAble)=Node->Size;
 
-		Return=1;
+		goto SUCCESS;
 	}
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 integer MemC_ML_Kill_(memc_ml _PL_ ML)
 {
-	integer Return;
-
 	if(ML)
 	{
-		if(ML->NumsUsed)
+		memc_ml *_R_ PtrML=ML;
+		memc_mn *PtrMN;
+
+		do
 		{
-			memc_mn _PL_ MN=(memc_mn*)(ML+1);
+			if(PtrML->NumsUsed)
+			{
+				PtrMN=(memc_mn*)(PtrML+1);
 
-			_MemC_MN_Reset_(MN);
+				_MemC_MN_Reset_(PtrMN);
 
-			MN->Home=NULL;
-			MN->Prev=NULL;
-			MN->Next=NULL;
-			MN->Size=MemC_Size_(memc_mn,ML->NumsIdle+ML->NumsUsed-1)+(ML->SizeIdle+ML->SizeUsed);
+				PtrMN->Home=NULL;
+				PtrMN->Prev=NULL;
+				PtrMN->Next=NULL;
+				PtrMN->Size=MemC_Size_(memc_mn,PtrML->NumsIdle+PtrML->NumsUsed-1)+(PtrML->SizeIdle+PtrML->SizeUsed);
 
-			Acs_(address,ML->SizeAble)=MN->Size;
-			Acs_(address,ML->SizeIdle)=MN->Size;
-			Acs_(address,ML->SizeUsed)=0;
-			Acs_(address,ML->NumsIdle)=1;
-			Acs_(address,ML->NumsUsed)=0;
+				Acs_(address,PtrML->SizeAble)=PtrMN->Size;
+				Acs_(address,PtrML->SizeIdle)=PtrMN->Size;
+				Acs_(address,PtrML->SizeUsed)=0;
+				Acs_(address,PtrML->NumsIdle)=1;
+				Acs_(address,PtrML->NumsUsed)=0;
+			}
+			PtrML=PtrML->LinkNext;
 		}
+		while(PtrML!=ML);
 
-		Return=1;
+		goto SUCCESS;
 	}
 	else
-		Return=0;
-
-	return Return;
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 
 memc_ml *MemC_ML_Master_(GENERAL _PL_ Memory)
@@ -1755,6 +1759,215 @@ address MemC_ML_Usable_(GENERAL _PL_ Memory)
 		Size=0;
 
 	return Size;
+}
+
+static address _MemC_ML_Link_Count_(MEMC_ML _PL_ ML)
+{
+	MEMC_ML *_R_ Ptr=ML;
+	address Count=0;
+
+	do
+	{
+		Count++;
+		Ptr=Ptr->LinkNext;
+	}
+	while(Ptr!=ML);
+
+	return Count;
+}
+static address _MemC_ML_Used_Count_(MEMC_ML _PL_ ML)
+{
+	MEMC_ML *_R_ Ptr=ML;
+	address Count=0;
+
+	do
+	{
+		Count+=Ptr->NumsUsed;
+		Ptr=Ptr->LinkNext;
+	}
+	while(Ptr!=ML);
+
+	return Count;
+}
+static general _MemC_ML_Used_Array_(MEMC_ML _PL_ ML,address *_R_ Array)
+{
+	MEMC_ML *_R_ Ptr=ML;
+
+	do
+	{
+		*Array=Ptr->SizeUsed+MemC_Size_(memc_mn,Ptr->NumsUsed);
+		Array++;
+		Ptr=Ptr->LinkNext;
+	}
+	while(Ptr!=ML);
+}
+static general _MemC_ML_Able_Array_(MEMC_ML _PL_ ML,address *_R_ Array)
+{
+	MEMC_ML *_R_ Ptr=ML;
+
+	do
+	{
+		*Array=Ptr->SizeAble;
+		Array++;
+		Ptr=Ptr->LinkNext;
+	}
+	while(Ptr!=ML);
+}
+static integer _MemC_ML_Able_Check_(ADDRESS *_R_ PtrU,address _PL_ Able,ADDRESS _PL_ EndA)
+{
+	address *PtrA;
+	address *Mark;
+	address Size;
+
+	for(;PtrU<Able;PtrU++)
+		if(*PtrU)
+		{
+			for(PtrA=Able,Mark=NULL,Size=(address)FULL;PtrA<EndA;PtrA++)
+				if((*PtrU)<=(*PtrA))
+					if(Size>(*PtrA))
+					{
+						Size=*PtrA;
+						Mark=PtrA;
+					}
+
+			if(Mark)
+				(*Mark)-=(*PtrU);
+			else
+				break;
+		}
+
+	return (PtrU==Able);
+}
+static general _MemC_ML_Head_Array_(MEMC_ML _PL_ ML,MEMC_MN **_R_ Array)
+{
+	MEMC_ML *_R_ PtrML=ML;
+	MEMC_MN *PtrMN;
+
+	do
+	{
+		if(PtrML->NumsUsed)
+			for(PtrMN=(memc_mn*)(PtrML+1);PtrMN;PtrMN=PtrMN->Next)
+				if(PtrMN->Home)
+				{
+					*Array=PtrMN;
+					Array++;
+				}
+		PtrML=PtrML->LinkNext;
+	}
+	while(PtrML!=ML);
+}
+static integer _MemC_MN_Comp_Size_(MEMC_MN _PL_ A,MEMC_MN _PL_ B)
+{
+	return (A->Size<B->Size);
+}
+static integer _MemC_ML_Twin_Alloc_(memc_ml _PL_ ML,MEMC_MN _PL_ *_R_ Old,MEMC_MN _PL_ _PL_ End)
+{
+	general **New;
+
+	for(New=(general**)End;Old<End;Old++,New++)
+	{
+		*New=MemC_ML_Borrow_(ML,(*Old)->Size);
+		if(New)
+			if(MemC_Copy_1D_((byte_08*)((*Old)+1),(byte_08*)(*New),(*Old)->Size)==MemC_Errno_0);
+			else
+			{
+				MemC_ML_Return_(*New);
+				break;
+			}
+		else
+			break;
+	}
+	if(Old==End)
+		goto SUCCESS;
+	else
+	{
+		for(New--;New>=End;New--)
+			MemC_ML_Return_(*New);
+
+		goto FAILURE;
+	}
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
+}
+static general _MemC_ML_Over_Write_(MEMC_MN _PL_ *_R_ Old,MEMC_MN _PL_ _PL_ End)
+{
+	for(GENERAL _PL_ *_R_ New=(general**)End,_PL_ *Bound,**_R_ Ptr;Old<End;Old++,New++)
+	{
+		{
+			Ptr=(general**)((*Old)+1);
+			Bound=(general**)((address)Ptr+(*Old)->Size);
+		}
+		{
+			Ptr[0]=*New;
+			Ptr[1]=(general**)(Ptr[0])+1;
+			Ptr[2]=(general**)(Ptr[1])+1;
+			Ptr[3]=(general**)(Ptr[2])+1;
+		}
+		for(Ptr+=4;Ptr<Bound;Ptr+=4)
+		{
+			Ptr[0]=(general**)(Ptr[-1])+1;
+			Ptr[1]=(general**)(Ptr[0])+1;
+			Ptr[2]=(general**)(Ptr[1])+1;
+			Ptr[3]=(general**)(Ptr[2])+1;
+		}
+	}
+}
+integer MemC_ML_Move_(memc_ml _PL_ Source,memc_ml _PL_ Target,memc_ms _PL_ Buffer)
+{
+	if(Source)
+		if(Target)
+		{
+			ADDRESS Sources=_MemC_ML_Link_Count_(Source);
+			ADDRESS Targets=_MemC_ML_Link_Count_(Target);
+
+			if(Buffer->Nums<(Sources+Targets))
+				goto FAILURE;
+			else
+			{
+				ADDRESS Useds=_MemC_ML_Used_Count_(Source);
+				
+				if(Buffer->Nums<(3*Useds))
+					goto FAILURE;
+				else
+				{
+					address _PL_ Used=Buffer->Slot.V;
+					address _PL_ Able=Used+Sources;
+
+					_MemC_ML_Used_Array_(Source,Used);
+					_MemC_ML_Able_Array_(Target,Able);
+					if(_MemC_ML_Able_Check_(Used,Able,Able+Targets))
+					{
+						MEMC_MN *_PL_ Head=(memc_mn**)(Buffer->Slot.P);
+						address _PL_ Temp=(address*)(Head+Useds);
+
+						_MemC_ML_Head_Array_(Source,Head);
+						if(MemC_Sort_(_MemC_MN_Comp_Size_,Head,NULL,Temp,Useds)==MemC_Errno_0)
+							if(_MemC_ML_Twin_Alloc_(Target,Head,(memc_mn**)Temp))
+							{
+								_MemC_ML_Over_Write_(Head,(memc_mn**)Temp);
+
+								goto SUCCESS;
+							}
+							else
+								goto FAILURE;
+						else
+							goto FAILURE;
+					}
+					else
+						goto FAILURE;
+				}
+			}
+		}
+		else
+			goto FAILURE;
+	else
+		goto FAILURE;
+FAILURE:
+	return 0;
+SUCCESS:
+	return 1;
 }
 #endif
 #endif
