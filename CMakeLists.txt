@@ -65,7 +65,7 @@ target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # BitClip
 set(NAME bitclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/bitcrux.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
