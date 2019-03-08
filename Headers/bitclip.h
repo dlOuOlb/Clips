@@ -2,7 +2,7 @@
 /*	BitClip specifies the size of data types.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.10.16	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.03.08	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -460,6 +460,8 @@ extern NAME_08 _PL_ _PL_ BitCKernel;
 #endif
 
 #if(MemC_Fold_(Declaration:Endian Functions))
+//BitClip : 8-bit Natural Endian Flipping
+#define BitC_Endian_D08_(Data,Length) __dl{}lb__
 //BitClip : 16-bit Natural Endian Flipping
 general BitC_Endian_D16_(data_16 _PL_ Data,DATA_32 Length);
 //BitClip : 32-bit Natural Endian Flipping
@@ -467,10 +469,12 @@ general BitC_Endian_D32_(data_32 _PL_ Data,DATA_32 Length);
 //BitClip : 64-bit Natural Endian Flipping
 general BitC_Endian_D64_(data_64 _PL_ Data,DATA_32 Length);
 //BitClip : Redefined Natural Endian Flipping
-#define BitC_Endian_(Data,Length) __dl{switch(sizeof(*(Data))){case 2:BitC_Endian_D16_((data_16*)(Data),Length);break;case 4:BitC_Endian_D32_((data_32*)(Data),Length);break;case 8:BitC_Endian_D64_((data_64*)(Data),Length);break;default:;}}lb__
+#define BitC_Endian_(Data,Length) __dl{switch(sizeof(*(Data))){case 1:BitC_Endian_D08_((data_08*)(Data),Length);break;case 2:BitC_Endian_D16_((data_16*)(Data),Length);break;case 4:BitC_Endian_D32_((data_32*)(Data),Length);break;case 8:BitC_Endian_D64_((data_64*)(Data),Length);break;default:;}}lb__
 #endif
 
 #if(MemC_Fold_(Declaration:Caster Functions))
+//BitClip : 8-bit Natural to 8-bit Natural Type Casting
+#define BitC_Caster_D08_D08_(I,O,N) MemC_Copy_1D_((data_08*)(I),(data_08*)(O),N)
 //BitClip : 8-bit Natural to 16-bit Natural Type Casting
 general BitC_Caster_D08_D16_(DATA_08 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 32-bit Natural Type Casting
@@ -479,6 +483,12 @@ general BitC_Caster_D08_D32_(DATA_08 *_R_ I,data_32 *_R_ O,DATA_32 N);
 general BitC_Caster_D08_D64_(DATA_08 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 8-bit Integer Type Casting
 general BitC_Caster_D08_I08_(DATA_08 *_R_ I,inte_08 *_R_ O,DATA_32 N);
+//BitClip : 8-bit Natural to 16-bit Integer Type Casting
+#define BitC_Caster_D08_I16_(I,O,N) BitC_Caster_D08_D16_((data_08*)(I),(data_16*)(O),N)
+//BitClip : 8-bit Natural to 32-bit Integer Type Casting
+#define BitC_Caster_D08_I32_(I,O,N) BitC_Caster_D08_D32_((data_08*)(I),(data_32*)(O),N)
+//BitClip : 8-bit Natural to 64-bit Integer Type Casting
+#define BitC_Caster_D08_I64_(I,O,N) BitC_Caster_D08_D64_((data_08*)(I),(data_64*)(O),N)
 //BitClip : 8-bit Natural to 32-bit Real Type Casting
 general BitC_Caster_D08_R32_(DATA_08 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Natural to 64-bit Real Type Casting
@@ -486,6 +496,8 @@ general BitC_Caster_D08_R64_(DATA_08 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
 //BitClip : 16-bit Natural to 8-bit Natural Type Casting
 general BitC_Caster_D16_D08_(DATA_16 *_R_ I,data_08 *_R_ O,DATA_32 N);
+//BitClip : 16-bit Natural to 16-bit Natural Type Casting
+#define BitC_Caster_D16_D16_(I,O,N) MemC_Copy_1D_((data_16*)(I),(data_16*)(O),N)
 //BitClip : 16-bit Natural to 32-bit Natural Type Casting
 general BitC_Caster_D16_D32_(DATA_16 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 64-bit Natural Type Casting
@@ -494,6 +506,10 @@ general BitC_Caster_D16_D64_(DATA_16 *_R_ I,data_64 *_R_ O,DATA_32 N);
 general BitC_Caster_D16_I08_(DATA_16 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 16-bit Integer Type Casting
 general BitC_Caster_D16_I16_(DATA_16 *_R_ I,inte_16 *_R_ O,DATA_32 N);
+//BitClip : 16-bit Natural to 32-bit Integer Type Casting
+#define BitC_Caster_D16_I32_(I,O,N) BitC_Caster_D16_D32_((data_16*)(I),(data_32*)(O),N)
+//BitClip : 16-bit Natural to 64-bit Integer Type Casting
+#define BitC_Caster_D16_I64_(I,O,N) BitC_Caster_D16_D64_((data_16*)(I),(data_64*)(O),N)
 //BitClip : 16-bit Natural to 32-bit Real Type Casting
 general BitC_Caster_D16_R32_(DATA_16 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Natural to 64-bit Real Type Casting
@@ -503,6 +519,8 @@ general BitC_Caster_D16_R64_(DATA_16 *_R_ I,real_64 *_R_ O,DATA_32 N);
 general BitC_Caster_D32_D08_(DATA_32 *_R_ I,data_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 16-bit Natural Type Casting
 general BitC_Caster_D32_D16_(DATA_32 *_R_ I,data_16 *_R_ O,DATA_32 N);
+//BitClip : 32-bit Natural to 32-bit Natural Type Casting
+#define BitC_Caster_D32_D32_(I,O,N) MemC_Copy_1D_((data_32*)(I),(data_32*)(O),N)
 //BitClip : 32-bit Natural to 64-bit Natural Type Casting
 general BitC_Caster_D32_D64_(DATA_32 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 8-bit Integer Type Casting
@@ -511,6 +529,8 @@ general BitC_Caster_D32_I08_(DATA_32 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 general BitC_Caster_D32_I16_(DATA_32 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 32-bit Integer Type Casting
 general BitC_Caster_D32_I32_(DATA_32 *_R_ I,inte_32 *_R_ O,DATA_32 N);
+//BitClip : 32-bit Natural to 64-bit Integer Type Casting
+#define BitC_Caster_D32_I64_(I,O,N) BitC_Caster_D32_D64_((data_32*)(I),(data_64*)(O),N)
 //BitClip : 32-bit Natural to 32-bit Real Type Casting
 general BitC_Caster_D32_R32_(DATA_32 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Natural to 64-bit Real Type Casting
@@ -522,6 +542,8 @@ general BitC_Caster_D64_D08_(DATA_64 *_R_ I,data_08 *_R_ O,DATA_32 N);
 general BitC_Caster_D64_D16_(DATA_64 *_R_ I,data_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 32-bit Natural Type Casting
 general BitC_Caster_D64_D32_(DATA_64 *_R_ I,data_32 *_R_ O,DATA_32 N);
+//BitClip : 64-bit Natural to 64-bit Natural Type Casting
+#define BitC_Caster_D64_D64_(I,O,N) MemC_Copy_1D_((data_64*)(I),(data_64*)(O),N)
 //BitClip : 64-bit Natural to 8-bit Integer Type Casting
 general BitC_Caster_D64_I08_(DATA_64 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Natural to 16-bit Integer Type Casting
@@ -543,6 +565,8 @@ general BitC_Caster_I08_D16_(INTE_08 *_R_ I,data_16 *_R_ O,DATA_32 N);
 general BitC_Caster_I08_D32_(INTE_08 *_R_ I,data_32 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 64-bit Natural Type Casting
 general BitC_Caster_I08_D64_(INTE_08 *_R_ I,data_64 *_R_ O,DATA_32 N);
+//BitClip : 8-bit Integer to 8-bit Integer Type Casting
+#define BitC_Caster_I08_I08_(I,O,N) MemC_Copy_1D_((inte_08*)(I),(inte_08*)(O),N)
 //BitClip : 8-bit Integer to 16-bit Integer Type Casting
 general BitC_Caster_I08_I16_(INTE_08 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 8-bit Integer to 32-bit Integer Type Casting
@@ -564,6 +588,8 @@ general BitC_Caster_I16_D32_(INTE_16 *_R_ I,data_32 *_R_ O,DATA_32 N);
 general BitC_Caster_I16_D64_(INTE_16 *_R_ I,data_64 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 8-bit Integer Type Casting
 general BitC_Caster_I16_I08_(INTE_16 *_R_ I,inte_08 *_R_ O,DATA_32 N);
+//BitClip : 16-bit Integer to 16-bit Integer Type Casting
+#define BitC_Caster_I16_I16_(I,O,N) MemC_Copy_1D_((inte_16*)(I),(inte_16*)(O),N)
 //BitClip : 16-bit Integer to 32-bit Integer Type Casting
 general BitC_Caster_I16_I32_(INTE_16 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 16-bit Integer to 64-bit Integer Type Casting
@@ -585,6 +611,8 @@ general BitC_Caster_I32_D64_(INTE_32 *_R_ I,data_64 *_R_ O,DATA_32 N);
 general BitC_Caster_I32_I08_(INTE_32 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 16-bit Integer Type Casting
 general BitC_Caster_I32_I16_(INTE_32 *_R_ I,inte_16 *_R_ O,DATA_32 N);
+//BitClip : 32-bit Integer to 32-bit Integer Type Casting
+#define BitC_Caster_I32_I32_(I,O,N) MemC_Copy_1D_((inte_32*)(I),(inte_32*)(O),N)
 //BitClip : 32-bit Integer to 64-bit Integer Type Casting
 general BitC_Caster_I32_I64_(INTE_32 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Integer to 32-bit Real Type Casting
@@ -606,6 +634,8 @@ general BitC_Caster_I64_I08_(INTE_64 *_R_ I,inte_08 *_R_ O,DATA_32 N);
 general BitC_Caster_I64_I16_(INTE_64 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 32-bit Integer Type Casting
 general BitC_Caster_I64_I32_(INTE_64 *_R_ I,inte_32 *_R_ O,DATA_32 N);
+//BitClip : 64-bit Integer to 64-bit Integer Type Casting
+#define BitC_Caster_I64_I64_(I,O,N) MemC_Copy_1D_((inte_64*)(I),(inte_64*)(O),N)
 //BitClip : 64-bit Integer to 32-bit Real Type Casting
 general BitC_Caster_I64_R32_(INTE_64 *_R_ I,real_32 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Integer to 64-bit Real Type Casting
@@ -627,6 +657,8 @@ general BitC_Caster_R32_I16_(REAL_32 *_R_ I,inte_16 *_R_ O,DATA_32 N);
 general BitC_Caster_R32_I32_(REAL_32 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 //BitClip : 32-bit Real to 64-bit Integer Type Casting
 general BitC_Caster_R32_I64_(REAL_32 *_R_ I,inte_64 *_R_ O,DATA_32 N);
+//BitClip : 32-bit Real to 32-bit Real Type Casting
+#define BitC_Caster_R32_R32_(I,O,N) MemC_Copy_1D_((real_32*)(I),(real_32*)(O),N)
 //BitClip : 32-bit Real to 64-bit Real Type Casting
 general BitC_Caster_R32_R64_(REAL_32 *_R_ I,real_64 *_R_ O,DATA_32 N);
 
@@ -648,6 +680,8 @@ general BitC_Caster_R64_I32_(REAL_64 *_R_ I,inte_32 *_R_ O,DATA_32 N);
 general BitC_Caster_R64_I64_(REAL_64 *_R_ I,inte_64 *_R_ O,DATA_32 N);
 //BitClip : 64-bit Real to 32-bit Real Type Casting
 general BitC_Caster_R64_R32_(REAL_64 *_R_ I,real_32 *_R_ O,DATA_32 N);
+//BitClip : 64-bit Real to 64-bit Real Type Casting
+#define BitC_Caster_R64_R64_(I,O,N) MemC_Copy_1D_((real_64*)(I),(real_64*)(O),N)
 #endif
 
 #if(MemC_Fold_(Declaration:Bit Operation Functions))
