@@ -71,7 +71,7 @@ target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # LinClip
 set(NAME linclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/lincrux.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
