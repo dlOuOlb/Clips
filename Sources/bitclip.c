@@ -23,17 +23,14 @@
 #define _BitC_Type_(Type,Bits) Type##_##Bits
 #define BitC_Type_(Type,Bits) _BitC_Type_(Type,Bits)
 
-#define _BitC_Func_(Name,Suffix) general BitC_##Name##_##Suffix##_
+#define _BitC_Func_(Name,Suffix) Name##Suffix##_
 #define BitC_Func_(Name,Suffix) _BitC_Func_(Name,Suffix)
 
-#define _BitC_Cast_(Source,Target) general BitC_Caster_##Source##_##Target##_
+#define _BitC_Cast_(Source,Target) BitC_Caster_##Source##_##Target##_
 #define BitC_Cast_(Source,Target) _BitC_Cast_(Source,Target)
 
-#define _BitC_Oper_(Oper,N,TXX) general Oper##N##_##TXX##_
+#define _BitC_Oper_(Oper,N,TXX) Oper##N##_##TXX##_
 #define BitC_Oper_(Oper,N,TXX) _BitC_Oper_(Oper,N,TXX)
-
-#define _BitC_Wide_(TXX) _BitC_Wide_Mask_##TXX##_
-#define BitC_Wide_(TXX) _BitC_Wide_(TXX)
 
 #define BitC_BO_A_(U,V) ((U)&(V))
 #define BitC_BO_O_(U,V) ((U)|(V))
@@ -46,7 +43,7 @@
 #endif
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2019.03.08";
+static DATA_08 IdiomVersion[16]="Date:2019.03.12";
 
 static INTE_64 ConstantInvalid64[4]={0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
 static INTE_64 ConstantPi64[4]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38};
@@ -1868,8 +1865,6 @@ penc_eu BitC_CL_Action_(BITC_CL _PL_ Manager,MEMC_MS _PL_ Argument,BITC_KI Indic
 #undef BitC_BO_X_
 #undef BitC_BO_O_
 #undef BitC_BO_A_
-#undef BitC_Wide_
-#undef _BitC_Wide_
 #undef BitC_Oper_
 #undef _BitC_Oper_
 #undef BitC_Cast_

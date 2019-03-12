@@ -68,7 +68,7 @@
 
 #if(MemC_Fold_(Definition:Function Templates))
 #ifdef _BitC_Caster_
-BitC_Cast_(BitC_TXX_(S,OO),BitC_TXX_(T,XX))(BitC_Type_(SYPE,OO) *_R_ DataI,BitC_Type_(type,XX) *_R_ DataO,DATA_32 Length)
+general BitC_Cast_(BitC_TXX_(S,OO),BitC_TXX_(T,XX))(BitC_Type_(SYPE,OO) *_R_ DataI,BitC_Type_(type,XX) *_R_ DataO,DATA_32 Length)
 {
 #if(T()==R())
 #define BitC_Gate_(Data,Min,Max) (Data)
@@ -119,7 +119,7 @@ BitC_Cast_(BitC_TXX_(S,OO),BitC_TXX_(T,XX))(BitC_Type_(SYPE,OO) *_R_ DataI,BitC_
 #endif
 
 #ifdef _BitC_BO_S_1_
-BitC_Oper_(BitC_Op_,1,BitC_TXX_(T,XX))(BitC_Type_(type,XX) *DataC,BitC_Type_(TYPE,XX) *DataA,inte_32 Shift,DATA_32 Length)
+general BitC_Oper_(BitC_Op_,1,BitC_TXX_(T,XX))(BitC_Type_(type,XX) *DataC,BitC_Type_(TYPE,XX) *DataA,inte_32 Shift,DATA_32 Length)
 {
 	BitC_Type_(TYPE,XX) *End=DataA+(Length&0xFFFFFFF8);
 	
@@ -159,9 +159,9 @@ BitC_Oper_(BitC_Op_,1,BitC_TXX_(T,XX))(BitC_Type_(type,XX) *DataC,BitC_Type_(TYP
 #endif
 
 #ifdef _BitC_BO_Op_1_
-BitC_Oper_(BitC_Op_,1,BitC_TXX_(D,XX))(BitC_Type_(data,XX) _PL_ DataC,BitC_Type_(DATA,XX) _PL_ DataA,BitC_Type_(DATA,XX) Mask,DATA_32 Length)
+general BitC_Oper_(BitC_Op_,1,BitC_TXX_(D,XX))(BitC_Type_(data,XX) _PL_ DataC,BitC_Type_(DATA,XX) _PL_ DataA,BitC_Type_(DATA,XX) Mask,DATA_32 Length)
 {
-	DATA_64 Wide=BitC_Wide_(BitC_TXX_(D,XX))(Mask);
+	DATA_64 Wide=BitC_Func_(_BitC_Wide_Mask_,BitC_TXX_(D,XX))(Mask);
 	bitclip End;
 	bitclip PtrA;
 	bitclip PtrC;
@@ -190,7 +190,7 @@ BitC_Oper_(BitC_Op_,1,BitC_TXX_(D,XX))(BitC_Type_(data,XX) _PL_ DataC,BitC_Type_
 #endif
 
 #ifdef _BitC_BO_Op_2_
-BitC_Oper_(BitC_Op_,2,D08)(data_08 _PL_ DataC,DATA_08 _PL_ DataA,DATA_08 _PL_ DataB,DATA_32 Length)
+general BitC_Oper_(BitC_Op_,2,D08)(data_08 _PL_ DataC,DATA_08 _PL_ DataA,DATA_08 _PL_ DataB,DATA_32 Length)
 {
 	bitclip End;
 	bitclip PtrA;
@@ -222,7 +222,7 @@ BitC_Oper_(BitC_Op_,2,D08)(data_08 _PL_ DataC,DATA_08 _PL_ DataA,DATA_08 _PL_ Da
 #endif
 
 #ifdef _BitC_Expand_
-BitC_Func_(Expand,BitC_TXX_(D,XX))(DATA_08 *_R_ DataI,BitC_Type_(data,XX) *_R_ DataO,DATA_32 Length)
+general BitC_Func_(BitC_Expand_,BitC_TXX_(D,XX))(DATA_08 *_R_ DataI,BitC_Type_(data,XX) *_R_ DataO,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -282,7 +282,7 @@ BitC_Func_(Expand,BitC_TXX_(D,XX))(DATA_08 *_R_ DataI,BitC_Type_(data,XX) *_R_ D
 #endif
 
 #ifdef _BitC_RO_Op_
-BitC_Oper_(BitC_Op_,1,BitC_TXX_(T,XX))(data_08 *_R_ DataC,BitC_Type_(TYPE,XX) *_R_ DataA,BitC_Type_(TYPE,XX) Value,DATA_32 Length)
+general BitC_Oper_(BitC_Op_,1,BitC_TXX_(T,XX))(data_08 *_R_ DataC,BitC_Type_(TYPE,XX) *_R_ DataA,BitC_Type_(TYPE,XX) Value,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
@@ -324,7 +324,7 @@ BitC_Oper_(BitC_Op_,1,BitC_TXX_(T,XX))(data_08 *_R_ DataC,BitC_Type_(TYPE,XX) *_
 		}
 	}
 }
-BitC_Oper_(BitC_Op_,2,BitC_TXX_(T,XX))(data_08 *_R_ DataC,BitC_Type_(TYPE,XX) *_R_ DataA,BitC_Type_(TYPE,XX) *_R_ DataB,DATA_32 Length)
+general BitC_Oper_(BitC_Op_,2,BitC_TXX_(T,XX))(data_08 *_R_ DataC,BitC_Type_(TYPE,XX) *_R_ DataA,BitC_Type_(TYPE,XX) *_R_ DataB,DATA_32 Length)
 {
 	DATA_32 Safe=Length&0xFFFFFFF8;
 	DATA_32 Rest=Length&0x00000007;
