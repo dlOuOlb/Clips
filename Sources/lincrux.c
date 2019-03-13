@@ -16,12 +16,12 @@
 #endif
 
 #ifdef _LinC_Operation_0_
-general LinC_Oper_(LinC_Op_,0,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *_R_ Line,LinC_Type_(TYPE,XX) Start,LinC_Type_(TYPE,XX) Step,DATA_32 Length)
+general LinC_Oper_(LinC_Op_,0,TXX)(type_xx *_R_ Line,TYPE_XX Start,TYPE_XX Step,DATA_32 Length)
 {
 	if(Length)
 	{
 		DATA_32 Last=Length-1;
-		LinC_Type_(TYPE,XX) *End=Line+(Last&0xFFFFFFF8);
+		TYPE_XX *End=Line+(Last&0xFFFFFFF8);
 
 		for(Line[0]=Start;Line<End;Line+=8)
 		{
@@ -41,9 +41,9 @@ general LinC_Oper_(LinC_Op_,0,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *_R_ Line,Lin
 #endif
 
 #ifdef _LinC_Operation_1_
-general LinC_Oper_(LinC_Op_,1,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *LineC,LinC_Type_(TYPE,XX) *LineA,LinC_Type_(TYPE,XX) Value,DATA_32 Length)
+general LinC_Oper_(LinC_Op_,1,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX Value,DATA_32 Length)
 {
-	LinC_Type_(TYPE,XX) *End=LineA+(Length&0xFFFFFFF8);
+	TYPE_XX *End=LineA+(Length&0xFFFFFFF8);
 
 	for(;LineA<End;LineA+=8,LineC+=8)
 	{
@@ -62,9 +62,9 @@ general LinC_Oper_(LinC_Op_,1,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *LineC,LinC_T
 #endif
 
 #ifdef _LinC_Operation_2_
-general LinC_Oper_(LinC_Op_,2,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *LineC,LinC_Type_(TYPE,XX) *LineA,LinC_Type_(TYPE,XX) *LineB,DATA_32 Length)
+general LinC_Oper_(LinC_Op_,2,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX *LineB,DATA_32 Length)
 {
-	LinC_Type_(TYPE,XX) *End=LineA+(Length&0xFFFFFFF8);
+	TYPE_XX *End=LineA+(Length&0xFFFFFFF8);
 
 	for(;LineA<End;LineA+=8,LineB+=8,LineC+=8)
 	{
@@ -83,10 +83,10 @@ general LinC_Oper_(LinC_Op_,2,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *LineC,LinC_T
 #endif
 
 #ifdef _LinC_Summation_
-LinC_Type_(type,XX) LinC_Func_(LinC_Sum_1_,LinC_TXX_(T,XX))(LinC_Type_(TYPE,XX) *_R_ Line,DATA_32 Length)
+type_xx LinC_Func_(LinC_Sum_1_,TXX)(TYPE_XX *_R_ Line,DATA_32 Length)
 {
-	LinC_Type_(TYPE,XX) *End=Line+(Length&0xFFFFFFF8);
-	LinC_Type_(type,XX) Sum;
+	TYPE_XX *End=Line+(Length&0xFFFFFFF8);
+	type_xx Sum;
 
 	for(Acs_(LinC_Type_(data,XX),Sum)=0;Line<End;Line+=8)
 	{
@@ -104,10 +104,10 @@ LinC_Type_(type,XX) LinC_Func_(LinC_Sum_1_,LinC_TXX_(T,XX))(LinC_Type_(TYPE,XX) 
 
 	return Sum;
 }
-LinC_Type_(type,XX) LinC_Func_(LinC_Dot_2_,LinC_TXX_(T,XX))(LinC_Type_(TYPE,XX) *LineA,LinC_Type_(TYPE,XX) *LineB,DATA_32 Length)
+type_xx LinC_Func_(LinC_Dot_2_,TXX)(TYPE_XX *LineA,TYPE_XX *LineB,DATA_32 Length)
 {
-	LinC_Type_(TYPE,XX) *End=LineA+(Length&0xFFFFFFF8);
-	LinC_Type_(type,XX) Sum;
+	TYPE_XX *End=LineA+(Length&0xFFFFFFF8);
+	type_xx Sum;
 
 	for(Acs_(LinC_Type_(data,XX),Sum)=0;LineA<End;LineA+=8,LineB+=8)
 	{
@@ -128,16 +128,16 @@ LinC_Type_(type,XX) LinC_Func_(LinC_Dot_2_,LinC_TXX_(T,XX))(LinC_Type_(TYPE,XX) 
 #endif
 
 #ifdef _LinC_Min_Max_
-data_32 LinC_Oper_(LinC_Op_,1,LinC_TXX_(T,XX))(LinC_Type_(TYPE,XX) _PL_ Line,DATA_32 Length)
+data_32 LinC_Oper_(LinC_Op_,1,TXX)(TYPE_XX _PL_ Line,DATA_32 Length)
 {
 	data_32 Index;
 
 	if(Length)
 	{
-		LinC_Type_(TYPE,XX) _PL_ End=Line+Length;
-		LinC_Type_(TYPE,XX) *_R_ Ptr=Line;
-		LinC_Type_(TYPE,XX) *Here=Ptr;
-		LinC_Type_(type,XX) Value=*Ptr;
+		TYPE_XX _PL_ End=Line+Length;
+		TYPE_XX *_R_ Ptr=Line;
+		TYPE_XX *Here=Ptr;
+		type_xx Value=*Ptr;
 
 		for(Ptr++;Ptr<End;Ptr++)
 			if(LinC_Op_(Value,*Ptr))
@@ -155,7 +155,7 @@ data_32 LinC_Oper_(LinC_Op_,1,LinC_TXX_(T,XX))(LinC_Type_(TYPE,XX) _PL_ Line,DAT
 #endif
 
 #ifdef _LinC_Sorting_
-general LinC_Func_(LinC_Map_1_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *_R_ Line,DATA_32 *_R_ Index,LinC_Type_(TYPE,XX) _PL_ Table,DATA_32 Length)
+general LinC_Func_(LinC_Map_1_,TXX)(type_xx *_R_ Line,DATA_32 *_R_ Index,TYPE_XX _PL_ Table,DATA_32 Length)
 {
 	DATA_32 *End=Index+(Length&0xFFFFFFF8);
 
@@ -174,16 +174,16 @@ general LinC_Func_(LinC_Map_1_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *_R_ Line,DA
 		Line[0]=Table[Index[0]];
 }
 
-static inline general LinC_Func_(_LinC_Swap_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) _PL_ A,INTEGER _PL_ T)
+static inline general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ A,INTEGER _PL_ T)
 {
-	LinC_Type_(TYPE,XX) Temp=A[T[1]];
+	TYPE_XX Temp=A[T[1]];
 
 	A[0]=A[T[0]];
 	A[1]=Temp;
 }
-static LinC_Type_(type,XX) *LinC_Func_(_LinC_Radix_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *_R_ ValueFirst,data_32 *_R_ IndexFirst,LinC_Type_(TYPE,XX) *_R_ ValueMess,DATA_32 *_R_ IndexMess,DATA_32 Length,BOOLEAN Mode,LinC_Type_(TYPE,XX) Scan)
+static type_xx *LinC_Func_(_LinC_Radix_,TXX)(type_xx *_R_ ValueFirst,data_32 *_R_ IndexFirst,TYPE_XX *_R_ ValueMess,DATA_32 *_R_ IndexMess,DATA_32 Length,BOOLEAN Mode,TYPE_XX Scan)
 {
-	LinC_Type_(type,XX) *_R_ ValueLast=ValueFirst+Length;
+	type_xx *_R_ ValueLast=ValueFirst+Length;
 	data_32 *_R_ IndexLast=IndexFirst+Length;
 
 	if(Mode)
@@ -225,7 +225,7 @@ static LinC_Type_(type,XX) *LinC_Func_(_LinC_Radix_,LinC_TXX_(T,XX))(LinC_Type_(
 
 	return ValueFirst;
 }
-static general LinC_Func_(_LinC_Sort_2_Here_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) _PL_ ValueA,data_32 _PL_ IndexA,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ ValueA,data_32 _PL_ IndexA,BOOLEAN Mode)
 {
 	integer T[2];
 
@@ -240,11 +240,11 @@ static general LinC_Func_(_LinC_Sort_2_Here_,LinC_TXX_(T,XX))(LinC_Type_(type,XX
 		T[0]=T[1]^1;
 	}
 	{
-		LinC_Func_(_LinC_Swap_,LinC_TXX_(T,XX))(ValueA,T);
+		LinC_Func_(_LinC_Swap_,TXX)(ValueA,T);
 		_LinC_Swap_D32_(IndexA,T);
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Move_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) _PL_ ValueA,LinC_Type_(type,XX) _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ ValueA,type_xx _PL_ ValueB,data_32 _PL_ IndexA,data_32 _PL_ IndexB,BOOLEAN Mode)
 {
 	integer T[2];
 
@@ -266,9 +266,9 @@ static general LinC_Func_(_LinC_Sort_2_Move_,LinC_TXX_(T,XX))(LinC_Type_(type,XX
 		IndexB[1]=IndexA[T[1]];
 	}
 }
-static general LinC_Func_(_LinC_Recur_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *ValueSource,data_32 *IndexSource,LinC_Type_(type,XX) *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,integer Bits)
+static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *ValueSource,data_32 *IndexSource,type_xx *ValueTarget,data_32 *IndexTarget,DATA_32 Length,BOOLEAN Mode,integer Bits)
 {
-	data_32 Offset=(data_32)(LinC_Func_(_LinC_Radix_,LinC_TXX_(T,XX))(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((LinC_Type_(type,XX))1)<<((LinC_Type_(type,XX))Bits))-ValueTarget);
+	data_32 Offset=(data_32)(LinC_Func_(_LinC_Radix_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((type_xx)1)<<((type_xx)Bits))-ValueTarget);
 
 	if(Bits)
 	{
@@ -277,10 +277,10 @@ static general LinC_Func_(_LinC_Recur_,LinC_TXX_(T,XX))(LinC_Type_(type,XX) *Val
 			switch(Offset)
 			{
 			default:
-				LinC_Func_(_LinC_Recur_,LinC_TXX_(T,XX))(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
 				goto JUMP_A;
 			case 2:
-				LinC_Func_(_LinC_Sort_2_Here_,LinC_TXX_(T,XX))(ValueTarget,IndexTarget,Mode);
+				LinC_Func_(_LinC_Sort_2_Here_,TXX)(ValueTarget,IndexTarget,Mode);
 			case 1:
 JUMP_A:
 				ValueSource+=Offset;
@@ -292,10 +292,10 @@ JUMP_A:
 				switch(Offset)
 				{
 				default:
-					LinC_Func_(_LinC_Recur_,LinC_TXX_(T,XX))(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
 					break;
 				case 2:
-					LinC_Func_(_LinC_Sort_2_Here_,LinC_TXX_(T,XX))(ValueTarget,IndexTarget,Mode);
+					LinC_Func_(_LinC_Sort_2_Here_,TXX)(ValueTarget,IndexTarget,Mode);
 					break;
 				case 1:
 				case 0:;
@@ -305,10 +305,10 @@ JUMP_A:
 			switch(Offset)
 			{
 			default:
-				LinC_Func_(_LinC_Recur_,LinC_TXX_(T,XX))(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
 				goto JUMP_B;
 			case 2:
-				LinC_Func_(_LinC_Sort_2_Move_,LinC_TXX_(T,XX))(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+				LinC_Func_(_LinC_Sort_2_Move_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
 				goto JUMP_B;
 			case 1:
 				ValueSource[0]=ValueTarget[0];
@@ -323,10 +323,10 @@ JUMP_B:
 				switch(Offset)
 				{
 				default:
-					LinC_Func_(_LinC_Recur_,LinC_TXX_(T,XX))(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
 					break;
 				case 2:
-					LinC_Func_(_LinC_Sort_2_Move_,LinC_TXX_(T,XX))(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+					LinC_Func_(_LinC_Sort_2_Move_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
 					break;
 				case 1:
 					ValueSource[0]=ValueTarget[0];
@@ -358,6 +358,24 @@ JUMP_B:
 #ifdef type
 #error The macro "type" is already defined.
 #else
+
+#ifdef TXX
+#error The macro "TXX" is already defined.
+#else
+#define TXX LinC_TXX_(T,XX)
+#endif
+
+#ifdef TYPE_XX
+#error The macro "TYPE_XX" is already defined.
+#else
+#define TYPE_XX LinC_Type_(TYPE,XX)
+#endif
+
+#ifdef type_xx
+#error The macro "type_xx" is already defined.
+#else
+#define type_xx LinC_Type_(type,XX)
+#endif
 
 #ifdef D
 #error The macro "D" is already defined.
@@ -429,6 +447,9 @@ JUMP_B:
 #undef R
 #undef I
 #undef D
+#undef type_xx
+#undef TYPE_XX
+#undef TXX
 #endif
 #endif
 #endif

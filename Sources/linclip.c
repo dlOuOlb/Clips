@@ -1,7 +1,7 @@
 ﻿#include "linclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2019.03.11";
+static DATA_08 IdiomVersion[16]="Date:2019.03.13";
 static ADDRESS ConstantSize[2]={sizeof(real_32),sizeof(real_64)};
 
 #ifdef __OPENCL_H
