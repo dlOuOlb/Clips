@@ -2,7 +2,7 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.03.13	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.03.22	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -512,6 +512,33 @@ general LinC_Div_2_R32_(real_32 *C,REAL_32 *A,REAL_32 *B,DATA_32 N);
 //LinClip : 64-bit Real Line Division
 //＊C[n]＝A[n]÷B[n]
 general LinC_Div_2_R64_(real_64 *C,REAL_64 *A,REAL_64 *B,DATA_32 N);
+#endif
+
+#if(MemC_Fold_(Declaration:Modulo Functions))
+//LinClip : 8-bit Natural Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_D08_(data_08 *C,DATA_08 *A,DATA_08 K,DATA_32 N);
+//LinClip : 16-bit Natural Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_D16_(data_16 *C,DATA_16 *A,DATA_16 K,DATA_32 N);
+//LinClip : 32-bit Natural Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_D32_(data_32 *C,DATA_32 *A,DATA_32 K,DATA_32 N);
+//LinClip : 64-bit Natural Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_D64_(data_64 *C,DATA_64 *A,DATA_64 K,DATA_32 N);
+//LinClip : 8-bit Integer Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_I08_(inte_08 *C,INTE_08 *A,INTE_08 K,DATA_32 N);
+//LinClip : 16-bit Integer Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_I16_(inte_16 *C,INTE_16 *A,INTE_16 K,DATA_32 N);
+//LinClip : 32-bit Integer Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_I32_(inte_32 *C,INTE_32 *A,INTE_32 K,DATA_32 N);
+//LinClip : 64-bit Integer Line Modulo
+//＊C[n]＝A[n]％K
+general LinC_Mod_1_I64_(inte_64 *C,INTE_64 *A,INTE_64 K,DATA_32 N);
 #endif
 
 #if(MemC_Fold_(Declaration:Summation Functions))
