@@ -1,5 +1,4 @@
-﻿#include "linclip.h"
-
+﻿#ifdef _INC_LINCLIP
 #ifdef _SRC_LINCRUX
 
 #if(T()==D())
@@ -454,4 +453,8 @@ JUMP_B:
 #endif
 #endif
 #endif
+#endif
+
+#else
+static void _LinC_Void_(void) {}
 #endif

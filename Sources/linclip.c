@@ -1,7 +1,7 @@
 ﻿#include "linclip.h"
 
 #if(MemC_Fold_(Definition:Global Constants))
-static DATA_08 IdiomVersion[16]="Date:2019.03.13";
+static DATA_08 IdiomVersion[16]="Date:2019.03.22";
 static ADDRESS ConstantSize[2]={sizeof(real_32),sizeof(real_64)};
 
 #ifdef __OPENCL_H
@@ -111,6 +111,7 @@ NAME_08 _PL_ _PL_ LinCKernel=AddressKernelName;
 #define LinC_Mul_(U,V) ((U)*(V))
 #define LinC_Div_(U,V) ((U)/(V))
 #define LinC_Inv_(U,V) ((V)/(U))
+#define LinC_Mod_(U,V) ((U)%(V))
 #define LinC_Max_(U,V) ((U)<(V))
 #define LinC_Min_(U,V) ((U)>(V))
 #endif
@@ -179,6 +180,18 @@ NAME_08 _PL_ _PL_ LinCKernel=AddressKernelName;
 #define _LinC_Real_
 #include "lincrux.c"
 #undef _LinC_Real_
+#undef _LinC_Inte_
+#undef _LinC_Data_
+#undef LinC_Op_
+#undef _LinC_Operation_1_
+#endif
+
+#if(MemC_Fold_(Definition:Modulo Functions))
+#define _LinC_Operation_1_
+#define LinC_Op_ LinC_Mod_
+#define _LinC_Data_
+#define _LinC_Inte_
+#include "lincrux.c"
 #undef _LinC_Inte_
 #undef _LinC_Data_
 #undef LinC_Op_
@@ -839,6 +852,7 @@ penc_eu LinC_CL_Action_(LINC_CL _PL_ Manager,MEMC_MS _PL_ Argument,LINC_KI Indic
 #if(MemC_Fold_(Undefinition:LinCrux Macros))
 #undef LinC_Min_
 #undef LinC_Max_
+#undef LinC_Mod_
 #undef LinC_Inv_
 #undef LinC_Div_
 #undef LinC_Mul_
