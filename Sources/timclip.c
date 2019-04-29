@@ -1,30 +1,28 @@
-﻿#include "timclip.h"
+#include "timclip.h"
 
-#if(MemC_Fold_(Definition:Opaque Types))
+#if(Fold_(Definition:Opaque Types))
 struct _timc_te { clock_t Sum;clock_t Mark;timc_sf State;integer Count; };
 MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
-#if(MemC_Fold_(Definition:Global Constants))
-static BYTE_08 IdiomVersion[16]="Date:2018.10.16";
-static REAL_32 ConstantClocks[2]={(real_32)(CLOCKS_PER_SEC),1.0F/(real_32)(CLOCKS_PER_SEC)};
-
-BYTE_08 _PL_ TimClip=IdiomVersion;
-REAL_32 _PL_ TimClocks=ConstantClocks;
+#if(Fold_(Definition:Internal Constants))
+static BYTE_08 IdiomVersion[16]="Date:2019.04.26";
 #endif
 
-#if(MemC_Fold_(Definition:Functions))
-timc_sw *TimC_SW_Create_(ADDRESS Timers)
+#if(Fold_(Definition:Functions))
+#define _TIMC_ static
+
+_TIMC_ timc_sw *TimC_SW_Create_(ADDRESS Timers)
 {
 	timc_sw *SW;
 
 	if(Timers)
 	{
-		ADDRESS Temp=_MemC_Size_Mul_(Timers,sizeof(timc_te));
+		ADDRESS Temp=MemC.Size.Mul_(Timers,sizeof(timc_te));
 
 		if(Temp)
 		{
-			SW=MemC_Alloc_Byte_(_MemC_Size_Add_(Temp,sizeof(timc_sw)));
+			SW=MemC.Alloc.Byte_(MemC.Size.Add_(Temp,sizeof(timc_sw)));
 			if(SW)
 			{
 				Acs_(timc_te*,SW->Timer)=MemC_Clear_1D_((timc_te*)(SW+1),Timers);
@@ -43,16 +41,16 @@ timc_sw *TimC_SW_Create_(ADDRESS Timers)
 
 	return SW;
 }
-general TimC_SW_Delete_(timc_sw *_PL_ SW)
+_TIMC_ general TimC_SW_Delete_(timc_sw *_PL_ SW)
 {
 	MemC_Deloc_(*SW);
 }
-address TimC_SW_Size_(TIMC_SW _PL_ SW)
+_TIMC_ address TimC_SW_Size_(TIMC_SW _PL_ SW)
 {
 	return ((SW)?(sizeof(timc_sw)+MemC_Size_(timc_te,SW->Nums)):(0));
 }
 
-timc_sf TimC_SW_Reset_All_(TIMC_SW _PL_ SW)
+_TIMC_ timc_sf TimC_SW_Reset_All_(TIMC_SW _PL_ SW)
 {
 	if(SW)
 	{
@@ -68,14 +66,13 @@ FAILURE:
 SUCCESS:
 	return TimCStateStopped;
 }
-timc_sf TimC_SW_Stop_All_(TIMC_SW _PL_ SW)
+_TIMC_ timc_sf TimC_SW_Stop_All_(TIMC_SW _PL_ SW)
 {
 	if(SW)
 	{
 		TIMC_TE _PL_ End=(timc_te*)(SW->Timer)+SW->Nums;
-		timc_te *_R_ Ptr;
 
-		for(Ptr=(timc_te*)(SW->Timer);Ptr<End;Ptr++)
+		for(timc_te *_R_ Ptr=(timc_te*)(SW->Timer);Ptr<End;Ptr++)
 			switch(Ptr->State)
 			{
 			default:
@@ -98,7 +95,7 @@ SUCCESS:
 	return TimCStateStopped;
 }
 
-timc_sf TimC_SW_Reset_(TIMC_SW _PL_ SW,ADDRESS Select)
+_TIMC_ timc_sf TimC_SW_Reset_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	if(SW)
 		if(Select<SW->Nums)
@@ -116,7 +113,7 @@ FAILURE:
 SUCCESS:
 	return TimCStateStopped;
 }
-timc_sf TimC_SW_Toggle_(TIMC_SW _PL_ SW,ADDRESS Select)
+_TIMC_ timc_sf TimC_SW_Toggle_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	timc_sf Flag;
 
@@ -160,7 +157,7 @@ UNKNOWN:
 	return Flag;
 }
 
-timc_sf TimC_SW_Read_State_(TIMC_SW _PL_ SW,ADDRESS Select)
+_TIMC_ timc_sf TimC_SW_Read_State_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	timc_sf Flag;
 
@@ -174,7 +171,7 @@ timc_sf TimC_SW_Read_State_(TIMC_SW _PL_ SW,ADDRESS Select)
 
 	return Flag;
 }
-integer TimC_SW_Read_Count_(TIMC_SW _PL_ SW,ADDRESS Select)
+_TIMC_ integer TimC_SW_Read_Count_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	integer Count;
 
@@ -189,7 +186,7 @@ integer TimC_SW_Read_Count_(TIMC_SW _PL_ SW,ADDRESS Select)
 	return Count;
 }
 
-real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
+_TIMC_ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	real_32 Time;
 
@@ -201,10 +198,10 @@ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
 			switch(Timer->State)
 			{
 			case TimCStateStopped:
-				Time=TimClocks[1]*(real_32)(Timer->Sum);
+				Time=TimC.Clock.Frequency*(real_32)(Timer->Sum);
 				break;
 			case TimCStateRunning:
-				Time=TimClocks[1]*(real_32)(clock()-(Timer->Mark)+(Timer->Sum));
+				Time=TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum));
 				break;
 			default:
 				Time=-1.0F;
@@ -217,7 +214,7 @@ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
 
 	return Time;
 }
-real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ SW,ADDRESS Select)
+_TIMC_ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	real_32 Time;
 
@@ -229,10 +226,10 @@ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ SW,ADDRESS Select)
 			switch(Timer->State)
 			{
 			case TimCStateStopped:
-				Time=(Timer->Count)?((TimClocks[1]*(real_32)(Timer->Sum))/((real_32)(Timer->Count))):(0.0F);
+				Time=(Timer->Count)?((TimC.Clock.Frequency*(real_32)(Timer->Sum))/((real_32)(Timer->Count))):(0.0F);
 				break;
 			case TimCStateRunning:
-				Time=(TimClocks[1]*(real_32)(clock()-(Timer->Mark)+(Timer->Sum)))/((real_32)(Timer->Count));
+				Time=(TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum)))/((real_32)(Timer->Count));
 				break;
 			default:
 				Time=-1.0F;
@@ -245,4 +242,27 @@ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ SW,ADDRESS Select)
 
 	return Time;
 }
+
+#undef _TIMC_
+#endif
+
+#if(Fold_(Library Casing))
+const struct _timcase TimC=
+{
+	.Version=IdiomVersion,
+	.Clock.Resolution=(real_32)(CLOCKS_PER_SEC),
+	.Clock.Frequency=1.0F/((real_32)(CLOCKS_PER_SEC)),
+
+	.SW.Create_=TimC_SW_Create_,
+	.SW.Delete_=TimC_SW_Delete_,
+	.SW.Size_=TimC_SW_Size_,
+	.SW.All.Reset_=TimC_SW_Reset_All_,
+	.SW.All.Stop_=TimC_SW_Stop_All_,
+	.SW.Reset_=TimC_SW_Reset_,
+	.SW.Toggle_=TimC_SW_Toggle_,
+	.SW.State_=TimC_SW_Read_State_,
+	.SW.Count_=TimC_SW_Read_Count_,
+	.SW.Sum_=TimC_SW_Read_Sum_,
+	.SW.Mean_=TimC_SW_Read_Mean_
+};
 #endif
