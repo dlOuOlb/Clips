@@ -1,81 +1,68 @@
-﻿#include <CL\opencl.h>
+#include <CL/opencl.h>
 #include <linclip.h>
-
-static penc_eu _Main_Build_Option_(cl_device_id const,PENC_SC);
 
 integer main(general)
 {
-	NAME_08 PathI[16]="..\\..\\Kernels\\";
-	NAME_08 PathO[16]="..\\Release\\";
-	NAME_08 NameL[24]="..\\Release\\log.txt";
-	cl_uint Select[2];
-	penc_eu Error=PenC_CL_Identify_(Select+0,Select+1,NULL,NULL);
-
-	if(Error.E==CLSuccess)
+	FILE _PL_ Stream=NULL;
+	penc_sl *StringLender=PenC.SL.Create_(1024);
+	oclc_ef _Error={.E=CLSuccess},_PL_ Error=&_Error;
+	
+	if(StringLender)
 	{
-		PenC_File_Using_(Log,NameL,PenCOpen[3],Error.I)
+		oclc_em *EnvMan=OCLC.EM.Create_(Error);
+
+		if(EnvMan)
 		{
-			name_08 Buffer[64];
-			PENC_SC Option=PenC_SC_Assign_(Buffer);
-			
-			MemC_Using_(devi_qc,QC,Devi_QC_Create_(Select[0],Select[1]),Devi_QC_Delete_)
+			for(address IdxP=0;IdxP<EnvMan->Platform.Nums;IdxP++)
 			{
-				Error=_Main_Build_Option_(QC->Device,Option);
-				if(Error.E==CLSuccess)
+				MemC_Temp_ND_(penclip,TempString,ESCAPE,1,EnvMan->Platform.List[IdxP].Device.Nums)
 				{
-					Error=BitC_CL_Binary_(QC->Queue,PathI,PathO,Option.String.N08,Log);
-					PenC_Stream_Format_N08_(0,Log,"\n\n");
-					if(Error.E==CLSuccess)
+					TEXT_08 NameList[2][8]={"bitclip","linclip"};
+					penclip _PL_ BinaryPath=TempString;
+
+					for(address IdxN=0;IdxN<2;IdxN++)
 					{
-						Error=LinC_CL_Binary_(QC->Queue,PathI,PathO,Option.String.N08,Log);
-						PenC_Stream_Format_N08_(0,Log,"\n\n");
-						if(Error.E==CLSuccess)
-							PenC_Stream_Format_N08_(0,NULL,"Fine\n");
+						for(address IdxD=0;IdxD<EnvMan->Platform.List[IdxP].Device.Nums;IdxD++)
+						{
+							penc_sc *TempContainer=NULL;
+
+							PenC_SL_Borrow_Format_T08_(StringLender,TempContainer,"../Release/P%d D%d %s.obj",IdxP,IdxD,NameList[IdxN]);
+							BinaryPath[IdxD]=TempContainer->String;
+						}
+						{
+							penc_sc *TempContainer=NULL;
+
+							PenC_SL_Borrow_Format_T08_(StringLender,TempContainer,"../../Sources/%s.cl",NameList[IdxN]);
+							BitC.CL.Ready.T08_(EnvMan->Platform.List[IdxP].Context,"-I ../../Headers/ -I ../../Sources/ -D _BitC_R16_=0 -D _BitC_R64_=1",TempContainer->String.T08,(text_08**)BinaryPath,Stream,Error);
+						}
+						if(Error->E==CLSuccess)
+							PenC.SL.Reset_(StringLender);
+						else
+						{
+							PenC_Stream_Format_T08_(0,Stream,"Program Build Failure\r\n");
+							break;
+						}
 					}
-					else
-						PenC_Stream_Format_N08_(0,NULL,"Program Build Failure\n");
 				}
-				else
-					PenC_Stream_Format_N08_(0,NULL,"Error Occurred during Parsing the Build Option\n");
+				continue;
+ESCAPE:
+				PenC_Stream_Format_T08_(0,Stream,"String Array Allocation Failure\r\n");
+				Error->E=CLOutOfHostMemory;
+				break;
 			}
-			MemC_Catch_
-			{
-				PenC_Stream_Format_N08_(0,NULL,"Invalid Platform or Device\n");
-				Error.E=CLInvalidCommandQueue;
-			}
-		}
-		if(Error.I)
-			PenC_Stream_Format_N08_(0,NULL,"File Open Failure\n");
-	}
-	else
-		PenC_Stream_Format_N08_(0,NULL,"Platform or Device Select Failure\n");
-
-	return Error.I;
-}
-static penc_eu _Main_Build_Option_(cl_device_id const Device,PENC_SC Option)
-{
-	address Size;
-	penc_eu Error;
-
-	Error.I=Devi_Size_Info_Device_(Device,&Size,CL_DEVICE_EXTENSIONS);
-	if(Error.E==CLSuccess)
-	{
-		name_08 *Buffer=MemC_Alloc_1D_(Size,name_08);
-
-		if(Buffer)
-		{
-			Error.I=Devi_Info_Device_(Device,Buffer,Size,CL_DEVICE_EXTENSIONS);
-			if(Error.E==CLSuccess)
-				if(PenC_SC_Format_N08_(0,Option,"-D _ABLE_R16_=%d -D _ABLE_R64_=%d",(PenC_String_Finder_N08_(Buffer,"cl_khr_fp16")!=NULL),(PenC_String_Finder_N08_(Buffer,"cl_khr_fp64")!=NULL))<0)
-					Error.E=CLOutOfHostMemory;
+			OCLC.EM.Delete_(&EnvMan);
 		}
 		else
-			Error.E=CLOutOfHostMemory;
+			PenC_Stream_Format_T08_(0,Stream,"Environment Manager Creation Failure\r\n");
 
-		MemC_Deloc_(Buffer);
+		PenC.SL.Delete_(&StringLender);
+	}
+	else
+	{
+		PenC_Stream_Format_T08_(0,Stream,"String Lender Creation Failure\r\n");
+		Error->E=CLOutOfHostMemory;
 	}
 
-	return Error;
+	return Error->I;
 }
-general *_MemC_Malloc_(ADDRESS Size) { return malloc(Size); }
-general _MemC_Free_(general _PL_ Memory) { free(Memory); }
+_MemC_Default_
