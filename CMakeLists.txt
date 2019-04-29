@@ -63,15 +63,21 @@ add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
+# OCLClip
+set(NAME oclclip)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/oclcrux.c)
+target_include_directories(${NAME} PUBLIC ${DIR_INC})
+target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
+
 # BitClip
 set(NAME bitclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/bitcrux.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/bitcros.c ${DIR_SRC}/bitcrux.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # LinClip
 set(NAME linclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/lincrux.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/lincros.c ${DIR_SRC}/lincrux.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
@@ -93,5 +99,5 @@ if(FLAG_CL)
 	add_executable(${NAME} ${DIR_USE}/${NAME}.c)
 	target_include_directories(${NAME} PRIVATE ${DIR_INC})
 	target_compile_options(${NAME} PRIVATE ${OPT_COMPILE})
-	target_link_libraries(${NAME} PRIVATE ${DIR_OCL}/OpenCL.lib memclip penclip bitclip linclip)
+	target_link_libraries(${NAME} PRIVATE ${DIR_OCL}/OpenCL.lib memclip penclip oclclip bitclip linclip)
 endif()
