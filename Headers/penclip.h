@@ -1,247 +1,57 @@
-ï»¿/*------------------------------------------------------------------*/
+/*------------------------------------------------------------------*/
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2018.10.19	*/
-/*------------------------------------------------------------------*/
-/*	OpenCL Support													*/
-/*	http://www.khronos.org/opencl/									*/
+/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
-#define _INC_PENCLIP	//PenClip : Header Declaration
+#define _INC_PENCLIP
 
+#if(1)
 #include <uchar.h>
 #include <wchar.h>
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
-#include <time.h>
-#ifdef _CL
-#include <CL\opencl.h>
-#endif
 #include <memclip.h>
+#endif
 
-#if(MemC_Fold_(Definition:Primitive Types))
-MemC_Type_Rename_(char,name_08,NAME_08);		//PenClip : 8-bit Character
-static_assert((sizeof(name_08)==1),"sizeof(name_08) != 1");
-MemC_Type_Rename_(wchar_t,name_16,NAME_16);		//PenClip : 16-bit Character
-static_assert((sizeof(name_16)==2),"sizeof(name_16) != 2");
-MemC_Type_Rename_(char32_t,name_32,NAME_32);	//PenClip : 32-bit Character
-static_assert((sizeof(name_32)==4),"sizeof(name_32) != 4");
+#if(Fold_(Definition:Primal Types))
+MemC_Type_Rename_(char,text_08,TEXT_08);		//PenClip : 8-bit Character
+static_assert((sizeof(text_08)==1),"sizeof(text_08) != 1");
+MemC_Type_Rename_(wchar_t,text_16,TEXT_16);		//PenClip : 16-bit Character
+static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
+MemC_Type_Rename_(char32_t,text_32,TEXT_32);	//PenClip : 32-bit Character
+static_assert((sizeof(text_32)==4),"sizeof(text_32) != 4");
 
 static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
 static_assert((sizeof(integer)<=sizeof(rsize_t)),"sizeof(integer) > sizeof(rsize_t)");
 static_assert((sizeof(rsize_t)<=sizeof(address)),"sizeof(rsize_t) > sizeof(address)");
 #endif
 
-#if(MemC_Fold_(Definition:Macros))
-#define PenC_Catch_	else	//PenClip : Failure case for "PenC_File_Using_" and "PenC_Pipe_Using_"
-
-#define PenC_Prefix_N08_N_(String) String		//PenClip : Narrow Multi-byte String Literal Prefix
-#define PenC_Prefix_N16_W_(String) L##String	//PenClip : Wide String Literal Prefix
-#define PenC_Prefix_N08_U_(String) u8##String	//PenClip : UTF-8 Encoded String Literal Prefix
-#define PenC_Prefix_N16_U_(String) u##String	//PenClip : UTF-16 Encoded String Literal Prefix
-#define PenC_Prefix_N32_U_(String) U##String	//PenClip : UTF-32 Encoded String Literal Prefix
-
-#define PenC_Setter_N08_(Buffer,Value,Count) (name_08*)memset(Buffer,Value,Count)	//PenClip : 8-bit Character Setting
-#define PenC_Setter_N16_(Buffer,Value,Count) (name_16*)wmemset(Buffer,Value,Count)	//PenClip : 16-bit Character Setting
-
-#define PenC_Finder_N08_(Buffer,Value,Count) (name_08*)memchr(Buffer,Value,Count)	//PenClip : 8-bit Character Finding
-#define PenC_Finder_N16_(Buffer,Value,Count) (name_16*)wmemchr(Buffer,Value,Count)	//PenClip : 16-bit Character Finding
-
-#define PenC_Format_Length_N08_(...) snprintf(NULL,0,__VA_ARGS__)	//PenClip : 8-bit Format String Length Expectation
-
-#define PenC_Buffer_Format_N08_(Mode,Buffer,Capacity,...) ((Mode)?(sscanf_s(Buffer,__VA_ARGS__)):(sprintf_s(Buffer,Capacity,__VA_ARGS__)))		//PenClip : 8-bit Buffer Print (Mode 0) or Scan (Mode 1)
-#define PenC_Buffer_Format_N16_(Mode,Buffer,Capacity,...) ((Mode)?(swscanf_s(Buffer,__VA_ARGS__)):(swprintf_s(Buffer,Capacity,__VA_ARGS__)))	//PenClip : 16-bit Buffer Print (Mode 0) or Scan (Mode 1)
-
-#define PenC_Stream_Format_N08_(Mode,Stream,...) ((Mode)?((Stream)?(fscanf_s(Stream,__VA_ARGS__)):(scanf_s(__VA_ARGS__))):((Stream)?(fprintf_s(Stream,__VA_ARGS__)):(printf_s(__VA_ARGS__))))		//PenClip : 8-bit Stream Print (Mode 0) or Scan (Mode 1)
-#define PenC_Stream_Format_N16_(Mode,Stream,...) ((Mode)?((Stream)?(fwscanf_s(Stream,__VA_ARGS__)):(wscanf_s(__VA_ARGS__))):((Stream)?(fwprintf_s(Stream,__VA_ARGS__)):(wprintf_s(__VA_ARGS__))))	//PenClip : 16-bit Stream Print (Mode 0) or Scan (Mode 1)
-
-#define PenC_Stream_Buffer_N08_(Mode,Stream,Buffer,Capacity) ((Mode)?((Stream)?((address)fgets(Buffer,(integer)(Capacity),Stream)):((address)gets_s(Buffer,(rsize_t)(Capacity)))):((Stream)?((address)fputs(Buffer,Stream)):((address)puts(Buffer))))	//PenClip : 8-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
-#define PenC_Stream_Buffer_N16_(Mode,Stream,Buffer,Capacity) ((Mode)?((Stream)?((address)fgetws(Buffer,(integer)(Capacity),Stream)):((address)_getws_s(Buffer,Capacity))):((Stream)?((address)fputws(Buffer,Stream)):((address)_putws(Buffer))))		//PenClip : 16-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
-#endif
-
-#if(MemC_Fold_(Declaration:Global Constants))
-//PenClip : Library Version
-extern NAME_08 _PL_ PenClip;
-
-//PenClip : File I/O Option
-//ï¼Š[0] : "rb" (Read Binary)
-//ã€€[1] : "wb" (Write Binary)
-//ã€€[2] : "rt" (Read Text)
-//ã€€[3] : "wt" (Write Text)
-extern NAME_08 _PL_ _PL_ PenCOpen;
-#endif
-
-#if(MemC_Fold_(Declaration:I/O Functions))
-#if(MemC_Fold_(Part:File))
-//PenClip : File Open
-FILE *PenC_File_Opener_(NAME_08 _PL_ FileName,NAME_08 _PL_ OpeningMode);
-//PenClip : File Close
-//ï¼ŠReturn value is 0 for success, an error code for failure.
-integer PenC_File_Closer_(FILE *_PL_ FilePointer);
-//PenClip : File Pointer Usage in Local Scope - Handle with "PenC_Catch_"
-#define PenC_File_Using_(File,Name,Mode,Error) for(FILE *(_Temp)=FULL,_PL_ (File)=PenC_File_Opener_(Name,Mode);_Temp;(_Temp)=NULL,(Error)=PenC_File_Closer_((FILE**)&(File)))if(File)
-//PenClip : File Write
-#define PenC_File_Writer_(FilePointer,Buffer,Elements) fwrite(Buffer,sizeof(*(Buffer)),Elements,FilePointer)
-//PenClip : File Read
-#define PenC_File_Reader_(FilePointer,Buffer,Elements) fread_s(Buffer,(Elements)*sizeof(*(Buffer)),sizeof(*(Buffer)),Elements,FilePointer)
-//PenClip : Step Forward from Current Location
-#define PenC_File_Jumper_(FilePointer,Elements,type) fseek(FilePointer,(Elements)*sizeof(type),SEEK_CUR)
-//PenClip : Step Backward from Current Location
-#define PenC_File_Backer_(FilePointer,Elements,type) fseek(FilePointer,0-((Elements)*sizeof(type)),SEEK_CUR)
-//PenClip : Pointer Restart
-#define PenC_File_Rewind_(FilePointer) rewind(FilePointer)
-//PenClip : Current Location from Start
-#define PenC_File_Teller_(FilePointer) ftell(FilePointer)
-//PenClip : Stream Flush
-#define PenC_File_Washer_(FilePointer) fflush(FilePointer)
-//PenClip : End of File
-#define PenC_File_Finish_(FilePointer) feof(FilePointer)
-//PenClip : File Remove
-#define PenC_File_Remove_(FileName) remove(FileName)
-//PenClip : File Rename
-#define PenC_File_Rename_(FileNameOld,FileNameNew) rename(FileNameOld,FileNameNew)
-//PenClip : File's Byte Size
-address PenC_File_Length_(NAME_08 _PL_ FileName);
-
-//PenClip : 1D Array Data Read
-//ï¼ŠReturn value is 1 for success, 0 for failure.
-integer _PenC_Reader_1D_(general _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
-#define PenC_Reader_1D_(Line,FileName,Elements) _PenC_Reader_1D_(Line,FileName,sizeof(*(Line)),Elements)
-//PenClip : 1D Array Data Write
-//ï¼ŠReturn value is 1 for success, 0 for failure.
-integer _PenC_Writer_1D_(GENERAL _PL_ Line,NAME_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
-#define PenC_Writer_1D_(Line,FileName,Elements) _PenC_Writer_1D_(Line,FileName,sizeof(*(Line)),Elements)
-#endif
-
-#if(MemC_Fold_(Part:Pipe))
-//PenClip : Pipe Open
-#define PenC_Pipe_Opener_(Command,Mode) _popen(Command,Mode)
-//PenClip : Pipe Close
-integer PenC_Pipe_Closer_(FILE *_PL_ Pipe);
-//PenClip : Pipe Pointer Usage in Local Scope - Handle with "PenC_Catch_"
-#define PenC_Pipe_Using_(Pipe,Command,Mode,Return) for(FILE *(_Temp)=FULL,_PL_ (Pipe)=PenC_Pipe_Opener_(Command,Mode);_Temp;(_Temp)=NULL,(Return)=PenC_Pipe_Closer_((FILE**)&(Pipe)))if(Pipe)
-//PenClip : Execute a command.
-integer PenC_Pipe_Action_(NAME_08 _PL_ Command,FILE _PL_ MsgStream);
-#endif
-
-#if(MemC_Fold_(Part:String))
-//PenClip : Narrow Multi-byte to Wide String Conversion
-errno_t PenC_String_Caster_N08_N16_(NAME_08 *SourceString,name_16 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
-//PenClip : Wide to Narrow Multi-byte String Conversion
-errno_t PenC_String_Caster_N16_N08_(NAME_16 *SourceString,name_08 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
-
-//PenClip : 8-bit String Length
-#define PenC_String_Length_N08_(String,Capacity) strnlen_s(String,Capacity)
-//PenClip : 16-bit String Length
-#define PenC_String_Length_N16_(String,Capacity) wcsnlen_s(String,Capacity)
-
-//PenClip : 8-bit Sub-String Finding
-#define PenC_String_Finder_N08_(String,SubString) (name_08*)strstr(String,SubString)
-//PenClip : 16-bit Sub-String Finding
-#define PenC_String_Finder_N16_(String,SubString) (name_16*)wcsstr(String,SubString)
-
-//PenClip : 8-bit String Concatenation
-#define PenC_String_Concat_N08_(Buffer,Source,Capacity) strcat_s(Buffer,Capacity,Source)
-//PenClip : 16-bit String Concatenation
-#define PenC_String_Concat_N16_(Buffer,Source,Capacity) wcscat_s(Buffer,Capacity,Source)
-
-//PenClip : 8-bit String Copy
-#define PenC_String_Copier_N08_(Buffer,Source,Capacity) strcpy_s(Buffer,Capacity,Source)
-//PenClip : 16-bit String Copy
-#define PenC_String_Copier_N16_(Buffer,Source,Capacity) wcscpy_s(Buffer,Capacity,Source)
-
-//PenClip : 8-bit String Comparison
-#define PenC_String_Compar_N08_(StringA,StringB) strcmp(StringA,StringB)
-//PenClip : 16-bit String Comparison
-#define PenC_String_Compar_N16_(StringA,StringB) wcscmp(StringA,StringB)
-#endif
-
-#if(MemC_Fold_(Part:Name))
-//PenClip : Print an integer in decimal form.
-//ï¼ŠRequired buffer size is count bytes.
-general PenC_Name_Deci_(name_08 _PL_ Buffer,ADDRESS Number,ADDRESS Count);
-//PenClip : Print an integer in hexadecimal form.
-//ï¼ŠRequired buffer size is count bytes.
-general PenC_Name_Hexa_(name_08 _PL_ Buffer,ADDRESS Number,ADDRESS Count);
-
-//PenClip : Find the last dot character.
-//ï¼ŠReturn value is offset.
-address PenC_Name_Extend_(NAME_08 _PL_ Buffer,ADDRESS Length);
-#endif
-#endif
-
-#if(MemC_Fold_(Declaration:PenClip Managed Functions))
-#if(MemC_Fold_(Part:PenC_SC))
-struct _penc_sc				//PenClip : String Container Structure
+#if(Fold_(Definition:Advanced Types))
+//PenClip : String Pointer Union
+union _penclip
 {
-	ADDRESS Capacity;		//PenClip : Allowed Size in Bytes
-	union _penc_up			//PenClip : Union of Pointers
-	{
-		name_08 _PL_ N08;	//PenClip : 8-bit Access
-		name_16 _PL_ N16;	//PenClip : 16-bit Access
-		name_32 _PL_ N32;	//PenClip : 32-bit Access
-		GENERAL _PL_ X;		//PenClip : No Access
-		ADDRESS A;			//PenClip : Address Value
-	}
-	String;					//PenClip : String Data
+	text_08 *T08;	//PenClip : 8-bit Access
+	text_16 *T16;	//PenClip : 16-bit Access
+	text_32 *T32;	//PenClip : 32-bit Access
+	general *X;		//PenClip : General Access
+	address A;		//PenClip : Address Value
+};
+MemC_Type_Declare_(union,penclip,PENCLIP);	//PenClip : String Pointer Union
+
+//PenClip : String Container Structure
+struct _penc_sc
+{
+	ADDRESS Capacity;	//PenClip : Allowed Size in Bytes
+	PENCLIP String;		//PenClip : String Data
 };
 MemC_Type_Declare_(struct,penc_sc,PENC_SC);	//PenClip : String Container Structure
 
-//PenClip : String Container Static Definition
-#define PenC_SC_Define_(IString) {.Capacity=sizeof(IString),.String.X=(IString)}
-//PenClip : String Container Local Variable Assignment without Heap Allocation
-penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity);
-#define PenC_SC_Assign_(Buffer) _PenC_SC_Assign_(Buffer,sizeof(Buffer))
-
-//PenClip : String Container Memory Allocation - Deallocate with "PenC_SC_Delete_"
-penc_sc *PenC_SC_Create_(ADDRESS CapacityBytes);
-//PenClip : String Container Memory Deallocation
-general PenC_SC_Delete_(penc_sc *_PL_ StringContainer);
-
-//PenClip : String Container Data Reset
-#define PenC_SC_Init_(SC) MemC_Clear_1D_((SC).String.N08,(SC).Capacity,name_08)
-
-//PenClip : String Container multi-byte to 2-byte Conversion
-#define PenC_SC_Caster_N08_N16_(Source,Target) PenC_String_Caster_N08_N16_((Source).String.N08,(Target).String.N16,(Source).Capacity,(Target).Capacity>>1)
-//PenClip : String Container 2-byte to multi-byte Conversion
-#define PenC_SC_Caster_N16_N08_(Source,Target) PenC_String_Caster_N16_N08_((Source).String.N16,(Target).String.N08,(Source).Capacity>>1,(Target).Capacity)
-
-//PenClip : String Container 8-bit Length
-#define PenC_SC_Length_N08_(SC) PenC_String_Length_N08_((SC).String.N08,(SC).Capacity)
-//PenClip : String Container 16-bit Length
-#define PenC_SC_Length_N16_(SC) PenC_String_Length_N16_((SC).String.N16,(SC).Capacity>>1)
-
-//PenClip : String Container 8-bit Copy
-#define PenC_SC_Copier_N08_(Target,Source) PenC_String_Copier_N08_((Target).String.N08,(Source).String.N08,(Target).Capacity)
-//PenClip : String Container 16-bit Copy
-#define PenC_SC_Copier_N16_(Target,Source) PenC_String_Copier_N16_((Target).String.N16,(Source).String.N16,(Target).Capacity>>1)
-
-//PenClip : String Container 8-bit Concatenation
-#define PenC_SC_Concat_N08_(Target,Source) PenC_String_Concat_N08_((Target).String.N08,(Source).String.N08,(Target).Capacity)
-//PenClip : String Container 16-bit Concatenation
-#define PenC_SC_Concat_N16_(Target,Source) PenC_String_Concat_N16_((Target).String.N16,(Source).String.N16,(Target).Capacity>>1)
-
-//PenClip : String Container 8-bit Comparison
-#define PenC_SC_Compar_N08_(SCA,SCB) PenC_String_Compar_N08_((SCA).String.N08,(SCB).String.N08)
-//PenClip : String Container 16-bit Comparison
-#define PenC_SC_Compar_N16_(SCA,SCB) PenC_String_Compar_N16_((SCA).String.N16,(SCB).String.N16)
-
-//PenClip : 8-bit String Container Print (Mode 0) or Scan (Mode 1)
-#define PenC_SC_Format_N08_(Mode,SC,...) PenC_Buffer_Format_N08_(Mode,(SC).String.N08,(SC).Capacity,__VA_ARGS__)
-//PenClip : 16-bit String Container Print (Mode 0) or Scan (Mode 1)
-#define PenC_SC_Format_N16_(Mode,SC,...) PenC_Buffer_Format_N16_(Mode,(SC).String.N16,(SC).Capacity>>1,__VA_ARGS__)
-
-//PenClip : 8-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
-#define PenC_SC_Stream_N08_(Mode,SC,Stream) PenC_Stream_Buffer_N08_(Mode,Stream,(SC).String.N08,(SC).Capacity)
-//PenClip : 16-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
-#define PenC_SC_Stream_N16_(Mode,SC,Stream) PenC_Stream_Buffer_N16_(Mode,Stream,(SC).String.N16,(SC).Capacity>>1)
-#endif
-
-#if(MemC_Fold_(Part:PenC_SL))
-struct _penc_sl			//PenClip : String Container Lender Structure
+//PenClip : String Container Lender Structure
+struct _penc_sl
 {
 	GENERAL _PL_ Node;	//PenClip : Internal Node Set
 	ADDRESS Chunks;		//PenClip : Total Number of Internal Memory Chunks
@@ -249,131 +59,474 @@ struct _penc_sl			//PenClip : String Container Lender Structure
 	ADDRESS Capable;	//PenClip : Current Lendable String Size in Bytes
 };
 MemC_Type_Declare_(struct,penc_sl,PENC_SL);	//PenClip : String Container Lender Structure
-
-//PenClip : SC Lender Memory Allocation - Deallocate with "PenC_SL_Delete_"
-//ï¼Š1 chunk is equal to 4Ã—sizeof(size_t) bytes.
-//ï¼ŠEach SC node's head occupies 1 chunk.
-penc_sl *PenC_SL_Create_(ADDRESS ChunksNumber);
-//PenClip : SC Lender Memory Deallocation
-general PenC_SL_Delete_(penc_sl *_PL_ SCLender);
-
-//PenClip : SC Lender Memory Occupation
-address PenC_SL_Size_(PENC_SL _PL_ SCLender);
-//PenClip : Kill all SCs in the SC Lender
-integer PenC_SL_Reset_(penc_sl _PL_ SCLender);
-
-//PenClip : Borrow an SC from the SC Lender - Return with "PenC_SL_Return_"
-penc_sc *PenC_SL_Borrow_(PENC_SL _PL_ SCLender,ADDRESS DemandBytes);
-//PenClip : Borrow an SC from the SC Lender with the Specified 8-bit Format - Return with "PenC_SL_Return_"
-#define PenC_SL_Borrow_Format_N08_(SL,SC,...) __dl{PenC_SL_Return_(SL,&(SC));(SC)=PenC_SL_Borrow_(SL,PenC_Format_Length_N08_(__VA_ARGS__)+1);if(SC){PenC_SC_Format_N08_(0,*(SC),__VA_ARGS__);}}lb__
-//PenClip : Borrow an SC from the SC Lender Copying another SC - Return with "PenC_SL_Return_"
-#define PenC_SL_Borrow_Copier_N08_(SL,SCTarget,SCSource) __dl{PenC_SL_Return_(SL,&(SCTarget));(SCTarget)=PenC_SL_Borrow_(SL,PenC_SC_Length_N08_(*(SCSource))+1);if(SCTarget){PenC_SC_Copier_N08_(*(SCTarget),*(SCSource));}}lb__
-//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs - Return with "PenC_SL_Return_"
-#define PenC_SL_Borrow_Concat_N08_(SL,SCConcat,SCFormer,SCLatter) __dl{PenC_SL_Return_(SL,&(SCConcat));(SCConcat)=PenC_SL_Borrow_(SL,PenC_SC_Length_N08_(*(SCFormer))+PenC_SC_Length_N08_(*(SCLatter))+1);if(SCConcat){PenC_SC_Copier_N08_(*(SCConcat),*(SCFormer));PenC_SC_Concat_N08_(*(SCConcat),*(SCLatter));}}lb__
-//PenClip : Return the SC to the SC Lender
-integer PenC_SL_Return_(PENC_SL _PL_ SCLender,PENC_SC *_PL_ StringContainer);
-#endif
 #endif
 
-#if(MemC_Fold_(Declaration:OpenCL Functions))
-#ifdef __OPENCL_H
-struct _penc_cl						//PenC_CL : OpenCL Program Resource Structure
+#if(Fold_(Library Casing))
+//PenClip : Library Case
+extern const struct _pencase
 {
-	cl_device_id const Device;		//PenC_CL : Device ID
-	cl_context const Context;		//PenC_CL : Context
-	cl_command_queue const Queue;	//PenC_CL : Command Queue
-	cl_program const Program;		//PenC_CL : Internal Program
-	cl_kernel _PL_ SetKernel;		//PenC_CL : Internal Kernel Set
-	ADDRESS _PL_ SizeWorker;		//PenC_CL : Maximum Number of Work Items that can be specified in each Dimension of the Work Group 
-	ADDRESS Workers;				//PenC_CL : Maximum Number of Work Items in a Work Group
-	const cl_ulong SizeLocal;		//PenC_CL : Size of Local Memory Arena in Bytes
-	const cl_uint Cores;			//PenC_CL : The Number of Parallel Compute Cores
-	const cl_uint Dimensions;		//PenC_CL : Maximum Dimensions of Global and Local Work Items
-	const cl_uint Kernels;			//PenC_CL : The Number of Kernels
-};
-MemC_Type_Declare_(struct,penc_cl,PENC_CL);	//PenC_CL : OpenCL Program Resource Structure
+	//PenClip : Library Version
+	BYTE_08 _PL_ Version;
 
-union _penc_eu		//PenC_CL : OpenCL Error Union
-{
-	enum _penc_ee	//PenC_CL : OpenCL Error Enumeration
+	//PenClip : Stream I/O Options
+	const struct
 	{
-		CLSuccess=CL_SUCCESS,
-		CLDeviceNotFound=CL_DEVICE_NOT_FOUND,
-		CLDeviceNotAvailable=CL_DEVICE_NOT_AVAILABLE,
-		CLCompilerNotAvailable=CL_COMPILER_NOT_AVAILABLE,
-		CLMemObjectAllocationFailure=CL_MEM_OBJECT_ALLOCATION_FAILURE,
-		CLOutOfResources=CL_OUT_OF_RESOURCES,
-		CLOutOfHostMemory=CL_OUT_OF_HOST_MEMORY,
-		CLProfilingInfoNotAvailable=CL_PROFILING_INFO_NOT_AVAILABLE,
-		CLMemCopyOverlap=CL_MEM_COPY_OVERLAP,
-		CLImageFormatMismatch=CL_IMAGE_FORMAT_MISMATCH,
-		CLImageFormatNotSupported=CL_IMAGE_FORMAT_NOT_SUPPORTED,
-		CLBuildProgramFailure=CL_BUILD_PROGRAM_FAILURE,
-		CLMapFailure=CL_MAP_FAILURE,
-		CLMisalignedSubBufferOffset=CL_MISALIGNED_SUB_BUFFER_OFFSET,
-		CLExecStatusErrorForEventsInWaitList=CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST,
-		CLCompileProgramFailure=CL_COMPILE_PROGRAM_FAILURE,
-		CLLinkerNotAvailable=CL_LINKER_NOT_AVAILABLE,
-		CLLinkProgramFailure=CL_LINK_PROGRAM_FAILURE,
-		CLDevicePartitionFailed=CL_DEVICE_PARTITION_FAILED,
-		CLKernelArgInfoNotAvailable=CL_KERNEL_ARG_INFO_NOT_AVAILABLE,
-		CLInvalidValue=CL_INVALID_VALUE,
-		CLInvalidDeviceType=CL_INVALID_DEVICE_TYPE,
-		CLInvalidPlatform=CL_INVALID_PLATFORM,
-		CLInvalidDevice=CL_INVALID_DEVICE,
-		CLInvalidContext=CL_INVALID_CONTEXT,
-		CLInvalidQueueProperties=CL_INVALID_QUEUE_PROPERTIES,
-		CLInvalidCommandQueue=CL_INVALID_COMMAND_QUEUE,
-		CLInvalidHostPtr=CL_INVALID_HOST_PTR,
-		CLInvalidMemObject=CL_INVALID_MEM_OBJECT,
-		CLInvalidImageFormatDescriptor=CL_INVALID_IMAGE_FORMAT_DESCRIPTOR,
-		CLInvalidImageSize=CL_INVALID_IMAGE_SIZE,
-		CLInvalidSampler=CL_INVALID_SAMPLER,
-		CLInvalidBinary=CL_INVALID_BINARY,
-		CLInvalidBuildOptions=CL_INVALID_BUILD_OPTIONS,
-		CLInvalidProgram=CL_INVALID_PROGRAM,
-		CLInvalidProgramExecutable=CL_INVALID_PROGRAM_EXECUTABLE,
-		CLInvalidKernelName=CL_INVALID_KERNEL_NAME,
-		CLInvalidKernelDefinition=CL_INVALID_KERNEL_DEFINITION,
-		CLInvalidKernel=CL_INVALID_KERNEL,
-		CLInvalidArgIndex=CL_INVALID_ARG_INDEX,
-		CLInvalidArgValue=CL_INVALID_ARG_VALUE,
-		CLInvalidArgSize=CL_INVALID_ARG_SIZE,
-		CLInvalidKernelArgs=CL_INVALID_KERNEL_ARGS,
-		CLInvalidWorkDimension=CL_INVALID_WORK_DIMENSION,
-		CLInvalidWorkGroupSize=CL_INVALID_WORK_GROUP_SIZE,
-		CLInvalidWorkItemSize=CL_INVALID_WORK_ITEM_SIZE,
-		CLInvalidGlobalOffset=CL_INVALID_GLOBAL_OFFSET,
-		CLInvalidEventWaitList=CL_INVALID_EVENT_WAIT_LIST,
-		CLInvalidEvent=CL_INVALID_EVENT,
-		CLInvalidOperation=CL_INVALID_OPERATION,
-		CLInvalidGlObject=CL_INVALID_GL_OBJECT,
-		CLInvalidBufferSize=CL_INVALID_BUFFER_SIZE,
-		CLInvalidMipLevel=CL_INVALID_MIP_LEVEL,
-		CLInvalidGlobalWorkSize=CL_INVALID_GLOBAL_WORK_SIZE,
-		CLInvalidProperty=CL_INVALID_PROPERTY,
-		CLInvalidImageDescriptor=CL_INVALID_IMAGE_DESCRIPTOR,
-		CLInvalidCompilerOptions=CL_INVALID_COMPILER_OPTIONS,
-		CLInvalidLinkerOptions=CL_INVALID_LINKER_OPTIONS,
-		CLInvalidDevicePartitionCount=CL_INVALID_DEVICE_PARTITION_COUNT,
-		CLInvalidPipeSize=CL_INVALID_PIPE_SIZE,
-		CLInvalidDeviceQueue=CL_INVALID_DEVICE_QUEUE
+		//PenClip : Stream Read Options
+		const struct
+		{
+			//PenClip : Stream Read Binary Options
+			const struct
+			{
+				TEXT_08 _PL_ T08;	//PenClip : "rb"
+				TEXT_16 _PL_ T16;	//PenClip : L"rb"
+			}
+			Binary;
+
+			//PenClip : Stream Read Text Options
+			const struct
+			{
+				TEXT_08 _PL_ T08;	//PenClip : "rt"
+				TEXT_16 _PL_ T16;	//PenClip : L"rt"
+			}
+			Text;
+		}
+		Read;
+
+		//PenClip : Stream Write Options
+		const struct
+		{
+			//PenClip : Stream Write Binary Options
+			const struct
+			{
+				TEXT_08 _PL_ T08;	//PenClip : "wb"
+				TEXT_16 _PL_ T16;	//PenClip : L"wb"
+			}
+			Binary;
+
+			//PenClip : Stream Write Text Options
+			const struct
+			{
+				TEXT_08 _PL_ T08;	//PenClip : "wt"
+				TEXT_16 _PL_ T16;	//PenClip : L"wt"
+			}
+			Text;
+		}
+		Write;
 	}
-	E;				//PenC_CL : Access as Enumeration
-	cl_int I;		//PenC_CL : Access as Integer
-};
-MemC_Type_Declare_(union,penc_eu,PENC_EU);	//PenC_CL : OpenCL Error Union
-static_assert((sizeof(enum _penc_ee)==sizeof(cl_int)),"sizeof(enum) != sizeof(integer)");
+	Option;
 
-//PenC_CL : Select Platform and Device with Console Interface
-penc_eu PenC_CL_Identify_(cl_uint _PL_ PlatformSelect,cl_uint _PL_ DeviceSelect,FILE _PL_ InputMessageStream,FILE _PL_ OutputMessageStream);
-//PenC_CL : Program Build from Source Files to an Object File
-penc_eu PenC_CL_Binary_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ SourceFileNameSet,NAME_08 _PL_ BuildOption,ADDRESS SourceFilesNumber,FILE _PL_ MsgStream);
+	//PenClip : Character Setting Functions
+	const struct
+	{
+		//PenClip : 8-bit Character Setting
+		general(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 Value,ADDRESS Count);
+		//PenClip : 16-bit Character Setting
+		general(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count);
+#define PenC_Setter_(Buffer,Value,Count) __dl{switch(sizeof(Value)){case 1:PenC.Setter.T08_((text_08*)(Buffer),(text_08)(Value),Count);break;case 2:PenC.Setter.T16_((text_16*)(Buffer),(text_16)(Value),Count);break;default:{static_assert(sizeof(*(Buffer))==sizeof(Value),"Type Size Mismatch");static_assert((sizeof(Value)==1)|(sizeof(Value)==2),"Type Size Unsupported");}}}lb__
+	}
+	Setter;
 
-//PenC_CL : Program Resource Memory Allocation - Deallocate with "PenC_Delete_CL_"
-penc_cl *PenC_CL_Create_(cl_command_queue const Queue,NAME_08 _PL_ ObjectFileName,NAME_08 _PL_ _PL_ IndicatorSet,NAME_08 _PL_ BuildOption,const cl_uint KernelsNumber,penc_eu _PL_ Error,FILE _PL_ MsgStream);
-//PenC_CL : Program Resource Memory Deallocation
-general PenC_CL_Delete_(penc_cl *_PL_ PenCL);
-#endif
+	//PenClip : Character Finding Functions
+	const struct
+	{
+		//PenClip : 8-bit Character Finding
+		text_08*(_PL_ T08_)(TEXT_08 _PL_ Buffer,TEXT_08 Value,ADDRESS Count);
+		//PenClip : 16-bit Character Finding
+		text_16*(_PL_ T16_)(TEXT_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count);
+	}
+	Finder;
+
+	//PenClip : String Handling Functions
+	const struct
+	{
+		//PenClip : String Conversion Functions
+		const struct
+		{
+			//PenClip : Narrow Multi-byte to Wide String Conversion
+			errno_t(_PL_ T08_T16_)(TEXT_08 _PL_ SourceString,text_16 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
+			//PenClip : Wide to Narrow Multi-byte String Conversion
+			errno_t(_PL_ T16_T08_)(TEXT_16 _PL_ SourceString,text_08 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
+		}
+		Caster;
+
+		//PenClip : String Length Functions
+		const struct
+		{
+			//PenClip : 8-bit String Length
+			address(_PL_ T08_)(TEXT_08 _PL_ String,ADDRESS Capacity);
+			//PenClip : 16-bit String Length
+			address(_PL_ T16_)(TEXT_16 _PL_ String,ADDRESS Capacity);
+		}
+		Length;
+
+		//PenClip : Sub-String Finding Functions
+		const struct
+		{
+			//PenClip : 8-bit Sub-String Finding
+			text_08*(_PL_ T08_)(TEXT_08 _PL_ String,TEXT_08 _PL_ SubString);
+			//PenClip : 16-bit Sub-String Finding
+			text_16*(_PL_ T16_)(TEXT_16 _PL_ String,TEXT_16 _PL_ SubString);
+		}
+		Finder;
+
+		//PenClip : String Concatenation Functions
+		const struct
+		{
+			//PenClip : 8-bit String Concatenation
+			errno_t(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity);
+			//PenClip : 16-bit String Concatenation
+			errno_t(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity);
+		}
+		Concat;
+
+		//PenClip : String Copy Functions
+		const struct
+		{
+			//PenClip : 8-bit String Copy
+			errno_t(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity);
+			//PenClip : 16-bit String Copy
+			errno_t(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity);
+		}
+		Copier;
+
+		//PenClip : String Comparison Functions
+		const struct
+		{
+			//PenClip : 8-bit String Comparison
+			integer(_PL_ T08_)(TEXT_08 _PL_ StringA,TEXT_08 _PL_ StringB);
+			//PenClip : 16-bit String Comparison
+			integer(_PL_ T16_)(TEXT_16 _PL_ StringA,TEXT_16 _PL_ StringB);
+		}
+		Compar;
+	}
+	String;
+	
+	//PenClip : Pipe Handling Functions
+	const struct
+	{
+		//PenClip : Pipe Open Functions
+		const struct
+		{
+			//PenClip : Pipe Open with 8-bit String - Close with "PenC.Pipe.Closer_"
+			FILE*(_PL_ T08_)(TEXT_08 _PL_ Command,TEXT_08 _PL_ Mode);
+			//PenClip : Pipe Open with 16-bit String - Close with "PenC.Pipe.Closer_"
+			FILE*(_PL_ T16_)(TEXT_16 _PL_ Command,TEXT_16 _PL_ Mode);
+#define PenC_Pipe_Opener_(Command,Mode) ((sizeof(*(Command))==sizeof(*(Mode)))?((sizeof(*(Command))==1)?(PenC.Pipe.Opener.T08_((text_08*)(Command),(text_08*)(Mode))):((sizeof(*(Command))==2)?(PenC.Pipe.Opener.T16_((text_16*)(Command),(text_16*)(Mode))):(NULL))):(NULL))
+		}
+		Opener;
+		//PenClip : Pipe Close
+		integer(_PL_ Closer_)(FILE *_PL_ Pipe);
+		//PenClip : Pipe Pointer Usage in Local Scope - Handle with "PenC_Catch_"
+#define PenC_Pipe_Using_(Stream,Command,Mode,Return) for(FILE*(_Temp##Stream)[sizeof(*(Command))==sizeof(*(Mode))]={FULL},_PL_(Stream)=PenC_Pipe_Opener_(Command,Mode);(_Temp##Stream)[0];(_Temp##Stream)[0]=NULL,(Return)=PenC.Pipe.Closer_((FILE**)&(Stream)))if(!(Stream)){(Return)=EOF;break;}else
+		//PenClip : Pipe Execute Functions
+		const struct
+		{
+			//PenClip : Execute an 8-bit string command.
+			integer(_PL_ T08_)(TEXT_08 _PL_ Command,FILE _PL_ MsgStream);
+			//PenClip : Execute a 16-bit string command.
+			integer(_PL_ T16_)(TEXT_16 _PL_ Command,FILE _PL_ MsgStream);
+		}
+		Action;
+	}
+	Pipe;
+
+	//PenClip : File Handling Functions
+	const struct
+	{
+		//PenClip : File Open Functions
+		const struct
+		{
+			//PenClip : File Open with 8-bit String - Close with "PenC.File.Closer_"
+			FILE*(_PL_ T08_)(TEXT_08 _PL_ FileName,TEXT_08 _PL_ OpeningMode);
+			//PenClip : File Open with 16-bit String - Close with "PenC.File.Closer_"
+			FILE*(_PL_ T16_)(TEXT_16 _PL_ FileName,TEXT_16 _PL_ OpeningMode);
+#define PenC_File_Opener_(Name,Mode) ((sizeof(*(Name))==sizeof(*(Mode)))?((sizeof(*(Name))==1)?(PenC.File.Opener.T08_((text_08*)(Name),(text_08*)(Mode))):((sizeof(*(Name))==2)?(PenC.File.Opener.T16_((text_16*)(Name),(text_16*)(Mode))):(NULL))):(NULL))
+		}
+		Opener;
+		//PenClip : File Close
+		//£ªReturn value is 0 for success, or an error code for failure.
+		integer(_PL_ Closer_)(FILE *_PL_ FilePointer);
+		//PenClip : File Pointer Usage in Local Scope - Handle with "PenC_Catch_"
+#define PenC_File_Using_(Stream,Name,Mode,Error) for(FILE*(_##Stream)[sizeof(*(Name))==sizeof(*(Mode))]={FULL},_PL_(Stream)=PenC_File_Opener_(Name,Mode);(_##Stream)[0];(_##Stream)[0]=NULL,(Error)=PenC.File.Closer_((FILE**)&(Stream)))if(!(Stream)){(Error)=EOF;break;}else
+		//PenClip : File Write
+		address(_PL_ Writer_)(FILE _PL_ FilePointer,GENERAL _PL_ Buffer,ADDRESS Elements,ADDRESS TypeSize);
+#define PenC_File_Writer_(FilePointer,Buffer,Elements) PenC.File.Writer_(FilePointer,Buffer,Elements,sizeof(*(Buffer)))
+		//PenClip : File Read
+		address(_PL_ Reader_)(FILE _PL_ FilePointer,general _PL_ Buffer,ADDRESS Elements,ADDRESS TypeSize);
+#define PenC_File_Reader_(FilePointer,Buffer,Elements) PenC.File.Reader_(FilePointer,Buffer,Elements,sizeof(*(Buffer)))
+		//PenClip : Step Forward from Current Location
+		integer(_PL_ Jumper_)(FILE _PL_ FilePointer,const long Elements,ADDRESS TypeSize);
+#define PenC_File_Jumper_(FilePointer,Elements,type) PenC.File.Jumper_(FilePointer,Elements,sizeof(type))
+		//PenClip : Step Backward from Current Location
+		integer(_PL_ Backer_)(FILE _PL_ FilePointer,const long Elements,ADDRESS TypeSize);
+#define PenC_File_Backer_(FilePointer,Elements,type) PenC.File.Backer_(FilePointer,Elements,sizeof(type))
+		//PenClip : Pointer Restart
+		general(_PL_ Rewind_)(FILE _PL_ FilePointer);
+		//PenClip : Current Location from Start
+		long(_PL_ Teller_)(FILE _PL_ FilePointer);
+		//PenClip : Stream Flush
+		integer(_PL_ Washer_)(FILE _PL_ FilePointer);
+		//PenClip : End of File
+		integer(_PL_ Finish_)(FILE _PL_ FilePointer);
+		//PenClip : File Remove Functions
+		const struct
+		{
+			//PenClip : File Remove with 8-bit String
+			integer(_PL_ T08_)(TEXT_08 _PL_ FileName);
+			//PenClip : File Remove with 16-bit String
+			integer(_PL_ T16_)(TEXT_16 _PL_ FileName);
+#define PenC_File_Remove_(Name) ((sizeof(*(Name))==1)?(PenC.File.Remove.T08_((text_08*)(Name))):((sizeof(*(Name))==2)?(PenC.File.Remove.T16_((text_16*)(Name))):(0)))
+		}
+		Remove;
+		//PenClip : File Rename Functions
+		const struct
+		{
+			//PenClip : File Rename with 8-bit String
+			integer(_PL_ T08_)(TEXT_08 _PL_ OldName,TEXT_08 _PL_ NewName);
+			//PenClip : File Rename with 16-bit String
+			integer(_PL_ T16_)(TEXT_16 _PL_ OldName,TEXT_16 _PL_ NewName);
+#define PenC_File_Rename_(Old,New) ((sizeof(*(Old))==sizeof(*(New)))?((sizeof(*(Old))==1)?(PenC.File.Rename.T08_((text_08*)(Old),(text_08*)(New))):((sizeof(*(Old))==2)?(PenC.File.Rename.T16_((text_16*)(Old),(text_16*)(New))):(0))):(0))
+		}
+		Rename;
+		//PenClip : File's Byte Size Functions
+		const struct
+		{
+			//PenClip : File's Byte Size with 8-bit String
+			address(_PL_ T08_)(TEXT_08 _PL_ FileName);
+			//PenClip : File's Byte Size with 16-bit String
+			address(_PL_ T16_)(TEXT_16 _PL_ FileName);
+#define PenC_File_Length_(Name) ((sizeof(*(Name))==1)?(PenC.File.Length.T08_((text_08*)(Name))):((sizeof(*(Name))==2)?(PenC.File.Length.T16_((text_16*)(Name))):(0)))
+		}
+		Length;
+	}
+	File;
+
+	//PenClip : Stream Functions
+	const struct
+	{
+		//PenClip : 8-bit Stream Print (Mode 0) or Scan (Mode 1)
+#define PenC_Stream_Format_T08_(Mode,Stream,...) ((Mode)?((Stream)?(fscanf_s(Stream,__VA_ARGS__)):(scanf_s(__VA_ARGS__))):((Stream)?(fprintf_s(Stream,__VA_ARGS__)):(printf_s(__VA_ARGS__))))
+		//PenClip : 16-bit Stream Print (Mode 0) or Scan (Mode 1)
+#define PenC_Stream_Format_T16_(Mode,Stream,...) ((Mode)?((Stream)?(fwscanf_s(Stream,__VA_ARGS__)):(wscanf_s(__VA_ARGS__))):((Stream)?(fwprintf_s(Stream,__VA_ARGS__)):(wprintf_s(__VA_ARGS__))))
+
+		//PenClip : Stream-Buffer I/O Functions
+		const struct
+		{
+			//PenClip : 8-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
+			address(_PL_ T08_)(INTEGER Mode,FILE _PL_ Stream,text_08 _PL_ Buffer,ADDRESS Capacity);
+			//PenClip : 16-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
+			address(_PL_ T16_)(INTEGER Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity);
+		}
+		Buffer;
+
+		//PenClip : Stream-String Container I/O Functions
+		const struct
+		{
+			//PenClip : 8-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
+			address(_PL_ T08_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+			//PenClip : 16-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
+			address(_PL_ T16_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+		}
+		SC;
+	}
+	Stream;
+
+	//PenClip : Buffer Functions
+	const struct
+	{
+		//PenClip : 8-bit Format String Length Expectation
+#define PenC_Format_Length_T08_(...) snprintf(NULL,0,__VA_ARGS__)
+		//PenClip : 16-bit Format String Length Expectation
+#define PenC_Format_Length_T16_(...) swprintf(NULL,0,__VA_ARGS__)
+		//PenClip : 8-bit Buffer Print (Mode 0) or Scan (Mode 1)
+#define PenC_Buffer_Format_T08_(Mode,Buffer,Capacity,...) ((Mode)?(sscanf_s(Buffer,__VA_ARGS__)):(sprintf_s(Buffer,Capacity,__VA_ARGS__)))
+		//PenClip : 16-bit Buffer Print (Mode 0) or Scan (Mode 1)
+#define PenC_Buffer_Format_T16_(Mode,Buffer,Capacity,...) ((Mode)?(swscanf_s(Buffer,__VA_ARGS__)):(swprintf_s(Buffer,Capacity,__VA_ARGS__)))
+
+		//PenClip : Buffer-Stream I/O Functions
+		const struct
+		{
+			//PenClip : 8-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
+			address(_PL_ T08_)(INTEGER Mode,FILE _PL_ Stream,text_08 _PL_ Buffer,ADDRESS Capacity);
+			//PenClip : 16-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
+			address(_PL_ T16_)(INTEGER Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity);
+		}
+		Stream;
+
+		//PenClip : 1D Array Data Read Functions
+		const struct
+		{
+			//PenClip : 1D Array Data Read with 8-bit String
+			//£ªReturn value is 1 for success, or 0 for failure.
+			integer(_PL_ T08_)(general _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+			//PenClip : 1D Array Data Read with 16-bit String
+			//£ªReturn value is 1 for success, or 0 for failure.
+			integer(_PL_ T16_)(general _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+#define PenC_Buffer_Reader_(Line,FileName,Elements) ((sizeof(*(FileName))==1)?(PenC.Buffer.Reader.T08_(Line,(text_08*)(FileName),sizeof(*(Line)),Elements)):((sizeof(*(FileName))==2)?(PenC.Buffer.Reader.T16_(Line,(text_16*)(FileName),sizeof(*(Line)),Elements)):(0)))
+		}
+		Reader;
+
+		//PenClip : 1D Array Data Write Functions
+		const struct
+		{
+			//PenClip : 1D Array Data Write with 8-bit String
+			//£ªReturn value is 1 for success, or 0 for failure.
+			integer(_PL_ T08_)(GENERAL _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+			//PenClip : 1D Array Data Write with 16-bit String
+			//£ªReturn value is 1 for success, or 0 for failure.
+			integer(_PL_ T16_)(GENERAL _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+#define PenC_Buffer_Writer_(Line,FileName,Elements) ((sizeof(*(FileName))==1)?(PenC.Buffer.Writer.T08_(Line,(text_08*)(FileName),sizeof(*(Line)),Elements)):((sizeof(*(FileName))==2)?(PenC.Buffer.Writer.T16_(Line,(text_16*)(FileName),sizeof(*(Line)),Elements)):(0)))
+		}
+		Writer;
+	}
+	Buffer;
+
+	//PenClip : String Containter Functions
+	const struct
+	{
+		//PenClip : String Container Static Definition
+#define PenC_SC_Define_(IString) {.Capacity=sizeof(IString),.String.X=(IString)}
+
+		//PenClip : String Container Local Variable Assignment without Heap Allocation
+		penc_sc(_PL_ Assign_)(GENERAL _PL_ String,ADDRESS Capacity);
+#define PenC_SC_Assign_(Buffer) PenC.SC.Assign_(Buffer,sizeof(Buffer))
+
+		//PenClip : String Container Memory Allocation - Deallocate with "PenC.SC.Delete_"
+		penc_sc*(_PL_ Create_)(ADDRESS CapacityBytes);
+		//PenClip : String Container Memory Deallocation
+		general(_PL_ Delete_)(penc_sc *_PL_ StringContainer);
+
+		//PenClip : String Container Data Reset
+		general(_PL_ Init_)(PENC_SC _PL_);
+
+		//PenClip : Null End Functions
+		const struct
+		{
+			//PenClip : String Container 8-bit Null End
+			general(_PL_ T08_)(PENC_SC _PL_);
+			//PenClip : String Container 16-bit Null End
+			general(_PL_ T16_)(PENC_SC _PL_);
+			//PenClip : String Container 32-bit Null End
+			general(_PL_ T32_)(PENC_SC _PL_);
+		}
+		Shut;
+
+		//PenClip : Conversion Functions
+		const struct
+		{
+			//PenClip : String Container multi-byte to 2-byte Conversion
+			errno_t(_PL_ T08_T16_)(PENC_SC _PL_ Source,PENC_SC _PL_ Target);
+			//PenClip : String Container 2-byte to multi-byte Conversion
+			errno_t(_PL_ T16_T08_)(PENC_SC _PL_ Source,PENC_SC _PL_ Target);
+		}
+		Caster;
+
+		//PenClip : Length Functions
+		const struct
+		{
+			//PenClip : String Container 8-bit Length
+			address(_PL_ T08_)(PENC_SC _PL_);
+			//PenClip : String Container 16-bit Length
+			address(_PL_ T16_)(PENC_SC _PL_);
+		}
+		Length;
+
+		//PenClip : Copy Functions
+		const struct
+		{
+			//PenClip : String Container 8-bit Copy
+			errno_t(_PL_ T08_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+			//PenClip : String Container 16-bit Copy
+			errno_t(_PL_ T16_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+		}
+		Copier;
+
+		//PenClip : Concatenation Functions
+		const struct
+		{
+			//PenClip : String Container 8-bit Concatenation
+			errno_t(_PL_ T08_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+			//PenClip : String Container 16-bit Concatenation
+			errno_t(_PL_ T16_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+		}
+		Concat;
+
+		//PenClip : Comparison Functions
+		const struct
+		{
+			//PenClip : String Container 8-bit Comparison
+			integer(_PL_ T08_)(PENC_SC _PL_,PENC_SC _PL_);
+			//PenClip : String Container 16-bit Comparison
+			integer(_PL_ T16_)(PENC_SC _PL_,PENC_SC _PL_);
+		}
+		Compar;
+		
+		//PenClip : 8-bit String Container Print (Mode 0) or Scan (Mode 1)
+#define PenC_SC_Format_T08_(Mode,SC,...) PenC_Buffer_Format_T08_(Mode,(SC)->String.T08,(SC)->Capacity,__VA_ARGS__)
+		//PenClip : 16-bit String Container Print (Mode 0) or Scan (Mode 1)
+#define PenC_SC_Format_T16_(Mode,SC,...) PenC_Buffer_Format_T16_(Mode,(SC)->String.T16,(SC)->Capacity>>1,__VA_ARGS__)
+
+		//PenClip : String Container-Stream I/O Functions
+		const struct
+		{
+			//PenClip : 8-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
+			address(_PL_ T08_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+			//PenClip : 16-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
+			address(_PL_ T16_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+		}
+		Stream;
+	}
+	SC;
+
+	//PenClip : String Container Lender Functions
+	const struct
+	{
+		//PenClip : SC Lender Memory Allocation - Deallocate with "PenC.SL.Delete_"
+		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
+		//£ªEach SC node's head occupies 1 chunk.
+		penc_sl*(_PL_ Create_)(ADDRESS ChunksNumber);
+		//PenClip : SC Lender Memory Deallocation
+		general(_PL_ Delete_)(penc_sl *_PL_ SCLender);
+
+		//PenClip : SC Lender Memory Occupation
+		address(_PL_ Size_)(PENC_SL _PL_ SCLender);
+		//PenClip : Kill all SCs in the SC Lender
+		integer(_PL_ Reset_)(penc_sl _PL_ SCLender);
+
+		//PenClip : Borrow an SC from the SC Lender - Return with "PenC.SL.Return_"
+		penc_sc*(_PL_ Borrow_)(PENC_SL _PL_ SCLender,ADDRESS DemandBytes);
+		//PenClip : Borrow Functions
+		const struct
+		{
+			//PenClip : Borrow an SC from the SC Lender with the Specified 8-bit Format - Return with "PenC.SL.Return_"
+#define PenC_SL_Borrow_Format_T08_(Lender,Container,...) __dl{PenC.SL.Return_(Lender,&(Container));(Container)=PenC.SL.Borrow_(Lender,PenC_Format_Length_T08_(__VA_ARGS__)+1);if(Container){PenC_SC_Format_T08_(0,Container,__VA_ARGS__);}}lb__
+			//PenClip : Borrow an SC from the SC Lender with the Specified 16-bit Format - Return with "PenC.SL.Return_"
+#define PenC_SL_Borrow_Format_T16_(Lender,Container,...) __dl{PenC.SL.Return_(Lender,&(Container));(Container)=PenC.SL.Borrow_(Lender,(PenC_Format_Length_T16_(__VA_ARGS__)+1)<<1);if(Container){PenC_SC_Format_T16_(0,Container,__VA_ARGS__);}}lb__
+			//PenClip : Borrow an SC from the SC Lender Copying another SC
+			const struct
+			{
+				//PenClip : Borrow an SC from the SC Lender Copying another SC with 8-bit String - Return with "PenC.SL.Return_"
+				penc_sc*(_PL_ T08_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCSource);
+				//PenClip : Borrow an SC from the SC Lender Copying another SC with 8-bit String - Return with "PenC.SL.Return_"
+				penc_sc*(_PL_ T16_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCSource);
+			}
+			Copier;
+			//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs
+			const struct
+			{
+				//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs - Return with "PenC.SL.Return_"
+				penc_sc*(_PL_ T08_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCFormer,PENC_SC _PL_ SCLatter);
+				//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs - Return with "PenC.SL.Return_"
+				penc_sc*(_PL_ T16_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCFormer,PENC_SC _PL_ SCLatter);
+			}
+			Concat;
+		}
+		Borrow;
+		//PenClip : Return the SC to the SC Lender
+		integer(_PL_ Return_)(PENC_SL _PL_ SCLender,PENC_SC *_PL_ StringContainer);
+	}
+	SL;
+}
+PenC;
 #endif
 #endif
