@@ -16,7 +16,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="2019.04.26";
+static BYTE_08 IdiomVersion[16]="2019.05.02";
 static OCLC_MP ConstantZero={.N=0,.Z=0,.Y=0,.X=0};
 #endif
 
@@ -364,7 +364,7 @@ _OCLC_ general OCLC_PM_Build_Log_(OCLC_PM _PL_ PM,FILE _PL_ Stream,cl_int _PL_ E
 		*Error=clGetProgramInfo(Program,CL_PROGRAM_NUM_DEVICES,sizeof(cl_uint),&DeviceNums,NULL);
 		if(*Error==CL_SUCCESS)
 		{
-			MemC_Temp_ND_(cl_device_id,DeviceTemp,ESCAPE_DEVICE,1,DeviceNums)
+			MemC_Temp_ND_(cl_device_id,DeviceTemp,*Error=CL_OUT_OF_HOST_MEMORY;,1,DeviceNums)
 			{
 				cl_device_id _PL_ DeviceList=DeviceTemp;
 
@@ -383,7 +383,7 @@ _OCLC_ general OCLC_PM_Build_Log_(OCLC_PM _PL_ PM,FILE _PL_ Stream,cl_int _PL_ E
 
 						if(*Error==CL_SUCCESS)
 						{
-							MemC_Temp_Byte_(NameTemp,Size,ESCAPE_PROGRAM)
+							MemC_Temp_Byte_(NameTemp,Size,*Error=CL_OUT_OF_HOST_MEMORY;)
 							{
 								byte_08 _PL_ Name=NameTemp;
 
@@ -403,7 +403,7 @@ _OCLC_ general OCLC_PM_Build_Log_(OCLC_PM _PL_ PM,FILE _PL_ Stream,cl_int _PL_ E
 
 						if(*Error==CL_SUCCESS)
 						{
-							MemC_Temp_Byte_(LogTemp,Size,ESCAPE_PROGRAM)
+							MemC_Temp_Byte_(LogTemp,Size,*Error=CL_OUT_OF_HOST_MEMORY;)
 							{
 								byte_08 _PL_ Log=LogTemp;
 
@@ -416,17 +416,9 @@ _OCLC_ general OCLC_PM_Build_Log_(OCLC_PM _PL_ PM,FILE _PL_ Stream,cl_int _PL_ E
 							}
 						}
 						else break;
-
-						continue;
-ESCAPE_PROGRAM:
-						*Error=CL_OUT_OF_HOST_MEMORY;
-						break;
 					}
 				}
 			}
-			return;
-ESCAPE_DEVICE:
-			*Error=CL_OUT_OF_HOST_MEMORY;
 		}
 	}
 	else
@@ -643,7 +635,7 @@ _OCLC_ address OCLC_MP_Total_(OCLC_MP _PL_ Pin)
 #endif
 
 #if(Fold_(Part:Memory Holder))
-_OCLC_ oclc_mh OCLC_MH_Assign_(general _PL_ Memory,OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape,MEMC_DT _PL_ Type)
+_OCLC_ oclc_mh _OCLC_MH_Assign_(general _PL_ Memory,OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape,MEMC_DT _PL_ Type)
 {
 	oclc_mh Holder;
 
@@ -1079,6 +1071,6 @@ const struct _oclcase OCLC=
 	.MP.Offset.D3_=OCLC_MP_Offset_3D_,
 	.MP.Offset.D4_=OCLC_MP_Offset_4D_,
 
-	.MH.Assign_=OCLC_MH_Assign_
+	.MH.Assign_=_OCLC_MH_Assign_
 };
 #endif

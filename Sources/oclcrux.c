@@ -16,17 +16,16 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Build_,TXX)(oclc_pm _PL_ PM,const cl_context C
 					*Error=clGetContextInfo(Context,CL_CONTEXT_NUM_DEVICES,sizeof(cl_uint),&DeviceNums,NULL);
 					if(*Error==CL_SUCCESS)
 					{
-						cl_device_id *DeviceList=MemC_Alloc_ND_(cl_device_id,1,DeviceNums);
-
-						if(DeviceList)
+						MemC_Temp_ND_(cl_device_id,DeviceTemp,*Error=CL_OUT_OF_HOST_MEMORY;,1,DeviceNums)
 						{
+							cl_device_id _PL_ DeviceList=DeviceTemp;
+
 							*Error=clGetContextInfo(Context,CL_CONTEXT_DEVICES,MemC_Size_(cl_device_id,DeviceNums),DeviceList,NULL);
 							if(*Error==CL_SUCCESS)
 							{
-								address *SrcLngs=MemC_Alloc_ND_(address,1,SrcNums<<1);
-
-								if(SrcLngs)
+								MemC_Temp_ND_(address,SrcTemp,*Error=CL_OUT_OF_HOST_MEMORY;,1,SrcNums<<1)
 								{
+									address _PL_ SrcLngs=SrcTemp;
 									address SrcSums;
 									address Idx;
 
@@ -35,17 +34,15 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Build_,TXX)(oclc_pm _PL_ PM,const cl_context C
 										SrcLngs[Idx]=PenC_File_Length_(SrcPath[Idx]);
 										if(SrcLngs[Idx])
 											SrcSums+=SrcLngs[Idx];
-										else
-											break;
+										else break;
 									}
 									if(Idx<SrcNums)
 										*Error=CL_INVALID_HOST_PTR;
 									else
 									{
-										byte_08 *Source=MemC.Alloc.Byte_(SrcSums);
-
-										if(Source)
+										MemC_Temp_Byte_(Space,SrcSums,*Error=CL_OUT_OF_HOST_MEMORY;)
 										{
+											byte_08 _PL_ Source=Space;
 											byte_08 **SrcList=(byte_08**)(SrcLngs+SrcNums);
 
 											MemC_Assign_1D_N_(SrcList,Source,SrcLngs,SrcNums);
@@ -75,29 +72,17 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Build_,TXX)(oclc_pm _PL_ PM,const cl_context C
 															case CL_INVALID_KERNEL_NAME:
 																*Error=CL_SUCCESS;
 																break;
-															default:
-																goto ESCAPE;
+															default:goto ESCAPE;
 															}
 														}
 												}
 											}
+ESCAPE:;
 										}
-										else
-											*Error=CL_OUT_OF_HOST_MEMORY;
-ESCAPE:
-										MemC_Deloc_(Source);
 									}
 								}
-								else
-									*Error=CL_OUT_OF_HOST_MEMORY;
-
-								MemC_Deloc_(SrcLngs);
 							}
 						}
-						else
-							*Error=CL_OUT_OF_HOST_MEMORY;
-
-						MemC_Deloc_(DeviceList);
 					}
 				}
 				else
@@ -118,7 +103,7 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Load_,TXX)(oclc_pm _PL_ PM,const cl_context Co
 				*Error=clGetContextInfo(Context,CL_CONTEXT_NUM_DEVICES,sizeof(cl_uint),&Devices,NULL);
 				if(*Error==CL_SUCCESS)
 				{
-					MemC_Temp_ND_(address,Space,ESCAPE,1,Devices*3)
+					MemC_Temp_ND_(address,Space,*Error=CL_OUT_OF_HOST_MEMORY;,1,Devices*3)
 					{
 						address _PL_ SizeList=Space;
 						address SizeSums=0;
@@ -141,7 +126,7 @@ INVALID_VALUE:
 						{
 							byte_08 *_PL_ BinaryList=(byte_08**)(SizeList+Devices);
 
-							MemC_Temp_Byte_(Temp,SizeSums,FAILED)
+							MemC_Temp_Byte_(Temp,SizeSums,*Error=CL_OUT_OF_HOST_MEMORY;)
 							{
 								byte_08 *Binary=Temp;
 
@@ -190,14 +175,8 @@ INVALID_VALUE:
 								}
 WRONG:;
 							}
-							continue;
-FAILED:
-							*Error=CL_OUT_OF_HOST_MEMORY;
 						}
 					}
-					return;
-ESCAPE:
-					*Error=CL_OUT_OF_HOST_MEMORY;
 				}
 			}
 		else
@@ -214,7 +193,7 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ N
 			*Error=clGetProgramInfo(Program,CL_PROGRAM_NUM_DEVICES,sizeof(cl_uint),&Devices,NULL);
 			if(*Error==CL_SUCCESS)
 			{
-				MemC_Temp_ND_(address,Space,ESCAPE,1,Devices<<1)
+				MemC_Temp_ND_(address,Space,*Error=CL_OUT_OF_HOST_MEMORY;,1,Devices<<1)
 				{
 					address _PL_ SizeList=Space;
 
@@ -236,7 +215,7 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ N
 						if(*Error==CL_SUCCESS)
 							if(SizeSums)
 							{
-								MemC_Temp_Byte_(Temp,SizeSums,FAILED)
+								MemC_Temp_Byte_(Temp,SizeSums,*Error=CL_OUT_OF_HOST_MEMORY;)
 								{
 									byte_08 *_PL_ BinaryList=(byte_08**)(SizeList+Devices);
 									byte_08 *Binary=Temp;
@@ -260,15 +239,9 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ N
 													break;
 												}
 								}
-								continue;
-FAILED:
-								*Error=CL_OUT_OF_HOST_MEMORY;
 							}
 					}
 				}
-				return;
-ESCAPE:
-				*Error=CL_OUT_OF_HOST_MEMORY;
 			}
 		}
 		else
