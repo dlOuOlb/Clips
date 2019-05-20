@@ -2,78 +2,81 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
 #define _INC_MEMCLIP
 
 #if(1)
+
 #include <malloc.h>
 #include <memory.h>
 #include <stdarg.h>
 #include <assert.h>
 #include <errno.h>
-#endif
 
-#if(1)
 #ifdef Fold_
 #error The macro "Fold_" is already defined.
 #else
 #define Fold_(Comment,...) (1)	//MemClip : Code Folding with #if and #endif Pre-processor.
 #endif
+
 #endif
 
 #if(Fold_(Definition:Primal Macros))
 #ifdef _WIN64
-#define MemC_64_	//MemClip : 64-bit Memory Address
+#define MemC_64_
 #endif
 
 #ifdef NULL
 static_assert(((size_t)(NULL))==((size_t)(0)),"NULL != 0");
 #else
-#define NULL ((void*)(0))	//MemClip : Null Pointer Definition
+#define NULL ((void*)(0))
 #endif
 
 #ifdef FULL
 static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
 #else
-#define FULL ((void*)(~((size_t)(0))))	//MemClip : Full Pointer Definition
+#define FULL ((void*)(~((size_t)(0))))
 #endif
 
 #ifdef _PL_
 #error The macro "_PL_" is already defined.
 #else
-#define _PL_ *const	//MemClip : Pointer Lock Definition
+#define _PL_ *const
 #endif
 
 #ifdef _R_
 #error The macro "_R_" is already defined.
 #else
-#define _R_ __restrict	//MemClip : Exclusive memory Access
+#define _R_ __restrict
 #endif
 
 #ifdef Acs_
 #error The macro "Acs_" is already defined.
 #else
-#define Acs_(type,Data) (*((type*)(&(Data))))	//MemClip : Indirect Memory Access
+#define Acs_(type,Data) (*((type*)(&(Data))))
 #endif
 
 #ifdef Mute_
 #error The macro "Mute_" is already defined.
 #else
-#define Mute_(Argument) ((general)(Argument))	//MemClip : Unused Argument Warning Mute
+#define Mute_(Argument) ((general)(Argument))
 #endif
 
-#ifdef __dl
-#error The macro "__dl" is already defined.
+#if defined(_Conc_)||defined(Conc_)
+#error The macro "_Conc_" or "Conc_" is already defined.
 #else
-#define __dl do			//MemClip : Macro Block Opening
+#define _Conc_(A,B) A##B
+#define Conc_(A,B) _Conc_(A,B)
 #endif
-#ifdef lb__
-#error The macro "lb__" is already defined.
+
+#if defined(__dl)||defined(lb__)
+#error The macro "__dl" or "lb__" is already defined.
 #else
-#define lb__ while(0)	//MemClip : Macro Block Closing
+#define __dl do
+#define lb__ while(0)
 #endif
 #endif
 
@@ -81,14 +84,21 @@ static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
 #define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;	//MemClip : Macro for Type Renaming
 #define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;		//MemClip : Macro for Type Declaration
 
+#define MemC_Unit_Declare_(type,Unit,...) type(_##Unit)##__VA_ARGS__,_PL_(Unit)=&(_##Unit)	//MemClip : Unit Pointer Declaration
+
 #define MemC_Func_Declare_V_(Return,Func_,...) Return (*Func_)(__VA_ARGS__)		//MemClip : Function Pointer Variable Declaration
 #define MemC_Func_Declare_C_(Return,Func_,...) Return (_PL_ Func_)(__VA_ARGS__)	//MemClip : Function Pointer Constant Declaration
 #define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)	//MemClip : Function Pointer Casting
+
 #define MemC_Type_Func_Declare_(Return,func_type_,FUNC_TYPE_,...) typedef MemC_Func_Declare_V_(Return,func_type_,__VA_ARGS__);typedef MemC_Func_Declare_C_(Return,FUNC_TYPE_,__VA_ARGS__);	//MemClip : Macro for Function Type Declaration
 
 #define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
 
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))	//MemClip : Byte Size of Elements
+
+#define MemC_Assert_(Bool) ((GENERAL*[Bool]){FULL})	//MemClip : Static Assertion
+
+#define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)	//MemClip : Temporary Variable
 
 #define MemC_Max_Dimension 8	//MemClip : Maximum Array Dimension
 #endif
@@ -309,9 +319,9 @@ extern const struct _memcase
 #define MemC_Deloc_(Memory) __dl{if(Memory){_MemC_Free_(Memory);(Memory)=NULL;}}lb__
 
 	//MemClip : Temporary Memory Allocation and Deallocation
-#define MemC_Temp_Byte_(Temp,Size,EXIT) for(general _PL_(Temp)=MemC.Alloc.Byte_(Size),*(_##Temp)=FULL;_##Temp;_MemC_Free_(Temp),_##Temp=NULL)if(!(Temp))goto EXIT;else
-#define MemC_Temp_Unit_(type,Temp,EXIT) for(type _PL_(Temp)=MemC_Alloc_Unit_(type),*(_##Temp)=FULL;_##Temp;_MemC_Free_(Temp),_##Temp=NULL)if(!(Temp))goto EXIT;else
-#define MemC_Temp_ND_(type,Temp,EXIT,Dims,...) for(general _PL_(Temp)=MemC_Alloc_ND_(type,Dims,__VA_ARGS__),*(_##Temp)=FULL;_##Temp;_MemC_Free_(Temp),_##Temp=NULL)if(!(Temp))goto EXIT;else
+#define MemC_Temp_Byte_(Temp,Size,FAIL) for(general _PL_(Temp)=MemC.Alloc.Byte_(Size),*(_##Temp)=FULL;_##Temp;_MemC_Free_(Temp),_##Temp=NULL)if(!(Temp)){FAIL}else
+#define MemC_Temp_Unit_(type,Temp,FAIL) for(type _PL_(Temp)=MemC_Alloc_Unit_(type),*(_##Temp)=FULL;_##Temp;_MemC_Free_(Temp),_##Temp=NULL)if(!(Temp)){FAIL}else
+#define MemC_Temp_ND_(type,Temp,FAIL,Dims,...) for(general _PL_(Temp)=MemC_Alloc_ND_(type,Dims,__VA_ARGS__),*(_##Temp)=FULL;_##Temp;_MemC_Free_(Temp),_##Temp=NULL)if(!(Temp)){FAIL}else
 
 	//MemClip : Set Functions
 	const struct
@@ -338,18 +348,18 @@ extern const struct _memcase
 	//MemClip : Data Copy in Byte Size
 #define MemC_Copy_Byte_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)
 	//MemClip : Unit Data Copy
-#define MemC_Copy_Unit_(Source,Target) ((sizeof(*(Source))==sizeof(*(Target)))?(memcpy_s(Target,sizeof(*(Target)),Source,sizeof(*(Source)))):(MemCErrCustom))
+#define MemC_Copy_Unit_(Source,Target) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),memcpy_s(Target,sizeof(*(Target)),Source,sizeof(*(Source))))
 	//MemClip : 1D Array Data Copy
-#define MemC_Copy_1D_(Source,Target,Elements) ((sizeof(*(Source))==sizeof(*(Target)))?(memcpy_s(Target,(Elements)*sizeof(*(Target)),Source,(Elements)*sizeof(*(Source)))):(MemCErrCustom))
+#define MemC_Copy_1D_(Source,Target,Elements) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),memcpy_s(Target,(Elements)*sizeof(*(Target)),Source,(Elements)*sizeof(*(Source))))
 #endif
 
 #if(Fold_(Part:Plain Memory Compare))
 	//MemClip : Data Compare in Byte Size
 #define MemC_Compare_Byte_(MemoryA,MemoryB,ByteSize) memcmp(MemoryA,MemoryB,ByteSize)
 	//MemClip : Unit Data Compare
-#define MemC_Compare_Unit_(UnitA,UnitB) memcmp(UnitA,UnitB,sizeof(*(UnitA)))
+#define MemC_Compare_Unit_(UnitA,UnitB) (MemC_Assert_(sizeof(*(UnitA))==sizeof(*(UnitB))),memcmp(UnitA,UnitB,sizeof(*(UnitA))))
 	//MemClip : 1D Array Data Compare
-#define MemC_Compare_1D_(LineA,LineB,Elements) memcmp(LineA,LineB,(Elements)*sizeof(*(LineA)))
+#define MemC_Compare_1D_(LineA,LineB,Elements) (MemC_Assert_(sizeof(*(LineA))==sizeof(*(LineB))),memcmp(LineA,LineB,(Elements)*sizeof(*(LineA))))
 #endif
 
 	//MemClip : Complex Memory Copy Functions
@@ -357,7 +367,7 @@ extern const struct _memcase
 	{
 		//MemClip : Array Data Copy
 		errno_t(_PL_ DN_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
-#define MemC_Copy_ND_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims) ((sizeof(*(S))==sizeof(*(T)))?(MemC.Copy.DN_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(*(S)))):(MemCErrCustom))
+#define MemC_Copy_ND_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims) (MemC_Assert_(sizeof(*(S))==sizeof(*(T))),MemC.Copy.DN_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(*(S))))
 		//MemClip : Array Data Copy with Step
 		errno_t(_PL_ Step_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS CopyNums,ADDRESS SourceStepBytes,ADDRESS TargetStepBytes,ADDRESS EachCopyBytes);
 	}
@@ -368,7 +378,7 @@ extern const struct _memcase
 	{
 		//MemClip : 1D Array Data Preset
 		errno_t(_PL_ D1_)(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS Number,ADDRESS TypeSize);
-#define MemC_Preset_1D_(Memory,Tile,Elements) ((sizeof(*(Memory))==sizeof(*(Tile)))?(MemC.Preset.D1_(Memory,Tile,Elements,sizeof(*(Tile)))):(MemCErrCustom))
+#define MemC_Preset_1D_(Memory,Tile,Elements) (MemC_Assert_(sizeof(*(Memory))==sizeof(*(Tile))),MemC.Preset.D1_(Memory,Tile,Elements,sizeof(*(Tile))))
 	}
 	Preset;
 
@@ -381,7 +391,7 @@ extern const struct _memcase
 
 		//MemClip : Array Data Reformation - See also "MemC_Reform_Shape_"
 		errno_t(_PL_ DN_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
-#define MemC_Reform_ND_(S,T,SShp,Axis,Dims) ((sizeof(*(S))==sizeof(*(T)))?(MemC.Reform.DN_(S,T,SShp,Axis,Dims,sizeof(*(S)))):(MemCErrCustom))
+#define MemC_Reform_ND_(S,T,SShp,Axis,Dims) (MemC_Assert_(sizeof(*(S))==sizeof(*(T))),MemC.Reform.DN_(S,T,SShp,Axis,Dims,sizeof(*(S))))
 	}
 	Reform;
 
@@ -442,7 +452,7 @@ extern const struct _memcase
 		//MemClip : Memory Slot Memory Deallocation
 		general(_PL_ Delete_)(memc_ms *_PL_ MemorySlot);
 		//MemClip : Temporarily allocate and deallocate a memory slot.
-#define MemC_MS_Temp_(Temp,Nums,EXIT) for(memc_ms _PL_(Temp)=MemC.MS.Create_(NULL,Nums),*(_##Temp)=FULL;_##Temp;MemC.MS.Delete_((memc_ms**)&(Temp)),(_##Temp)=NULL)if(!(Temp))goto EXIT;else
+#define MemC_MS_Temp_(Temp,Nums,FAIL) for(memc_ms _PL_(Temp)=MemC.MS.Create_(NULL,Nums),*(_##Temp)=FULL;_##Temp;MemC.MS.Delete_((memc_ms**)&(Temp)),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 
 		//MemClip : Memory Slot Memory Occupation
 		address(_PL_ Size_)(MEMC_MS _PL_ MemorySlot);
@@ -469,7 +479,7 @@ extern const struct _memcase
 		//MemClip : Oops!
 		integer(_PL_ Oops_)(MEMC_MS _PL_ MemorySlot);
 
-#define MemC_MS_Foreach_(MemorySlot,type,Each) for(type (Each)=(type)0,*(_Ptr##Each)=(general*)((MemorySlot)->Slot.P),_PL_(_End##Each)=(general*)(((MemorySlot)->Slot.P)+((MemorySlot)->Nums)),_PL_(_Check##Each)[sizeof(type)==sizeof(address)]={NULL};(((address)(_Ptr##Each))<((address)(_End##Each)))?(Acs_(address,Each)=*(address*)(_Ptr##Each),1):(MemC_Mute_(_Check##Each),0);Acs_(address*,(_Ptr##Each))++)
+#define MemC_MS_Foreach_(MemorySlot,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((MemorySlot)->Slot.P),_PL_(_End##Each)=(general*)(((MemorySlot)->Slot.P)+((MemorySlot)->Nums));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
 	}
 	MS;
 
@@ -484,7 +494,7 @@ extern const struct _memcase
 		//MemClip : Memory Container Memory Deallocation
 		general(_PL_ Delete_)(memc_mc *_PL_ MemoryContainer);
 		//MemClip : Temporarily allocate and deallocate a memory container.
-#define MemC_MC_Temp_(Temp,Shape,Type,EXIT) for(memc_mc _PL_(Temp)=MemC.MC.Create_(NULL,Shape,Type),*(_##Temp)=FULL;_##Temp;MemC.MC.Delete_((memc_mc**)&(Temp)),(_##Temp)=NULL)if(!(Temp))goto EXIT;else
+#define MemC_MC_Temp_(Temp,Shape,Type,FAIL) for(memc_mc _PL_(Temp)=MemC.MC.Create_(NULL,Shape,Type),*(_##Temp)=FULL;_##Temp;MemC.MC.Delete_((memc_mc**)&(Temp)),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 
 		//MemClip : Memory Container Memory Occupation
 		address(_PL_ Size_)(MEMC_MC _PL_ MemoryContainer);
@@ -504,7 +514,7 @@ extern const struct _memcase
 		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
 		//¡¡The memory lender's head occupies 2 chunks.
 		//¡¡Each memory slice's head occupies 1 chunk.
-#define MemC_ML_Define_(LenderName,ChunksNumber) static address _##LenderName[(ChunksNumber)<<2]={(address)_##LenderName,(address)_##LenderName,(address)_##LenderName,((ChunksNumber)-3)<<4,((ChunksNumber)-3)<<4,0,1,0,(address)NULL,(address)NULL,(address)NULL,((ChunksNumber)-3)<<4};memc_ml _PL_ LenderName=(memc_ml*)_##LenderName;
+#define MemC_ML_Define_(LenderName,ChunksNumber) static address _##LenderName[(ChunksNumber)<<2]={(address)_##LenderName,(address)_##LenderName,(address)_##LenderName,MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_ LenderName=(memc_ml*)_##LenderName;
 
 		//MemClip : Memory Lender Memory Allocation - Deallocate with "MemC.ML.Delete_"
 		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
@@ -536,7 +546,7 @@ extern const struct _memcase
 		integer(_PL_ Return_)(general _PL_ MemorySlice);
 #define MemC_ML_Return_(MemorySlice) __dl{if(MemC.ML.Return_(MemorySlice)){(MemorySlice)=NULL;}}lb__
 		//MemClip : Temporarily borrow and return a memory slice from the memory lender.
-#define MemC_ML_Moment_(Lender,Temp,Size,EXIT) for(general _PL_(Temp)=MemC.ML.Borrow_(Lender,Size),*(_##Temp)=FULL;_##Temp;MemC.ML.Return_(Temp),(_##Temp)=NULL)if(!(Temp))goto EXIT;else
+#define MemC_ML_Moment_(Lender,Temp,Size,FAIL) for(general _PL_(Temp)=MemC.ML.Borrow_(Lender,Size),*(_##Temp)=FULL;_##Temp;MemC.ML.Return_(Temp),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 
 		//MemClip : Get the master of the memory slice.
 		memc_ml*(_PL_ Master_)(GENERAL _PL_ MemorySlice);

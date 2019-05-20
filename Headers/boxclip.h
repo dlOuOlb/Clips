@@ -2,7 +2,7 @@
 /*	BoxClip is a simple data structure library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -42,6 +42,18 @@ struct _boxc_rs
 	ADDRESS Capacity;	//BoxClip : Maximum Total Ring Length
 };
 MemC_Type_Declare_(struct,boxc_rs,BOXC_RS);	//BoxClip : Ring Set Structure
+
+//BoxClip : Key Set Structure
+struct _boxc_ks
+{
+	GENERAL _PL_ Key;	//BoxClip : Internal Key Set
+	//BoxClip : Ordering Function
+	integer(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_);
+	ADDRESS Number;		//BoxClip : Current Number of Keys
+	ADDRESS Capacity;	//BoxClip : Maximum Number of Keys
+};
+MemC_Type_Declare_(struct,boxc_ks,BOXC_KS);	//BoxClip : Key Set Structure
+static_assert((sizeof(boxc_ks)%sizeof(address))==0,"Type Size Misalign");
 
 //BoxClip : Flag Set Structure
 struct _boxc_fs
@@ -96,6 +108,10 @@ extern const struct _boxcase
 		//BoxClip : Pop an Object from the Selected Stack
 		//£ªReturn value is the stored address.
 		general*(_PL_ Pop_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect);
+		//BoxClip : Spread Objects into the Memory Slot
+		//£ªReturn value is the number of popped objects.
+		address(_PL_ Spread_)(MEMC_MS _PL_ MemorySlot,BOXC_SS _PL_ StackSet,ADDRESS StackSelect);
+#define BoxC_SS_Foreach_(StackSet,StackSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(StackSet)?(((StackSelect)<((StackSet)->Number))?((general*)(((StackSet)->Count)+(StackSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.SS.Pop_(StackSet,StackSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Check the Selected Stack
 		//£ªReturn value is ~0 only if the selected stack has no NULL object, otherwise 0.
@@ -129,6 +145,10 @@ extern const struct _boxcase
 		//BoxClip : Dequeue an Object from the Selected Queue
 		//£ªReturn value is the stored address.
 		general*(_PL_ Deque_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect);
+		//BoxClip : Spread Objects into the Memory Slot
+		//£ªReturn value is the number of dequeued objects.
+		address(_PL_ Spread_)(MEMC_MS _PL_ MemorySlot,BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect);
+#define BoxC_QS_Foreach_(QueueSet,QueueSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(QueueSet)?(((QueueSelect)<((QueueSet)->Number))?((general*)(((QueueSet)->Count)+(QueueSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.QS.Deque_(QueueSet,QueueSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Check the Selected Queue
 		//£ªReturn value is ~0 only if the selected queue has no NULL object, otherwise 0.
@@ -167,7 +187,7 @@ extern const struct _boxcase
 		//BoxClip : Rotate the Selected Ring
 		//£ªMove the pin left for negative rotation, right for positive rotation.
 		//£ªReturn value is ~0 for success, 0 for failure.
-		boolean(_PL_ Rotate_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,INTEGER Rotation);
+		boolean(_PL_ Rotate_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,SINTPTR Rotation);
 
 		//BoxClip : Check the Selected Ring
 		//£ªReturn value is ~0 only if the selected ring has no NULL object, otherwise 0.
@@ -176,8 +196,64 @@ extern const struct _boxcase
 		//£ªRead left for direction 0, right for direction ~0.
 		//£ªReturn value is the stored address.
 		general*(_PL_ Read_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,BOOLEAN Direction);
+		//BoxClip : Spread Objects into the Memory Slot
+		//£ªReturn value is the number of read objects.
+		address(_PL_ Spread_)(MEMC_MS _PL_ MemorySlot,BOXC_RS _PL_ RingSet,ADDRESS RingSelect,SINTPTR Rotation,BOOLEAN Mode);
+#define BoxC_RS_Foreach_(RingSet,RingSelect,Rotation,Direction,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_ _PL_(_Mark##Each)=(RingSet)?(((RingSelect)<((RingSet)->Number))?((general*)(((address*)((RingSet)->Ring))+((RingSelect)<<1))):(NULL)):(NULL),_PL_(_Stop##Each)=*(_Mark##Each),*(_Temp##Each)=FULL;(_Temp##Each)?((Acs_(general*,Each)=BoxC.RS.Read_(RingSet,RingSelect,Direction)),1):(0);(_Temp##Each)=(BoxC.RS.Rotate_(RingSet,RingSelect,Rotation))?(((_Stop##Each)==*(_Mark##Each))?(NULL):(FULL)):(NULL))
 	}
 	RS;
+
+	//BoxClip : Map Functions
+	const struct
+	{
+		//BoxClip : Key Set Memory Allocation - Deallocate with "BoxC.KS.Delete_"
+		boxc_ks*(_PL_ Create_)(integer(_PL_ Compare_)(GENERAL _PL_ KeyA,GENERAL _PL_ KeyB),ADDRESS Capacity);
+		//BoxClip : Key Set Memory Deallocation
+		general(_PL_ Delete_)(boxc_ks *_PL_ KeySet);
+		//BoxClip : Key Set Memory Occupation
+		address(_PL_ Size_)(BOXC_KS _PL_ KeySet);
+		//BoxClip : Remove All Keys
+		//£ªReturn value is ~0 for success, 0 for failure.
+		boolean(_PL_ Reset_)(boxc_ks _PL_ KeySet);
+
+		//BoxClip : Key Functions
+		const struct
+		{
+			//BoxClip : Insert a Key into the Key Set
+			boolean(_PL_ Insert_)(boxc_ks _PL_ KeySet,general _PL_ Key);
+			//BoxClip : Desert a Key from the Key Set
+			boolean(_PL_ Desert_)(boxc_ks _PL_ KeySet,GENERAL _PL_ Key);
+			//BoxClip : Verify a Key's Existence
+			boolean(_PL_ Verify_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
+			//BoxClip : Spread Keys into the Memory Slot
+			//£ªReturn value is the number of copied keys.
+			address(_PL_ Spread_)(MEMC_MS _PL_ MemorySlot,BOXC_KS _PL_ KeySet);
+#define BoxC_KS_Foreach_(KeySet,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Num##Each)=Acs_(general*,(KeySet)->Number),*(_Idx##Each)=NULL;(Acs_(address,_Idx##Each)<Acs_(address,_Num##Each))?((Acs_(type,Each)=BoxC.KS.Index.Search_(KeySet,Acs_(address,_Idx##Each))),1):(0);Acs_(address,_Idx##Each)++)
+		}
+		Key;
+
+		//BoxClip : Value Functions
+		const struct
+		{
+			//BoxClip : Write a Value at the Key
+			boolean(_PL_ Writer_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key,general _PL_ Value);
+			//BoxClip : Read a Value at the Key
+			general*(_PL_ Reader_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
+		}
+		Value;
+
+		//BoxClip : Index Functions
+		const struct
+		{
+			//BoxClip : Convert from an Index to a Key
+			general*(_PL_ Search_)(BOXC_KS _PL_ KeySet,ADDRESS Index);
+			//BoxClip : Convert from a key to an Index
+			//£ªReturn value is ~0 for failure.
+			address(_PL_ Locate_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
+		}
+		Index;
+	}
+	KS;
 
 	//BoxClip : Flag Functions
 	const struct

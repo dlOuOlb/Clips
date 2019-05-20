@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -435,6 +435,7 @@ extern const struct _bitcase
 	{
 		//BitClip : Array Reformation
 		//£ªSourceShape[dim] == TargetShape[ReformingAxis[dim]] where dim£¼Dimensions.
+		//£ªReturn value is ~0 for success, 0 for failure.
 		boolean(_PL_ Reform_)(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,ADDRESS Dimensions,ADDRESS TypeSize);
 #define BitC_Reform_(S,T,SShp,StoTAxis,Dims) ((sizeof(*(S))==sizeof(*(T)))?(BitC.Reform_(S,T,SShp,StoTAxis,Dims,sizeof(*(S)))):(BitCNull))
 

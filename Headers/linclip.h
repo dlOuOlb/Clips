@@ -2,7 +2,7 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
