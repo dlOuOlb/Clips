@@ -2,7 +2,7 @@
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.02	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -183,6 +183,9 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 #include <memclip.h>
 #include <penclip.h>
 #include <CL\opencl.h>
+#ifdef _
+#error The macro "_" is already defined.
+#endif
 #endif
 
 #if(Fold_(Redefinition:OpenCL Types))
@@ -215,7 +218,6 @@ enum _oclc_pa
 };
 MemC_Type_Declare_(enum,oclc_pa,OCLC_PA);	//OCLClip : 4D Pin Axis Enumeration
 static_assert(OCLCPinAxes==4,"The pin must be 4D.");
-
 
 //OCLClip : 4D Memory Pin Structure
 struct _oclc_mp
@@ -658,6 +660,7 @@ extern const struct _oclcase
 			oclc_mp(_PL_ D3_)(ADDRESS Z,ADDRESS Y,ADDRESS X);
 			//OCLClip : Set 4D Length
 			oclc_mp(_PL_ D4_)(ADDRESS N,ADDRESS Z,ADDRESS Y,ADDRESS X);
+#define OCLC_MP_Length_(Pin,...) __dl{oclc_mp(_)={1,1,1,1};__VA_ARGS__;*(Pin)=(_);}lb__
 
 			//OCLClip : Validity Check
 			//£ªReturn value is 1 for any excess, otherwise 0.
@@ -677,6 +680,7 @@ extern const struct _oclcase
 			oclc_mp(_PL_ D3_)(ADDRESS Z,ADDRESS Y,ADDRESS X);
 			//OCLClip : Set 4D Offset
 			oclc_mp(_PL_ D4_)(ADDRESS N,ADDRESS Z,ADDRESS Y,ADDRESS X);
+#define OCLC_MP_Offset_(Pin,...) __dl{oclc_mp(_)={0,0,0,0};__VA_ARGS__;*(Pin)=(_);}lb__
 
 			//OCLClip : Validity Check
 			//£ªReturn value is 1 for any excess, otherwise 0.
@@ -699,6 +703,7 @@ extern const struct _oclcase
 	{
 		//OCLClip : Memory Holder Pin Assign
 		oclc_mh(_PL_ Assign_)(general _PL_ Memory,OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape,MEMC_DT _PL_ Type);
+#define OCLC_MH_Assign_(Holder,Memory,Type,...) __dl{struct{OCLC_MP*Start;OCLC_MP*Shape;}(_)={NULL,NULL};__VA_ARGS__;*(Holder)=OCLC.MH.Assign_(Memory,_.Start,_.Shape,Type);}lb__
 	}
 	MH;
 }
