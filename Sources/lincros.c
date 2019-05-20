@@ -24,7 +24,6 @@
 #undef _LinC_Type_
 
 #undef LinC_TXX_
-#undef _LinC_Conc_
 
 #undef _SRC_BITCROS
 
@@ -32,8 +31,7 @@
 
 #define _SRC_BITCROS
 
-#define _LinC_Conc_(A,B) A##B
-#define LinC_TXX_(Type,Bits) _LinC_Conc_(Type,Bits)
+#define LinC_TXX_(Type,Bits) _Conc_(Type,Bits)
 
 #define _LinC_Type_(Type,Bits) Type##_##Bits
 #define LinC_Type_(Type,Bits) _LinC_Type_(Type,Bits)

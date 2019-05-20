@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.04.26";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
 
 static ADDRESS ConstantSafe[8]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127};
 static ADDRESS ConstantRest[8]={(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
@@ -251,16 +251,13 @@ __inline static data_64 _BitC_Wide_Mask_D64_(DATA_64 Mask)
 #if(Fold_(Definition:Relational Operation Functions))
 __inline static data_08 _BitC_RO_Loop_A_(bitclip M)
 {
-	M.V.D08[1]<<=1;
-	M.V.D08[2]<<=2;
-	M.V.D08[3]<<=3;
-	M.V.D08[4]<<=4;
-	M.V.D08[5]<<=5;
-	M.V.D08[6]<<=6;
-	M.V.D08[7]<<=7;
-
+	M.V.D32[1]<<=4;
 	M.V.D32[0]|=M.C.D32[1];
+
+	M.V.D16[1]<<=2;
 	M.V.D16[0]|=M.C.D16[1];
+
+	M.V.D08[1]<<=1;
 	M.V.D08[0]|=M.C.D08[1];
 
 	return M.C.D08[0];

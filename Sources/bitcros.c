@@ -25,7 +25,6 @@
 
 #undef BitC_TXX_
 #undef BitC_XX_
-#undef _BitC_Conc_
 
 #undef _SRC_BITCROS
 
@@ -33,9 +32,8 @@
 
 #define _SRC_BITCROS
 
-#define _BitC_Conc_(A,B) A##B
-#define BitC_XX_(Bits) ((_BitC_Conc_(1,Bits))-(_BitC_Conc_(1,00)))
-#define BitC_TXX_(Type,Bits) _BitC_Conc_(Type,Bits)
+#define BitC_XX_(Bits) ((_Conc_(1,Bits))-(_Conc_(1,00)))
+#define BitC_TXX_(Type,Bits) _Conc_(Type,Bits)
 
 #define _BitC_Type_(Type,Bits) Type##_##Bits
 #define BitC_Type_(Type,Bits) _BitC_Type_(Type,Bits)

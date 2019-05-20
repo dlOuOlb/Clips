@@ -1,7 +1,7 @@
 #include "boxclip.h"
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.04.26";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -23,8 +23,7 @@ static boolean _BoxC_L2_Check_(BOXC_L2 *_R_ Ptr)
 	while(Ptr)
 		if(Ptr->L[0])
 			Ptr=Ptr->L[1];
-		else
-			break;
+		else break;
 
 	return BitC.Boolean[Ptr==NULL];
 }
@@ -158,19 +157,14 @@ _BOXC_ boolean BoxC_SS_Push_(BOXC_VS _PL_ S,ADDRESS Select,general *Contents)
 
 				Count[-1]--;
 				Count[Select]++;
-
-				goto SUCCESS;
 			}
-			else
-				goto FAILURE;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+			else goto FAILURE;
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 _BOXC_ general *BoxC_SS_Pop_(BOXC_VS _PL_ S,ADDRESS Select)
 {
@@ -197,6 +191,34 @@ _BOXC_ general *BoxC_SS_Pop_(BOXC_VS _PL_ S,ADDRESS Select)
 
 	return Return;
 }
+_BOXC_ address BoxC_SS_Spread_(MEMC_MS _PL_ MS,BOXC_VS _PL_ SS,ADDRESS Select)
+{
+	address Return;
+
+	if(MS)
+		if(SS)
+			if(Select<SS->Number)
+			{
+				boxc_l2 *_PL_ Stack=SS->Thing;
+				address _PL_ Count=SS->Count;
+
+				Return=((MS->Nums)<(SS->Count[Select]))?(MS->Nums):(SS->Count[Select]);
+				MemC_Temp_(boxc_l2,*_PL_ From=Stack+Select,*_PL_ Into=Stack-1)
+					for(general **Ptr=MS->Slot.P,_PL_ _PL_ End=Ptr+Return;Ptr<End;Ptr++)
+						_BoxC_SS_Swap_(From,Into,Ptr);
+
+				Count[-1]+=Return;
+				Count[Select]-=Return;
+			}
+			else
+				Return=0;
+		else
+			Return=0;
+	else
+		Return=0;
+
+	return Return;
+}
 
 static general _BoxC_SS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
 {
@@ -212,6 +234,7 @@ _BOXC_ boolean BoxC_SS_Reset_(BOXC_VS _PL_ S,ADDRESS Select)
 {
 	if(S)
 		if(Select<S->Number)
+		{
 			if(S->Count[Select])
 			{
 				boxc_l2 *_PL_ Stack=S->Thing;
@@ -221,19 +244,14 @@ _BOXC_ boolean BoxC_SS_Reset_(BOXC_VS _PL_ S,ADDRESS Select)
 
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
-
-				goto SUCCESS;
 			}
-			else
-				goto SUCCESS;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+		}
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 _BOXC_ boolean BoxC_SS_Reset_All_(BOXC_VS _PL_ S)
 {
@@ -370,19 +388,14 @@ _BOXC_ boolean BoxC_QS_Enque_(BOXC_VS _PL_ Q,ADDRESS Select,general *Contents)
 
 				Count[-1]--;
 				Count[Select]++;
-
-				goto SUCCESS;
 			}
-			else
-				goto FAILURE;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+			else goto FAILURE;
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 _BOXC_ general *BoxC_QS_Deque_(BOXC_VS _PL_ Q,ADDRESS Select)
 {
@@ -409,6 +422,34 @@ _BOXC_ general *BoxC_QS_Deque_(BOXC_VS _PL_ Q,ADDRESS Select)
 
 	return Return;
 }
+_BOXC_ address BoxC_QS_Spread_(MEMC_MS _PL_ MS,BOXC_VS _PL_ QS,ADDRESS Select)
+{
+	address Return;
+
+	if(MS)
+		if(QS)
+			if(Select<QS->Number)
+			{
+				boxc_l2 _PL_ Queue=QS->Thing;
+				address _PL_ Count=QS->Count;
+
+				Return=((MS->Nums)<(QS->Count[Select]))?(MS->Nums):(QS->Count[Select]);
+				MemC_Temp_(boxc_l2,_PL_ From=Queue+Select,_PL_ Into=Queue-1)
+					for(general **Ptr=MS->Slot.P,_PL_ _PL_ End=Ptr+Return;Ptr<End;Ptr++)
+						_BoxC_QS_Swap_(From->L,Into->L,Ptr);
+
+				Count[-1]+=Return;
+				Count[Select]-=Return;
+			}
+			else
+				Return=0;
+		else
+			Return=0;
+	else
+		Return=0;
+
+	return Return;
+}
 
 static general _BoxC_QS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
 {
@@ -427,6 +468,7 @@ _BOXC_ boolean BoxC_QS_Reset_(BOXC_VS _PL_ Q,ADDRESS Select)
 {
 	if(Q)
 		if(Select<Q->Number)
+		{
 			if(Q->Count[Select])
 			{
 				boxc_l2 _PL_ Queue=Q->Thing;
@@ -436,19 +478,14 @@ _BOXC_ boolean BoxC_QS_Reset_(BOXC_VS _PL_ Q,ADDRESS Select)
 
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
-
-				goto SUCCESS;
 			}
-			else
-				goto SUCCESS;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+		}
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 _BOXC_ boolean BoxC_QS_Reset_All_(BOXC_VS _PL_ Q)
 {
@@ -466,14 +503,12 @@ _BOXC_ boolean BoxC_QS_Reset_All_(BOXC_VS _PL_ Q)
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
 			}
-		goto SUCCESS;
 	}
-	else
-		goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 
 _BOXC_ boolean BoxC_QS_Check_(BOXC_VS _PL_ Q,ADDRESS Select)
@@ -633,19 +668,14 @@ _BOXC_ boolean BoxC_RS_Insert_(BOXC_VS _PL_ R,ADDRESS Select,general *Contents,B
 
 				Count[-1]--;
 				Count[Select]++;
-
-				goto SUCCESS;
 			}
-			else
-				goto FAILURE;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+			else goto FAILURE;
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 _BOXC_ boolean BoxC_RS_Desert_(BOXC_VS _PL_ R,ADDRESS Select,BOOLEAN Mode)
 {
@@ -661,33 +691,27 @@ _BOXC_ boolean BoxC_RS_Desert_(BOXC_VS _PL_ R,ADDRESS Select,BOOLEAN Mode)
 
 				Count[-1]++;
 				Count[Select]--;
-
-				goto SUCCESS;
 			}
-			else
-				goto FAILURE;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+			else goto FAILURE;
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 
-static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ Ring,integer Rotation)
+static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ Ring,sintptr Rotation)
 {
-	INTEGER Mask=(Rotation>=0);
-	INTEGER Nega=Mask^1;
-	INTEGER Step=1-(Mask<<1);
+	SINTPTR Mask=(Rotation>0);
+	SINTPTR Nega=Mask^1;
 	BOXC_L2 *Here=Ring[Mask];
 	BOXC_L2 *Prop=_BoxC_L2_Twist_(Ring[Nega],Here->L[1]);
-	BOXC_L2 *Temp;
 
-	for(;Rotation;Rotation+=Step)
+	for(SINTPTR Step=1-(Mask<<1);Rotation;Rotation+=Step)
 	{
-		Temp=Prop;
+		BOXC_L2 _PL_ Temp=Prop;
+
 		Prop=_BoxC_L2_Twist_(Here,Prop->L[1]);
 		Here=Temp;
 	}
@@ -696,26 +720,22 @@ static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ Ring,integer Rotation)
 		Ring[Nega]=_BoxC_L2_Twist_(Prop,Here->L[1]);
 	}
 }
-_BOXC_ boolean BoxC_RS_Rotate_(BOXC_VS _PL_ R,ADDRESS Select,INTEGER Rotation)
+_BOXC_ boolean BoxC_RS_Rotate_(BOXC_VS _PL_ R,ADDRESS Select,SINTPTR Rotation)
 {
 	if(R)
 		if(Select<R->Number)
-			if(R->Count[Select])
-			{
-				_BoxC_RS_Rotate_(((boxc_l2*)(R->Thing))[Select].L,Rotation);
+		{
+			ADDRESS Count=R->Count[Select];
 
-				goto SUCCESS;
-			}
-			else
-				goto SUCCESS;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+			if(Count)
+				_BoxC_RS_Rotate_(((boxc_l2*)(R->Thing))[Select].L,Rotation%Acs_(sintptr,Count));
+		}
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 
 static general _BoxC_RS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
@@ -745,6 +765,7 @@ _BOXC_ boolean BoxC_RS_Reset_(BOXC_VS _PL_ R,ADDRESS Select)
 {
 	if(R)
 		if(Select<R->Number)
+		{
 			if(R->Count[Select])
 			{
 				boxc_l2 _PL_ Ring=R->Thing;
@@ -754,19 +775,14 @@ _BOXC_ boolean BoxC_RS_Reset_(BOXC_VS _PL_ R,ADDRESS Select)
 
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
-
-				goto SUCCESS;
 			}
-			else
-				goto SUCCESS;
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+		}
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 _BOXC_ boolean BoxC_RS_Reset_All_(BOXC_VS _PL_ R)
 {
@@ -784,14 +800,12 @@ _BOXC_ boolean BoxC_RS_Reset_All_(BOXC_VS _PL_ R)
 				Count[-1]+=Count[Select];
 				Count[Select]=0;
 			}
-		goto SUCCESS;
 	}
-	else
-		goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 
 static boolean _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ Ring)
@@ -804,17 +818,16 @@ static boolean _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ Ring)
 	{
 		BOXC_L2 *Here=Ring[1];
 		BOXC_L2 *Next=_BoxC_L2_Twist_(Ring[0],Here->L[1]);
-		BOXC_L2 *Temp;
 
 		while(Next!=Ring[1])
 			if(Here->L[0])
 			{
-				Temp=Next;
+				BOXC_L2 _PL_ Temp=Next;
+
 				Next=_BoxC_L2_Twist_(Here,Next->L[1]);
 				Here=Temp;
 			}
-			else
-				break;
+			else break;
 
 		Return=BitC.Boolean[Next==Ring[1]];
 	}
@@ -830,7 +843,581 @@ _BOXC_ general *BoxC_RS_Read_(BOXC_VS _PL_ R,ADDRESS Select,BOOLEAN Mode)
 	return (R)?((Select<R->Number)?((R->Count[Select])?(((boxc_l2*)(R->Thing))[Select].L[Mode&1]->L[0]):(NULL)):(NULL)):(NULL);
 }
 
+static inline address _BoxC_RS_Zeros_(address T)
+{
+	address C=0;
+
+	for(T^=T-1,T>>=1;T;T>>=1,C++);
+
+	return C;
+}
+static address _BoxC_RS_GCD_(address M,address N)
+{
+	ADDRESS S=_BoxC_RS_Zeros_(M|N);
+
+	M>>=S;
+	N>>=S;
+
+	M>>=_BoxC_RS_Zeros_(M);
+	while(1)
+	{
+		N>>=_BoxC_RS_Zeros_(N);
+		if(M>N)
+		{
+			ADDRESS T=M-N;
+
+			M=N;
+			N=T;
+		}
+		else if(M<N)
+			N-=M;
+		else break;
+	}
+
+	return (M<<S);
+}
+static general _BoxC_RS_Spread_(general **Slot,BOXC_L2 *_PL_ Ring,ADDRESS Count,SINTPTR Rotation,INTEGER Mode)
+{
+	SINTPTR Mask=(Rotation>0);
+	SINTPTR Nega=Mask^1;
+	SINTPTR Step=1-(Mask<<1);
+	BOXC_L2 *Here=Ring[Mask];
+	BOXC_L2 *Prop=_BoxC_L2_Twist_(Ring[Nega],Here->L[1]);
+	
+	for(GENERAL _PL_ _PL_ End=Slot+Count;Slot<End;Slot++)
+	{
+		MemC_Temp_(boxc_l2,Temp)
+		{
+			Temp.L[Mask]=(boxc_l2*)Here;
+			Temp.L[Nega]=_BoxC_L2_Twist_(Prop,Here->L[1]);
+
+			*Slot=Temp.L[Mode]->L[0];
+		}
+		for(sintptr Iter=Rotation;Iter;Iter+=Step)
+		{
+			BOXC_L2 _PL_ Temp=Prop;
+
+			Prop=_BoxC_L2_Twist_(Here,Prop->L[1]);
+			Here=Temp;
+		}
+	}
+}
+_BOXC_ address BoxC_RS_Spread_(MEMC_MS _PL_ MS,BOXC_VS _PL_ RS,ADDRESS Select,sintptr Rotation,BOOLEAN Mode)
+{
+	address Return;
+
+	if(MS)
+		if(RS)
+			if(Select<RS->Number)
+				if(RS->Count[Select])
+				{
+					if(Rotation)
+					{
+						ADDRESS Count=RS->Count[Select];
+
+						Rotation%=Acs_(sintptr,Count);
+						Return=(Rotation<0)?(-Rotation):(+Rotation);
+						Return=_BoxC_RS_GCD_(Count,Return);
+						Return=Count/Return;
+					}
+					else
+						Return=1;
+
+					if(Return>MS->Nums)
+						Return=0;
+					else
+						_BoxC_RS_Spread_(MS->Slot.P,((boxc_l2*)(RS->Thing))[Select].L,Return,Rotation,Mode&1);
+				}
+				else
+					Return=0;
+			else
+				Return=0;
+		else
+			Return=0;
+	else
+		Return=0;
+
+	return Return;
+}
+
 #undef _BoxC_L2_Twist_
+#endif
+
+#if(Fold_(Part:BoxC_KS))
+MemC_Type_Func_Declare_(integer,boxc_kc,BOXC_KC,GENERAL _PL_,GENERAL _PL_);
+MemC_Type_Declare_(struct,boxc_kn,BOXC_KN);
+struct _boxc_kn
+{
+	general *Key;
+	general *Value;
+	address Height;
+	address Weight;
+	boxc_kn *Leaf[2];
+};
+
+static inline integer _BoxC_KN_Comp_(BYTE_08 _PL_ A,BYTE_08 _PL_ B)
+{
+	return ((A<B)?(-1):((A>B)?(+1):(0)));
+}
+static inline address _BoxC_KN_Height_Old_(BOXC_KN _PL_ Node)
+{
+	return ((Node)?(Node->Height):(0));
+}
+static inline general _BoxC_KN_Height_New_(boxc_kn _PL_ Node)
+{
+	ADDRESS H0=_BoxC_KN_Height_Old_(Node->Leaf[0]);
+	ADDRESS H1=_BoxC_KN_Height_Old_(Node->Leaf[1]);
+
+	Node->Height=(H0>H1)?(H0):(H1);
+	Node->Height++;
+}
+static inline sintptr _BoxC_KN_Height_Bal_(BOXC_KN _PL_ Node)
+{
+	return ((Node)?(_BoxC_KN_Height_Old_(Node->Leaf[0])-_BoxC_KN_Height_Old_(Node->Leaf[1])):(0));
+}
+static inline address _BoxC_KN_Weight_Old_(BOXC_KN _PL_ Node)
+{
+	return ((Node)?(Node->Weight):(0));
+}
+static inline general _BoxC_KN_Weight_New_(boxc_kn _PL_ Node)
+{
+	ADDRESS W0=_BoxC_KN_Weight_Old_(Node->Leaf[0]);
+	ADDRESS W1=_BoxC_KN_Weight_Old_(Node->Leaf[1]);
+
+	Node->Weight=W0+W1;
+	Node->Weight++;
+}
+static boxc_kn *_BoxC_KN_Deeper_(boxc_kn *Node)
+{
+	while(Node->Height>1)
+		Node=Node->Leaf[_BoxC_KN_Height_Old_(Node->Leaf[0])<_BoxC_KN_Height_Old_(Node->Leaf[1])];
+
+	return Node;
+}
+static boxc_kn *_BoxC_KN_Diving_(boxc_kn *Node,INTEGER Mode)
+{
+	while(Node->Leaf[Mode])
+		Node=Node->Leaf[Mode];
+
+	return Node;
+}
+static boxc_kn *_BoxC_KN_Verify_(BOXC_KC Comp_,boxc_kn *Node,GENERAL _PL_ Key)
+{
+	while(Node)
+	{
+		INTEGER Comp=Comp_(Key,Node->Key);
+
+		if(Comp)
+			Node=Node->Leaf[Comp>0];
+		else break;
+	}
+
+	return Node;
+}
+static boxc_kn *_BoxC_KN_Search_(boxc_kn *Node,ADDRESS Index)
+{
+	for(address Offset=0;1;)
+	{
+		ADDRESS Temp=Offset+_BoxC_KN_Weight_Old_(Node->Leaf[0]);
+
+		if(Index<Temp)
+			Node=Node->Leaf[0];
+		else if(Index>Temp)
+		{
+			Node=Node->Leaf[1];
+			Offset=Temp+1;
+		}
+		else break;
+	}
+
+	return Node;
+}
+static memclip _BoxC_KN_Locate_(BOXC_KC Comp_,boxc_kn *Node,GENERAL _PL_ Key)
+{
+	memclip Index={.V=0};
+
+	while(1)
+	{
+		INTEGER Comp=Comp_(Key,Node->Key);
+
+		if(Comp<0)
+			if(Node->Leaf[0])
+				Node=Node->Leaf[0];
+			else goto WRONG;
+		else if(Comp>0)
+			if(Node->Leaf[1])
+			{
+				if(Node->Leaf[0])
+					Index.V+=Node->Leaf[0]->Weight;
+				Index.V++;
+				Node=Node->Leaf[1];
+			}
+			else
+			{
+WRONG:
+				Index.P=FULL;
+				break;
+			}
+		else break;
+	}
+	
+	return Index;
+}
+static general _BoxC_KN_Travel_(BOXC_KN _PL_ Node,memclip *List)
+{
+	if(Node->Leaf[0])
+	{
+		_BoxC_KN_Travel_(Node->Leaf[0],List);
+		List+=Node->Leaf[0]->Weight;
+	}
+	List->P=Node->Key;
+	if(Node->Leaf[1])
+		_BoxC_KN_Travel_(Node->Leaf[1],List+1);
+}
+static boxc_kn *_BoxC_KN_Rotate_(boxc_kn _PL_ Node,INTEGER Mode)
+{
+	INTEGER Togg=Mode^1;
+	boxc_kn _PL_ Leaf=Node->Leaf[Togg];
+	boxc_kn _PL_ Temp=Leaf->Leaf[Mode];
+
+	Leaf->Leaf[Mode]=Node;
+	Node->Leaf[Togg]=Temp;
+
+	_BoxC_KN_Height_New_(Node);
+	_BoxC_KN_Weight_New_(Node);
+
+	_BoxC_KN_Height_New_(Leaf);
+	_BoxC_KN_Weight_New_(Leaf);
+
+	return Leaf;
+}
+
+static boxc_kn *_BoxC_KN_Insert_(boxc_kn _PL_,BOXC_KC,boxc_kn*,general _PL_);
+static boxc_kn *_BoxC_KN_Desert_(boxc_kn _PL_,BOXC_KC,boxc_kn*,GENERAL _PL_);
+static boxc_kn *_BoxC_KN_Create_(boxc_kn _PL_ Pair,general _PL_ Key)
+{
+	boxc_kn *Node;
+
+	if(Pair)
+	{
+		Node=_BoxC_KN_Deeper_(Pair);
+		_BoxC_KN_Desert_(NULL,_BoxC_KN_Comp_,Pair,Node);
+
+		Node->Key=Key;
+		Node->Value=NULL;
+	}
+	else
+	{
+		Node=Key;
+
+		Node->Key=Key;
+		Node->Height=1;
+		Node->Weight=1;
+		Node->Leaf[0]=NULL;
+		Node->Leaf[1]=NULL;
+	}
+
+	return Node;
+}
+static general _BoxC_KN_Delete_(boxc_kn _PL_ Pair,boxc_kn _PL_ Node)
+{
+	if(Pair)
+		_BoxC_KN_Insert_(NULL,_BoxC_KN_Comp_,Pair,Node);
+}
+static boxc_kn *_BoxC_KN_Insert_(boxc_kn _PL_ Pair,BOXC_KC Comp_,boxc_kn *Node,general _PL_ Key)
+{
+	if(Node)
+	{
+		integer Comp=Comp_(Key,Node->Key);
+		integer Mode=(Comp>0);
+
+		Node->Leaf[Mode]=_BoxC_KN_Insert_(Pair,Comp_,Node->Leaf[Mode],Key);
+
+		_BoxC_KN_Height_New_(Node);
+		_BoxC_KN_Weight_New_(Node);
+		{
+			SINTPTR Balance=_BoxC_KN_Height_Bal_(Node);
+
+			switch(Balance)
+			{
+			default:
+				Mode=(Balance<0)?((Comp=+Comp_(Key,Node->Leaf[1]->Key)),1):((Comp=-Comp_(Key,Node->Leaf[0]->Key)),0);
+				if(Comp)
+				{
+					if(Comp<0)
+						Node->Leaf[Mode]=_BoxC_KN_Rotate_(Node->Leaf[Mode],Mode);
+					Node=_BoxC_KN_Rotate_(Node,Mode^1);
+				}
+			case-1:case 0:case+1:;
+			}
+		}
+	}
+	else
+		Node=_BoxC_KN_Create_(Pair,Key);
+
+	return Node;
+}
+static boxc_kn *_BoxC_KN_Desert_(boxc_kn _PL_ Pair,BOXC_KC Comp_,boxc_kn *Node,GENERAL _PL_ Key)
+{
+	if(Node)
+	{
+		integer Comp=Comp_(Key,Node->Key);
+		integer Mode;
+
+		if(Comp)
+		{
+			Mode=(Comp>0);
+			Node->Leaf[Mode]=_BoxC_KN_Desert_(Pair,Comp_,Node->Leaf[Mode],Key);
+		}
+		else
+		{
+			Mode=((Node->Leaf[0])?(1):(0))|((Node->Leaf[1])?(2):(0));
+			switch(Mode)
+			{
+			case 0:
+				_BoxC_KN_Delete_(Pair,Node);
+				Node=NULL;
+				goto RETURN;
+			case 1:
+			case 2:
+				{
+					boxc_kn _PL_ Leaf=Node->Leaf[Mode>>1];
+
+					*Node=*Leaf;
+					_BoxC_KN_Delete_(Pair,Leaf);
+				}
+				break;
+			default:
+				{
+					boxc_kn _PL_ Leaf=_BoxC_KN_Diving_(Node->Leaf[1],0);
+
+					Node->Key=Leaf->Key;
+					Node->Leaf[1]=_BoxC_KN_Desert_(Pair,Comp_,Node->Leaf[1],Leaf->Key);
+				}
+			}
+		}
+		_BoxC_KN_Height_New_(Node);
+		_BoxC_KN_Weight_New_(Node);
+		{
+			sintptr Balance=_BoxC_KN_Height_Bal_(Node);
+
+			switch(Balance)
+			{
+			default:
+				Mode=(Balance<0)?((Balance=+_BoxC_KN_Height_Bal_(Node->Leaf[1])),1):((Balance=-_BoxC_KN_Height_Bal_(Node->Leaf[0])),0);
+				if(Balance>0)
+					Node->Leaf[Mode]=_BoxC_KN_Rotate_(Node->Leaf[Mode],Mode);
+				Node=_BoxC_KN_Rotate_(Node,Mode^1);
+			case-1:case 0:case+1:;
+			}
+		}
+	}
+RETURN:
+	return Node;
+}
+
+static general _BoxC_KS_Setup_(BOXC_KS _PL_ Head)
+{
+	boxc_kn *_PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+
+	Root[0]=NULL;
+	Root[1]=NULL;
+
+	for(boxc_kn *Ptr=(boxc_kn*)(Root+2),_PL_ End=Ptr+(Head->Capacity);Ptr<End;Ptr++)
+		Root[0]=_BoxC_KN_Insert_(NULL,_BoxC_KN_Comp_,Root[0],Ptr);
+}
+_BOXC_ boxc_ks *BoxC_KS_Create_(BOXC_KC Comp_,ADDRESS Capacity)
+{
+	boxc_ks *Head;
+
+	if(Capacity)
+	{
+		ADDRESS Temp=MemC.Size.Mul_(Capacity,sizeof(boxc_kn));
+
+		Head=(Temp)?(MemC.Alloc.Byte_(MemC.Size.Add_(Temp,sizeof(boxc_ks)+sizeof(boxc_l2)))):(NULL);
+	}
+	else
+		Head=MemC.Alloc.Byte_(sizeof(boxc_ks)+sizeof(boxc_l2));
+
+	if(Head)
+	{
+		Acs_(boxc_l2*,Head->Key)=(boxc_l2*)(Head+1);
+		Acs_(boxc_kc,Head->Comp_)=(Comp_)?(Comp_):(_BoxC_KN_Comp_);
+		Acs_(address,Head->Number)=0;
+		Acs_(address,Head->Capacity)=Capacity;
+
+		_BoxC_KS_Setup_(Head);
+	}
+
+	return Head;
+}
+_BOXC_ address BoxC_KS_Size_(BOXC_KS _PL_ Head)
+{
+	return ((Head)?(sizeof(boxc_ks)+sizeof(boxc_l2)+MemC_Size_(boxc_kn,Head->Capacity)):(0));
+}
+_BOXC_ boolean BoxC_KS_Reset_(boxc_ks _PL_ Head)
+{
+	if(Head)
+	{
+		Acs_(address,Head->Number)=0;
+
+		_BoxC_KS_Setup_(Head);
+	}
+	else goto FAILURE;
+
+	return BitCFull;
+FAILURE:
+	return BitCNull;
+}
+
+_BOXC_ boolean BoxC_KS_Insert_(boxc_ks _PL_ Head,general _PL_ Key)
+{
+	if(Head)
+		if((Head->Number)<(Head->Capacity))
+		{
+			boxc_kn *_PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+
+			if(_BoxC_KN_Verify_(Head->Comp_,Root[1],Key))
+				goto FAILURE;
+			else
+			{
+				Root[1]=_BoxC_KN_Insert_(Root[0],Head->Comp_,Root[1],Key);
+				Acs_(address,Head->Number)++;
+			}
+		}
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
+FAILURE:
+	return BitCNull;
+}
+_BOXC_ boolean BoxC_KS_Desert_(boxc_ks _PL_ Head,GENERAL _PL_ Key)
+{
+	if(Head)
+	{
+		boxc_kn *_PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+
+		if(_BoxC_KN_Verify_(Head->Comp_,Root[1],Key))
+		{
+			Root[1]=_BoxC_KN_Desert_(Root[0],Head->Comp_,Root[1],Key);
+			Acs_(address,Head->Number)--;
+		}
+		else goto FAILURE;
+	}
+	else goto FAILURE;
+
+	return BitCFull;
+FAILURE:
+	return BitCNull;
+}
+_BOXC_ boolean BoxC_KS_Verify_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
+{
+	if(Head)
+	{
+		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+
+		if(_BoxC_KN_Verify_(Head->Comp_,Root[1],Key));
+		else goto FAILURE;
+	}
+	else goto FAILURE;
+
+	return BitCFull;
+FAILURE:
+	return BitCNull;
+}
+
+_BOXC_ boolean BoxC_KS_Writer_(BOXC_KS _PL_ Head,GENERAL _PL_ Key,general _PL_ Value)
+{
+	if(Head)
+	{
+		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+		boxc_kn _PL_ Node=_BoxC_KN_Verify_(Head->Comp_,Root[1],Key);
+
+		if(Node)
+			Node->Value=Value;
+		else goto FAILURE;
+	}
+	else goto FAILURE;
+
+	return BitCFull;
+FAILURE:
+	return BitCNull;
+}
+_BOXC_ general *BoxC_KS_Reader_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
+{
+	general *Return;
+
+	if(Head)
+	{
+		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+		boxc_kn _PL_ Node=_BoxC_KN_Verify_(Head->Comp_,Root[1],Key);
+
+		Return=(Node)?(Node->Value):(NULL);
+	}
+	else
+		Return=NULL;
+
+	return Return;
+}
+
+_BOXC_ general *BoxC_KS_Search_(BOXC_KS _PL_ Head,ADDRESS Index)
+{
+	general *Return;
+
+	if(Head)
+		if(Index<Head->Number)
+		{
+			boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+
+			Return=_BoxC_KN_Search_(Root[1],Index)->Key;
+		}
+		else
+			Return=NULL;
+	else
+		Return=NULL;
+
+	return Return;
+}
+_BOXC_ address BoxC_KS_Locate_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
+{
+	memclip Return;
+
+	if(Head)
+	{
+		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+
+		Return=_BoxC_KN_Locate_(Head->Comp_,Root[1],Key);
+	}
+	else
+		Return.P=FULL;
+
+	return Return.V;
+}
+
+_BOXC_ address BoxC_KS_Spread_(MEMC_MS _PL_ MS,BOXC_KS _PL_ KS)
+{
+	address Return;
+
+	if(MS)
+		if(KS)
+			if((MS->Nums)<(KS->Number))
+				Return=0;
+			else
+			{
+				BOXC_KN _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(KS->Key))->L);
+
+				_BoxC_KN_Travel_(Root[1],MS->Cell);
+
+				Return=Root[1]->Weight;
+			}
+		else
+			Return=0;
+	else
+		Return=0;
+
+	return Return;
+}
 #endif
 
 #if(Fold_(Part:BoxC_FS))
@@ -1175,13 +1762,10 @@ static boolean _BoxC_Tr_Okay_(BOXC_TR *Source,BOXC_TR *Target)
 
 			if(Source==Target)
 				goto SUCCESS;
-			else
-				goto FAILURE;
+			else goto FAILURE;
 		}
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+		else goto FAILURE;
+	else goto FAILURE;
 FAILURE:
 	return BitCNull;
 SUCCESS:
@@ -1194,15 +1778,12 @@ _BOXC_ boolean BoxC_Tr_Move_(boxc_tr _PL_ Tree,boxc_tr _PL_ Root)
 		_BoxC_Tr_Numb_Dec_(Tree);
 		_BoxC_Tr_Swap_(Tree,Root);
 		_BoxC_Tr_Numb_Inc_(Tree);
-
-		goto SUCCESS;
 	}
-	else
-		goto FAILURE;
+	else goto FAILURE;
+
+	return BitCFull;
 FAILURE:
 	return BitCNull;
-SUCCESS:
-	return BitCFull;
 }
 #endif
 
@@ -1222,6 +1803,7 @@ const struct _boxcase BoxC=
 	.SS.Reset_=MemC_Func_Casting_(boolean,BoxC_SS_Reset_,BOXC_SS _PL_,ADDRESS),
 	.SS.Push_=MemC_Func_Casting_(boolean,BoxC_SS_Push_,BOXC_SS _PL_,ADDRESS,general _PL_),
 	.SS.Pop_=MemC_Func_Casting_(general*,BoxC_SS_Pop_,BOXC_SS _PL_,ADDRESS),
+	.SS.Spread_=MemC_Func_Casting_(address,BoxC_SS_Spread_,MEMC_MS _PL_,BOXC_SS _PL_,ADDRESS),
 	.SS.Check_=MemC_Func_Casting_(boolean,BoxC_SS_Check_,BOXC_SS _PL_,ADDRESS),
 	.SS.Peek_=MemC_Func_Casting_(general*,BoxC_SS_Peek_,BOXC_SS _PL_,ADDRESS,ADDRESS),
 #endif
@@ -1234,6 +1816,7 @@ const struct _boxcase BoxC=
 	.QS.Reset_=MemC_Func_Casting_(boolean,BoxC_QS_Reset_,BOXC_QS _PL_,ADDRESS),
 	.QS.Enque_=MemC_Func_Casting_(boolean,BoxC_QS_Enque_,BOXC_QS _PL_,ADDRESS,general _PL_),
 	.QS.Deque_=MemC_Func_Casting_(general*,BoxC_QS_Deque_,BOXC_QS _PL_,ADDRESS),
+	.QS.Spread_=MemC_Func_Casting_(address,BoxC_QS_Spread_,MEMC_MS _PL_,BOXC_QS _PL_,ADDRESS),
 	.QS.Check_=MemC_Func_Casting_(boolean,BoxC_QS_Check_,BOXC_QS _PL_,ADDRESS),
 	.QS.Peek_=MemC_Func_Casting_(general*,BoxC_QS_Peek_,BOXC_QS _PL_,ADDRESS,ADDRESS),
 #endif
@@ -1246,9 +1829,25 @@ const struct _boxcase BoxC=
 	.RS.Reset_=MemC_Func_Casting_(boolean,BoxC_RS_Reset_,BOXC_RS _PL_,ADDRESS),
 	.RS.Insert_=MemC_Func_Casting_(boolean,BoxC_RS_Insert_,BOXC_RS _PL_,ADDRESS,general _PL_,BOOLEAN),
 	.RS.Desert_=MemC_Func_Casting_(boolean,BoxC_RS_Desert_,BOXC_RS _PL_,ADDRESS,BOOLEAN),
-	.RS.Rotate_=MemC_Func_Casting_(boolean,BoxC_RS_Rotate_,BOXC_RS _PL_,ADDRESS,INTEGER),
+	.RS.Rotate_=MemC_Func_Casting_(boolean,BoxC_RS_Rotate_,BOXC_RS _PL_,ADDRESS,SINTPTR),
 	.RS.Check_=MemC_Func_Casting_(boolean,BoxC_RS_Check_,BOXC_RS _PL_,ADDRESS),
 	.RS.Read_=MemC_Func_Casting_(general*,BoxC_RS_Read_,BOXC_RS _PL_,ADDRESS,BOOLEAN),
+	.RS.Spread_=MemC_Func_Casting_(address,BoxC_RS_Spread_,MEMC_MS _PL_,BOXC_RS _PL_,ADDRESS,SINTPTR,BOOLEAN),
+#endif
+
+#if(Fold_(Part:BoxC_KS))
+	.KS.Create_=BoxC_KS_Create_,
+	.KS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ks *_PL_),
+	.KS.Size_=BoxC_KS_Size_,
+	.KS.Reset_=BoxC_KS_Reset_,
+	.KS.Key.Insert_=BoxC_KS_Insert_,
+	.KS.Key.Desert_=BoxC_KS_Desert_,
+	.KS.Key.Verify_=BoxC_KS_Verify_,
+	.KS.Key.Spread_=BoxC_KS_Spread_,
+	.KS.Value.Writer_=BoxC_KS_Writer_,
+	.KS.Value.Reader_=BoxC_KS_Reader_,
+	.KS.Index.Search_=BoxC_KS_Search_,
+	.KS.Index.Locate_=BoxC_KS_Locate_,
 #endif
 
 #if(Fold_(Part:BoxC_FS))

@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ LinClip=&LinClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.04.26";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
 #endif
 
 #if(Fold_(Domain:Host))

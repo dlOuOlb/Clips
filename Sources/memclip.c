@@ -6,7 +6,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.04.26";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
 static ADDRESS ConstantZero[MemC_Max_Dimension]={0};
 #endif
 
@@ -1370,6 +1370,9 @@ SUCCESS:
 }
 #endif
 #if(Fold_(Part:MemC_ML))
+#define _MemC_ML_Malloc_(Chunks) ((_MemC_Size_Mul_(Chunks,sizeof(memc_mn)))?(_mm_malloc(MemC_Size_(memc_mn,Chunks),sizeof(memc_mn))):(NULL))
+#define _MemC_ML_Free_(Memory) __dl{_mm_free(Memory);(Memory)=NULL;}lb__
+
 MemC_Type_Declare_(struct,memc_l2,MEMC_L2);
 struct _memc_l2 { general *L[2]; };
 
@@ -1390,7 +1393,7 @@ _MEMC_ memc_ml *MemC_ML_Create_(memc_ml _PL_ Root,ADDRESS Chunks)
 		if(Root)
 			if(Root==Root->LinkSelf)
 			{
-				ML=MemC_Alloc_Byte_(_MemC_Size_Mul_(Chunks,sizeof(memc_mn)));
+				ML=_MemC_ML_Malloc_(Chunks);
 				if(ML)
 				{
 					Acs_(memc_ml*,ML->LinkSelf)=ML;
@@ -1407,7 +1410,7 @@ _MEMC_ memc_ml *MemC_ML_Create_(memc_ml _PL_ Root,ADDRESS Chunks)
 				ML=NULL;
 		else
 		{
-			ML=MemC_Alloc_Byte_(_MemC_Size_Mul_(Chunks,sizeof(memc_mn)));
+			ML=_MemC_ML_Malloc_(Chunks);
 			if(ML)
 			{
 				{
@@ -1453,7 +1456,7 @@ _MEMC_ memc_ml *MemC_ML_Delete_(memc_ml *_PL_ ML)
 				Acs_(memc_ml*,(*ML)->LinkPrev->LinkNext)=(*ML)->LinkNext;
 				Acs_(memc_ml*,(*ML)->LinkNext->LinkPrev)=(*ML)->LinkPrev;
 			}
-			MemC_Deloc_(*ML);
+			_MemC_ML_Free_(*ML);
 		}
 		else
 			Return=NULL;
@@ -1462,6 +1465,7 @@ _MEMC_ memc_ml *MemC_ML_Delete_(memc_ml *_PL_ ML)
 
 	return Return;
 }
+
 _MEMC_ address MemC_ML_Size_(MEMC_ML _PL_ ML)
 {
 	return ((ML)?(MemC_Size_(memc_ml,1)+MemC_Size_(memc_mn,ML->NumsIdle+ML->NumsUsed)+(ML->SizeIdle+ML->SizeUsed)):(0));
@@ -1482,10 +1486,8 @@ static integer _MemC_MN_Scan_(memc_mn *_R_ Ptr)
 		if(Ptr->Next)
 			if(Ptr==Ptr->Next->Prev)
 				Ptr=Ptr->Next;
-			else
-				return 0;
-		else
-			return 1;
+			else return 0;
+		else return 1;
 }
 static memc_mn *_MemC_MN_Search_Space_(memc_mn *_R_ Ptr,ADDRESS Demand)
 {
@@ -1529,9 +1531,9 @@ static memc_mn *_MemC_MN_Search_Node_(memc_mn *Node)
 
 	return Node;
 }
-static address _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
+static integer _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
 {
-	address Return;
+	integer Return;
 
 	if(Demand<Node->Size)
 	{
@@ -1553,11 +1555,11 @@ static address _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
 			Node->Next->Home=NULL;
 
 			Node->Size=Demand;
-			Return=0;
 		}
+		Return=1;
 	}
 	else
-		Return=1;
+		Return=0;
 
 	return Return;
 }
@@ -1649,24 +1651,21 @@ _MEMC_ general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
 			{
 				memc_ml _PL_ Home=Select.L[0];
 				memc_mn _PL_ Node=Select.L[1];
+				ADDRESS Size=Node->Size;
 
 				Node->Home=Home;
-				if(Node->Size==Home->SizeAble)
-				{
-					Acs_(address,Home->NumsIdle)-=_MemC_MN_Borrow_(Node,Margin);
-					Acs_(address,Home->SizeAble)=_MemC_MN_Search_Size_(Node);
-				}
+				if(_MemC_MN_Borrow_(Node,Margin))
+					Acs_(address,Home->SizeIdle)-=sizeof(memc_mn);
 				else
-					Acs_(address,Home->NumsIdle)-=_MemC_MN_Borrow_(Node,Margin);
+					Acs_(address,Home->NumsIdle)--;
+				if(Size==Home->SizeAble)
+					Acs_(address,Home->SizeAble)=_MemC_MN_Search_Size_(Node);
 				{
 					Acs_(address,Home->NumsUsed)++;
-
-					Acs_(address,Home->SizeIdle)-=sizeof(memc_mn);
 					Acs_(address,Home->SizeIdle)-=Margin;
 					Acs_(address,Home->SizeUsed)+=Margin;
-
-					Memory=Node+1;
 				}
+				Memory=Node+1;
 			}
 			else
 				Memory=NULL;
@@ -1686,12 +1685,14 @@ _MEMC_ integer _MemC_ML_Return_(general _PL_ Memory)
 	if(Node)
 	{
 		memc_ml _PL_ Home=Node->Home;
+		ADDRESS Size=Node->Size;
+		ADDRESS Mode=_MemC_MN_Return_(&Node);
 
-		Acs_(address,Home->SizeIdle)+=sizeof(memc_mn);
-		Acs_(address,Home->SizeIdle)+=Node->Size;
-		Acs_(address,Home->SizeUsed)-=Node->Size;
+		Acs_(address,Home->SizeIdle)+=MemC_Size_(memc_mn,Mode);
+		Acs_(address,Home->SizeIdle)+=Size;
+		Acs_(address,Home->SizeUsed)-=Size;
 
-		Acs_(address,Home->NumsIdle)-=_MemC_MN_Return_(&Node);
+		Acs_(address,Home->NumsIdle)-=Mode;
 		Acs_(address,Home->NumsIdle)++;
 		Acs_(address,Home->NumsUsed)--;
 
@@ -1988,6 +1989,9 @@ FAILURE:
 SUCCESS:
 	return 1;
 }
+
+#undef _MemC_ML_Free_
+#undef _MemC_ML_Malloc_
 #endif
 #endif
 
