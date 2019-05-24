@@ -6,7 +6,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.24";
 static ADDRESS ConstantZero[MemC_Max_Dimension]={0};
 #endif
 
@@ -48,53 +48,31 @@ static address _MemC_Array_Prod_(ADDRESS *_R_ Ptr,ADDRESS Count)
 }
 static integer _MemC_Array_Non_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
 {
-	ADDRESS _PL_ End=Ptr+Nums;
+	for(ADDRESS _PL_ End=Ptr+Nums;Ptr<End;Ptr++)
+		if(!(*Ptr))
+			return 0;
 
-	while(Ptr<End)
-		if(*Ptr)
-			Ptr++;
-		else
-			break;
-
-	return (Ptr==End);
+	return 1;
 }
 static integer _MemC_Array_All_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
 {
-	ADDRESS _PL_ End=Ptr+Nums;
-
-	while(Ptr<End)
+	for(ADDRESS _PL_ End=Ptr+Nums;Ptr<End;Ptr++)
 		if(*Ptr)
-			break;
-		else
-			Ptr++;
+			return 0;
 
-	return (Ptr==End);
+	return 1;
 }
-static integer _MemC_Array_Boundary_(ADDRESS *_R_ Access,ADDRESS *_R_ Bound,ADDRESS Count)
+static integer _MemC_Array_Boundary_(ADDRESS _PL_ _R_ Access,ADDRESS _PL_ _R_ Bound,ADDRESS Count)
 {
-	ADDRESS _PL_ End=Access+Count;
+	for(address Index=0;Index<Count;Index++)
+		if(Access[Index]>=Bound[Index])
+			return 0;
 
-	while(Access<End)
-		if((*Access)<(*Bound))
-		{
-			Access++;
-			Bound++;
-		}
-		else
-			break;
-
-	return (Access==End);
+	return 1;
 }
-_MEMC_ integer MemC_Check_(GENERAL _PL_ *Memory,ADDRESS Sets)
+_MEMC_ integer MemC_Check_(GENERAL _PL_ _PL_ Memory,ADDRESS Sets)
 {
-	integer Success;
-
-	if(Memory)
-		Success=_MemC_Array_Non_Zero_((address*)Memory,Sets);
-	else
-		Success=0;
-
-	return Success;
+	return ((Memory)?(_MemC_Array_Non_Zero_((ADDRESS*)Memory,Sets)):(0));
 }
 _MEMC_ general MemC_Deloc_Set_(general **Memory,ADDRESS Sets)
 {
@@ -792,38 +770,6 @@ _MEMC_ address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRES
 
 	return Sum;
 }
-_MEMC_ address _MemC_Switch_(GENERAL _PL_ Key,GENERAL _PL_ _PL_ ReferTable,ADDRESS *ReferLength,ADDRESS KeyLength,ADDRESS Refers,ADDRESS TypeSize)
-{
-	ADDRESS ByteSize=KeyLength*TypeSize;
-	address Index=0;
-
-	Index=~Index;
-	if(ByteSize)
-	{
-		GENERAL _PL_ _PL_ End=ReferTable+Refers;
-		GENERAL _PL_ *PointerT=ReferTable;
-
-		if(ReferLength)
-			for(;PointerT<End;PointerT++,ReferLength++)
-			{
-				if(ReferLength[0]==KeyLength)
-					if(!memcmp(Key,PointerT[0],ByteSize))
-					{
-						Index=PointerT-ReferTable;
-						break;
-					}
-			}
-		else
-			for(;PointerT<End;PointerT++)
-				if(!memcmp(Key,PointerT[0],ByteSize))
-				{
-					Index=PointerT-ReferTable;
-					break;
-				}
-	}
-
-	return Index;
-}
 #endif
 #endif
 
@@ -950,28 +896,26 @@ _MEMC_ integer MemC_MS_Dims_(MEMC_MS _PL_ MS,ADDRESS Dims,...)
 		{
 			va_list Arg;
 
-			va_start(Arg,MS);
+			va_start(Arg,Dims);
 
-			for(address Dim=0;Dim<=Dims;Dim++)
-				MS->Slot.V[Dim]=va_arg(Arg,address);
+			MemC_Temp_(address,Dim=0)
+				for(MS->Slot.V[Dim++]=Dims;Dim<=Dims;Dim++)
+					MS->Slot.V[Dim]=va_arg(Arg,address);
 
 			va_end(Arg);
-
-			goto SUCCESS;
 		}
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+		else goto FAILURE;
+	else goto FAILURE;
+
+	return 1;
 FAILURE:
 	return 0;
-SUCCESS:
-	return 1;
 }
 
 _MEMC_ integer MemC_MS_Joke_(MEMC_MS _PL_ MS)
 {
 	if(MS)
+	{
 		if(MS->Nums)
 		{
 			address Table[8]={1,2,3,4,5,6,7,8};
@@ -1044,17 +988,13 @@ _MEMC_ integer MemC_MS_Joke_(MEMC_MS _PL_ MS)
 				}
 			}
 			(*Pointer)=MS->Slot.P;
-
-			goto SUCCESS;
 		}
-		else
-			goto SUCCESS;
-	else
-		goto FAILURE;
+	}
+	else goto FAILURE;
+
+	return 1;
 FAILURE:
 	return 0;
-SUCCESS:
-	return 1;
 }
 _MEMC_ integer MemC_MS_Oops_(MEMC_MS _PL_ MS)
 {
@@ -1074,12 +1014,10 @@ _MEMC_ integer MemC_MS_Oops_(MEMC_MS _PL_ MS)
 						if((*Pointer)==Start)
 							if(Count)
 								goto FAILURE;
-							else
-								goto SUCCESS;
+							else goto SUCCESS;
 						else
 							Pointer=(*Pointer);
-					else
-						goto FAILURE;
+					else goto FAILURE;
 			goto FAILURE;
 		}
 		else
@@ -1419,9 +1357,8 @@ _MEMC_ memc_ml *MemC_ML_Create_(memc_ml _PL_ Root,ADDRESS Chunks)
 					Acs_(memc_ml*,ML->LinkNext)=ML;
 				}
 JUMP:
+				MemC_Temp_(memc_mn,_PL_ MN=(memc_mn*)(ML+1))
 				{
-					memc_mn *MN=(memc_mn*)(ML+1);
-
 					MN->Home=NULL;
 					MN->Prev=NULL;
 					MN->Next=NULL;
@@ -1465,7 +1402,6 @@ _MEMC_ memc_ml *MemC_ML_Delete_(memc_ml *_PL_ ML)
 
 	return Return;
 }
-
 _MEMC_ address MemC_ML_Size_(MEMC_ML _PL_ ML)
 {
 	return ((ML)?(MemC_Size_(memc_ml,1)+MemC_Size_(memc_mn,ML->NumsIdle+ML->NumsUsed)+(ML->SizeIdle+ML->SizeUsed)):(0));
@@ -1482,7 +1418,7 @@ static address _MemC_MN_Margin_(address Size)
 }
 static integer _MemC_MN_Scan_(memc_mn *_R_ Ptr)
 {
-	while(1)
+	__dlOuOlb__
 		if(Ptr->Next)
 			if(Ptr==Ptr->Next->Prev)
 				Ptr=Ptr->Next;
@@ -1533,8 +1469,6 @@ static memc_mn *_MemC_MN_Search_Node_(memc_mn *Node)
 }
 static integer _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
 {
-	integer Return;
-
 	if(Demand<Node->Size)
 	{
 		if(Node->Next)
@@ -1556,12 +1490,12 @@ static integer _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
 
 			Node->Size=Demand;
 		}
-		Return=1;
 	}
-	else
-		Return=0;
+	else goto FAILURE;
 
-	return Return;
+	return 1;
+FAILURE:
+	return 0;
 }
 static general _MemC_MN_Attach_(memc_mn _PL_ Node)
 {
@@ -1630,10 +1564,19 @@ static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
 
 	return Return;
 }
-static general _MemC_MN_Reset_(memc_mn *Node)
+static inline general *_MemC_MN_Give_(memc_mn _PL_ Node,ADDRESS Demand)
 {
-	for(Node=Node->Next;Node;Node=Node->Next)
-		Node->Home=NULL;
+	ADDRESS Margin=Node->Size;
+	byte_08 _PL_ Return=memset(Node+1,0x6F,Margin);
+
+	if(Demand<Margin)
+		memset(Return+Demand,0x78,Margin-Demand);
+
+	return Return;
+}
+static inline general _MemC_MN_Take_(memc_mn _PL_ Node)
+{
+	memset(Node+1,0x58,Node->Size);
 }
 _MEMC_ general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
 {
@@ -1665,7 +1608,7 @@ _MEMC_ general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
 					Acs_(address,Home->SizeIdle)-=Margin;
 					Acs_(address,Home->SizeUsed)+=Margin;
 				}
-				Memory=Node+1;
+				Memory=_MemC_MN_Give_(Node,Demand);
 			}
 			else
 				Memory=NULL;
@@ -1699,34 +1642,32 @@ _MEMC_ integer _MemC_ML_Return_(general _PL_ Memory)
 		if(Home->SizeAble<Node->Size)
 			Acs_(address,Home->SizeAble)=Node->Size;
 
-		goto SUCCESS;
+		_MemC_MN_Take_(Node);
 	}
 	else
 		goto FAILURE;
+
+	return 1;
 FAILURE:
 	return 0;
-SUCCESS:
-	return 1;
 }
 _MEMC_ integer MemC_ML_Kill_(memc_ml _PL_ ML)
 {
 	if(ML)
 	{
-		memc_ml *_R_ PtrML=ML;
-		memc_mn *PtrMN;
+		memc_ml *PtrML=ML;
 
 		do
 		{
 			if(PtrML->NumsUsed)
 			{
-				PtrMN=(memc_mn*)(PtrML+1);
-
-				_MemC_MN_Reset_(PtrMN);
+				memc_mn _PL_ PtrMN=(memc_mn*)(PtrML+1);
 
 				PtrMN->Home=NULL;
 				PtrMN->Prev=NULL;
 				PtrMN->Next=NULL;
 				PtrMN->Size=MemC_Size_(memc_mn,PtrML->NumsIdle+PtrML->NumsUsed-1)+(PtrML->SizeIdle+PtrML->SizeUsed);
+				_MemC_MN_Take_(PtrMN);
 
 				Acs_(address,PtrML->SizeAble)=PtrMN->Size;
 				Acs_(address,PtrML->SizeIdle)=PtrMN->Size;
@@ -1737,15 +1678,13 @@ _MEMC_ integer MemC_ML_Kill_(memc_ml _PL_ ML)
 			PtrML=PtrML->LinkNext;
 		}
 		while(PtrML!=ML);
-
-		goto SUCCESS;
 	}
 	else
 		goto FAILURE;
+
+	return 1;
 FAILURE:
 	return 0;
-SUCCESS:
-	return 1;
 }
 
 _MEMC_ memc_ml *MemC_ML_Master_(GENERAL _PL_ Memory)
@@ -1948,7 +1887,7 @@ _MEMC_ integer MemC_ML_Move_(memc_ml _PL_ Source,memc_ml _PL_ Target,memc_ms _PL
 			{
 				ADDRESS Useds=_MemC_ML_Used_Count_(Source);
 				
-				if(Buffer->Nums<(3*Useds))
+				if((Buffer->Nums)<(3*Useds))
 					goto FAILURE;
 				else
 				{
@@ -1965,11 +1904,7 @@ _MEMC_ integer MemC_ML_Move_(memc_ml _PL_ Source,memc_ml _PL_ Target,memc_ms _PL
 						_MemC_ML_Head_Array_(Source,Head);
 						if(MemC_Sort_(_MemC_MN_Comp_Size_,Head,NULL,Temp,Useds)==MemCErrZero)
 							if(_MemC_ML_Twin_Alloc_(Target,Head,(memc_mn**)Temp))
-							{
 								_MemC_ML_Over_Write_(Head,(memc_mn**)Temp);
-
-								goto SUCCESS;
-							}
 							else
 								goto FAILURE;
 						else
@@ -1984,10 +1919,10 @@ _MEMC_ integer MemC_ML_Move_(memc_ml _PL_ Source,memc_ml _PL_ Target,memc_ms _PL
 			goto FAILURE;
 	else
 		goto FAILURE;
+
+	return 1;
 FAILURE:
 	return 0;
-SUCCESS:
-	return 1;
 }
 
 #undef _MemC_ML_Free_
@@ -2003,6 +1938,7 @@ SUCCESS:
 const struct _memcase MemC=
 {
 	.Version=IdiomVersion,
+	.Void_=MemC_Void_,
 
 #if(Fold_(Part:Type))
 	.Type.N00=TableType+MemCTypeNone_00,
@@ -2046,11 +1982,6 @@ const struct _memcase MemC=
 #if(Fold_(Part:Size))
 	.Size.Add_=_MemC_Size_Add_,
 	.Size.Mul_=_MemC_Size_Mul_,
-#endif
-
-#if(Fold_(Part:Others))
-	.Void_=MemC_Void_,
-	.Switch_=_MemC_Switch_,
 #endif
 
 #if(Fold_(Part:MemC_MS))

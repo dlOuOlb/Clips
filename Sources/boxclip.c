@@ -1,7 +1,7 @@
 #include "boxclip.h"
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.24";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -48,8 +48,7 @@ MemC_Type_Declare_(struct,boxc_vs,BOXC_VS);
 
 static general _BoxC_VS_Delete_(boxc_vs *_PL_ V)
 {
-	if(*V)
-		MemC_Deloc_(*V);
+	MemC_Deloc_(*V);
 }
 #endif
 
@@ -857,9 +856,9 @@ static address _BoxC_RS_GCD_(address M,address N)
 
 	M>>=S;
 	N>>=S;
-
 	M>>=_BoxC_RS_Zeros_(M);
-	while(1)
+
+	__dlOuOlb__
 	{
 		N>>=_BoxC_RS_Zeros_(N);
 		if(M>N)
@@ -871,10 +870,9 @@ static address _BoxC_RS_GCD_(address M,address N)
 		}
 		else if(M<N)
 			N-=M;
-		else break;
+		else
+			return (M<<S);
 	}
-
-	return (M<<S);
 }
 static general _BoxC_RS_Spread_(general **Slot,BOXC_L2 *_PL_ Ring,ADDRESS Count,SINTPTR Rotation,INTEGER Mode)
 {
@@ -955,9 +953,9 @@ struct _boxc_kn
 	boxc_kn *Leaf[2];
 };
 
-static inline integer _BoxC_KN_Comp_(BYTE_08 _PL_ A,BYTE_08 _PL_ B)
+static inline integer _BoxC_KN_Comp_(GENERAL _PL_ A,GENERAL _PL_ B)
 {
-	return ((A<B)?(-1):((A>B)?(+1):(0)));
+	return ((A>B)-(A<B));
 }
 static inline address _BoxC_KN_Height_Old_(BOXC_KN _PL_ Node)
 {
@@ -1036,7 +1034,7 @@ static memclip _BoxC_KN_Locate_(BOXC_KC Comp_,boxc_kn *Node,GENERAL _PL_ Key)
 {
 	memclip Index={.V=0};
 
-	while(1)
+	__dlOuOlb__
 	{
 		INTEGER Comp=Comp_(Key,Node->Key);
 
@@ -1442,6 +1440,19 @@ _BOXC_ address BoxC_FS_Size_(BOXC_FS _PL_ F)
 {
 	return (F)?(((F->Number+7)>>3)+sizeof(boxc_fs)):(0);
 }
+_BOXC_ boolean BoxC_FS_Reset_All_(BOXC_FS _PL_ F)
+{
+	if(F)
+	{
+		if(F->Number)
+			MemC_Clear_1D_((byte_08*)(F->Flag),(F->Number+7)>>3);
+	}
+	else goto FAILURE;
+
+	return BitCFull;
+FAILURE:
+	return BitCNull;
+}
 
 _BOXC_ general BoxC_FS_Writer_(BOXC_FS _PL_ F,ADDRESS Select,BOOLEAN Bool)
 {
@@ -1787,6 +1798,124 @@ FAILURE:
 }
 #endif
 
+#if(Fold_(Part:BoxC_Sw))
+static integer _BoxC_Sw_Comp_(GENERAL _PL_ A,GENERAL _PL_ B)
+{
+	return (A>B);
+}
+_BOXC_ boxc_sw *BoxC_Sw_Create_(MEMC_MS _PL_ MS)
+{
+	boxc_sw *Switch;
+
+	if(MS)
+		if(MS->Nums)
+			if((MS->Slot.V[0])<(MS->Nums))
+			{
+				ADDRESS Valid=MS->Slot.V[0];
+				ADDRESS Number=Valid+1;
+
+				MemC_Temp_(ADDRESS,Temp=MemC.Size.Mul_(Number,sizeof(boxclip)))
+					Switch=(Temp)?(MemC.Alloc.Byte_(MemC.Size.Add_(Temp,sizeof(boxc_sw)))):(NULL);
+
+				if(Switch)
+				{
+					boxclip _PL_ Case=(boxclip*)(Switch+1);
+
+					Acs_(boxclip*,Switch->Case)=Case;
+					Acs_(address,Switch->Number)=Number;
+					if(Valid)
+					{
+						MemC_Temp_ND_(general*,Space,KILL:_BoxC_VS_Delete_((boxc_vs**)(&Switch));,1,Number<<1)
+						{
+							general *_PL_ TableL=Space;
+							address _PL_ TableI=(address*)(TableL+Number);
+
+							if(MemC_Copy_1D_(MS->Slot.P+1,TableL+1,Valid)==MemCErrZero)
+							{
+								TableL[0]=NULL;
+								MemC.Sort.Index_(TableI,Number,0);
+							}
+							else goto KILL;
+
+							if(MemC.Sort.Do_(_BoxC_Sw_Comp_,TableL,TableI,(address*)Case,Number)==MemCErrZero)
+							{
+								GENERAL _PL_ _PL_ Last=TableL+Valid;
+								GENERAL _PL_ *_R_ Ptr=TableL;
+								
+								while(Ptr<Last)
+									if(Ptr[0]==Ptr[1])
+										goto KILL;
+									else
+										Ptr++;
+							}
+							else goto KILL;
+
+							for(address Index=0;Index<Number;Index++)
+							{
+								Case[Index].L=TableL[Index];
+								Case[Index].I=TableI[Index];
+							}
+						}
+					}
+					else
+					{
+						Case->L=NULL;
+						Case->I=0;
+					}
+				}
+			}
+			else
+				Switch=NULL;
+		else
+			Switch=NULL;
+	else
+		Switch=NULL;
+
+	return Switch;
+}
+_BOXC_ address BoxC_Sw_Size_(BOXC_SW _PL_ Switch)
+{
+	return ((Switch)?(sizeof(boxc_sw)+MemC_Size_(boxclip,Switch->Number)):(0));
+}
+
+_BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ Switch,GENERAL _PL_ Key,BOOLEAN Mode)
+{
+	if(Switch)
+		if(Mode)
+		{
+			boxclip Scope=*((BOXCLIP*)Switch);
+
+			__dlOuOlb__
+			{
+				ADDRESS Pick=Scope.I>>1;
+				BOXCLIP _PL_ Case=((boxclip*)(Scope.L))+Pick;
+
+				if(Pick)
+					if(Key<(Case->L))
+						Scope.I=Pick;
+					else if(Key>(Case->L))
+					{
+						ADDRESS Offset=Pick+1;
+
+						Acs_(boxclip*,Scope.L)+=Offset;
+						Scope.I-=Offset;
+					}
+					else
+						return (Case->I);
+				else if(Key==(Case->L))
+					return (Case->I);
+				else break;
+			}
+		}
+		else
+			for(BOXCLIP *_R_ Case=Switch->Case,_PL_ End=Case+(Switch->Number);Case<End;Case++)
+				if(Key==(Case->L))
+					return (Case->I);
+
+	return (address)FULL;
+}
+#endif
+
 #undef _BOXC_
 #endif
 
@@ -1840,8 +1969,8 @@ const struct _boxcase BoxC=
 	.KS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ks *_PL_),
 	.KS.Size_=BoxC_KS_Size_,
 	.KS.Reset_=BoxC_KS_Reset_,
-	.KS.Key.Insert_=BoxC_KS_Insert_,
-	.KS.Key.Desert_=BoxC_KS_Desert_,
+	.KS.Key.Enroll_=BoxC_KS_Insert_,
+	.KS.Key.Remove_=BoxC_KS_Desert_,
 	.KS.Key.Verify_=BoxC_KS_Verify_,
 	.KS.Key.Spread_=BoxC_KS_Spread_,
 	.KS.Value.Writer_=BoxC_KS_Writer_,
@@ -1854,12 +1983,13 @@ const struct _boxcase BoxC=
 	.FS.Create_=BoxC_FS_Create_,
 	.FS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_fs *_PL_),
 	.FS.Size_=BoxC_FS_Size_,
+	.FS.Reset_All_=BoxC_FS_Reset_All_,
 	.FS.Writer_=BoxC_FS_Writer_,
 	.FS.Reader_=BoxC_FS_Reader_,
 	.FS.Toggle_=BoxC_FS_Toggle_,
 #endif
 
-#if(Fold_(Part:Tree))
+#if(Fold_(Part:BoxC_Tr))
 	.Tr.Create_=BoxC_Tr_Create_,
 	.Tr.Delete_=BoxC_Tr_Delete_,
 	.Tr.Size_=BoxC_Tr_Size_,
@@ -1867,7 +1997,14 @@ const struct _boxcase BoxC=
 	.Tr.Left_=BoxC_Tr_Left_,
 	.Tr.Origin_=BoxC_Tr_Origin_,
 	.Tr.Height_=BoxC_Tr_Height_,
-	.Tr.Move_=BoxC_Tr_Move_
+	.Tr.Move_=BoxC_Tr_Move_,
+#endif
+
+#if(Fold_(Part:BoxC_Sw))
+	.Sw.Create_=BoxC_Sw_Create_,
+	.Sw.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_sw *_PL_),
+	.Sw.Size_=BoxC_Sw_Size_,
+	.Sw.Find_=BoxC_Sw_Find_
 #endif
 };
 #endif
