@@ -2,7 +2,7 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -77,6 +77,12 @@ static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
 #else
 #define __dl do
 #define lb__ while(0)
+#endif
+
+#ifdef __dlOuOlb__
+#error The macro __dlOuOlb__ is already defined.
+#else
+#define __dlOuOlb__ while(1)
 #endif
 #endif
 
@@ -286,6 +292,9 @@ extern const struct _memcase
 {
 	BYTE_08 _PL_ Version;	//MemClip : Library Version
 
+	//MemClip : Do nothing.
+	general(_PL_ Void_)(general);
+
 	//MemClip : Type Descriptors
 	const struct
 	{
@@ -434,18 +443,12 @@ extern const struct _memcase
 	}
 	Size;
 
-#if(Fold_(Part:Others))
-	//MemClip : Do nothing.
-	general(_PL_ Void_)(general);
-
-	//MemClip : Key Finding for Switch Operation
-	address(_PL_ Switch_)(GENERAL _PL_ Key,GENERAL _PL_ _PL_ TblRf,ADDRESS _PL_ LngRf,ADDRESS LngKey,ADDRESS NumRf,ADDRESS TypeSize);
-#define MemC_Switch_(Key,RefBook,RefLng,KeyLng,Refs) MemC.Switch_(Key,RefBook,RefLng,KeyLng,Refs,sizeof(**(RefBoook)))
-#endif
-
 	//MemClip : Memory Slot Functions
 	const struct
 	{
+		//MemClip : Memory Slot Non-Dynamic Definition
+#define MemC_MS_Define_(SlotName,SlotsNumber) address(_##SlotName)[(SlotsNumber)+4];memc_ms _PL_(SlotName)=((((GENERAL**)(_##SlotName))[0]=(_##SlotName)),(((GENERAL**)(_##SlotName))[1]=MemC.Type.Add),((_##SlotName)[2]=(SlotsNumber)),(((GENERAL**)(_##SlotName))[3]=(_##SlotName)+4),(memc_ms*)(_##SlotName));
+
 		//MemClip : Memory Slot Memory Allocation - Deallocate with "MemC.MS.Delete_"
 		//£ªNums = SlotsNumber
 		memc_ms*(_PL_ Create_)(GENERAL _PL_ Identification,ADDRESS SlotsNumber);
@@ -510,11 +513,11 @@ extern const struct _memcase
 	//MemClip : Memory Lender Functions
 	const struct
 	{
-		//MemClip : Memory Lender Static Definition
+		//MemClip : Memory Lender Non-Dynamic Definition
 		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
 		//¡¡The memory lender's head occupies 2 chunks.
 		//¡¡Each memory slice's head occupies 1 chunk.
-#define MemC_ML_Define_(LenderName,ChunksNumber) static address _##LenderName[(ChunksNumber)<<2]={(address)_##LenderName,(address)_##LenderName,(address)_##LenderName,MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_ LenderName=(memc_ml*)_##LenderName;
+#define MemC_ML_Define_(LenderName,ChunksNumber) address(_##LenderName)[(ChunksNumber)<<2]={(address)(_##LenderName),(address)(_##LenderName),(address)(_##LenderName),MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_(LenderName)=(memc_ml*)(_##LenderName);
 
 		//MemClip : Memory Lender Memory Allocation - Deallocate with "MemC.ML.Delete_"
 		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.

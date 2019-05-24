@@ -2,7 +2,7 @@
 /*	BoxClip is a simple data structure library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -13,6 +13,14 @@
 #endif
 
 #if(Fold_(Definition:Types))
+//BoxClip : Box Structure
+struct _boxclip
+{
+	general *L;	//BoxClip : External Link
+	address I;	//BoxClip : Identifier
+};
+MemC_Type_Declare_(struct,boxclip,BOXCLIP);	//BoxClip : Box Structure
+
 //BoxClip : Stack Set Structure
 struct _boxc_ss
 {
@@ -76,6 +84,14 @@ struct _boxc_tr
 	general _PL_ Link;	//BoxClip : Internal Linking
 	general *Object;	//BoxClip : User Object
 };
+
+//BoxClip : Switch Structure
+struct _boxc_sw
+{
+	BOXCLIP _PL_ Case;	//BoxClip : Case Mapping
+	ADDRESS Number;		//BoxClip : The Number of Cases
+};
+MemC_Type_Declare_(struct,boxc_sw,BOXC_SW);	//BoxClip : Switch Structure
 #endif
 
 #if(Fold_(Library Casing))
@@ -219,10 +235,10 @@ extern const struct _boxcase
 		//BoxClip : Key Functions
 		const struct
 		{
-			//BoxClip : Insert a Key into the Key Set
-			boolean(_PL_ Insert_)(boxc_ks _PL_ KeySet,general _PL_ Key);
-			//BoxClip : Desert a Key from the Key Set
-			boolean(_PL_ Desert_)(boxc_ks _PL_ KeySet,GENERAL _PL_ Key);
+			//BoxClip : Enroll a Key into the Key Set
+			boolean(_PL_ Enroll_)(boxc_ks _PL_ KeySet,general _PL_ Key);
+			//BoxClip : Remove a Key from the Key Set
+			boolean(_PL_ Remove_)(boxc_ks _PL_ KeySet,GENERAL _PL_ Key);
 			//BoxClip : Verify a Key's Existence
 			boolean(_PL_ Verify_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
 			//BoxClip : Spread Keys into the Memory Slot
@@ -264,6 +280,9 @@ extern const struct _boxcase
 		general(_PL_ Delete_)(boxc_fs *_PL_ FlagSet);
 		//BoxClip : Flag Set Memory Occupation
 		address(_PL_ Size_)(BOXC_FS _PL_ FlagSet);
+		//BoxClip : Reset All Flags
+		//£ªReturn value is ~0 for success, 0 for failure.
+		boolean(_PL_ Reset_All_)(BOXC_FS _PL_ FlagSet);
 
 		//BoxClip : Write a Boolean into the Selected Flag
 		//£ªBoolean value should be 0 or ~0.
@@ -302,6 +321,26 @@ extern const struct _boxcase
 		boolean(_PL_ Move_)(boxc_tr _PL_ Tree,boxc_tr _PL_ NewRoot);
 	}
 	Tr;
+
+	//BoxClip : Switch Functions
+	const struct
+	{
+		//BoxClip : Switch Creation - Delete with "BoxC.Sw.Delete_"
+		//£ªNumber = CaseList -> Slot.V[0]
+		//¡¡Case[idx].L = CaseList -> Slot.P[Case[idx].I]
+		boxc_sw*(_PL_ Create_)(MEMC_MS _PL_ CaseList);
+		//BoxClip : Switch Deletion
+		general(_PL_ Delete_)(boxc_sw *_PL_ Switch);
+		//BoxClip : Switch Memory Occupation
+		address(_PL_ Size_)(BOXC_SW _PL_ Switch);
+
+		//BoxClip : Case Finding
+		//£ªMode 0 : Naive Search
+		//¡¡Mode ~0 : Binary Search
+		//£ªReturn value is a corresponding index of the found case, 0 for NULL, or ~0 for the unknown.
+		address(_PL_ Find_)(BOXC_SW _PL_ Switch,GENERAL _PL_ Case,BOOLEAN SearchMode);
+	}
+	Sw;
 }
 BoxC;
 #endif

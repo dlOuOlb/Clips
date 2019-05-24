@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
@@ -67,6 +67,14 @@ extern const struct _pencase
 {
 	//PenClip : Library Version
 	BYTE_08 _PL_ Version;
+
+	//PenClip : Hello, world!
+	const struct
+	{
+		TEXT_08 _PL_ T08;	//PenClip : "Hello, world!\r\n"
+		TEXT_16 _PL_ T16;	//PenClip : L"Hello, world!\r\n"
+	}
+	Hello;
 
 	//PenClip : Stream I/O Options
 	const struct
@@ -211,7 +219,7 @@ extern const struct _pencase
 			FILE*(_PL_ T08_)(TEXT_08 _PL_ Command,TEXT_08 _PL_ Mode);
 			//PenClip : Pipe Open with 16-bit String - Close with "PenC.Pipe.Closer_"
 			FILE*(_PL_ T16_)(TEXT_16 _PL_ Command,TEXT_16 _PL_ Mode);
-#define PenC_Pipe_Opener_(Command,Mode) ((sizeof(*(Command))==sizeof(*(Mode)))?((sizeof(*(Command))==1)?(PenC.Pipe.Opener.T08_((text_08*)(Command),(text_08*)(Mode))):((sizeof(*(Command))==2)?(PenC.Pipe.Opener.T16_((text_16*)(Command),(text_16*)(Mode))):(NULL))):(NULL))
+#define PenC_Pipe_Opener_(Command,Mode) (MemC_Assert_(sizeof(*(Command))==sizeof(*(Mode))),((sizeof(*(Command))==1)?(PenC.Pipe.Opener.T08_((text_08*)(Command),(text_08*)(Mode))):((sizeof(*(Command))==2)?(PenC.Pipe.Opener.T16_((text_16*)(Command),(text_16*)(Mode))):(NULL))))
 		}
 		Opener;
 		//PenClip : Pipe Close
@@ -285,7 +293,7 @@ extern const struct _pencase
 			integer(_PL_ T08_)(TEXT_08 _PL_ OldName,TEXT_08 _PL_ NewName);
 			//PenClip : File Rename with 16-bit String
 			integer(_PL_ T16_)(TEXT_16 _PL_ OldName,TEXT_16 _PL_ NewName);
-#define PenC_File_Rename_(Old,New) ((sizeof(*(Old))==sizeof(*(New)))?((sizeof(*(Old))==1)?(PenC.File.Rename.T08_((text_08*)(Old),(text_08*)(New))):((sizeof(*(Old))==2)?(PenC.File.Rename.T16_((text_16*)(Old),(text_16*)(New))):(0))):(0))
+#define PenC_File_Rename_(Old,New) (MemC_Assert_(sizeof(*(Old))==sizeof(*(New))),((sizeof(*(Old))==1)?(PenC.File.Rename.T08_((text_08*)(Old),(text_08*)(New))):((sizeof(*(Old))==2)?(PenC.File.Rename.T16_((text_16*)(Old),(text_16*)(New))):(0))))
 		}
 		Rename;
 		//PenClip : File's Byte Size Functions
