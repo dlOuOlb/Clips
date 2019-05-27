@@ -1,7 +1,7 @@
 #include "boxclip.h"
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.05.24";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.27";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -77,9 +77,7 @@ _BOXC_ boxc_vs *BoxC_SS_Create_(ADDRESS Number,ADDRESS Capacity)
 {
 	boxc_vs *S;
 
-	{
-		address Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2*)+sizeof(address));
-
+	MemC_Temp_(address,Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2*)+sizeof(address)))
 		if(Size)
 			if(Capacity)
 			{
@@ -98,7 +96,7 @@ _BOXC_ boxc_vs *BoxC_SS_Create_(ADDRESS Number,ADDRESS Capacity)
 				S=MemC.Alloc.Byte_(MemC.Size.Add_(Size,sizeof(boxc_vs)));
 		else
 			S=NULL;
-	}
+
 	if(S)
 	{
 		S->Count=(address*)(S+1)+1;
@@ -297,9 +295,7 @@ _BOXC_ boxc_vs *BoxC_QS_Create_(ADDRESS Number,ADDRESS Capacity)
 {
 	boxc_vs *Q;
 
-	{
-		address Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2)+sizeof(address));
-
+	MemC_Temp_(address,Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2)+sizeof(address)))
 		if(Size)
 			if(Capacity)
 			{
@@ -318,7 +314,7 @@ _BOXC_ boxc_vs *BoxC_QS_Create_(ADDRESS Number,ADDRESS Capacity)
 				Q=MemC.Alloc.Byte_(MemC.Size.Add_(Size,sizeof(boxc_vs)));
 		else
 			Q=NULL;
-	}
+
 	if(Q)
 	{
 		Q->Count=(address*)(Q+1)+1;
@@ -568,9 +564,7 @@ _BOXC_ boxc_vs *BoxC_RS_Create_(ADDRESS Number,ADDRESS Capacity)
 {
 	boxc_vs *R;
 
-	{
-		address Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2)+sizeof(address));
-
+	MemC_Temp_(address,Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2)+sizeof(address)))
 		if(Size)
 			if(Capacity)
 			{
@@ -589,7 +583,7 @@ _BOXC_ boxc_vs *BoxC_RS_Create_(ADDRESS Number,ADDRESS Capacity)
 				R=MemC.Alloc.Byte_(MemC.Size.Add_(Size,sizeof(boxc_vs)));
 		else
 			R=NULL;
-	}
+
 	if(R)
 	{
 		R->Count=(address*)(R+1)+1;
@@ -1423,11 +1417,9 @@ _BOXC_ boxc_fs *BoxC_FS_Create_(ADDRESS Number)
 {
 	boxc_fs *F;
 
-	{
-		ADDRESS Size=MemC.Size.Add_(Number,7);
-
+	MemC_Temp_(ADDRESS,Size=MemC.Size.Add_(Number,7))
 		F=(Size)?(MemC.Alloc.Byte_(MemC.Size.Add_(Size>>3,sizeof(boxc_fs)))):(NULL);
-	}
+
 	if(F)
 	{
 		Acs_(general*,F->Flag)=(Number)?(MemC_Clear_1D_((byte_08*)(F+1),(Number+7)>>3)):(NULL);
@@ -1803,6 +1795,43 @@ static integer _BoxC_Sw_Comp_(GENERAL _PL_ A,GENERAL _PL_ B)
 {
 	return (A>B);
 }
+static address _BoxC_Sw_Count_(ADDRESS _PL_ Slot)
+{
+	address Count=0;
+
+	for(ADDRESS *_R_ Ptr=Slot+1,_PL_ End=Ptr+(*Slot);Ptr<End;Ptr++)
+		if(*Ptr)
+			Count++;
+
+	return Count;
+}
+static general _BoxC_Sw_Compact_(ADDRESS _PL_ Slot,address *_R_ PtrL,address *_R_ PtrI)
+{
+	*(PtrL++)=0;
+	*(PtrI++)=0;
+	for(ADDRESS *_R_ PtrS=Slot+1,_PL_ End=PtrS+(*Slot);PtrS<End;PtrS++)
+		if(*PtrS)
+		{
+			*(PtrL++)=*PtrS;
+			*(PtrI++)=PtrS-Slot;
+		}
+}
+static general _BoxC_Sw_Take_(general _PL_ *_R_ PtrL,ADDRESS *_R_ PtrI,boxclip *_R_ PtrC,ADDRESS Nums)
+{
+	for(BOXCLIP _PL_ End=PtrC+Nums;PtrC<End;PtrL++,PtrI++,PtrC++)
+	{
+		PtrC->L=*PtrL;
+		PtrC->I=*PtrI;
+	}
+}
+static boolean _BoxC_Sw_Unique_(GENERAL _PL_ *_R_ Ptr,ADDRESS Valid)
+{
+	for(GENERAL _PL_ _PL_ End=Ptr+Valid;Ptr<End;Ptr++)
+		if(Ptr[0]==Ptr[1])
+			return BitCNull;
+
+	return BitCFull;
+}
 _BOXC_ boxc_sw *BoxC_Sw_Create_(MEMC_MS _PL_ MS)
 {
 	boxc_sw *Switch;
@@ -1811,7 +1840,7 @@ _BOXC_ boxc_sw *BoxC_Sw_Create_(MEMC_MS _PL_ MS)
 		if(MS->Nums)
 			if((MS->Slot.V[0])<(MS->Nums))
 			{
-				ADDRESS Valid=MS->Slot.V[0];
+				ADDRESS Valid=_BoxC_Sw_Count_(MS->Slot.V);
 				ADDRESS Number=Valid+1;
 
 				MemC_Temp_(ADDRESS,Temp=MemC.Size.Mul_(Number,sizeof(boxclip)))
@@ -1823,44 +1852,18 @@ _BOXC_ boxc_sw *BoxC_Sw_Create_(MEMC_MS _PL_ MS)
 
 					Acs_(boxclip*,Switch->Case)=Case;
 					Acs_(address,Switch->Number)=Number;
-					if(Valid)
+					MemC_Temp_ND_(general*,Space,KILL:_BoxC_VS_Delete_((boxc_vs**)(&Switch));,1,Number<<1)
 					{
-						MemC_Temp_ND_(general*,Space,KILL:_BoxC_VS_Delete_((boxc_vs**)(&Switch));,1,Number<<1)
-						{
-							general *_PL_ TableL=Space;
-							address _PL_ TableI=(address*)(TableL+Number);
+						general *_PL_ TableL=Space;
+						address _PL_ TableI=(address*)(TableL+Number);
 
-							if(MemC_Copy_1D_(MS->Slot.P+1,TableL+1,Valid)==MemCErrZero)
-							{
-								TableL[0]=NULL;
-								MemC.Sort.Index_(TableI,Number,0);
-							}
+						_BoxC_Sw_Compact_(MS->Slot.V,(address*)TableL,TableI);
+
+						if(MemC.Sort.Do_(_BoxC_Sw_Comp_,TableL,TableI,(address*)Case,Number)==MemCErrZero)
+							if(_BoxC_Sw_Unique_(TableL,Valid))
+								_BoxC_Sw_Take_(TableL,TableI,Case,Number);
 							else goto KILL;
-
-							if(MemC.Sort.Do_(_BoxC_Sw_Comp_,TableL,TableI,(address*)Case,Number)==MemCErrZero)
-							{
-								GENERAL _PL_ _PL_ Last=TableL+Valid;
-								GENERAL _PL_ *_R_ Ptr=TableL;
-								
-								while(Ptr<Last)
-									if(Ptr[0]==Ptr[1])
-										goto KILL;
-									else
-										Ptr++;
-							}
-							else goto KILL;
-
-							for(address Index=0;Index<Number;Index++)
-							{
-								Case[Index].L=TableL[Index];
-								Case[Index].I=TableI[Index];
-							}
-						}
-					}
-					else
-					{
-						Case->L=NULL;
-						Case->I=0;
+						else goto KILL;
 					}
 				}
 			}

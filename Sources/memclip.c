@@ -6,7 +6,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.05.24";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.27";
 static ADDRESS ConstantZero[MemC_Max_Dimension]={0};
 #endif
 
