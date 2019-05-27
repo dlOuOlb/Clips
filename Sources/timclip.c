@@ -56,23 +56,17 @@ _TIMC_ timc_sf TimC_SW_Reset_All_(TIMC_SW _PL_ SW)
 	{
 		if(SW->Nums)
 			MemC_Clear_1D_((timc_te*)(SW->Timer),SW->Nums);
-
-		goto SUCCESS;
 	}
-	else
-		goto FAILURE;
+	else goto FAILURE;
+
+	return TimCStateStopped;
 FAILURE:
 	return TimCStateUnknown;
-SUCCESS:
-	return TimCStateStopped;
 }
 _TIMC_ timc_sf TimC_SW_Stop_All_(TIMC_SW _PL_ SW)
 {
 	if(SW)
-	{
-		TIMC_TE _PL_ End=(timc_te*)(SW->Timer)+SW->Nums;
-
-		for(timc_te *_R_ Ptr=(timc_te*)(SW->Timer);Ptr<End;Ptr++)
+		for(timc_te *_R_ Ptr=(timc_te*)(SW->Timer),_PL_ End=Ptr+(SW->Nums);Ptr<End;Ptr++)
 			switch(Ptr->State)
 			{
 			default:
@@ -85,33 +79,24 @@ _TIMC_ timc_sf TimC_SW_Stop_All_(TIMC_SW _PL_ SW)
 				Ptr->State=TimCStateStopped;
 			case TimCStateStopped:;
 			}
-		goto SUCCESS;
-	}
-	else
-		goto FAILURE;
+	else goto FAILURE;
+
+	return TimCStateStopped;
 FAILURE:
 	return TimCStateUnknown;
-SUCCESS:
-	return TimCStateStopped;
 }
 
 _TIMC_ timc_sf TimC_SW_Reset_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	if(SW)
 		if(Select<SW->Nums)
-		{
 			MemC_Clear_Unit_((timc_te*)(SW->Timer)+Select);
+		else goto FAILURE;
+	else goto FAILURE;
 
-			goto SUCCESS;
-		}
-		else
-			goto FAILURE;
-	else
-		goto FAILURE;
+	return TimCStateStopped;
 FAILURE:
 	return TimCStateUnknown;
-SUCCESS:
-	return TimCStateStopped;
 }
 _TIMC_ timc_sf TimC_SW_Toggle_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
@@ -132,8 +117,7 @@ _TIMC_ timc_sf TimC_SW_Toggle_(TIMC_SW _PL_ SW,ADDRESS Select)
 					Timer->Mark=clock();
 					break;
 				}
-				else
-					goto UNKNOWN;
+				else goto UNKNOWN;
 			case TimCStateRunning:
 				Timer->Sum+=clock()-(Timer->Mark);
 				if(Timer->Sum<0)
@@ -159,31 +143,11 @@ UNKNOWN:
 
 _TIMC_ timc_sf TimC_SW_Read_State_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
-	timc_sf Flag;
-
-	if(SW)
-		if(Select<SW->Nums)
-			Flag=((timc_te*)(SW->Timer))[Select].State;
-		else
-			Flag=TimCStateUnknown;
-	else
-		Flag=TimCStateUnknown;
-
-	return Flag;
+	return ((SW)?((Select<(SW->Nums))?(((timc_te*)(SW->Timer))[Select].State):(TimCStateUnknown)):(TimCStateUnknown));
 }
 _TIMC_ integer TimC_SW_Read_Count_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
-	integer Count;
-
-	if(SW)
-		if(Select<SW->Nums)
-			Count=((timc_te*)(SW->Timer))[Select].Count;
-		else
-			Count=-1;
-	else
-		Count=-1;
-
-	return Count;
+	return ((SW)?((Select<(SW->Nums))?(((timc_te*)(SW->Timer))[Select].Count):(-1)):(-1));
 }
 
 _TIMC_ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
