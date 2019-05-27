@@ -2,7 +2,7 @@
 /*	BoxClip is a simple data structure library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.24	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.27	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -328,6 +328,7 @@ extern const struct _boxcase
 		//BoxClip : Switch Creation - Delete with "BoxC.Sw.Delete_"
 		//£ªNumber = CaseList -> Slot.V[0]
 		//¡¡Case[idx].L = CaseList -> Slot.P[Case[idx].I]
+		//£ªAll NULL cases will be mapped to 0, and duplicated non-NULL cases are not allowed.
 		boxc_sw*(_PL_ Create_)(MEMC_MS _PL_ CaseList);
 		//BoxClip : Switch Deletion
 		general(_PL_ Delete_)(boxc_sw *_PL_ Switch);

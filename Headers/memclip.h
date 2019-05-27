@@ -2,7 +2,7 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.24	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.27	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -446,7 +446,7 @@ extern const struct _memcase
 	//MemClip : Memory Slot Functions
 	const struct
 	{
-		//MemClip : Memory Slot Non-Dynamic Definition
+		//MemClip : Memory Slot Automatic Definition
 #define MemC_MS_Define_(SlotName,SlotsNumber) address(_##SlotName)[(SlotsNumber)+4];memc_ms _PL_(SlotName)=((((GENERAL**)(_##SlotName))[0]=(_##SlotName)),(((GENERAL**)(_##SlotName))[1]=MemC.Type.Add),((_##SlotName)[2]=(SlotsNumber)),(((GENERAL**)(_##SlotName))[3]=(_##SlotName)+4),(memc_ms*)(_##SlotName));
 
 		//MemClip : Memory Slot Memory Allocation - Deallocate with "MemC.MS.Delete_"
@@ -513,11 +513,12 @@ extern const struct _memcase
 	//MemClip : Memory Lender Functions
 	const struct
 	{
-		//MemClip : Memory Lender Non-Dynamic Definition
+		//MemClip : Memory Lender Static Definition
 		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
 		//¡¡The memory lender's head occupies 2 chunks.
 		//¡¡Each memory slice's head occupies 1 chunk.
-#define MemC_ML_Define_(LenderName,ChunksNumber) address(_##LenderName)[(ChunksNumber)<<2]={(address)(_##LenderName),(address)(_##LenderName),(address)(_##LenderName),MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_(LenderName)=(memc_ml*)(_##LenderName);
+		//£ªBe aware that it is not thread-safe.
+#define MemC_ML_Define_(LenderName,ChunksNumber) static address(_##LenderName)[(ChunksNumber)<<2]={(address)(_##LenderName),(address)(_##LenderName),(address)(_##LenderName),MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_(LenderName)=(memc_ml*)(_##LenderName);
 
 		//MemClip : Memory Lender Memory Allocation - Deallocate with "MemC.ML.Delete_"
 		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
