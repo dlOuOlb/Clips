@@ -2,7 +2,7 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.04.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.05.27	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
@@ -48,7 +48,7 @@ extern const struct _timcase
 		//TimClip : Stopwatch Memory Deallocation
 		general(_PL_ Delete_)(timc_sw *_PL_ Stopwatch);
 		//TimClip : Temporarily allocate and deallocate a stopwatch.
-#define TimC_SW_Temp_(Temp,Nums,EXIT) for(timc_sw _PL_(Temp)=TimC.SW.Create_(Nums),*(_##Temp)=FULL;_##Temp;TimC.SW.Delete_((timc_sw**)&(Temp)),(_##Temp)=NULL)if(!(Temp))goto EXIT;else
+#define TimC_SW_Temp_(Temp,Nums,FAIL) for(timc_sw _PL_(Temp)=TimC.SW.Create_(Nums),*(_##Temp)=FULL;_##Temp;TimC.SW.Delete_((timc_sw**)&(Temp)),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 
 		//TimClip : Stopwatch Memory Occupation
 		address(_PL_ Size_)(TIMC_SW _PL_ Stopwatch);
@@ -71,18 +71,23 @@ extern const struct _timcase
 		//TimClip : Toggle the Selected Timer
 		//£ªReturn value is the timer's state after toggling.
 		timc_sf(_PL_ Toggle_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
-#define TimC_SW_Tick_Tock_(Stopwatch,TimerSelect,State) if(TimC.SW.State_(Stopwatch,TimerSelect)){(State)=TimCStateUnknown;}else for((State)=TimC.SW.Toggle_(Stopwatch,TimerSelect);(State)==TimCStateRunning;(State)=TimC.SW.Toggle_(Stopwatch,TimerSelect))
+#define TimC_SW_Tick_Tock_(Stopwatch,TimerSelect,State) if(TimC.SW.Read.State_(Stopwatch,TimerSelect)){(State)=TimCStateUnknown;}else for((State)=TimC.SW.Toggle_(Stopwatch,TimerSelect);(State)==TimCStateRunning;(State)=TimC.SW.Toggle_(Stopwatch,TimerSelect))
 
-		//TimClip : Read the Selected Timer's State Flag
-		//£ªReturn value is the timer's current state.
-		timc_sf(_PL_ State_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
-		//TimClip : Read the Selected Timer's Running Count
-		integer(_PL_ Count_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
+		//TimClip : Timer Read Functions
+		const struct
+		{
+			//TimClip : Read the Selected Timer's State Flag
+			//£ªReturn value is the timer's current state.
+			timc_sf(_PL_ State_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
+			//TimClip : Read the Selected Timer's Running Count
+			integer(_PL_ Count_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
 
-		//TimClip : Read the Selected Timer's Total Running Time
-		real_32(_PL_ Sum_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
-		//TimClip : Read the Selected Timer's Average Running Time
-		real_32(_PL_ Mean_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
+			//TimClip : Read the Selected Timer's Total Running Time
+			real_32(_PL_ Sum_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
+			//TimClip : Read the Selected Timer's Average Running Time
+			real_32(_PL_ Mean_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
+		}
+		Read;
 	}
 	SW;
 
