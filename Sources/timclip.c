@@ -6,7 +6,7 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.04.26";
+static BYTE_08 IdiomVersion[16]="Date:2019.05.27";
 #endif
 
 #if(Fold_(Definition:Functions))
@@ -260,9 +260,9 @@ const struct _timcase TimC=
 	.SW.All.Stop_=TimC_SW_Stop_All_,
 	.SW.Reset_=TimC_SW_Reset_,
 	.SW.Toggle_=TimC_SW_Toggle_,
-	.SW.State_=TimC_SW_Read_State_,
-	.SW.Count_=TimC_SW_Read_Count_,
-	.SW.Sum_=TimC_SW_Read_Sum_,
-	.SW.Mean_=TimC_SW_Read_Mean_
+	.SW.Read.State_=TimC_SW_Read_State_,
+	.SW.Read.Count_=TimC_SW_Read_Count_,
+	.SW.Read.Sum_=TimC_SW_Read_Sum_,
+	.SW.Read.Mean_=TimC_SW_Read_Mean_
 };
 #endif
