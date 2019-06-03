@@ -433,8 +433,9 @@ _TIMC_ boolean TimC_RG_Gau_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ 
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_32,Length)))
 	{
 		DATA_32 Ref=0x2F800000;
-		REAL_32 ScaleU=Acs_(real_32,Ref)*Deviation;
+		REAL_32 ScaleU=Acs_(real_32,Ref);
 		REAL_32 ScaleV=2.0F*(BitC.Const.Pi.R32[0])*ScaleU;
+		REAL_32 ScaleW=-2.0F*Deviation*Deviation;
 		data_32 Space[2];
 		bitclip End;End.C.G=Array;
 		bitclip Ptr;Ptr.C.G=Array;
@@ -444,12 +445,12 @@ _TIMC_ boolean TimC_RG_Gau_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ 
 		{
 			Temp.V.D32[0]=0x00000001|Ptr.C.D32[0];
 			Temp.V.D32[1]=0xFFFFFFFE&Ptr.C.D32[1];
-
+			
 			Temp.V.R32[0]=ScaleU*((real_32)(Temp.C.D32[0]));
 			Temp.V.R32[1]=ScaleV*((real_32)(Temp.C.D32[1]));
 
 			Temp.V.R32[0]=logf(Temp.C.R32[0]);
-			Temp.V.R32[0]*=-2.0F;
+			Temp.V.R32[0]*=ScaleW;
 			Temp.V.R32[0]=sqrtf(Temp.C.R32[0]);
 
 			Ptr.V.R32[0]=Temp.C.R32[0]*cosf(Temp.C.R32[1]);
@@ -469,7 +470,7 @@ _TIMC_ boolean TimC_RG_Gau_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ 
 			Temp.V.R32[1]=ScaleV*((real_32)(Temp.C.D32[1]));
 
 			Temp.V.R32[0]=logf(Temp.C.R32[0]);
-			Temp.V.R32[0]*=-2.0F;
+			Temp.V.R32[0]*=ScaleW;
 			Temp.V.R32[0]=sqrtf(Temp.C.R32[0]);
 
 			Ptr.V.R32[0]=Temp.C.R32[0]*cosf(Temp.C.R32[1]);
@@ -488,8 +489,9 @@ _TIMC_ boolean TimC_RG_Gau_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ 
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_64,Length)))
 	{
 		DATA_64 Ref=0x3BF0000000000000;
-		REAL_64 ScaleU=Acs_(real_64,Ref)*Deviation;
+		REAL_64 ScaleU=Acs_(real_64,Ref);
 		REAL_64 ScaleV=2.0*(BitC.Const.Pi.R64[0])*ScaleU;
+		REAL_64 ScaleW=-2.0*Deviation*Deviation;
 		data_64 Space[2];
 		bitclip End;End.C.G=Array;
 		bitclip Ptr;Ptr.C.G=Array;
@@ -504,7 +506,7 @@ _TIMC_ boolean TimC_RG_Gau_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ 
 			Temp.V.R64[1]=ScaleV*((real_64)(Temp.C.D64[1]));
 
 			Temp.V.R64[0]=log(Temp.C.R64[0]);
-			Temp.V.R64[0]*=-2.0;
+			Temp.V.R64[0]*=ScaleW;
 			Temp.V.R64[0]=sqrt(Temp.C.R64[0]);
 
 			Ptr.V.R64[0]=Temp.C.R64[0]*cos(Temp.C.R64[1]);
@@ -524,7 +526,7 @@ _TIMC_ boolean TimC_RG_Gau_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ 
 			Temp.V.R64[1]=ScaleV*((real_64)(Temp.C.D64[1]));
 
 			Temp.V.R64[0]=log(Temp.C.R64[0]);
-			Temp.V.R64[0]*=-2.0;
+			Temp.V.R64[0]*=ScaleW;
 			Temp.V.R64[0]=sqrt(Temp.C.R64[0]);
 
 			Ptr.V.R64[0]=Temp.C.R64[0]*cos(Temp.C.R64[1]);
