@@ -166,45 +166,67 @@ _K_ LinC_Func_(LinC_Dot_2_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G
 #else
 _LINC_ type_xx LinC_Func_(LinC_Sum_1_,TXX)(TYPE_XX *_R_ Line,ADDRESS Length)
 {
-	TYPE_XX *End=Line+(Length&BitC.Const.Mask.Safe[3]);
-	type_xx Sum;
+	TYPE_XX *End=Line;
+	type_xx Temp[8];MemC_Clear_1D_(Temp,8);
 
-	for(Acs_(LinC_Type_(data,XX),Sum)=0;Line<End;Line+=8)
+	for(End+=(Length&BitC.Const.Mask.Safe[3]);Line<End;Line+=8)
 	{
-		Sum+=Line[0];
-		Sum+=Line[1];
-		Sum+=Line[2];
-		Sum+=Line[3];
-		Sum+=Line[4];
-		Sum+=Line[5];
-		Sum+=Line[6];
-		Sum+=Line[7];
+		Temp[0]+=Line[0];
+		Temp[1]+=Line[1];
+		Temp[2]+=Line[2];
+		Temp[3]+=Line[3];
+		Temp[4]+=Line[4];
+		Temp[5]+=Line[5];
+		Temp[6]+=Line[6];
+		Temp[7]+=Line[7];
 	}
 	for(End+=(Length&BitC.Const.Mask.Rest[3]);Line<End;Line++)
-		Sum+=Line[0];
+		Temp[0]+=Line[0];
+	{
+		Temp[0]+=Temp[4];
+		Temp[1]+=Temp[5];
+		Temp[2]+=Temp[6];
+		Temp[3]+=Temp[7];
 
-	return Sum;
+		Temp[0]+=Temp[2];
+		Temp[1]+=Temp[3];
+
+		Temp[0]+=Temp[1];
+	}
+
+	return Temp[0];
 }
 _LINC_ type_xx LinC_Func_(LinC_Dot_2_,TXX)(TYPE_XX *LineA,TYPE_XX *LineB,ADDRESS Length)
 {
-	TYPE_XX *End=LineA+(Length&BitC.Const.Mask.Safe[3]);
-	type_xx Sum;
+	TYPE_XX *End=LineA;
+	type_xx Temp[8];MemC_Clear_1D_(Temp,8);
 
-	for(Acs_(LinC_Type_(data,XX),Sum)=0;LineA<End;LineA+=8,LineB+=8)
+	for(End+=(Length&BitC.Const.Mask.Safe[3]);LineA<End;LineA+=8,LineB+=8)
 	{
-		Sum+=(LineA[0]*LineB[0]);
-		Sum+=(LineA[1]*LineB[1]);
-		Sum+=(LineA[2]*LineB[2]);
-		Sum+=(LineA[3]*LineB[3]);
-		Sum+=(LineA[4]*LineB[4]);
-		Sum+=(LineA[5]*LineB[5]);
-		Sum+=(LineA[6]*LineB[6]);
-		Sum+=(LineA[7]*LineB[7]);
+		Temp[0]+=(LineA[0]*LineB[0]);
+		Temp[1]+=(LineA[1]*LineB[1]);
+		Temp[2]+=(LineA[2]*LineB[2]);
+		Temp[3]+=(LineA[3]*LineB[3]);
+		Temp[4]+=(LineA[4]*LineB[4]);
+		Temp[5]+=(LineA[5]*LineB[5]);
+		Temp[6]+=(LineA[6]*LineB[6]);
+		Temp[7]+=(LineA[7]*LineB[7]);
 	}
 	for(End+=(Length&BitC.Const.Mask.Rest[3]);LineA<End;LineA++,LineB++)
-		Sum+=(LineA[0]*LineB[0]);
+		Temp[0]+=(LineA[0]*LineB[0]);
+	{
+		Temp[0]+=Temp[4];
+		Temp[1]+=Temp[5];
+		Temp[2]+=Temp[6];
+		Temp[3]+=Temp[7];
 
-	return Sum;
+		Temp[0]+=Temp[2];
+		Temp[1]+=Temp[3];
+
+		Temp[0]+=Temp[1];
+	}
+
+	return Temp[0];
 }
 #endif
 #endif
