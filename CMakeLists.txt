@@ -103,3 +103,10 @@ if(FLAG_CL)
 	target_compile_options(${NAME} PRIVATE ${OPT_COMPILE})
 	target_link_libraries(${NAME} PRIVATE ${DIR_OCL}/OpenCL.lib memclip penclip oclclip bitclip linclip)
 endif()
+
+# Sorting Tester
+set(NAME sorting)
+add_executable(${NAME} ${DIR_USE}/${NAME}.c)
+target_include_directories(${NAME} PRIVATE ${DIR_INC})
+target_compile_options(${NAME} PRIVATE ${OPT_COMPILE})
+target_link_libraries(${NAME} PRIVATE memclip penclip bitclip linclip timclip)
