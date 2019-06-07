@@ -2,7 +2,7 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -574,7 +574,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I08_)(inte_08 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I08_)(inte_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 16-Bit Integer Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿2 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -582,7 +582,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I16_)(inte_16 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I16_)(inte_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 32-Bit Integer Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿4 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -590,7 +590,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I32_)(inte_32 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I32_)(inte_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 64-Bit Integer Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿8 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -598,7 +598,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I64_)(inte_64 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I64_)(inte_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 8-Bit Natural Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿1 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -606,7 +606,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D08_)(data_08 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D08_)(data_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 16-Bit Natural Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿2 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -614,7 +614,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D16_)(data_16 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D16_)(data_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 32-Bit Natural Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿4 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -622,7 +622,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D32_)(data_32 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D32_)(data_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 64-Bit Natural Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿8 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -630,7 +630,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D64_)(data_64 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D64_)(data_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 32-Bit Real Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿4 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -638,7 +638,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ R32_)(real_32 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ R32_)(real_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 64-Bit Real Recursive Radix Sorting
 			//£ªRequired (ValueLine) size is (Length)¡¿8 bytes.
 			//¡¡Required (IndexLine) size is (Length)¡¿sizeof(address) bytes.
@@ -646,7 +646,7 @@ extern const struct _lincase
 			//£ªMode Null : Ascending Order
 			//¡¡Mode Full : Descending Order
 			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ R64_)(real_64 _PL_ ValueLine,address _PL_ IndexLine,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ R64_)(real_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 		}
 		Order;
 
