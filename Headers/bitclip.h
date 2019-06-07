@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -151,6 +151,7 @@ OCLC_Type_Declare_(union,bitc_pp,BITC_PP);
 
 #if(1)
 #include <stdint.h>
+
 #include <memclip.h>
 #ifdef _CL
 #include <CL\opencl.h>
@@ -180,8 +181,6 @@ MemC_Type_Rename_(uintptr_t,uintptr,UINTPTR);	//BitClip : Unsigned Address
 static_assert((-1)==(((inte_08)(-1))>>1),"The bit-shift-right operation of a signed integer must preserve the sign.");
 static_assert((-1)!=(((data_08)(-1))>>1),"The bit-shift-right operation of an unsigned integer must not preserve the sign.");
 static_assert((~((address)(0)))==((address)((inte_08)(~0))),"Casting from a signed integer to an address value must preserve the sign.");
-static_assert((~((address)(1)))==((address)((inte_08)(~1))),"Casting from a signed integer to an address value must preserve the sign.");
-static_assert(sizeof(data_32)<=sizeof(address),"The size of an address value must be equal to or larger than 32 bits.");
 #endif
 
 #if(Fold_(Definition:Derived Types))

@@ -2,33 +2,31 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.27	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
 #define _INC_MEMCLIP
 
 #if(1)
+#ifndef __STDC_WANT_LIB_EXT1__
+#define __STDC_WANT_LIB_EXT1__ (1)
+#endif
 
-#include <malloc.h>
-#include <memory.h>
-#include <stdarg.h>
 #include <assert.h>
 #include <errno.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifdef Fold_
 #error The macro "Fold_" is already defined.
 #else
-#define Fold_(Comment,...) (1)	//MemClip : Code Folding with #if and #endif Pre-processor.
+#define Fold_(...) (1)
 #endif
-
 #endif
 
 #if(Fold_(Definition:Primal Macros))
-#ifdef _WIN64
-#define MemC_64_
-#endif
-
 #ifdef NULL
 static_assert(((size_t)(NULL))==((size_t)(0)),"NULL != 0");
 #else
@@ -50,7 +48,10 @@ static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
 #ifdef _R_
 #error The macro "_R_" is already defined.
 #else
-#define _R_ __restrict
+#ifdef _MSC_BUILD
+#define restrict __restrict	//:(
+#endif
+#define _R_ restrict
 #endif
 
 #ifdef Acs_

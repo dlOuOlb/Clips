@@ -2,18 +2,18 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.24	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
 #define _INC_PENCLIP
 
 #if(1)
+#include <limits.h>
+#include <stdio.h>
 #include <uchar.h>
 #include <wchar.h>
-#include <stdio.h>
-#include <string.h>
-#include <limits.h>
+
 #include <memclip.h>
 #endif
 
@@ -25,7 +25,6 @@ static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
 MemC_Type_Rename_(char32_t,text_32,TEXT_32);	//PenClip : 32-bit Character
 static_assert((sizeof(text_32)==4),"sizeof(text_32) != 4");
 
-static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
 static_assert((sizeof(integer)<=sizeof(rsize_t)),"sizeof(integer) > sizeof(rsize_t)");
 static_assert((sizeof(rsize_t)<=sizeof(address)),"sizeof(rsize_t) > sizeof(address)");
 #endif

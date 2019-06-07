@@ -2,7 +2,7 @@
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.02	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -180,8 +180,8 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 #else
 
 #if(1)
-#include <memclip.h>
 #include <penclip.h>
+
 #include <CL\opencl.h>
 #ifdef _
 #error The macro "_" is already defined.

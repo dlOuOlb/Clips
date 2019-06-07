@@ -2,16 +2,17 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.03	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
 #define _INC_TIMCLIP
 
 #if(1)
+#include <limits.h>
 #include <math.h>
 #include <time.h>
-#include <limits.h>
+
 #include <bitclip.h>
 #endif
 
