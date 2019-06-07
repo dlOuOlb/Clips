@@ -16,7 +16,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="2019.05.02";
+static BYTE_08 IdiomVersion[16]="2019.06.07";
 static OCLC_MP ConstantZero={.N=0,.Z=0,.Y=0,.X=0};
 #endif
 

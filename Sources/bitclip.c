@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
 
 static ADDRESS ConstantSafe[8]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127};
 static ADDRESS ConstantRest[8]={(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};

@@ -6,7 +6,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.05.27";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
 static ADDRESS ConstantZero[MemC_Max_Dimension]={0};
 #endif
 
@@ -58,14 +58,6 @@ static integer _MemC_Array_All_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
 {
 	for(ADDRESS _PL_ End=Ptr+Nums;Ptr<End;Ptr++)
 		if(*Ptr)
-			return 0;
-
-	return 1;
-}
-static integer _MemC_Array_Boundary_(ADDRESS _PL_ _R_ Access,ADDRESS _PL_ _R_ Bound,ADDRESS Count)
-{
-	for(address Index=0;Index<Count;Index++)
-		if(Access[Index]>=Bound[Index])
 			return 0;
 
 	return 1;
@@ -1308,11 +1300,11 @@ SUCCESS:
 }
 #endif
 #if(Fold_(Part:MemC_ML))
-#define _MemC_ML_Malloc_(Chunks) ((_MemC_Size_Mul_(Chunks,sizeof(memc_mn)))?(_mm_malloc(MemC_Size_(memc_mn,Chunks),sizeof(memc_mn))):(NULL))
-#define _MemC_ML_Free_(Memory) __dl{_mm_free(Memory);(Memory)=NULL;}lb__
+#define _MemC_ML_Malloc_(Chunks) ((_MemC_Size_Mul_(Chunks,sizeof(memc_mn)))?(malloc(MemC_Size_(memc_mn,Chunks))):(NULL))
+#define _MemC_ML_Free_(Memory) __dl{free(Memory);(Memory)=NULL;}lb__
 
-MemC_Type_Declare_(struct,memc_l2,MEMC_L2);
 struct _memc_l2 { general *L[2]; };
+MemC_Type_Declare_(struct,memc_l2,MEMC_L2);
 
 MemC_Type_Declare_(struct,memc_mn,MEMC_MN);
 struct _memc_mn

@@ -6,7 +6,7 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.06.03";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
 #endif
 
 #if(Fold_(Definition:Functions))

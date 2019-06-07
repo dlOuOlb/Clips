@@ -2,10 +2,15 @@
 
 #if(Fold_(Definition:PenClip Macros))
 #define _PENC_ static
+#ifdef RSIZE_MAX
+#define _PENC_SC_MAX_ RSIZE_MAX
+#else
+#define _PENC_SC_MAX_ ((address)(((address)1)<<(sizeof(address)<<2)))
+#endif
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.05.24";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
 static TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
 static TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
@@ -413,9 +418,7 @@ _PENC_ penc_sc *PenC_SC_Create_(ADDRESS Capacity)
 {
 	penc_sc *SC;
 	
-	if(Capacity>RSIZE_MAX)
-		SC=NULL;
-	else
+	if(Capacity<_PENC_SC_MAX_)
 		if(Capacity)
 		{
 			SC=MemC.Alloc.Byte_(MemC.Size.Add_(Capacity,sizeof(penc_sc)));
@@ -432,6 +435,8 @@ _PENC_ penc_sc *PenC_SC_Create_(ADDRESS Capacity)
 			if(SC)
 				MemC_Clear_Unit_(SC);
 		}
+	else
+		SC=NULL;
 
 	return SC;
 }
@@ -702,7 +707,7 @@ _PENC_ penc_sc *PenC_SL_Borrow_(PENC_SL _PL_ SL,ADDRESS Demand)
 	penc_sc *SC;
 
 	if(SL)
-		if(Demand<RSIZE_MAX)
+		if(Demand<_PENC_SC_MAX_)
 		{
 			penc_sn _PL_ Node=(penc_sn*)(SL->Node);
 			ADDRESS Margin=_PenC_SN_Margin_(Demand);
@@ -819,6 +824,7 @@ _PENC_ penc_sc *PenC_SL_Borrow_Concat_T16_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,P
 #endif
 
 #if(Fold_(Undefinition:PenClip Macros))
+#undef _PENC_SC_MAX_
 #undef _PENC_
 #endif
 
