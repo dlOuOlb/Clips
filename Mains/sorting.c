@@ -1,3 +1,4 @@
+#include <penclip.h>
 #include <linclip.h>
 #include <timclip.h>
 
