@@ -15,7 +15,7 @@ integer main(general)
 		{
 			for(address IdxP=0;IdxP<EnvMan->Platform.Nums;IdxP++)
 			{
-				MemC_Temp_ND_(penclip,TempString,ESCAPE,1,EnvMan->Platform.List[IdxP].Device.Nums)
+				MemC_Temp_ND_(penclip,TempString,goto ESCAPE;,1,EnvMan->Platform.List[IdxP].Device.Nums)
 				{
 					TEXT_08 NameList[2][8]={"bitclip","linclip"};
 					penclip _PL_ BinaryPath=TempString;
