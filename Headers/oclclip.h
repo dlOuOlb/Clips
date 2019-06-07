@@ -36,54 +36,36 @@
 #else
 #define Mute_(Argument) ((general)(Argument))
 #endif
+
+#if defined(_Conc_)||defined(Conc_)
+#error The macro "_Conc_" or "Conc_" is already defined.
+#else
+#define _Conc_(A,B) A##B
+#define Conc_(A,B) _Conc_(A,B)
+#endif
 #endif
 
 #if(Fold_(Qualifier Macros))
-#ifdef _K_
-#error The macro "_K_" is already defined.
+#if defined(_K_)||defined(_F_)
+#error The macro "_K_" or "_F_" is already defined.
 #else
 #define _K_ kernel void
-#endif
-
-#ifdef _F_
-#error The macro "_F_" is already defined.
-#else
 #define _F_ static inline
 #endif
 
-#ifdef _C_
-#error The macro "_C_" is already defined.
+#if defined(_C_)||defined(_G_)||defined(_L_)||defined(_P_)
+#error The macro "_C_", "_G_", "_L_", or "_P_" is already defined.
 #else
 #define _C_ constant
-#endif
-
-#ifdef _G_
-#error The macro "_G_" is already defined.
-#else
 #define _G_ global
-#endif
-
-#ifdef _L_
-#error The macro "_L_" is already defined.
-#else
 #define _L_ local
-#endif
-
-#ifdef _P_
-#error The macro "_P_" is already defined.
-#else
 #define _P_ private
 #endif
 
-#ifdef _R_
-#error The macro "_R_" is already defined.
+#if defined(_R_)||defined(_PL_)
+#error The macro "_R_" or "_PL_" is already defined.
 #else
 #define _R_ restrict
-#endif
-
-#ifdef _PL_
-#error The macro "_PL_" is already defined.
-#else
 #define _PL_ *const
 #endif
 #endif
