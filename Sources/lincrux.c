@@ -346,7 +346,7 @@ _LINC_ general LinC_Func_(LinC_Map_1_,TXX)(type_xx *_R_ Line,ADDRESS *_R_ Index,
 		Line[0]=Table[Index[0]];
 }
 
-static inline general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ A,INTEGER T[2])
+static inline general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ _R_ A,INTEGER _PL_ _R_ T)
 {
 	TYPE_XX Temp=A[T[1]];
 
@@ -397,7 +397,7 @@ static type_xx *LinC_Func_(_LinC_Radix_,TXX)(type_xx *_R_ ValueFirst,address *_R
 
 	return ValueFirst;
 }
-static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ ValueA,address _PL_ IndexA,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA,BOOLEAN Mode)
 {
 	integer T[2];
 
@@ -416,7 +416,7 @@ static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ ValueA,address _P
 		_LinC_Swap_Address_(IndexA,T);
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ ValueA,type_xx _PL_ ValueB,address _PL_ IndexA,address _PL_ IndexB,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB,BOOLEAN Mode)
 {
 	integer T[2];
 
@@ -438,7 +438,7 @@ static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ ValueA,type_xx _P
 		IndexB[1]=IndexA[T[1]];
 	}
 }
-static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *ValueSource,address *IndexSource,type_xx *ValueTarget,address *IndexTarget,ADDRESS Length,BOOLEAN Mode,integer Bits)
+static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,BOOLEAN Mode,integer Bits)
 {
 	address Offset=LinC_Func_(_LinC_Radix_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 

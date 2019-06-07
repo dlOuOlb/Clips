@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ LinClip=&LinClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
 #endif
 
 #if(Fold_(Domain:Host))
@@ -122,7 +122,7 @@ static BYTE_08 IdiomVersion[16]="Date:2019.05.20";
 #endif
 
 #if(Fold_(Part:Mapping and Radix Sorting Functions))
-static inline general _LinC_Swap_Address_(address _PL_ A,INTEGER T[2])
+static inline general _LinC_Swap_Address_(address _PL_ _R_ A,INTEGER _PL_ _R_ T)
 {
 	ADDRESS Temp=A[T[1]];
 
@@ -136,52 +136,52 @@ static inline general _LinC_Swap_Address_(address _PL_ A,INTEGER T[2])
 #undef _LinC_Data_
 #undef _LinC_Mapping_
 
-_LINC_ general LinC_Order_D08_(data_08 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D08_(data_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		data_08 _PL_ ValueTemp=(data_08*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		data_08 _PL_ _R_ ValueTemp=(data_08*)(IndexTemp+Length);
 
 		_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],7);
 	}
 }
-_LINC_ general LinC_Order_D16_(data_16 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		data_16 _PL_ ValueTemp=(data_16*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		data_16 _PL_ _R_ ValueTemp=(data_16*)(IndexTemp+Length);
 
 		_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],15);
 	}
 }
-_LINC_ general LinC_Order_D32_(data_32 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		data_32 _PL_ ValueTemp=(data_32*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		data_32 _PL_ _R_ ValueTemp=(data_32*)(IndexTemp+Length);
 
 		_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],31);
 	}
 }
-_LINC_ general LinC_Order_D64_(data_64 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		data_64 _PL_ ValueTemp=(data_64*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		data_64 _PL_ _R_ ValueTemp=(data_64*)(IndexTemp+Length);
 
 		_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],63);
 	}
 }
-_LINC_ general LinC_Order_I08_(inte_08 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I08_(inte_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		inte_08 _PL_ ValueTemp=(inte_08*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		inte_08 _PL_ _R_ ValueTemp=(inte_08*)(IndexTemp+Length);
 		ADDRESS Offset=(inte_08*)(_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80))-ValueTemp;
 
 		if(Offset)
@@ -190,12 +190,12 @@ _LINC_ general LinC_Order_I08_(inte_08 _PL_ Line,address _PL_ Index,general _PL_
 			_LinC_Recur_D08_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,Mode,6);
 	}
 }
-_LINC_ general LinC_Order_I16_(inte_16 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I16_(inte_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		inte_16 _PL_ ValueTemp=(inte_16*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		inte_16 _PL_ _R_ ValueTemp=(inte_16*)(IndexTemp+Length);
 		ADDRESS Offset=(inte_16*)(_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000))-ValueTemp;
 
 		if(Offset)
@@ -204,12 +204,12 @@ _LINC_ general LinC_Order_I16_(inte_16 _PL_ Line,address _PL_ Index,general _PL_
 			_LinC_Recur_D16_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,Mode,14);
 	}
 }
-_LINC_ general LinC_Order_I32_(inte_32 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I32_(inte_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		inte_32 _PL_ ValueTemp=(inte_32*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		inte_32 _PL_ _R_ ValueTemp=(inte_32*)(IndexTemp+Length);
 		ADDRESS Offset=(inte_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
 
 		if(Offset)
@@ -218,12 +218,12 @@ _LINC_ general LinC_Order_I32_(inte_32 _PL_ Line,address _PL_ Index,general _PL_
 			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,Mode,30);
 	}
 }
-_LINC_ general LinC_Order_I64_(inte_64 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I64_(inte_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		inte_64 _PL_ ValueTemp=(inte_64*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		inte_64 _PL_ _R_ ValueTemp=(inte_64*)(IndexTemp+Length);
 		ADDRESS Offset=(inte_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
 
 		if(Offset)
@@ -232,12 +232,12 @@ _LINC_ general LinC_Order_I64_(inte_64 _PL_ Line,address _PL_ Index,general _PL_
 			_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,Mode,62);
 	}
 }
-_LINC_ general LinC_Order_R32_(real_32 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_R32_(real_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		real_32 _PL_ ValueTemp=(real_32*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		real_32 _PL_ _R_ ValueTemp=(real_32*)(IndexTemp+Length);
 		ADDRESS Offset=(real_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
 
 		if(Offset)
@@ -246,12 +246,12 @@ _LINC_ general LinC_Order_R32_(real_32 _PL_ Line,address _PL_ Index,general _PL_
 			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,30);
 	}
 }
-_LINC_ general LinC_Order_R64_(real_64 _PL_ Line,address _PL_ Index,general _PL_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_R64_(real_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
 	{
-		address _PL_ IndexTemp=Buffer;
-		real_64 _PL_ ValueTemp=(real_64*)(IndexTemp+Length);
+		address _PL_ _R_ IndexTemp=Buffer;
+		real_64 _PL_ _R_ ValueTemp=(real_64*)(IndexTemp+Length);
 		ADDRESS Offset=(real_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
 
 		if(Offset)
