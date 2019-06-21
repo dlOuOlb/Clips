@@ -12,15 +12,14 @@ integer main(general)
 	ADDRESS Length=1<<20;
 	INTEGER Trials=256;
 	inte_32 *Array=MemC_Alloc_ND_(inte_32,1,Length);
-	address *Index=MemC_Alloc_ND_(address,1,Length);
-	general *Buffer=MemC.Alloc.Byte_(MemC_Size_(inte_32,Length)+MemC_Size_(address,Length));
-	timc_sw *SW=TimC.SW.Create_(3);
+	general *Buffer=MemC.Alloc.Byte_(MemC_Size_(inte_32,Length));
+	timc_sw *SW=TimC.SW.Create_(2);
 	timc_rg *RG=TimC.RG.Create_(1);
 	integer MainFlag=0;
 
-	if(Array&&Index&&SW&&RG)
+	if(Array&&SW&&RG)
 	{
-		timc_sf SWState[3];
+		timc_sf SWState[2];
 
 		PenC_Stream_Format_T08_(0,Stream,"Time Measurement for Random Generation and Sorting\r\n%d integers(32-bit) up to %d : %d tries\r\n",Length,RAND_MAX,Trials);
 
@@ -64,13 +63,12 @@ integer main(general)
 		{
 			PenC_Stream_Format_T08_(0,Stream,"Warming up...\r\n");
 			{
-				MemC_Clear_1D_(SWState,3);
+				MemC_Clear_1D_(SWState,2);
 				TimC.SW.All.Reset_(SW);
 				TimC.RG.Uni.I32_(RG,0,Array,Length,0,RAND_MAX);
-				MemC.Sort.Index_(Index,Length,0);
 
 				PenC_Stream_Format_T08_(0,Stream,"%d %d %d ... %d %d %d\r\n",Array[0],Array[1],Array[2],Array[Length-3],Array[Length-2],Array[Length-1]);
-				LinC.Order.I32_(Array,Index,Buffer,Length,BitCNull);
+				LinC.Order.I32_(Array,NULL,Buffer,Length,BitCNull);
 				PenC_Stream_Format_T08_(0,Stream,"%d %d %d ... %d %d %d\r\n",Array[0],Array[1],Array[2],Array[Length-3],Array[Length-2],Array[Length-1]);
 			}
 			for(integer Try=0;Try<Trials;Try++)
@@ -81,17 +79,13 @@ integer main(general)
 					TimC.RG.Uni.I32_(RG,0,Array,Length,0,RAND_MAX);
 
 				TimC_SW_Tick_Tock_(SW,1,SWState[1])
-					MemC.Sort.Index_(Index,Length,0);
-
-				TimC_SW_Tick_Tock_(SW,2,SWState[2])
-					LinC.Order.I32_(Array,Index,Buffer,Length,BitCNull);
+					LinC.Order.I32_(Array,NULL,Buffer,Length,BitCNull);
 			}
-			if((SWState[0]|SWState[1]|SWState[2])==TimCStateStopped)
+			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
 				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for random generation\r\n",1000.0F*TimC.SW.Read.Mean_(SW,0));
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for indexing\r\n",1000.0F*TimC.SW.Read.Mean_(SW,1));
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",1000.0F*TimC.SW.Read.Mean_(SW,2));
+				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",1000.0F*TimC.SW.Read.Mean_(SW,1));
 			}
 			else
 			{
@@ -106,7 +100,6 @@ KILL:
 	TimC.RG.Delete_(&RG);
 	TimC.SW.Delete_(&SW);
 	MemC_Deloc_(Buffer);
-	MemC_Deloc_(Index);
 	MemC_Deloc_(Array);
 
 	switch(MainFlag)
