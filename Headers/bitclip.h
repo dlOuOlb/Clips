@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -151,13 +151,13 @@ OCLC_Type_Declare_(union,bitc_pp,BITC_PP);
 
 #if(1)
 #include <stdint.h>
-
-#include <memclip.h>
 #ifdef _CL
 #include <CL\opencl.h>
 #endif
 #ifdef __OPENCL_H
 #include <oclclip.h>
+#else
+#include <memclip.h>
 #endif
 #endif
 
@@ -324,8 +324,8 @@ MemC_Type_Declare_(struct,bitc_bp,BITC_BP);	//BitClip : Bit Pointer Structure
 #endif
 
 #if(Fold_(Library Casing))
-//BitClip : Library Case
-extern const struct _bitcase
+//BitClip : Library Case Structure
+struct _bitcase
 {
 	//BitClip : Library Version
 	BYTE_08 _PL_ Version;
@@ -1486,8 +1486,13 @@ extern const struct _bitcase
 	}
 	CL;
 #endif
-}
-BitC;
+};
+MemC_Type_Declare_(struct,bitcase,BITCASE);	//BitClip : Library Case Structure
+
+//BitClip : Library Case Object
+extern BITCASE BitC;
+//BitClip : Indirect access to the library case object.
+extern BITCASE *BitC_(general);
 #endif
 #endif
 #endif

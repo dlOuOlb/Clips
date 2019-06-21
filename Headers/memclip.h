@@ -2,7 +2,7 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -15,7 +15,6 @@
 
 #include <assert.h>
 #include <errno.h>
-#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -88,26 +87,21 @@ static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
 #endif
 
 #if(Fold_(Definition:Advanced Macros))
-#define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;	//MemClip : Macro for Type Renaming
-#define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;		//MemClip : Macro for Type Declaration
+#define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;
+#define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;
 
-#define MemC_Unit_Declare_(type,Unit,...) type(_##Unit)##__VA_ARGS__,_PL_(Unit)=&(_##Unit)	//MemClip : Unit Pointer Declaration
+#define MemC_Unit_Declare_(type,Unit,...) type(_##Unit)##__VA_ARGS__,_PL_(Unit)=&(_##Unit)
 
-#define MemC_Func_Declare_V_(Return,Func_,...) Return (*Func_)(__VA_ARGS__)		//MemClip : Function Pointer Variable Declaration
-#define MemC_Func_Declare_C_(Return,Func_,...) Return (_PL_ Func_)(__VA_ARGS__)	//MemClip : Function Pointer Constant Declaration
-#define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)	//MemClip : Function Pointer Casting
+#define MemC_Func_Declare_V_(Return,Func_,...) Return (*Func_)(__VA_ARGS__)
+#define MemC_Func_Declare_C_(Return,Func_,...) Return (_PL_ Func_)(__VA_ARGS__)
+#define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)
+#define MemC_Type_Func_Declare_(Return,func_type_,FUNC_TYPE_,...) typedef MemC_Func_Declare_V_(Return,func_type_,__VA_ARGS__);typedef MemC_Func_Declare_C_(Return,FUNC_TYPE_,__VA_ARGS__);
 
-#define MemC_Type_Func_Declare_(Return,func_type_,FUNC_TYPE_,...) typedef MemC_Func_Declare_V_(Return,func_type_,__VA_ARGS__);typedef MemC_Func_Declare_C_(Return,FUNC_TYPE_,__VA_ARGS__);	//MemClip : Macro for Function Type Declaration
+#define MemC_Assert_(Bool) ((GENERAL*[Bool]){FULL})
+#define MemC_Size_(type,Elements) ((Elements)*sizeof(type))
+#define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)
 
-#define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}	//MemClip : Macro for MemC_DT Definition
-
-#define MemC_Size_(type,Elements) ((Elements)*sizeof(type))	//MemClip : Byte Size of Elements
-
-#define MemC_Assert_(Bool) ((GENERAL*[Bool]){FULL})	//MemClip : Static Assertion
-
-#define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)	//MemClip : Temporary Variable
-
-#define MemC_Max_Dimension 8	//MemClip : Maximum Array Dimension
+#define MemC_Max_Dimension 8
 #endif
 
 #if(Fold_(Definition:Primal Types))
@@ -133,69 +127,17 @@ MemC_Type_Declare_(union,memclip,MEMCLIP);	//MemClip : Address Union
 //MemClip : Error Note Union
 union _memc_en
 {
-	errno_t I;	//MemClip : Access as Raw Value
-
 	//MemClip : Access as Enumerated Value
 	enum
 	{
 		MemCErrZero=0,
-		MemCErrCustom=0x4D656D43,
-#ifdef EDOM
 		MemCErrDomain=EDOM,
-#endif
-#ifdef ERANGE
 		MemCErrRange=ERANGE,
-#endif
-#ifdef EILSEQ
 		MemCErrIllegalSequence=EILSEQ,
-#endif
-#ifdef ECHILD
-		MemCErrChild=ECHILD,
-#endif
-#ifdef EAGAIN
-		MemCErrAgain=EAGAIN,
-#endif
-#ifdef E2BIG
-		MemCErrTooBig=E2BIG,
-#endif
-#ifdef EACCES
-		MemCErrAccess=EACCES,
-#endif
-#ifdef EBADF
-		MemCErrBadFile=EBADF,
-#endif
-#ifdef EDEADLOCK
-		MemCErrDeadLock=EDEADLOCK,
-#endif
-#ifdef EEXIST
-		MemCErrExist=EEXIST,
-#endif
-#ifdef EINVAL
-		MemCErrInvalid=EINVAL,
-#endif
-#ifdef EMFILE
-		MemCErrManyFiles=EMFILE,
-#endif
-#ifdef ENOENT
-		MemCErrNoEntry=ENOENT,
-#endif
-#ifdef ENOEXEC
-		MemCErrNoExecution=ENOEXEC,
-#endif
-#ifdef ENOMEM
-		MemCErrNoMemory=ENOMEM,
-#endif
-#ifdef ENOSPC
-		MemCErrNoSpace=ENOSPC,
-#endif
-#ifdef EXDEV
-		MemCErrNoExternalDevice=EXDEV,
-#endif
-#ifdef STRUNCATE
-		MemCErrStringTruncate=STRUNCATE
-#endif
+		MemCErrCustom=0x4D656D43
 	}
 	E;
+	errno_t I;	//MemClip : Access as Raw Value
 };
 MemC_Type_Declare_(union,memc_en,MEMC_EN);	//MemClip : Error Note Union
 static_assert(sizeof(memc_en)==sizeof(errno_t),"sizeof(memc_en)!=sizeof(errno_t)");
@@ -288,8 +230,8 @@ general _MemC_Free_(general _PL_ Memory);
 #endif
 
 #if(Fold_(Library Casing))
-//MemClip : Library Case
-extern const struct _memcase
+//MemClip : Library Case Structure
+struct _memcase
 {
 	BYTE_08 _PL_ Version;	//MemClip : Library Version
 
@@ -299,6 +241,9 @@ extern const struct _memcase
 	//MemClip : Type Descriptors
 	const struct
 	{
+		//MemClip : Macro for MemC_DT Definition
+#define MemC_DT_Define_(IScope,IIndex,IName,IFlag,ILink,IMeta,type) {.Scope=(IScope),.Index=(IIndex),.Flag=(IFlag),.SizeType=sizeof(type),.SizeName=sizeof(IName),.Name=(IName),.Link=(ILink),.Meta=(IMeta)}
+
 		MEMC_DT _PL_ N00;	//MemClip : none_00
 		MEMC_DT _PL_ B08;	//MemClip : byte_08
 		MEMC_DT _PL_ Int;	//MemClip : integer
@@ -345,25 +290,21 @@ extern const struct _memcase
 	Set;
 #endif
 
-#if(Fold_(Part:Plain Memory Clear))
+#if(Fold_(Part:Plain Memory Handling))
 	//MemClip : Data Reset in Byte Size
 #define MemC_Clear_Byte_(Memory,ByteSize) memset(Memory,0,ByteSize)
 	//MemClip : Unit Data Reset
 #define MemC_Clear_Unit_(Unit) memset(Unit,0,sizeof(*(Unit)))
 	//MemClip : 1D Array Data Reset
 #define MemC_Clear_1D_(Line,Elements) memset(Line,0,(Elements)*sizeof(*(Line)))
-#endif
 
-#if(Fold_(Part:Plain Memory Copy))
 	//MemClip : Data Copy in Byte Size
 #define MemC_Copy_Byte_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)
 	//MemClip : Unit Data Copy
 #define MemC_Copy_Unit_(Source,Target) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),memcpy_s(Target,sizeof(*(Target)),Source,sizeof(*(Source))))
 	//MemClip : 1D Array Data Copy
 #define MemC_Copy_1D_(Source,Target,Elements) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),memcpy_s(Target,(Elements)*sizeof(*(Target)),Source,(Elements)*sizeof(*(Source))))
-#endif
 
-#if(Fold_(Part:Plain Memory Compare))
 	//MemClip : Data Compare in Byte Size
 #define MemC_Compare_Byte_(MemoryA,MemoryB,ByteSize) memcmp(MemoryA,MemoryB,ByteSize)
 	//MemClip : Unit Data Compare
@@ -559,7 +500,12 @@ extern const struct _memcase
 		address(_PL_ Usable_)(GENERAL _PL_ MemorySlice);
 	}
 	ML;
-}
-MemC;
+};
+MemC_Type_Declare_(struct,memcase,MEMCASE);	//MemClip : Library Case Structure
+
+//MemClip : Library Case Object
+extern MEMCASE MemC;
+//MemClip : Indirect access to the library case object.
+extern MEMCASE *MemC_(general);
 #endif
 #endif

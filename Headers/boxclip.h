@@ -2,7 +2,7 @@
 /*	BoxClip is a simple data structure library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.05.27	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -95,8 +95,8 @@ MemC_Type_Declare_(struct,boxc_sw,BOXC_SW);	//BoxClip : Switch Structure
 #endif
 
 #if(Fold_(Library Casing))
-//BoxClip : Library Case
-extern const struct _boxcase
+//BoxClip : Library Case Structure
+struct _boxcase
 {
 	//BoxClip : Library Version
 	BYTE_08 _PL_ Version;
@@ -342,7 +342,12 @@ extern const struct _boxcase
 		address(_PL_ Find_)(BOXC_SW _PL_ Switch,GENERAL _PL_ Case,BOOLEAN SearchMode);
 	}
 	Sw;
-}
-BoxC;
+};
+MemC_Type_Declare_(struct,boxcase,BOXCASE);	//BoxClip : Library Case Structure
+
+//BoxClip : Library Case Object
+extern BOXCASE BoxC;
+//BoxClip : Indirect access to the library case object.
+extern BOXCASE *BoxC_(general);
 #endif
 #endif

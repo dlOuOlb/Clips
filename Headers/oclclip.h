@@ -2,7 +2,7 @@
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -162,9 +162,8 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 #else
 
 #if(1)
-#include <penclip.h>
-
 #include <CL\opencl.h>
+#include <penclip.h>
 #ifdef _
 #error The macro "_" is already defined.
 #endif
@@ -420,8 +419,8 @@ MemC_Type_Declare_(struct,oclc_pm,OCLC_PM);	//OCLClip : Program Manager Structur
 #endif
 
 #if(Fold_(Library Casing))
-//OCLClip : Library Casing
-extern const struct _oclcase
+//OCLClip : Library Case Structure
+struct _oclcase
 {
 	//OCLClip : Library Version
 	BYTE_08 _PL_ Version;
@@ -688,10 +687,14 @@ extern const struct _oclcase
 #define OCLC_MH_Assign_(Holder,Memory,Type,...) __dl{struct{OCLC_MP*Start;OCLC_MP*Shape;}(_)={NULL,NULL};__VA_ARGS__;*(Holder)=OCLC.MH.Assign_(Memory,_.Start,_.Shape,Type);}lb__
 	}
 	MH;
-}
-OCLC;
-
+};
+MemC_Type_Declare_(struct,oclcase,OCLCASE);
 #define OCLC_Info_(Kind,Whose,It,Flag,Error) OCLC.Kind.Info.What_(Whose,Flag,It,sizeof(*(It)),Error)
+
+//OCLClip : Library Case Object
+extern OCLCASE OCLC;
+//OCLClip : Indirect access to the library case object.
+extern OCLCASE *OCLC_(general);
 #endif
 #endif
 #endif

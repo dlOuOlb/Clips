@@ -2,18 +2,16 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
 #define _INC_PENCLIP
 
 #if(1)
-#include <limits.h>
 #include <stdio.h>
 #include <uchar.h>
 #include <wchar.h>
-
 #include <memclip.h>
 #endif
 
@@ -25,8 +23,7 @@ static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
 MemC_Type_Rename_(char32_t,text_32,TEXT_32);	//PenClip : 32-bit Character
 static_assert((sizeof(text_32)==4),"sizeof(text_32) != 4");
 
-static_assert((sizeof(integer)<=sizeof(rsize_t)),"sizeof(integer) > sizeof(rsize_t)");
-static_assert((sizeof(rsize_t)<=sizeof(address)),"sizeof(rsize_t) > sizeof(address)");
+static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
 #endif
 
 #if(Fold_(Definition:Advanced Types))
@@ -61,8 +58,8 @@ MemC_Type_Declare_(struct,penc_sl,PENC_SL);	//PenClip : String Container Lender 
 #endif
 
 #if(Fold_(Library Casing))
-//PenClip : Library Case
-extern const struct _pencase
+//PenClip : Library Case Structure
+struct _pencase
 {
 	//PenClip : Library Version
 	BYTE_08 _PL_ Version;
@@ -533,7 +530,12 @@ extern const struct _pencase
 		integer(_PL_ Return_)(PENC_SL _PL_ SCLender,PENC_SC *_PL_ StringContainer);
 	}
 	SL;
-}
-PenC;
+};
+MemC_Type_Declare_(struct,pencase,PENCASE);	//PenClip : Library Case Structure
+
+//PenClip : Library Case Object
+extern PENCASE PenC;
+//PenClip : Indirect access to the library case object.
+extern PENCASE *PenC_(general);
 #endif
 #endif

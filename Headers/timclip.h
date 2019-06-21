@@ -2,17 +2,13 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.07	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
 #define _INC_TIMCLIP
 
 #if(1)
-#include <limits.h>
-#include <math.h>
-#include <time.h>
-
 #include <bitclip.h>
 #endif
 
@@ -44,8 +40,8 @@ MemC_Type_Declare_(struct,timc_rg,TIMC_RG);	//TimClip : Random Generator Structu
 #endif
 
 #if(Fold_(Library Casing))
-//TimClip : Library Case
-extern const struct _timcase
+//TimClip : Library Case Structure
+struct _timcase
 {
 	//TimClip : Library Version
 	BYTE_08 _PL_ Version;
@@ -171,7 +167,12 @@ extern const struct _timcase
 		Gau;
 	}
 	RG;
-}
-TimC;
+};
+MemC_Type_Declare_(struct,timcase,TIMCASE);	//TimClip : Library Case Structure
+
+//TimClip : Library Case Object
+extern TIMCASE TimC;
+//TimClip : Indirect access to the library case object.
+extern TIMCASE *TimC_(general);
 #endif
 #endif
