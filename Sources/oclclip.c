@@ -5,8 +5,7 @@
 #endif
 
 #if(Fold_(Definition:OCLCrux Macros))
-#define _OCLC_TXX_(Type,Bits) Type##Bits
-#define OCLC_TXX_(Type,Bits) _OCLC_TXX_(Type,Bits)
+#define OCLC_TXX_(Type,Bits) _Conc_(Type,Bits)
 
 #define _OCLC_Type_(Type,Bits) Type##_##Bits
 #define OCLC_Type_(Type,Bits) _OCLC_Type_(Type,Bits)
@@ -16,7 +15,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="2019.06.07";
+static BYTE_08 IdiomVersion[16]="2019.06.21";
 static OCLC_MP ConstantZero={.N=0,.Z=0,.Y=0,.X=0};
 #endif
 
@@ -1003,7 +1002,6 @@ _OCLC_ general OCLC_KO_P_(const cl_kernel Kernel,const cl_uint Index,GENERAL _PL
 #undef OCLC_Type_
 #undef _OCLC_Type_
 #undef OCLC_TXX_
-#undef _OCLC_TXX_
 #endif
 
 #if(Fold_(Undefinition:OCLClip Macros))
@@ -1011,66 +1009,120 @@ _OCLC_ general OCLC_KO_P_(const cl_kernel Kernel,const cl_uint Index,GENERAL _PL
 #endif
 
 #if(Fold_(Library Casing))
-const struct _oclcase OCLC=
+OCLCASE OCLC=
 {
 	.Version=IdiomVersion,
-
-	.EM.Create_=MemC_Func_Casting_(oclc_em*,OCLC_EM_Create_,oclc_ef _PL_),
-	.EM.Delete_=OCLC_EM_Delete_,
-	.EM.Select.Context_=OCLC_EM_Context_,
-	.EM.Select.Queue_=OCLC_EM_Queue_,
-
-	.PM.Create_=OCLC_PM_Create_,
-	.PM.Build.Source.T08_=MemC_Func_Casting_(general,OCLC_PM_Build_T08_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_08 _PL_ _PL_,const cl_uint,oclc_ef _PL_),
-	.PM.Build.Source.T16_=MemC_Func_Casting_(general,OCLC_PM_Build_T16_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_16 _PL_ _PL_,const cl_uint,oclc_ef _PL_),
-	.PM.Build.Binary.T08_=MemC_Func_Casting_(general,OCLC_PM_Load_T08_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_08 _PL_ _PL_,oclc_ef _PL_),
-	.PM.Build.Binary.T16_=MemC_Func_Casting_(general,OCLC_PM_Load_T16_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_16 _PL_ _PL_,oclc_ef _PL_),
-	.PM.Build.Save.T08_=MemC_Func_Casting_(general,OCLC_PM_Save_T08_,OCLC_PM _PL_,TEXT_08 _PL_ _PL_,oclc_ef _PL_),
-	.PM.Build.Save.T16_=MemC_Func_Casting_(general,OCLC_PM_Save_T16_,OCLC_PM _PL_,TEXT_16 _PL_ _PL_,oclc_ef _PL_),
-	.PM.Build.Log_=MemC_Func_Casting_(general,OCLC_PM_Build_Log_,OCLC_PM _PL_,FILE _PL_,oclc_ef _PL_),
-	.PM.Delete_=OCLC_PM_Delete_,
-	.PM.Select.Kernel_=OCLC_PM_Kernel_,
-
-	.PI.Info.Size_=MemC_Func_Casting_(address,OCLC_PI_Info_Size_,OCLC_PI _PL_,const cl_platform_info,oclc_ef _PL_),
-	.PI.Info.What_=MemC_Func_Casting_(general,OCLC_PI_Info_What_,OCLC_PI _PL_,const cl_platform_info,general _PL_,ADDRESS,oclc_ef _PL_),
-
-	.DI.Info.Size_=MemC_Func_Casting_(address,OCLC_DI_Info_Size_,OCLC_DI _PL_,const cl_device_info,oclc_ef _PL_),
-	.DI.Info.What_=MemC_Func_Casting_(general,OCLC_DI_Info_What_,OCLC_DI _PL_,const cl_device_info,general _PL_,ADDRESS,oclc_ef _PL_),
-
-	.CO.Info.Size_=MemC_Func_Casting_(address,OCLC_CO_Info_Size_,OCLC_CO _PL_,const cl_context_info,oclc_ef _PL_),
-	.CO.Info.What_=MemC_Func_Casting_(general,OCLC_CO_Info_What_,OCLC_CO _PL_,const cl_context_info,general _PL_,ADDRESS,oclc_ef _PL_),
-
-	.QO.Info.Size_=MemC_Func_Casting_(address,OCLC_QO_Info_Size_,OCLC_QO _PL_,const cl_command_queue_info,oclc_ef _PL_),
-	.QO.Info.What_=MemC_Func_Casting_(general,OCLC_QO_Info_What_,OCLC_QO _PL_,const cl_command_queue_info,general _PL_,ADDRESS,oclc_ef _PL_),
-	.QO.Fill_=MemC_Func_Casting_(general,OCLC_QO_Fill_,oclc_qo _PL_,GENERAL _PL_,OCLC_MH _PL_,OCLC_MP _PL_,oclc_ef _PL_),
-	.QO.Copy_=MemC_Func_Casting_(general,OCLC_QO_Copy_,oclc_qo _PL_,OCLC_CF,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,oclc_ef _PL_),
-	.QO.Wait_=MemC_Func_Casting_(general,OCLC_QO_Wait_,oclc_qo _PL_,oclc_ef _PL_),
-
-	.KO.Info.Size_=MemC_Func_Casting_(address,OCLC_KO_Info_Size_,OCLC_KO _PL_,const cl_kernel_info,oclc_ef _PL_),
-	.KO.Info.What_=MemC_Func_Casting_(general,OCLC_KO_Info_What_,OCLC_KO _PL_,const cl_kernel_info,general _PL_,ADDRESS,oclc_ef _PL_),
-	.KO.Arg.G_=MemC_Func_Casting_(general,OCLC_KO_G_,oclc_ko _PL_,const cl_uint,OCLC_MO _PL_,oclc_ef _PL_),
-	.KO.Arg.L_=MemC_Func_Casting_(general,OCLC_KO_L_,oclc_ko _PL_,const cl_uint,ADDRESS,oclc_ef _PL_),
-	.KO.Arg.P_=MemC_Func_Casting_(general,OCLC_KO_P_,oclc_ko _PL_,const cl_uint,GENERAL _PL_,ADDRESS,oclc_ef _PL_),
-
-	.MO.Info.Size_=MemC_Func_Casting_(address,OCLC_MO_Info_Size_,OCLC_MO _PL_,const cl_mem_info,oclc_ef _PL_),
-	.MO.Info.What_=MemC_Func_Casting_(general,OCLC_MO_Info_What_,OCLC_MO _PL_,const cl_mem_info,general _PL_,ADDRESS,oclc_ef _PL_),
-	.MO.Create.Buffer_=MemC_Func_Casting_(oclc_mo*,OCLC_MO_Create_Buffer_,oclc_co _PL_,ADDRESS,oclc_ef _PL_),
-	.MO.Create.Sub_=MemC_Func_Casting_(oclc_mo*,OCLC_MO_Create_Sub_Buffer_,oclc_mo _PL_,ADDRESS,ADDRESS,oclc_ef _PL_),
-	.MO.Delete_=OCLC_MO_Delete_,
-
-	.MP.Zero=&ConstantZero,
-	.MP.Total_=OCLC_MP_Total_,
-	.MP.Length.Invalid_=_OCLC_MP_Invalid_Length_,
-	.MP.Offset.Invalid_=_OCLC_MP_Invalid_Offset_,
-	.MP.Length.D1_=OCLC_MP_Length_1D_,
-	.MP.Length.D2_=OCLC_MP_Length_2D_,
-	.MP.Length.D3_=OCLC_MP_Length_3D_,
-	.MP.Length.D4_=OCLC_MP_Length_4D_,
-	.MP.Offset.D1_=OCLC_MP_Offset_1D_,
-	.MP.Offset.D2_=OCLC_MP_Offset_2D_,
-	.MP.Offset.D3_=OCLC_MP_Offset_3D_,
-	.MP.Offset.D4_=OCLC_MP_Offset_4D_,
-
+	.EM=
+	{
+		.Create_=MemC_Func_Casting_(oclc_em*,OCLC_EM_Create_,oclc_ef _PL_),
+		.Delete_=OCLC_EM_Delete_,
+		.Select=
+		{
+			.Context_=OCLC_EM_Context_,
+			.Queue_=OCLC_EM_Queue_
+		}
+	},
+	.PM=
+	{
+		.Create_=OCLC_PM_Create_,
+		.Build=
+		{
+			.Source=
+			{
+				.T08_=MemC_Func_Casting_(general,OCLC_PM_Build_T08_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_08 _PL_ _PL_,const cl_uint,oclc_ef _PL_),
+				.T16_=MemC_Func_Casting_(general,OCLC_PM_Build_T16_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_16 _PL_ _PL_,const cl_uint,oclc_ef _PL_)
+			},
+			.Binary=
+			{
+				.T08_=MemC_Func_Casting_(general,OCLC_PM_Load_T08_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_08 _PL_ _PL_,oclc_ef _PL_),
+				.T16_=MemC_Func_Casting_(general,OCLC_PM_Load_T16_,oclc_pm _PL_,oclc_co _PL_,BYTE_08 _PL_,TEXT_16 _PL_ _PL_,oclc_ef _PL_)
+			},
+			.Save=
+			{
+				.T08_=MemC_Func_Casting_(general,OCLC_PM_Save_T08_,OCLC_PM _PL_,TEXT_08 _PL_ _PL_,oclc_ef _PL_),
+				.T16_=MemC_Func_Casting_(general,OCLC_PM_Save_T16_,OCLC_PM _PL_,TEXT_16 _PL_ _PL_,oclc_ef _PL_)
+			},
+			.Log_=MemC_Func_Casting_(general,OCLC_PM_Build_Log_,OCLC_PM _PL_,FILE _PL_,oclc_ef _PL_)
+		},
+		.Delete_=OCLC_PM_Delete_,
+		.Select.Kernel_=OCLC_PM_Kernel_
+	},
+	.PI.Info=
+	{
+		.Size_=MemC_Func_Casting_(address,OCLC_PI_Info_Size_,OCLC_PI _PL_,const cl_platform_info,oclc_ef _PL_),
+		.What_=MemC_Func_Casting_(general,OCLC_PI_Info_What_,OCLC_PI _PL_,const cl_platform_info,general _PL_,ADDRESS,oclc_ef _PL_)
+	},
+	.DI.Info=
+	{
+		.Size_=MemC_Func_Casting_(address,OCLC_DI_Info_Size_,OCLC_DI _PL_,const cl_device_info,oclc_ef _PL_),
+		.What_=MemC_Func_Casting_(general,OCLC_DI_Info_What_,OCLC_DI _PL_,const cl_device_info,general _PL_,ADDRESS,oclc_ef _PL_)
+	},
+	.CO.Info=
+	{
+		.Size_=MemC_Func_Casting_(address,OCLC_CO_Info_Size_,OCLC_CO _PL_,const cl_context_info,oclc_ef _PL_),
+		.What_=MemC_Func_Casting_(general,OCLC_CO_Info_What_,OCLC_CO _PL_,const cl_context_info,general _PL_,ADDRESS,oclc_ef _PL_)
+	},
+	.QO=
+	{
+		.Info=
+		{
+			.Size_=MemC_Func_Casting_(address,OCLC_QO_Info_Size_,OCLC_QO _PL_,const cl_command_queue_info,oclc_ef _PL_),
+			.What_=MemC_Func_Casting_(general,OCLC_QO_Info_What_,OCLC_QO _PL_,const cl_command_queue_info,general _PL_,ADDRESS,oclc_ef _PL_)
+		},
+		.Fill_=MemC_Func_Casting_(general,OCLC_QO_Fill_,oclc_qo _PL_,GENERAL _PL_,OCLC_MH _PL_,OCLC_MP _PL_,oclc_ef _PL_),
+		.Copy_=MemC_Func_Casting_(general,OCLC_QO_Copy_,oclc_qo _PL_,OCLC_CF,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,oclc_ef _PL_),
+		.Wait_=MemC_Func_Casting_(general,OCLC_QO_Wait_,oclc_qo _PL_,oclc_ef _PL_)
+	},
+	.KO=
+	{
+		.Info=
+		{
+			.Size_=MemC_Func_Casting_(address,OCLC_KO_Info_Size_,OCLC_KO _PL_,const cl_kernel_info,oclc_ef _PL_),
+			.What_=MemC_Func_Casting_(general,OCLC_KO_Info_What_,OCLC_KO _PL_,const cl_kernel_info,general _PL_,ADDRESS,oclc_ef _PL_)
+		},
+		.Arg=
+		{
+			.G_=MemC_Func_Casting_(general,OCLC_KO_G_,oclc_ko _PL_,const cl_uint,OCLC_MO _PL_,oclc_ef _PL_),
+			.L_=MemC_Func_Casting_(general,OCLC_KO_L_,oclc_ko _PL_,const cl_uint,ADDRESS,oclc_ef _PL_),
+			.P_=MemC_Func_Casting_(general,OCLC_KO_P_,oclc_ko _PL_,const cl_uint,GENERAL _PL_,ADDRESS,oclc_ef _PL_)
+		}
+	},
+	.MO=
+	{
+		.Info=
+		{
+			.Size_=MemC_Func_Casting_(address,OCLC_MO_Info_Size_,OCLC_MO _PL_,const cl_mem_info,oclc_ef _PL_),
+			.What_=MemC_Func_Casting_(general,OCLC_MO_Info_What_,OCLC_MO _PL_,const cl_mem_info,general _PL_,ADDRESS,oclc_ef _PL_)
+		},
+		.Create=
+		{
+			.Buffer_=MemC_Func_Casting_(oclc_mo*,OCLC_MO_Create_Buffer_,oclc_co _PL_,ADDRESS,oclc_ef _PL_),
+			.Sub_=MemC_Func_Casting_(oclc_mo*,OCLC_MO_Create_Sub_Buffer_,oclc_mo _PL_,ADDRESS,ADDRESS,oclc_ef _PL_)
+		},
+		.Delete_=OCLC_MO_Delete_
+	},
+	.MP=
+	{
+		.Zero=&ConstantZero,
+		.Total_=OCLC_MP_Total_,
+		.Length=
+		{
+			.Invalid_=_OCLC_MP_Invalid_Length_,
+			.D1_=OCLC_MP_Length_1D_,
+			.D2_=OCLC_MP_Length_2D_,
+			.D3_=OCLC_MP_Length_3D_,
+			.D4_=OCLC_MP_Length_4D_
+		},
+		.Offset=
+		{
+			.Invalid_=_OCLC_MP_Invalid_Offset_,
+			.D1_=OCLC_MP_Offset_1D_,
+			.D2_=OCLC_MP_Offset_2D_,
+			.D3_=OCLC_MP_Offset_3D_,
+			.D4_=OCLC_MP_Offset_4D_
+		}
+	},
 	.MH.Assign_=_OCLC_MH_Assign_
 };
+OCLCASE *OCLC_(general) { return &OCLC; }
 #endif

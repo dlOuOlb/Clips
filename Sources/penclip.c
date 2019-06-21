@@ -2,15 +2,11 @@
 
 #if(Fold_(Definition:PenClip Macros))
 #define _PENC_ static
-#ifdef RSIZE_MAX
-#define _PENC_SC_MAX_ RSIZE_MAX
-#else
 #define _PENC_SC_MAX_ ((address)(((address)1)<<(sizeof(address)<<2)))
-#endif
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.21";
 static TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
 static TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
@@ -829,121 +825,228 @@ _PENC_ penc_sc *PenC_SL_Borrow_Concat_T16_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,P
 #endif
 
 #if(Fold_(Library Casing))
-const struct _pencase PenC=
+PENCASE PenC=
 {
 	.Version=IdiomVersion,
-	.Hello.T08=IdiomHello08,
-	.Hello.T16=IdiomHello16,
-
-#if(Fold_(Part:Opening Options))
-	.Option.Read.Binary.T08=IdiomOpen08+0,
-	.Option.Read.Binary.T16=IdiomOpen16+0,
-	.Option.Read.Text.T08=IdiomOpen08+8,
-	.Option.Read.Text.T16=IdiomOpen16+8,
-	.Option.Write.Binary.T08=IdiomOpen08+4,
-	.Option.Write.Binary.T16=IdiomOpen16+4,
-	.Option.Write.Text.T08=IdiomOpen08+12,
-	.Option.Write.Text.T16=IdiomOpen16+12,
-#endif
-
-#if(Fold_(Part:Character Functions))
-	.Setter.T08_=PenC_Setter_T08_,
-	.Setter.T16_=PenC_Setter_T16_,
-	.Finder.T08_=PenC_Finder_T08_,
-	.Finder.T16_=PenC_Finder_T16_,
-#endif
-
-#if(Fold_(Part:String Functions))
-	.String.Caster.T08_T16_=PenC_String_Caster_T08_T16_,
-	.String.Caster.T16_T08_=PenC_String_Caster_T16_T08_,
-	.String.Length.T08_=PenC_String_Length_T08_,
-	.String.Length.T16_=PenC_String_Length_T16_,
-	.String.Finder.T08_=PenC_String_Finder_T08_,
-	.String.Finder.T16_=PenC_String_Finder_T16_,
-	.String.Concat.T08_=PenC_String_Concat_T08_,
-	.String.Concat.T16_=PenC_String_Concat_T16_,
-	.String.Copier.T08_=PenC_String_Copier_T08_,
-	.String.Copier.T16_=PenC_String_Copier_T16_,
-	.String.Compar.T08_=PenC_String_Compar_T08_,
-	.String.Compar.T16_=PenC_String_Compar_T16_,
-#endif
-
-#if(Fold_(Part:Pipe Functions))
-	.Pipe.Opener.T08_=PenC_Pipe_Opener_T08_,
-	.Pipe.Opener.T16_=PenC_Pipe_Opener_T16_,
-	.Pipe.Closer_=PenC_Pipe_Closer_,
-	.Pipe.Action.T08_=PenC_Pipe_Action_T08_,
-	.Pipe.Action.T16_=PenC_Pipe_Action_T16_,
-#endif
-
-#if(Fold_(Part:File Functions))
-	.File.Opener.T08_=PenC_File_Opener_T08_,
-	.File.Opener.T16_=PenC_File_Opener_T16_,
-	.File.Closer_=PenC_File_Closer_,
-	.File.Writer_=_PenC_File_Writer_,
-	.File.Reader_=_PenC_File_Reader_,
-	.File.Jumper_=MemC_Func_Casting_(integer,_PenC_File_Jumper_,FILE _PL_,const long,ADDRESS),
-	.File.Backer_=MemC_Func_Casting_(integer,_PenC_File_Backer_,FILE _PL_,const long,ADDRESS),
-	.File.Rewind_=_PenC_File_Rewind_,
-	.File.Teller_=_PenC_File_Teller_,
-	.File.Washer_=_PenC_File_Washer_,
-	.File.Finish_=_PenC_File_Finish_,
-	.File.Remove.T08_=_PenC_File_Remove_T08_,
-	.File.Remove.T16_=_PenC_File_Remove_T16_,
-	.File.Rename.T08_=_PenC_File_Rename_T08_,
-	.File.Rename.T16_=_PenC_File_Rename_T16_,
-	.File.Length.T08_=PenC_File_Length_T08_,
-	.File.Length.T16_=PenC_File_Length_T16_,
-#endif
-
-#if(Fold_(Part:Stream and Buffer Functions))
-	.Stream.Buffer.T08_=PenC_Stream_Buffer_T08_,
-	.Stream.Buffer.T16_=PenC_Stream_Buffer_T16_,
-	.Stream.SC.T08_=PenC_SC_Stream_T08_,
-	.Stream.SC.T16_=PenC_SC_Stream_T16_,
-
-	.Buffer.Stream.T08_=PenC_Stream_Buffer_T08_,
-	.Buffer.Stream.T16_=PenC_Stream_Buffer_T16_,
-
-	.Buffer.Reader.T08_=_PenC_Reader_1D_T08_,
-	.Buffer.Reader.T16_=_PenC_Reader_1D_T16_,
-	.Buffer.Writer.T08_=_PenC_Writer_1D_T08_,
-	.Buffer.Writer.T16_=_PenC_Writer_1D_T16_,
-#endif
-
-#if(Fold_(Part:String Container Functions))
-	.SC.Assign_=_PenC_SC_Assign_,
-	.SC.Create_=PenC_SC_Create_,
-	.SC.Delete_=PenC_SC_Delete_,
-	.SC.Init_=PenC_SC_Init_,
-	.SC.Shut.T08_=PenC_SC_Shut_T08_,
-	.SC.Shut.T16_=PenC_SC_Shut_T16_,
-	.SC.Shut.T32_=PenC_SC_Shut_T32_,
-	.SC.Caster.T08_T16_=PenC_SC_Caster_T08_T16_,
-	.SC.Caster.T16_T08_=PenC_SC_Caster_T16_T08_,
-	.SC.Length.T08_=PenC_SC_Length_T08_,
-	.SC.Length.T16_=PenC_SC_Length_T16_,
-	.SC.Copier.T08_=PenC_SC_Copier_T08_,
-	.SC.Copier.T16_=PenC_SC_Copier_T16_,
-	.SC.Concat.T08_=PenC_SC_Concat_T08_,
-	.SC.Concat.T16_=PenC_SC_Concat_T16_,
-	.SC.Compar.T08_=PenC_SC_Compar_T08_,
-	.SC.Compar.T16_=PenC_SC_Compar_T16_,
-	.SC.Stream.T08_=PenC_SC_Stream_T08_,
-	.SC.Stream.T16_=PenC_SC_Stream_T16_,
-#endif
-
-#if(Fold_(Part:String Lender Functions))
-	.SL.Create_=PenC_SL_Create_,
-	.SL.Delete_=PenC_SL_Delete_,
-	.SL.Size_=PenC_SL_Size_,
-	.SL.Reset_=PenC_SL_Reset_,
-	.SL.Borrow_=PenC_SL_Borrow_,
-	.SL.Borrow.Copier.T08_=PenC_SL_Borrow_Copier_T08_,
-	.SL.Borrow.Copier.T16_=PenC_SL_Borrow_Copier_T16_,
-	.SL.Borrow.Concat.T08_=PenC_SL_Borrow_Concat_T08_,
-	.SL.Borrow.Concat.T16_=PenC_SL_Borrow_Concat_T16_,
-	.SL.Return_=PenC_SL_Return_
-#endif
+	.Hello=
+	{
+		.T08=IdiomHello08,
+		.T16=IdiomHello16
+	},
+	.Option=
+	{
+		.Read=
+		{
+			.Binary=
+			{
+				.T08=IdiomOpen08+0,
+				.T16=IdiomOpen16+0
+			},
+			.Text=
+			{
+				.T08=IdiomOpen08+8,
+				.T16=IdiomOpen16+8
+			}
+		},
+		.Write=
+		{
+			.Binary=
+			{
+				.T08=IdiomOpen08+4,
+				.T16=IdiomOpen16+4
+			},
+			.Text=
+			{
+				.T08=IdiomOpen08+12,
+				.T16=IdiomOpen16+12
+			}
+		}
+	},
+	.Setter=
+	{
+		.T08_=PenC_Setter_T08_,
+		.T16_=PenC_Setter_T16_
+	},
+	.Finder=
+	{
+		.T08_=PenC_Finder_T08_,
+		.T16_=PenC_Finder_T16_
+	},
+	.String=
+	{
+		.Caster=
+		{
+			.T08_T16_=PenC_String_Caster_T08_T16_,
+			.T16_T08_=PenC_String_Caster_T16_T08_
+		},
+		.Length=
+		{
+			.T08_=PenC_String_Length_T08_,
+			.T16_=PenC_String_Length_T16_
+		},
+		.Finder=
+		{
+			.T08_=PenC_String_Finder_T08_,
+			.T16_=PenC_String_Finder_T16_
+		},
+		.Concat=
+		{
+			.T08_=PenC_String_Concat_T08_,
+			.T16_=PenC_String_Concat_T16_
+		},
+		.Copier=
+		{
+			.T08_=PenC_String_Copier_T08_,
+			.T16_=PenC_String_Copier_T16_
+		},
+		.Compar=
+		{
+			.T08_=PenC_String_Compar_T08_,
+			.T16_=PenC_String_Compar_T16_
+		}
+	},
+	.Pipe=
+	{
+		.Opener=
+		{
+			.T08_=PenC_Pipe_Opener_T08_,
+			.T16_=PenC_Pipe_Opener_T16_
+		},
+		.Closer_=PenC_Pipe_Closer_,
+		.Action=
+		{
+			.T08_=PenC_Pipe_Action_T08_,
+			.T16_=PenC_Pipe_Action_T16_
+		}
+	},
+	.File=
+	{
+		.Opener=
+		{
+			.T08_=PenC_File_Opener_T08_,
+			.T16_=PenC_File_Opener_T16_
+		},
+		.Closer_=PenC_File_Closer_,
+		.Writer_=_PenC_File_Writer_,
+		.Reader_=_PenC_File_Reader_,
+		.Jumper_=MemC_Func_Casting_(integer,_PenC_File_Jumper_,FILE _PL_,const long,ADDRESS),
+		.Backer_=MemC_Func_Casting_(integer,_PenC_File_Backer_,FILE _PL_,const long,ADDRESS),
+		.Rewind_=_PenC_File_Rewind_,
+		.Teller_=_PenC_File_Teller_,
+		.Washer_=_PenC_File_Washer_,
+		.Finish_=_PenC_File_Finish_,
+		.Remove=
+		{
+			.T08_=_PenC_File_Remove_T08_,
+			.T16_=_PenC_File_Remove_T16_
+		},
+		.Rename=
+		{
+			.T08_=_PenC_File_Rename_T08_,
+			.T16_=_PenC_File_Rename_T16_
+		},
+		.Length=
+		{
+			.T08_=PenC_File_Length_T08_,
+			.T16_=PenC_File_Length_T16_
+		}
+	},
+	.Stream=
+	{
+		.Buffer=
+		{
+			.T08_=PenC_Stream_Buffer_T08_,
+			.T16_=PenC_Stream_Buffer_T16_
+		},
+		.SC=
+		{
+			.T08_=PenC_SC_Stream_T08_,
+			.T16_=PenC_SC_Stream_T16_
+		}
+	},
+	.Buffer=
+	{
+		.Stream=
+		{
+			.T08_=PenC_Stream_Buffer_T08_,
+			.T16_=PenC_Stream_Buffer_T16_
+		},
+		.Reader=
+		{
+			.T08_=_PenC_Reader_1D_T08_,
+			.T16_=_PenC_Reader_1D_T16_
+		},
+		.Writer=
+		{
+			.T08_=_PenC_Writer_1D_T08_,
+			.T16_=_PenC_Writer_1D_T16_
+		}
+	},
+	.SC=
+	{
+		.Assign_=_PenC_SC_Assign_,
+		.Create_=PenC_SC_Create_,
+		.Delete_=PenC_SC_Delete_,
+		.Init_=PenC_SC_Init_,
+		.Shut=
+		{
+			.T08_=PenC_SC_Shut_T08_,
+			.T16_=PenC_SC_Shut_T16_,
+			.T32_=PenC_SC_Shut_T32_
+		},
+		.Caster=
+		{
+			.T08_T16_=PenC_SC_Caster_T08_T16_,
+			.T16_T08_=PenC_SC_Caster_T16_T08_
+		},
+		.Length=
+		{
+			.T08_=PenC_SC_Length_T08_,
+			.T16_=PenC_SC_Length_T16_
+		},
+		.Copier=
+		{
+			.T08_=PenC_SC_Copier_T08_,
+			.T16_=PenC_SC_Copier_T16_
+		},
+		.Concat=
+		{
+			.T08_=PenC_SC_Concat_T08_,
+			.T16_=PenC_SC_Concat_T16_
+		},
+		.Compar=
+		{
+			.T08_=PenC_SC_Compar_T08_,
+			.T16_=PenC_SC_Compar_T16_
+		},
+		.Stream=
+		{
+			.T08_=PenC_SC_Stream_T08_,
+			.T16_=PenC_SC_Stream_T16_
+		}
+	},
+	.SL=
+	{
+		.Create_=PenC_SL_Create_,
+		.Delete_=PenC_SL_Delete_,
+		.Size_=PenC_SL_Size_,
+		.Reset_=PenC_SL_Reset_,
+		.Borrow_=PenC_SL_Borrow_,
+		.Borrow=
+		{
+			.Copier=
+			{
+				.T08_=PenC_SL_Borrow_Copier_T08_,
+				.T16_=PenC_SL_Borrow_Copier_T16_
+			},
+			.Concat=
+			{
+				.T08_=PenC_SL_Borrow_Concat_T08_,
+				.T16_=PenC_SL_Borrow_Concat_T16_
+			}
+		},
+		.Return_=PenC_SL_Return_
+	}
 };
+PENCASE *PenC_(general) { return &PenC; }
 #endif

@@ -362,38 +362,45 @@ static type_xx *LinC_Func_(_LinC_Radix_,TXX)(type_xx *_R_ ValueFirst,address *_R
 		for(;ValueFirst<ValueLast;ValueMess++,IndexMess++)
 			if((*ValueMess)&Scan)
 			{
-				(*ValueFirst)=(*ValueMess);
-				ValueFirst++;
-
-				(*IndexFirst)=(*IndexMess);
-				IndexFirst++;
+				*(ValueFirst++)=*ValueMess;
+				*(IndexFirst++)=*IndexMess;
 			}
 			else
 			{
-				ValueLast--;
-				(*ValueLast)=(*ValueMess);
-
-				IndexLast--;
-				(*IndexLast)=(*IndexMess);
+				*(--ValueLast)=*ValueMess;
+				*(--IndexLast)=*IndexMess;
 			}
 	else
 		for(;ValueFirst<ValueLast;ValueMess++,IndexMess++)
 			if((*ValueMess)&Scan)
 			{
-				ValueLast--;
-				(*ValueLast)=(*ValueMess);
-
-				IndexLast--;
-				(*IndexLast)=(*IndexMess);
+				*(--ValueLast)=*ValueMess;
+				*(--IndexLast)=*IndexMess;
 			}
 			else
 			{
-				(*ValueFirst)=(*ValueMess);
-				ValueFirst++;
-
-				(*IndexFirst)=(*IndexMess);
-				IndexFirst++;
+				*(ValueFirst++)=*ValueMess;
+				*(IndexFirst++)=*IndexMess;
 			}
+
+	return ValueFirst;
+}
+static type_xx *LinC_Func_(_LinC_Radix_Lite_,TXX)(type_xx *_R_ ValueFirst,TYPE_XX *_R_ ValueMess,ADDRESS Length,BOOLEAN Mode,TYPE_XX Scan)
+{
+	type_xx *_R_ ValueLast=ValueFirst+Length;
+
+	if(Mode)
+		for(;ValueFirst<ValueLast;ValueMess++)
+			if((*ValueMess)&Scan)
+				*(ValueFirst++)=*ValueMess;
+			else
+				*(--ValueLast)=*ValueMess;
+	else
+		for(;ValueFirst<ValueLast;ValueMess++)
+			if((*ValueMess)&Scan)
+				*(--ValueLast)=*ValueMess;
+			else
+				*(ValueFirst++)=*ValueMess;
 
 	return ValueFirst;
 }
@@ -416,6 +423,24 @@ static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ _R_ ValueA,addres
 		_LinC_Swap_Address_(IndexA,T);
 	}
 }
+static general LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(type_xx _PL_ _R_ ValueA,BOOLEAN Mode)
+{
+	integer T[2];
+
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
+	else
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		LinC_Func_(_LinC_Swap_,TXX)(ValueA,T);
+	}
+}
 static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB,BOOLEAN Mode)
 {
 	integer T[2];
@@ -436,6 +461,25 @@ static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ _R_ ValueA,type_x
 
 		IndexB[0]=IndexA[T[0]];
 		IndexB[1]=IndexA[T[1]];
+	}
+}
+static general LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,BOOLEAN Mode)
+{
+	integer T[2];
+
+	if(ValueA[0]<ValueA[1])
+	{
+		T[0]=Mode&1;
+		T[1]=T[0]^1;
+	}
+	else
+	{
+		T[1]=Mode&1;
+		T[0]=T[1]^1;
+	}
+	{
+		ValueB[0]=ValueA[T[0]];
+		ValueB[1]=ValueA[T[1]];
 	}
 }
 static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,BOOLEAN Mode,integer Bits)
@@ -503,6 +547,70 @@ JUMP_B:
 				case 1:
 					ValueSource[0]=ValueTarget[0];
 					IndexSource[0]=IndexTarget[0];
+				case 0:;
+				}
+			}
+	}
+}
+static general LinC_Func_(_LinC_Recur_Lite_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,BOOLEAN Mode,integer Bits)
+{
+	address Offset=LinC_Func_(_LinC_Radix_Lite_,TXX)(ValueTarget,ValueSource,Length,Mode,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
+
+	if(Bits)
+	{
+		Bits--;
+		if(Bits&1)
+			switch(Offset)
+			{
+			default:
+				LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+				goto JUMP_A;
+			case 2:
+				LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(ValueTarget,Mode);
+			case 1:
+JUMP_A:
+				ValueSource+=Offset;
+				ValueTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(ValueTarget,Mode);
+					break;
+				case 1:
+				case 0:;
+				}
+			}
+		else
+			switch(Offset)
+			{
+			default:
+				LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+				goto JUMP_B;
+			case 2:
+				LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(ValueTarget,ValueSource,Mode);
+				goto JUMP_B;
+			case 1:
+				ValueSource[0]=ValueTarget[0];
+JUMP_B:
+				ValueSource+=Offset;
+				ValueTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+					break;
+				case 2:
+					LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(ValueTarget,ValueSource,Mode);
+					break;
+				case 1:
+					ValueSource[0]=ValueTarget[0];
 				case 0:;
 				}
 			}

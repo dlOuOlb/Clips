@@ -1,3 +1,6 @@
+#include <limits.h>
+#include <math.h>
+#include <time.h>
 #include "timclip.h"
 
 #if(Fold_(Definition:Opaque Types))
@@ -6,7 +9,7 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.21";
 #endif
 
 #if(Fold_(Definition:Functions))
@@ -593,38 +596,57 @@ FAILURE:
 #endif
 
 #if(Fold_(Library Casing))
-const struct _timcase TimC=
+TIMCASE TimC=
 {
 	.Version=IdiomVersion,
-	.Clock.Resolution=(real_32)(CLOCKS_PER_SEC),
-	.Clock.Frequency=1.0F/((real_32)(CLOCKS_PER_SEC)),
-
-#if(Fold_(Part:TimC_SW))
-	.SW.Create_=TimC_SW_Create_,
-	.SW.Delete_=MemC_Func_Casting_(general,TimC_Delete_,timc_sw *_PL_),
-	.SW.Size_=TimC_SW_Size_,
-	.SW.All.Reset_=TimC_SW_Reset_All_,
-	.SW.All.Stop_=TimC_SW_Stop_All_,
-	.SW.Reset_=TimC_SW_Reset_,
-	.SW.Toggle_=TimC_SW_Toggle_,
-	.SW.Read.State_=TimC_SW_Read_State_,
-	.SW.Read.Count_=TimC_SW_Read_Count_,
-	.SW.Read.Sum_=TimC_SW_Read_Sum_,
-	.SW.Read.Mean_=TimC_SW_Read_Mean_,
-#endif
-
-#if(Fold_(Part:TimC_RG))
-	.RG.Create_=TimC_RG_Create_,
-	.RG.Delete_=MemC_Func_Casting_(general,TimC_Delete_,timc_rg *_PL_),
-	.RG.Size_=TimC_RG_Size_,
-	.RG.Reset_=TimC_RG_Reset_,
-	.RG.Rand.Byte_=TimC_RG_Byte_,
-	.RG.Rand.Perm_=TimC_RG_Perm_,
-	.RG.Uni.I32_=MemC_Func_Casting_(boolean,TimC_RG_Uni_I32_,TIMC_RG _PL_,ADDRESS,inte_32 _PL_ _R_,ADDRESS,INTE_32,INTE_32),
-	.RG.Uni.R32_=TimC_RG_Uni_R32_,
-	.RG.Uni.R64_=TimC_RG_Uni_R64_,
-	.RG.Gau.R32_=TimC_RG_Gau_R32_,
-	.RG.Gau.R64_=TimC_RG_Gau_R64_
-#endif
+	.Clock=
+	{
+		.Resolution=(real_32)(CLOCKS_PER_SEC),
+		.Frequency=1.0F/((real_32)(CLOCKS_PER_SEC))
+	},
+	.SW=
+	{
+		.Create_=TimC_SW_Create_,
+		.Delete_=MemC_Func_Casting_(general,TimC_Delete_,timc_sw *_PL_),
+		.Size_=TimC_SW_Size_,
+		.All=
+		{
+			.Reset_=TimC_SW_Reset_All_,
+			.Stop_=TimC_SW_Stop_All_
+		},
+		.Reset_=TimC_SW_Reset_,
+		.Toggle_=TimC_SW_Toggle_,
+		.Read=
+		{
+			.State_=TimC_SW_Read_State_,
+			.Count_=TimC_SW_Read_Count_,
+			.Sum_=TimC_SW_Read_Sum_,
+			.Mean_=TimC_SW_Read_Mean_
+		}
+	},
+	.RG=
+	{
+		.Create_=TimC_RG_Create_,
+		.Delete_=MemC_Func_Casting_(general,TimC_Delete_,timc_rg *_PL_),
+		.Size_=TimC_RG_Size_,
+		.Reset_=TimC_RG_Reset_,
+		.Rand=
+		{
+			.Byte_=TimC_RG_Byte_,
+			.Perm_=TimC_RG_Perm_
+		},
+		.Uni=
+		{
+			.I32_=MemC_Func_Casting_(boolean,TimC_RG_Uni_I32_,TIMC_RG _PL_,ADDRESS,inte_32 _PL_ _R_,ADDRESS,INTE_32,INTE_32),
+			.R32_=TimC_RG_Uni_R32_,
+			.R64_=TimC_RG_Uni_R64_
+		},
+		.Gau=
+		{
+			.R32_=TimC_RG_Gau_R32_,
+			.R64_=TimC_RG_Gau_R64_
+		}
+	}
 };
+TIMCASE *TimC_(general) { return &TimC; }
 #endif

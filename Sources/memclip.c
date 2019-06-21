@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include "memclip.h"
 
 #if(Fold_(Definition:MemClip Macros))
@@ -6,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.21";
 static ADDRESS ConstantZero[MemC_Max_Dimension]={0};
 #endif
 
@@ -1927,85 +1928,83 @@ FAILURE:
 #endif
 
 #if(Fold_(Library Casing))
-const struct _memcase MemC=
+MEMCASE MemC=
 {
 	.Version=IdiomVersion,
 	.Void_=MemC_Void_,
-
-#if(Fold_(Part:Type))
-	.Type.N00=TableType+MemCTypeNone_00,
-	.Type.B08=TableType+MemCTypeByte_08,
-	.Type.Int=TableType+MemCTypeInteger,
-	.Type.Add=TableType+MemCTypeAddress,
-	.Type.Enum_=MemC_DT_Enum_,
-	.Type.Desc_=MemC_DT_Desc_,
-#endif
-
-#if(Fold_(Part:Plain))
-	.Alloc.Byte_=MemC_Alloc_Byte_,
-	.Alloc.DN_=_MemC_Alloc_ND_,
-	.Set.Check_=MemC_Check_,
-	.Set.Deloc_=MemC_Deloc_Set_,
-#endif
-
-#if(Fold_(Part:Copy))
-	.Copy.DN_=_MemC_Copy_,
-	.Copy.Step_=MemC_Copy_Step_,
-#endif
-
-#if(Fold_(Part:Preset))
+	.Type=
+	{
+		.N00=TableType+MemCTypeNone_00,
+		.B08=TableType+MemCTypeByte_08,
+		.Int=TableType+MemCTypeInteger,
+		.Add=TableType+MemCTypeAddress,
+		.Enum_=MemC_DT_Enum_,
+		.Desc_=MemC_DT_Desc_
+	},
+	.Alloc=
+	{
+		.Byte_=MemC_Alloc_Byte_,
+		.DN_=_MemC_Alloc_ND_
+	},
+	.Set=
+	{
+		.Check_=MemC_Check_,
+		.Deloc_=MemC_Deloc_Set_
+	},
+	.Copy=
+	{
+		.DN_=_MemC_Copy_,
+		.Step_=MemC_Copy_Step_
+	},
 	.Preset.D1_=_MemC_Init_1D_,
-#endif
-
-#if(Fold_(Part:Reformation))
-	.Reform.DN_=_MemC_Reform_,
-	.Reform.Shape_=MemC_Reform_Shape_,
-#endif
-
-#if(Fold_(Part:Addressing))
+	.Reform=
+	{
+		.DN_=_MemC_Reform_,
+		.Shape_=MemC_Reform_Shape_
+	},
 	.Assign.D1_=_MemC_Assign_1D_,
-#endif
-
-#if(Fold_(Part:Sort))
-	.Sort.Index_=MemC_Self_,
-	.Sort.Do_=MemC_Sort_,
-#endif
-
-#if(Fold_(Part:Size))
-	.Size.Add_=_MemC_Size_Add_,
-	.Size.Mul_=_MemC_Size_Mul_,
-#endif
-
-#if(Fold_(Part:MemC_MS))
-	.MS.Create_=MemC_MS_Create_,
-	.MS.Delete_=MemC_MS_Delete_,
-	.MS.Size_=MemC_MS_Size_,
-	.MS.Change_=MemC_MS_Change_,
-	.MS.Init_=MemC_MS_Init_,
-	.MS.Null_=MemC_MS_Null_,
-	.MS.Dims_=MemC_MS_Dims_,
-	.MS.Joke_=MemC_MS_Joke_,
-	.MS.Oops_=MemC_MS_Oops_,
-#endif
-
-#if(Fold_(Part:MemC_MC))
-	.MC.Create_=MemC_MC_Create_,
-	.MC.Delete_=MemC_MC_Delete_,
-	.MC.Size_=MemC_MC_Size_,
-	.MC.Form_=MemC_MC_Form_,
-	.MC.Change_=MemC_MC_Change_,
-#endif
-
-#if(Fold_(Part:MemC_ML))
-	.ML.Create_=MemC_ML_Create_,
-	.ML.Delete_=MemC_ML_Delete_,
-	.ML.Size_=MemC_ML_Size_,
-	.ML.Kill_=MemC_ML_Kill_,
-	.ML.Move_=MemC_ML_Move_,
-	.ML.Borrow_=MemC_ML_Borrow_,
-	.ML.Return_=_MemC_ML_Return_,
-	.ML.Master_=MemC_ML_Master_,
-	.ML.Usable_=MemC_ML_Usable_
-#endif
+	.Sort=
+	{
+		.Index_=MemC_Self_,
+		.Do_=MemC_Sort_
+	},
+	.Size=
+	{
+		.Add_=_MemC_Size_Add_,
+		.Mul_=_MemC_Size_Mul_
+	},
+	.MS=
+	{
+		.Create_=MemC_MS_Create_,
+		.Delete_=MemC_MS_Delete_,
+		.Size_=MemC_MS_Size_,
+		.Change_=MemC_MS_Change_,
+		.Init_=MemC_MS_Init_,
+		.Null_=MemC_MS_Null_,
+		.Dims_=MemC_MS_Dims_,
+		.Joke_=MemC_MS_Joke_,
+		.Oops_=MemC_MS_Oops_
+	},
+	.MC=
+	{
+		.Create_=MemC_MC_Create_,
+		.Delete_=MemC_MC_Delete_,
+		.Size_=MemC_MC_Size_,
+		.Form_=MemC_MC_Form_,
+		.Change_=MemC_MC_Change_
+	},
+	.ML=
+	{
+		.Create_=MemC_ML_Create_,
+		.Delete_=MemC_ML_Delete_,
+		.Size_=MemC_ML_Size_,
+		.Kill_=MemC_ML_Kill_,
+		.Move_=MemC_ML_Move_,
+		.Borrow_=MemC_ML_Borrow_,
+		.Return_=_MemC_ML_Return_,
+		.Master_=MemC_ML_Master_,
+		.Usable_=MemC_ML_Usable_
+	}
 };
+MEMCASE *MemC_(general) { return &MemC; }
 #endif

@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ LinClip=&LinClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.06.07";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.21";
 #endif
 
 #if(Fold_(Domain:Host))
@@ -139,126 +139,220 @@ static inline general _LinC_Swap_Address_(address _PL_ _R_ A,INTEGER _PL_ _R_ T)
 _LINC_ general LinC_Order_D08_(data_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		data_08 _PL_ _R_ ValueTemp=(data_08*)(IndexTemp+Length);
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			data_08 _PL_ _R_ ValueTemp=(data_08*)(IndexTemp+Length);
 
-		_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],7);
-	}
+			_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],7);
+		}
+		else
+		{
+			data_08 _PL_ _R_ ValueTemp=Buffer;
+
+			_LinC_Recur_Lite_D08_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],7);
+		}
 }
 _LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		data_16 _PL_ _R_ ValueTemp=(data_16*)(IndexTemp+Length);
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			data_16 _PL_ _R_ ValueTemp=(data_16*)(IndexTemp+Length);
 
-		_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],15);
-	}
+			_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],15);
+		}
+		else
+		{
+			data_16 _PL_ _R_ ValueTemp=Buffer;
+
+			_LinC_Recur_Lite_D16_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],15);
+		}
 }
 _LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		data_32 _PL_ _R_ ValueTemp=(data_32*)(IndexTemp+Length);
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			data_32 _PL_ _R_ ValueTemp=(data_32*)(IndexTemp+Length);
 
-		_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],31);
-	}
+			_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],31);
+		}
+		else
+		{
+			data_32 _PL_ _R_ ValueTemp=Buffer;
+
+			_LinC_Recur_Lite_D32_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],31);
+		}
 }
 _LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		data_64 _PL_ _R_ ValueTemp=(data_64*)(IndexTemp+Length);
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			data_64 _PL_ _R_ ValueTemp=(data_64*)(IndexTemp+Length);
 
-		_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],63);
-	}
+			_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],63);
+		}
+		else
+		{
+			data_64 _PL_ _R_ ValueTemp=Buffer;
+
+			_LinC_Recur_Lite_D64_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],63);
+		}
 }
 _LINC_ general LinC_Order_I08_(inte_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		inte_08 _PL_ _R_ ValueTemp=(inte_08*)(IndexTemp+Length);
-		ADDRESS Offset=(inte_08*)(_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80))-ValueTemp;
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			inte_08 _PL_ _R_ ValueTemp=(inte_08*)(IndexTemp+Length);
+			ADDRESS Offset=(inte_08*)(_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80))-ValueTemp;
 
-		if(Offset)
-			_LinC_Recur_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,Mode,6);
-		if(Offset<Length)
-			_LinC_Recur_D08_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,Mode,6);
-	}
+			if(Offset)
+				_LinC_Recur_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,Mode,6);
+			if(Offset<Length)
+				_LinC_Recur_D08_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,Mode,6);
+		}
+		else
+		{
+			inte_08 _PL_ _R_ ValueTemp=Buffer;
+			ADDRESS Offset=(inte_08*)(_LinC_Radix_Lite_D08_((data_08*)ValueTemp,(data_08*)Line,Length,~BitC.Boolean[Mode&1],0x80))-ValueTemp;
+
+			if(Offset)
+				_LinC_Recur_Lite_D08_((data_08*)ValueTemp,(data_08*)Line,Offset,Mode,6);
+			if(Offset<Length)
+				_LinC_Recur_Lite_D08_((data_08*)(ValueTemp+Offset),(data_08*)(Line+Offset),Length-Offset,Mode,6);
+		}
 }
 _LINC_ general LinC_Order_I16_(inte_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		inte_16 _PL_ _R_ ValueTemp=(inte_16*)(IndexTemp+Length);
-		ADDRESS Offset=(inte_16*)(_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000))-ValueTemp;
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			inte_16 _PL_ _R_ ValueTemp=(inte_16*)(IndexTemp+Length);
+			ADDRESS Offset=(inte_16*)(_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000))-ValueTemp;
 
-		if(Offset)
-			_LinC_Recur_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,Mode,14);
-		if(Offset<Length)
-			_LinC_Recur_D16_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,Mode,14);
-	}
+			if(Offset)
+				_LinC_Recur_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,Mode,14);
+			if(Offset<Length)
+				_LinC_Recur_D16_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,Mode,14);
+		}
+		else
+		{
+			inte_16 _PL_ _R_ ValueTemp=Buffer;
+			ADDRESS Offset=(inte_16*)(_LinC_Radix_Lite_D16_((data_16*)ValueTemp,(data_16*)Line,Length,~BitC.Boolean[Mode&1],0x8000))-ValueTemp;
+
+			if(Offset)
+				_LinC_Recur_Lite_D16_((data_16*)ValueTemp,(data_16*)Line,Offset,Mode,14);
+			if(Offset<Length)
+				_LinC_Recur_Lite_D16_((data_16*)(ValueTemp+Offset),(data_16*)(Line+Offset),Length-Offset,Mode,14);
+		}
 }
 _LINC_ general LinC_Order_I32_(inte_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		inte_32 _PL_ _R_ ValueTemp=(inte_32*)(IndexTemp+Length);
-		ADDRESS Offset=(inte_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			inte_32 _PL_ _R_ ValueTemp=(inte_32*)(IndexTemp+Length);
+			ADDRESS Offset=(inte_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
 
-		if(Offset)
-			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,Mode,30);
-		if(Offset<Length)
-			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,Mode,30);
-	}
+			if(Offset)
+				_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,Mode,30);
+			if(Offset<Length)
+				_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,Mode,30);
+		}
+		else
+		{
+			inte_32 _PL_ _R_ ValueTemp=Buffer;
+			ADDRESS Offset=(inte_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+
+			if(Offset)
+				_LinC_Recur_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,Mode,30);
+			if(Offset<Length)
+				_LinC_Recur_Lite_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,Mode,30);
+		}
 }
 _LINC_ general LinC_Order_I64_(inte_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		inte_64 _PL_ _R_ ValueTemp=(inte_64*)(IndexTemp+Length);
-		ADDRESS Offset=(inte_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			inte_64 _PL_ _R_ ValueTemp=(inte_64*)(IndexTemp+Length);
+			ADDRESS Offset=(inte_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
 
-		if(Offset)
-			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,Mode,62);
-		if(Offset<Length)
-			_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,Mode,62);
-	}
+			if(Offset)
+				_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,Mode,62);
+			if(Offset<Length)
+				_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,Mode,62);
+		}
+		else
+		{
+			inte_64 _PL_ _R_ ValueTemp=Buffer;
+			ADDRESS Offset=(inte_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+
+			if(Offset)
+				_LinC_Recur_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,Mode,62);
+			if(Offset<Length)
+				_LinC_Recur_Lite_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,Mode,62);
+		}
 }
 _LINC_ general LinC_Order_R32_(real_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		real_32 _PL_ _R_ ValueTemp=(real_32*)(IndexTemp+Length);
-		ADDRESS Offset=(real_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			real_32 _PL_ _R_ ValueTemp=(real_32*)(IndexTemp+Length);
+			ADDRESS Offset=(real_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
 
-		if(Offset)
-			_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,BitCFull,30);
-		if(Offset<Length)
-			_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,30);
-	}
+			if(Offset)
+				_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,BitCFull,30);
+			if(Offset<Length)
+				_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,30);
+		}
+		else
+		{
+			real_32 _PL_ _R_ ValueTemp=Buffer;
+			ADDRESS Offset=(real_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+
+			if(Offset)
+				_LinC_Recur_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,BitCFull,30);
+			if(Offset<Length)
+				_LinC_Recur_Lite_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,BitCNull,30);
+		}
 }
 _LINC_ general LinC_Order_R64_(real_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
 {
 	if(Length)
-	{
-		address _PL_ _R_ IndexTemp=Buffer;
-		real_64 _PL_ _R_ ValueTemp=(real_64*)(IndexTemp+Length);
-		ADDRESS Offset=(real_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+		if(Index)
+		{
+			address _PL_ _R_ IndexTemp=Buffer;
+			real_64 _PL_ _R_ ValueTemp=(real_64*)(IndexTemp+Length);
+			ADDRESS Offset=(real_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
 
-		if(Offset)
-			_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,BitCFull,62);
-		if(Offset<Length)
-			_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,62);
-	}
+			if(Offset)
+				_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,BitCFull,62);
+			if(Offset<Length)
+				_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,62);
+		}
+		else
+		{
+			real_64 _PL_ _R_ ValueTemp=Buffer;
+			ADDRESS Offset=(real_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+
+			if(Offset)
+				_LinC_Recur_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,BitCFull,62);
+			if(Offset<Length)
+				_LinC_Recur_Lite_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,BitCNull,62);
+		}
 }
 #endif
 
@@ -1232,244 +1326,255 @@ _LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 #endif
 
 #if(Fold_(Library Casing))
-const struct _lincase LinC=
+LINCASE LinC=
 {
 	.Version=IdiomVersion,
-
-#if(Fold_(Domain:Device)&&defined(__OPENCL_H))
-	.CL.Ready.T08_=LinC_CL_Build_T08_,
-	.CL.Ready.T16_=LinC_CL_Build_T16_,
-	.CL.Create.T08_=LinC_CL_Create_T08_,
-	.CL.Create.T16_=LinC_CL_Create_T16_,
-	.CL.Inc_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-	.CL.Amp_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-	.CL.Add_2_=LinC_CL_Add_2_,
-	.CL.Sub_2_=LinC_CL_Sub_2_,
-	.CL.Mul_2_=LinC_CL_Mul_2_,
-	.CL.Div_1_=MemC_Func_Casting_(general,LinC_CL_Div_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-	.CL.Inv_1_=MemC_Func_Casting_(general,LinC_CL_Inv_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-	.CL.Div_2_=LinC_CL_Div_2_,
-	.CL.Mod_1_=MemC_Func_Casting_(general,LinC_CL_Mod_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-	.CL.Sum_1_=LinC_CL_Sum_1_,
-	.CL.Dot_2_=LinC_CL_Dot_2_,
-	.CL.Max_1_=LinC_CL_Max_1_,
-	.CL.Min_1_=LinC_CL_Min_1_,
-	.CL.Map_1_=LinC_CL_Map_1_,
+#ifdef __OPENCL_H
+	.CL=
+	{
+		.Ready=
+		{
+			.T08_=LinC_CL_Build_T08_,
+			.T16_=LinC_CL_Build_T16_
+		},
+		.Create=
+		{
+			.T08_=LinC_CL_Create_T08_,
+			.T16_=LinC_CL_Create_T16_
+		},
+		.Inc_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.Amp_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.Add_2_=LinC_CL_Add_2_,
+		.Sub_2_=LinC_CL_Sub_2_,
+		.Mul_2_=LinC_CL_Mul_2_,
+		.Div_1_=MemC_Func_Casting_(general,LinC_CL_Div_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.Inv_1_=MemC_Func_Casting_(general,LinC_CL_Inv_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.Div_2_=LinC_CL_Div_2_,
+		.Mod_1_=MemC_Func_Casting_(general,LinC_CL_Mod_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.Sum_1_=LinC_CL_Sum_1_,
+		.Dot_2_=LinC_CL_Dot_2_,
+		.Max_1_=LinC_CL_Max_1_,
+		.Min_1_=LinC_CL_Min_1_,
+		.Map_1_=LinC_CL_Map_1_
+	},
 #endif
-
-#if(Fold_(Domain:Host))
-#if(Fold_(Part:Arithmetic Progression))
-	.Ari_0.I08_=LinC_Ari_0_I08_,
-	.Ari_0.I16_=LinC_Ari_0_I16_,
-	.Ari_0.I32_=LinC_Ari_0_I32_,
-	.Ari_0.I64_=LinC_Ari_0_I64_,
-	.Ari_0.D08_=MemC_Func_Casting_(general,LinC_Ari_0_I08_,data_08 *_R_,DATA_08,DATA_08,ADDRESS),
-	.Ari_0.D16_=MemC_Func_Casting_(general,LinC_Ari_0_I16_,data_16 *_R_,DATA_16,DATA_16,ADDRESS),
-	.Ari_0.D32_=MemC_Func_Casting_(general,LinC_Ari_0_I32_,data_32 *_R_,DATA_32,DATA_32,ADDRESS),
-	.Ari_0.D64_=MemC_Func_Casting_(general,LinC_Ari_0_I64_,data_64 *_R_,DATA_64,DATA_64,ADDRESS),
-	.Ari_0.R32_=LinC_Ari_0_R32_,
-	.Ari_0.R64_=LinC_Ari_0_R64_,
-#endif
-
-#if(Fold_(Part:Geometric Progression))
-	.Geo_0.I08_=LinC_Geo_0_I08_,
-	.Geo_0.I16_=LinC_Geo_0_I16_,
-	.Geo_0.I32_=LinC_Geo_0_I32_,
-	.Geo_0.I64_=LinC_Geo_0_I64_,
-	.Geo_0.D08_=MemC_Func_Casting_(general,LinC_Geo_0_I08_,data_08 *_R_,DATA_08,DATA_08,ADDRESS),
-	.Geo_0.D16_=MemC_Func_Casting_(general,LinC_Geo_0_I16_,data_16 *_R_,DATA_16,DATA_16,ADDRESS),
-	.Geo_0.D32_=MemC_Func_Casting_(general,LinC_Geo_0_I32_,data_32 *_R_,DATA_32,DATA_32,ADDRESS),
-	.Geo_0.D64_=MemC_Func_Casting_(general,LinC_Geo_0_I64_,data_64 *_R_,DATA_64,DATA_64,ADDRESS),
-	.Geo_0.R32_=LinC_Geo_0_R32_,
-	.Geo_0.R64_=LinC_Geo_0_R64_,
-#endif
-
-#if(Fold_(Part:Increment))
-	.Inc_1.I08_=LinC_Inc_1_I08_,
-	.Inc_1.I16_=LinC_Inc_1_I16_,
-	.Inc_1.I32_=LinC_Inc_1_I32_,
-	.Inc_1.I64_=LinC_Inc_1_I64_,
-	.Inc_1.D08_=MemC_Func_Casting_(general,LinC_Inc_1_I08_,data_08*,DATA_08*,DATA_08,ADDRESS),
-	.Inc_1.D16_=MemC_Func_Casting_(general,LinC_Inc_1_I16_,data_16*,DATA_16*,DATA_16,ADDRESS),
-	.Inc_1.D32_=MemC_Func_Casting_(general,LinC_Inc_1_I32_,data_32*,DATA_32*,DATA_32,ADDRESS),
-	.Inc_1.D64_=MemC_Func_Casting_(general,LinC_Inc_1_I64_,data_64*,DATA_64*,DATA_64,ADDRESS),
-	.Inc_1.R32_=LinC_Inc_1_R32_,
-	.Inc_1.R64_=LinC_Inc_1_R64_,
-#endif
-
-#if(Fold_(Part:Amplification))
-	.Amp_1.I08_=LinC_Amp_1_I08_,
-	.Amp_1.I16_=LinC_Amp_1_I16_,
-	.Amp_1.I32_=LinC_Amp_1_I32_,
-	.Amp_1.I64_=LinC_Amp_1_I64_,
-	.Amp_1.D08_=MemC_Func_Casting_(general,LinC_Amp_1_I08_,data_08*,DATA_08*,DATA_08,ADDRESS),
-	.Amp_1.D16_=MemC_Func_Casting_(general,LinC_Amp_1_I16_,data_16*,DATA_16*,DATA_16,ADDRESS),
-	.Amp_1.D32_=MemC_Func_Casting_(general,LinC_Amp_1_I32_,data_32*,DATA_32*,DATA_32,ADDRESS),
-	.Amp_1.D64_=MemC_Func_Casting_(general,LinC_Amp_1_I64_,data_64*,DATA_64*,DATA_64,ADDRESS),
-	.Amp_1.R32_=LinC_Amp_1_R32_,
-	.Amp_1.R64_=LinC_Amp_1_R64_,
-#endif
-
-#if(Fold_(Part:Addition))
-	.Add_2.I08_=LinC_Add_2_I08_,
-	.Add_2.I16_=LinC_Add_2_I16_,
-	.Add_2.I32_=LinC_Add_2_I32_,
-	.Add_2.I64_=LinC_Add_2_I64_,
-	.Add_2.D08_=MemC_Func_Casting_(general,LinC_Add_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
-	.Add_2.D16_=MemC_Func_Casting_(general,LinC_Add_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
-	.Add_2.D32_=MemC_Func_Casting_(general,LinC_Add_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
-	.Add_2.D64_=MemC_Func_Casting_(general,LinC_Add_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
-	.Add_2.R32_=LinC_Add_2_R32_,
-	.Add_2.R64_=LinC_Add_2_R64_,
-#endif
-
-#if(Fold_(Part:Subtraction))
-	.Sub_2.I08_=LinC_Sub_2_I08_,
-	.Sub_2.I16_=LinC_Sub_2_I16_,
-	.Sub_2.I32_=LinC_Sub_2_I32_,
-	.Sub_2.I64_=LinC_Sub_2_I64_,
-	.Sub_2.D08_=MemC_Func_Casting_(general,LinC_Sub_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
-	.Sub_2.D16_=MemC_Func_Casting_(general,LinC_Sub_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
-	.Sub_2.D32_=MemC_Func_Casting_(general,LinC_Sub_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
-	.Sub_2.D64_=MemC_Func_Casting_(general,LinC_Sub_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
-	.Sub_2.R32_=LinC_Sub_2_R32_,
-	.Sub_2.R64_=LinC_Sub_2_R64_,
-#endif
-
-#if(Fold_(Part:Multiplication))
-	.Mul_2.I08_=LinC_Mul_2_I08_,
-	.Mul_2.I16_=LinC_Mul_2_I16_,
-	.Mul_2.I32_=LinC_Mul_2_I32_,
-	.Mul_2.I64_=LinC_Mul_2_I64_,
-	.Mul_2.D08_=MemC_Func_Casting_(general,LinC_Mul_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
-	.Mul_2.D16_=MemC_Func_Casting_(general,LinC_Mul_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
-	.Mul_2.D32_=MemC_Func_Casting_(general,LinC_Mul_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
-	.Mul_2.D64_=MemC_Func_Casting_(general,LinC_Mul_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
-	.Mul_2.R32_=LinC_Mul_2_R32_,
-	.Mul_2.R64_=LinC_Mul_2_R64_,
-#endif
-
-#if(Fold_(Part:Division))
-	.Div_1.I08_=LinC_Div_1_I08_,
-	.Div_1.I16_=LinC_Div_1_I16_,
-	.Div_1.I32_=LinC_Div_1_I32_,
-	.Div_1.I64_=LinC_Div_1_I64_,
-	.Div_1.D08_=LinC_Div_1_D08_,
-	.Div_1.D16_=LinC_Div_1_D16_,
-	.Div_1.D32_=LinC_Div_1_D32_,
-	.Div_1.D64_=LinC_Div_1_D64_,
-
-	.Inv_1.I08_=LinC_Inv_1_I08_,
-	.Inv_1.I16_=LinC_Inv_1_I16_,
-	.Inv_1.I32_=LinC_Inv_1_I32_,
-	.Inv_1.I64_=LinC_Inv_1_I64_,
-	.Inv_1.D08_=LinC_Inv_1_D08_,
-	.Inv_1.D16_=LinC_Inv_1_D16_,
-	.Inv_1.D32_=LinC_Inv_1_D32_,
-	.Inv_1.D64_=LinC_Inv_1_D64_,
-	.Inv_1.R32_=LinC_Inv_1_R32_,
-	.Inv_1.R64_=LinC_Inv_1_R64_,
-
-	.Div_2.I08_=LinC_Div_2_I08_,
-	.Div_2.I16_=LinC_Div_2_I16_,
-	.Div_2.I32_=LinC_Div_2_I32_,
-	.Div_2.I64_=LinC_Div_2_I64_,
-	.Div_2.D08_=LinC_Div_2_D08_,
-	.Div_2.D16_=LinC_Div_2_D16_,
-	.Div_2.D32_=LinC_Div_2_D32_,
-	.Div_2.D64_=LinC_Div_2_D64_,
-	.Div_2.R32_=LinC_Div_2_R32_,
-	.Div_2.R64_=LinC_Div_2_R64_,
-#endif
-
-#if(Fold_(Part:Modulo))
-	.Mod_1.I08_=LinC_Mod_1_I08_,
-	.Mod_1.I16_=LinC_Mod_1_I16_,
-	.Mod_1.I32_=LinC_Mod_1_I32_,
-	.Mod_1.I64_=LinC_Mod_1_I64_,
-	.Mod_1.D08_=LinC_Mod_1_D08_,
-	.Mod_1.D16_=LinC_Mod_1_D16_,
-	.Mod_1.D32_=LinC_Mod_1_D32_,
-	.Mod_1.D64_=LinC_Mod_1_D64_,
-#endif
-
-#if(Fold_(Part:Summation))
-	.Sum_1.I08_=LinC_Sum_1_I08_,
-	.Sum_1.I16_=LinC_Sum_1_I16_,
-	.Sum_1.I32_=LinC_Sum_1_I32_,
-	.Sum_1.I64_=LinC_Sum_1_I64_,
-	.Sum_1.D08_=MemC_Func_Casting_(data_08,LinC_Sum_1_I08_,DATA_08 *_R_,ADDRESS),
-	.Sum_1.D16_=MemC_Func_Casting_(data_16,LinC_Sum_1_I16_,DATA_16 *_R_,ADDRESS),
-	.Sum_1.D32_=MemC_Func_Casting_(data_32,LinC_Sum_1_I32_,DATA_32 *_R_,ADDRESS),
-	.Sum_1.D64_=MemC_Func_Casting_(data_64,LinC_Sum_1_I64_,DATA_64 *_R_,ADDRESS),
-	.Sum_1.R32_=LinC_Sum_1_R32_,
-	.Sum_1.R64_=LinC_Sum_1_R64_,
-#endif
-
-#if(Fold_(Part:Dot-Product))
-	.Dot_2.I08_=LinC_Dot_2_I08_,
-	.Dot_2.I16_=LinC_Dot_2_I16_,
-	.Dot_2.I32_=LinC_Dot_2_I32_,
-	.Dot_2.I64_=LinC_Dot_2_I64_,
-	.Dot_2.D08_=MemC_Func_Casting_(data_08,LinC_Dot_2_I08_,DATA_08*,DATA_08*,ADDRESS),
-	.Dot_2.D16_=MemC_Func_Casting_(data_16,LinC_Dot_2_I16_,DATA_16*,DATA_16*,ADDRESS),
-	.Dot_2.D32_=MemC_Func_Casting_(data_32,LinC_Dot_2_I32_,DATA_32*,DATA_32*,ADDRESS),
-	.Dot_2.D64_=MemC_Func_Casting_(data_64,LinC_Dot_2_I64_,DATA_64*,DATA_64*,ADDRESS),
-	.Dot_2.R32_=LinC_Dot_2_R32_,
-	.Dot_2.R64_=LinC_Dot_2_R64_,
-#endif
-
-#if(Fold_(Part:Maximum))
-	.Max_1.I08_=LinC_Max_1_I08_,
-	.Max_1.I16_=LinC_Max_1_I16_,
-	.Max_1.I32_=LinC_Max_1_I32_,
-	.Max_1.I64_=LinC_Max_1_I64_,
-	.Max_1.D08_=LinC_Max_1_D08_,
-	.Max_1.D16_=LinC_Max_1_D16_,
-	.Max_1.D32_=LinC_Max_1_D32_,
-	.Max_1.D64_=LinC_Max_1_D64_,
-	.Max_1.R32_=LinC_Max_1_R32_,
-	.Max_1.R64_=LinC_Max_1_R64_,
-#endif
-
-#if(Fold_(Part:Minimum))
-	.Min_1.I08_=LinC_Min_1_I08_,
-	.Min_1.I16_=LinC_Min_1_I16_,
-	.Min_1.I32_=LinC_Min_1_I32_,
-	.Min_1.I64_=LinC_Min_1_I64_,
-	.Min_1.D08_=LinC_Min_1_D08_,
-	.Min_1.D16_=LinC_Min_1_D16_,
-	.Min_1.D32_=LinC_Min_1_D32_,
-	.Min_1.D64_=LinC_Min_1_D64_,
-	.Min_1.R32_=LinC_Min_1_R32_,
-	.Min_1.R64_=LinC_Min_1_R64_,
-#endif
-
-#if(Fold_(Part:Radix Sorting))
-	.Order.I08_=LinC_Order_I08_,
-	.Order.I16_=LinC_Order_I16_,
-	.Order.I32_=LinC_Order_I32_,
-	.Order.I64_=LinC_Order_I64_,
-	.Order.D08_=LinC_Order_D08_,
-	.Order.D16_=LinC_Order_D16_,
-	.Order.D32_=LinC_Order_D32_,
-	.Order.D64_=LinC_Order_D64_,
-	.Order.R32_=LinC_Order_R32_,
-	.Order.R64_=LinC_Order_R64_,
-#endif
-
-#if(Fold_(Part:Mapping))
-	.Map_1.I08_=MemC_Func_Casting_(general,LinC_Map_1_D08_,inte_08 *_R_,ADDRESS *_R_,INTE_08 _PL_,ADDRESS),
-	.Map_1.I16_=MemC_Func_Casting_(general,LinC_Map_1_D16_,inte_16 *_R_,ADDRESS *_R_,INTE_16 _PL_,ADDRESS),
-	.Map_1.I32_=MemC_Func_Casting_(general,LinC_Map_1_D32_,inte_32 *_R_,ADDRESS *_R_,INTE_32 _PL_,ADDRESS),
-	.Map_1.I64_=MemC_Func_Casting_(general,LinC_Map_1_D64_,inte_64 *_R_,ADDRESS *_R_,INTE_64 _PL_,ADDRESS),
-	.Map_1.D08_=LinC_Map_1_D08_,
-	.Map_1.D16_=LinC_Map_1_D16_,
-	.Map_1.D32_=LinC_Map_1_D32_,
-	.Map_1.D64_=LinC_Map_1_D64_,
-	.Map_1.R32_=MemC_Func_Casting_(general,LinC_Map_1_D32_,real_32 *_R_,ADDRESS *_R_,REAL_32 _PL_,ADDRESS),
-	.Map_1.R64_=MemC_Func_Casting_(general,LinC_Map_1_D64_,real_64 *_R_,ADDRESS *_R_,REAL_64 _PL_,ADDRESS)
-#endif
-#endif
+	.Ari_0=
+	{
+		.I08_=LinC_Ari_0_I08_,
+		.I16_=LinC_Ari_0_I16_,
+		.I32_=LinC_Ari_0_I32_,
+		.I64_=LinC_Ari_0_I64_,
+		.D08_=MemC_Func_Casting_(general,LinC_Ari_0_I08_,data_08 *_R_,DATA_08,DATA_08,ADDRESS),
+		.D16_=MemC_Func_Casting_(general,LinC_Ari_0_I16_,data_16 *_R_,DATA_16,DATA_16,ADDRESS),
+		.D32_=MemC_Func_Casting_(general,LinC_Ari_0_I32_,data_32 *_R_,DATA_32,DATA_32,ADDRESS),
+		.D64_=MemC_Func_Casting_(general,LinC_Ari_0_I64_,data_64 *_R_,DATA_64,DATA_64,ADDRESS),
+		.R32_=LinC_Ari_0_R32_,
+		.R64_=LinC_Ari_0_R64_
+	},
+	.Geo_0=
+	{
+		.I08_=LinC_Geo_0_I08_,
+		.I16_=LinC_Geo_0_I16_,
+		.I32_=LinC_Geo_0_I32_,
+		.I64_=LinC_Geo_0_I64_,
+		.D08_=MemC_Func_Casting_(general,LinC_Geo_0_I08_,data_08 *_R_,DATA_08,DATA_08,ADDRESS),
+		.D16_=MemC_Func_Casting_(general,LinC_Geo_0_I16_,data_16 *_R_,DATA_16,DATA_16,ADDRESS),
+		.D32_=MemC_Func_Casting_(general,LinC_Geo_0_I32_,data_32 *_R_,DATA_32,DATA_32,ADDRESS),
+		.D64_=MemC_Func_Casting_(general,LinC_Geo_0_I64_,data_64 *_R_,DATA_64,DATA_64,ADDRESS),
+		.R32_=LinC_Geo_0_R32_,
+		.R64_=LinC_Geo_0_R64_
+	},
+	.Inc_1=
+	{
+		.I08_=LinC_Inc_1_I08_,
+		.I16_=LinC_Inc_1_I16_,
+		.I32_=LinC_Inc_1_I32_,
+		.I64_=LinC_Inc_1_I64_,
+		.D08_=MemC_Func_Casting_(general,LinC_Inc_1_I08_,data_08*,DATA_08*,DATA_08,ADDRESS),
+		.D16_=MemC_Func_Casting_(general,LinC_Inc_1_I16_,data_16*,DATA_16*,DATA_16,ADDRESS),
+		.D32_=MemC_Func_Casting_(general,LinC_Inc_1_I32_,data_32*,DATA_32*,DATA_32,ADDRESS),
+		.D64_=MemC_Func_Casting_(general,LinC_Inc_1_I64_,data_64*,DATA_64*,DATA_64,ADDRESS),
+		.R32_=LinC_Inc_1_R32_,
+		.R64_=LinC_Inc_1_R64_
+	},
+	.Amp_1=
+	{
+		.I08_=LinC_Amp_1_I08_,
+		.I16_=LinC_Amp_1_I16_,
+		.I32_=LinC_Amp_1_I32_,
+		.I64_=LinC_Amp_1_I64_,
+		.D08_=MemC_Func_Casting_(general,LinC_Amp_1_I08_,data_08*,DATA_08*,DATA_08,ADDRESS),
+		.D16_=MemC_Func_Casting_(general,LinC_Amp_1_I16_,data_16*,DATA_16*,DATA_16,ADDRESS),
+		.D32_=MemC_Func_Casting_(general,LinC_Amp_1_I32_,data_32*,DATA_32*,DATA_32,ADDRESS),
+		.D64_=MemC_Func_Casting_(general,LinC_Amp_1_I64_,data_64*,DATA_64*,DATA_64,ADDRESS),
+		.R32_=LinC_Amp_1_R32_,
+		.R64_=LinC_Amp_1_R64_
+	},
+	.Add_2=
+	{
+		.I08_=LinC_Add_2_I08_,
+		.I16_=LinC_Add_2_I16_,
+		.I32_=LinC_Add_2_I32_,
+		.I64_=LinC_Add_2_I64_,
+		.D08_=MemC_Func_Casting_(general,LinC_Add_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
+		.D16_=MemC_Func_Casting_(general,LinC_Add_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
+		.D32_=MemC_Func_Casting_(general,LinC_Add_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
+		.D64_=MemC_Func_Casting_(general,LinC_Add_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
+		.R32_=LinC_Add_2_R32_,
+		.R64_=LinC_Add_2_R64_
+	},
+	.Sub_2=
+	{
+		.I08_=LinC_Sub_2_I08_,
+		.I16_=LinC_Sub_2_I16_,
+		.I32_=LinC_Sub_2_I32_,
+		.I64_=LinC_Sub_2_I64_,
+		.D08_=MemC_Func_Casting_(general,LinC_Sub_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
+		.D16_=MemC_Func_Casting_(general,LinC_Sub_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
+		.D32_=MemC_Func_Casting_(general,LinC_Sub_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
+		.D64_=MemC_Func_Casting_(general,LinC_Sub_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
+		.R32_=LinC_Sub_2_R32_,
+		.R64_=LinC_Sub_2_R64_
+	},
+	.Mul_2=
+	{
+		.I08_=LinC_Mul_2_I08_,
+		.I16_=LinC_Mul_2_I16_,
+		.I32_=LinC_Mul_2_I32_,
+		.I64_=LinC_Mul_2_I64_,
+		.D08_=MemC_Func_Casting_(general,LinC_Mul_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
+		.D16_=MemC_Func_Casting_(general,LinC_Mul_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
+		.D32_=MemC_Func_Casting_(general,LinC_Mul_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
+		.D64_=MemC_Func_Casting_(general,LinC_Mul_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
+		.R32_=LinC_Mul_2_R32_,
+		.R64_=LinC_Mul_2_R64_
+	},
+	.Div_1=
+	{
+		.I08_=LinC_Div_1_I08_,
+		.I16_=LinC_Div_1_I16_,
+		.I32_=LinC_Div_1_I32_,
+		.I64_=LinC_Div_1_I64_,
+		.D08_=LinC_Div_1_D08_,
+		.D16_=LinC_Div_1_D16_,
+		.D32_=LinC_Div_1_D32_,
+		.D64_=LinC_Div_1_D64_
+	},
+	.Inv_1=
+	{
+		.I08_=LinC_Inv_1_I08_,
+		.I16_=LinC_Inv_1_I16_,
+		.I32_=LinC_Inv_1_I32_,
+		.I64_=LinC_Inv_1_I64_,
+		.D08_=LinC_Inv_1_D08_,
+		.D16_=LinC_Inv_1_D16_,
+		.D32_=LinC_Inv_1_D32_,
+		.D64_=LinC_Inv_1_D64_,
+		.R32_=LinC_Inv_1_R32_,
+		.R64_=LinC_Inv_1_R64_
+	},
+	.Div_2=
+	{
+		.I08_=LinC_Div_2_I08_,
+		.I16_=LinC_Div_2_I16_,
+		.I32_=LinC_Div_2_I32_,
+		.I64_=LinC_Div_2_I64_,
+		.D08_=LinC_Div_2_D08_,
+		.D16_=LinC_Div_2_D16_,
+		.D32_=LinC_Div_2_D32_,
+		.D64_=LinC_Div_2_D64_,
+		.R32_=LinC_Div_2_R32_,
+		.R64_=LinC_Div_2_R64_
+	},
+	.Mod_1=
+	{
+		.I08_=LinC_Mod_1_I08_,
+		.I16_=LinC_Mod_1_I16_,
+		.I32_=LinC_Mod_1_I32_,
+		.I64_=LinC_Mod_1_I64_,
+		.D08_=LinC_Mod_1_D08_,
+		.D16_=LinC_Mod_1_D16_,
+		.D32_=LinC_Mod_1_D32_,
+		.D64_=LinC_Mod_1_D64_
+	},
+	.Sum_1=
+	{
+		.I08_=LinC_Sum_1_I08_,
+		.I16_=LinC_Sum_1_I16_,
+		.I32_=LinC_Sum_1_I32_,
+		.I64_=LinC_Sum_1_I64_,
+		.D08_=MemC_Func_Casting_(data_08,LinC_Sum_1_I08_,DATA_08 *_R_,ADDRESS),
+		.D16_=MemC_Func_Casting_(data_16,LinC_Sum_1_I16_,DATA_16 *_R_,ADDRESS),
+		.D32_=MemC_Func_Casting_(data_32,LinC_Sum_1_I32_,DATA_32 *_R_,ADDRESS),
+		.D64_=MemC_Func_Casting_(data_64,LinC_Sum_1_I64_,DATA_64 *_R_,ADDRESS),
+		.R32_=LinC_Sum_1_R32_,
+		.R64_=LinC_Sum_1_R64_
+	},
+	.Dot_2=
+	{
+		.I08_=LinC_Dot_2_I08_,
+		.I16_=LinC_Dot_2_I16_,
+		.I32_=LinC_Dot_2_I32_,
+		.I64_=LinC_Dot_2_I64_,
+		.D08_=MemC_Func_Casting_(data_08,LinC_Dot_2_I08_,DATA_08*,DATA_08*,ADDRESS),
+		.D16_=MemC_Func_Casting_(data_16,LinC_Dot_2_I16_,DATA_16*,DATA_16*,ADDRESS),
+		.D32_=MemC_Func_Casting_(data_32,LinC_Dot_2_I32_,DATA_32*,DATA_32*,ADDRESS),
+		.D64_=MemC_Func_Casting_(data_64,LinC_Dot_2_I64_,DATA_64*,DATA_64*,ADDRESS),
+		.R32_=LinC_Dot_2_R32_,
+		.R64_=LinC_Dot_2_R64_
+	},
+	.Max_1=
+	{
+		.I08_=LinC_Max_1_I08_,
+		.I16_=LinC_Max_1_I16_,
+		.I32_=LinC_Max_1_I32_,
+		.I64_=LinC_Max_1_I64_,
+		.D08_=LinC_Max_1_D08_,
+		.D16_=LinC_Max_1_D16_,
+		.D32_=LinC_Max_1_D32_,
+		.D64_=LinC_Max_1_D64_,
+		.R32_=LinC_Max_1_R32_,
+		.R64_=LinC_Max_1_R64_
+	},
+	.Min_1=
+	{
+		.I08_=LinC_Min_1_I08_,
+		.I16_=LinC_Min_1_I16_,
+		.I32_=LinC_Min_1_I32_,
+		.I64_=LinC_Min_1_I64_,
+		.D08_=LinC_Min_1_D08_,
+		.D16_=LinC_Min_1_D16_,
+		.D32_=LinC_Min_1_D32_,
+		.D64_=LinC_Min_1_D64_,
+		.R32_=LinC_Min_1_R32_,
+		.R64_=LinC_Min_1_R64_
+	},
+	.Order=
+	{
+		.I08_=LinC_Order_I08_,
+		.I16_=LinC_Order_I16_,
+		.I32_=LinC_Order_I32_,
+		.I64_=LinC_Order_I64_,
+		.D08_=LinC_Order_D08_,
+		.D16_=LinC_Order_D16_,
+		.D32_=LinC_Order_D32_,
+		.D64_=LinC_Order_D64_,
+		.R32_=LinC_Order_R32_,
+		.R64_=LinC_Order_R64_
+	},
+	.Map_1=
+	{
+		.I08_=MemC_Func_Casting_(general,LinC_Map_1_D08_,inte_08 *_R_,ADDRESS *_R_,INTE_08 _PL_,ADDRESS),
+		.I16_=MemC_Func_Casting_(general,LinC_Map_1_D16_,inte_16 *_R_,ADDRESS *_R_,INTE_16 _PL_,ADDRESS),
+		.I32_=MemC_Func_Casting_(general,LinC_Map_1_D32_,inte_32 *_R_,ADDRESS *_R_,INTE_32 _PL_,ADDRESS),
+		.I64_=MemC_Func_Casting_(general,LinC_Map_1_D64_,inte_64 *_R_,ADDRESS *_R_,INTE_64 _PL_,ADDRESS),
+		.D08_=LinC_Map_1_D08_,
+		.D16_=LinC_Map_1_D16_,
+		.D32_=LinC_Map_1_D32_,
+		.D64_=LinC_Map_1_D64_,
+		.R32_=MemC_Func_Casting_(general,LinC_Map_1_D32_,real_32 *_R_,ADDRESS *_R_,REAL_32 _PL_,ADDRESS),
+		.R64_=MemC_Func_Casting_(general,LinC_Map_1_D64_,real_64 *_R_,ADDRESS *_R_,REAL_64 _PL_,ADDRESS)
+	}
 };
+LINCASE *LinC_(general) { return &LinC; }
 #endif

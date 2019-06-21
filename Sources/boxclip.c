@@ -1,7 +1,7 @@
 #include "boxclip.h"
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.05.27";
+static BYTE_08 IdiomVersion[16]="Date:2019.06.21";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -1646,7 +1646,7 @@ _BOXC_ general BoxC_Tr_Delete_(boxc_tr *_PL_ Tree)
 		if((*Tree)->Root)
 		{
 			boxc_tr _PL_ Root=(*Tree)->Root;
-			boxc_tr *Origin=_BoxC_Tr_Most_Root_(Root);
+			boxc_tr _PL_ Origin=_BoxC_Tr_Most_Root_(Root);
 
 			if(Origin<(boxc_tr*)(Origin->Link))
 			{
@@ -1923,91 +1923,101 @@ _BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ Switch,GENERAL _PL_ Key,BOOLEAN Mode)
 #endif
 
 #if(Fold_(Library Casing))
-const struct _boxcase BoxC=
+BOXCASE BoxC=
 {
 	.Version=IdiomVersion,
-
-#if(Fold_(Part:BoxC_SS))
-	.SS.Create_=MemC_Func_Casting_(boxc_ss*,BoxC_SS_Create_,ADDRESS,ADDRESS),
-	.SS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ss *_PL_),
-	.SS.Size_=MemC_Func_Casting_(address,BoxC_SS_Size_,BOXC_SS _PL_),
-	.SS.Reset_All_=MemC_Func_Casting_(boolean,BoxC_SS_Reset_All_,BOXC_SS _PL_),
-	.SS.Reset_=MemC_Func_Casting_(boolean,BoxC_SS_Reset_,BOXC_SS _PL_,ADDRESS),
-	.SS.Push_=MemC_Func_Casting_(boolean,BoxC_SS_Push_,BOXC_SS _PL_,ADDRESS,general _PL_),
-	.SS.Pop_=MemC_Func_Casting_(general*,BoxC_SS_Pop_,BOXC_SS _PL_,ADDRESS),
-	.SS.Spread_=MemC_Func_Casting_(address,BoxC_SS_Spread_,MEMC_MS _PL_,BOXC_SS _PL_,ADDRESS),
-	.SS.Check_=MemC_Func_Casting_(boolean,BoxC_SS_Check_,BOXC_SS _PL_,ADDRESS),
-	.SS.Peek_=MemC_Func_Casting_(general*,BoxC_SS_Peek_,BOXC_SS _PL_,ADDRESS,ADDRESS),
-#endif
-	
-#if(Fold_(Part:BoxC_QS))
-	.QS.Create_=MemC_Func_Casting_(boxc_qs*,BoxC_QS_Create_,ADDRESS,ADDRESS),
-	.QS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_qs *_PL_),
-	.QS.Size_=MemC_Func_Casting_(address,BoxC_QS_Size_,BOXC_QS _PL_),
-	.QS.Reset_All_=MemC_Func_Casting_(boolean,BoxC_QS_Reset_All_,BOXC_QS _PL_),
-	.QS.Reset_=MemC_Func_Casting_(boolean,BoxC_QS_Reset_,BOXC_QS _PL_,ADDRESS),
-	.QS.Enque_=MemC_Func_Casting_(boolean,BoxC_QS_Enque_,BOXC_QS _PL_,ADDRESS,general _PL_),
-	.QS.Deque_=MemC_Func_Casting_(general*,BoxC_QS_Deque_,BOXC_QS _PL_,ADDRESS),
-	.QS.Spread_=MemC_Func_Casting_(address,BoxC_QS_Spread_,MEMC_MS _PL_,BOXC_QS _PL_,ADDRESS),
-	.QS.Check_=MemC_Func_Casting_(boolean,BoxC_QS_Check_,BOXC_QS _PL_,ADDRESS),
-	.QS.Peek_=MemC_Func_Casting_(general*,BoxC_QS_Peek_,BOXC_QS _PL_,ADDRESS,ADDRESS),
-#endif
-
-#if(Fold_(Part:BoxC_RS))
-	.RS.Create_=MemC_Func_Casting_(boxc_rs*,BoxC_RS_Create_,ADDRESS,ADDRESS),
-	.RS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_rs *_PL_),
-	.RS.Size_=MemC_Func_Casting_(address,BoxC_RS_Size_,BOXC_RS _PL_),
-	.RS.Reset_All_=MemC_Func_Casting_(boolean,BoxC_RS_Reset_All_,BOXC_RS _PL_),
-	.RS.Reset_=MemC_Func_Casting_(boolean,BoxC_RS_Reset_,BOXC_RS _PL_,ADDRESS),
-	.RS.Insert_=MemC_Func_Casting_(boolean,BoxC_RS_Insert_,BOXC_RS _PL_,ADDRESS,general _PL_,BOOLEAN),
-	.RS.Desert_=MemC_Func_Casting_(boolean,BoxC_RS_Desert_,BOXC_RS _PL_,ADDRESS,BOOLEAN),
-	.RS.Rotate_=MemC_Func_Casting_(boolean,BoxC_RS_Rotate_,BOXC_RS _PL_,ADDRESS,SINTPTR),
-	.RS.Check_=MemC_Func_Casting_(boolean,BoxC_RS_Check_,BOXC_RS _PL_,ADDRESS),
-	.RS.Read_=MemC_Func_Casting_(general*,BoxC_RS_Read_,BOXC_RS _PL_,ADDRESS,BOOLEAN),
-	.RS.Spread_=MemC_Func_Casting_(address,BoxC_RS_Spread_,MEMC_MS _PL_,BOXC_RS _PL_,ADDRESS,SINTPTR,BOOLEAN),
-#endif
-
-#if(Fold_(Part:BoxC_KS))
-	.KS.Create_=BoxC_KS_Create_,
-	.KS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ks *_PL_),
-	.KS.Size_=BoxC_KS_Size_,
-	.KS.Reset_=BoxC_KS_Reset_,
-	.KS.Key.Enroll_=BoxC_KS_Insert_,
-	.KS.Key.Remove_=BoxC_KS_Desert_,
-	.KS.Key.Verify_=BoxC_KS_Verify_,
-	.KS.Key.Spread_=BoxC_KS_Spread_,
-	.KS.Value.Writer_=BoxC_KS_Writer_,
-	.KS.Value.Reader_=BoxC_KS_Reader_,
-	.KS.Index.Search_=BoxC_KS_Search_,
-	.KS.Index.Locate_=BoxC_KS_Locate_,
-#endif
-
-#if(Fold_(Part:BoxC_FS))
-	.FS.Create_=BoxC_FS_Create_,
-	.FS.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_fs *_PL_),
-	.FS.Size_=BoxC_FS_Size_,
-	.FS.Reset_All_=BoxC_FS_Reset_All_,
-	.FS.Writer_=BoxC_FS_Writer_,
-	.FS.Reader_=BoxC_FS_Reader_,
-	.FS.Toggle_=BoxC_FS_Toggle_,
-#endif
-
-#if(Fold_(Part:BoxC_Tr))
-	.Tr.Create_=BoxC_Tr_Create_,
-	.Tr.Delete_=BoxC_Tr_Delete_,
-	.Tr.Size_=BoxC_Tr_Size_,
-	.Tr.Used_=BoxC_Tr_Used_,
-	.Tr.Left_=BoxC_Tr_Left_,
-	.Tr.Origin_=BoxC_Tr_Origin_,
-	.Tr.Height_=BoxC_Tr_Height_,
-	.Tr.Move_=BoxC_Tr_Move_,
-#endif
-
-#if(Fold_(Part:BoxC_Sw))
-	.Sw.Create_=BoxC_Sw_Create_,
-	.Sw.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_sw *_PL_),
-	.Sw.Size_=BoxC_Sw_Size_,
-	.Sw.Find_=BoxC_Sw_Find_
-#endif
+	.SS=
+	{
+		.Create_=MemC_Func_Casting_(boxc_ss*,BoxC_SS_Create_,ADDRESS,ADDRESS),
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ss *_PL_),
+		.Size_=MemC_Func_Casting_(address,BoxC_SS_Size_,BOXC_SS _PL_),
+		.Reset_All_=MemC_Func_Casting_(boolean,BoxC_SS_Reset_All_,BOXC_SS _PL_),
+		.Reset_=MemC_Func_Casting_(boolean,BoxC_SS_Reset_,BOXC_SS _PL_,ADDRESS),
+		.Push_=MemC_Func_Casting_(boolean,BoxC_SS_Push_,BOXC_SS _PL_,ADDRESS,general _PL_),
+		.Pop_=MemC_Func_Casting_(general*,BoxC_SS_Pop_,BOXC_SS _PL_,ADDRESS),
+		.Spread_=MemC_Func_Casting_(address,BoxC_SS_Spread_,MEMC_MS _PL_,BOXC_SS _PL_,ADDRESS),
+		.Check_=MemC_Func_Casting_(boolean,BoxC_SS_Check_,BOXC_SS _PL_,ADDRESS),
+		.Peek_=MemC_Func_Casting_(general*,BoxC_SS_Peek_,BOXC_SS _PL_,ADDRESS,ADDRESS)
+	},
+	.QS=
+	{
+		.Create_=MemC_Func_Casting_(boxc_qs*,BoxC_QS_Create_,ADDRESS,ADDRESS),
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_qs *_PL_),
+		.Size_=MemC_Func_Casting_(address,BoxC_QS_Size_,BOXC_QS _PL_),
+		.Reset_All_=MemC_Func_Casting_(boolean,BoxC_QS_Reset_All_,BOXC_QS _PL_),
+		.Reset_=MemC_Func_Casting_(boolean,BoxC_QS_Reset_,BOXC_QS _PL_,ADDRESS),
+		.Enque_=MemC_Func_Casting_(boolean,BoxC_QS_Enque_,BOXC_QS _PL_,ADDRESS,general _PL_),
+		.Deque_=MemC_Func_Casting_(general*,BoxC_QS_Deque_,BOXC_QS _PL_,ADDRESS),
+		.Spread_=MemC_Func_Casting_(address,BoxC_QS_Spread_,MEMC_MS _PL_,BOXC_QS _PL_,ADDRESS),
+		.Check_=MemC_Func_Casting_(boolean,BoxC_QS_Check_,BOXC_QS _PL_,ADDRESS),
+		.Peek_=MemC_Func_Casting_(general*,BoxC_QS_Peek_,BOXC_QS _PL_,ADDRESS,ADDRESS)
+	},
+	.RS=
+	{
+		.Create_=MemC_Func_Casting_(boxc_rs*,BoxC_RS_Create_,ADDRESS,ADDRESS),
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_rs *_PL_),
+		.Size_=MemC_Func_Casting_(address,BoxC_RS_Size_,BOXC_RS _PL_),
+		.Reset_All_=MemC_Func_Casting_(boolean,BoxC_RS_Reset_All_,BOXC_RS _PL_),
+		.Reset_=MemC_Func_Casting_(boolean,BoxC_RS_Reset_,BOXC_RS _PL_,ADDRESS),
+		.Insert_=MemC_Func_Casting_(boolean,BoxC_RS_Insert_,BOXC_RS _PL_,ADDRESS,general _PL_,BOOLEAN),
+		.Desert_=MemC_Func_Casting_(boolean,BoxC_RS_Desert_,BOXC_RS _PL_,ADDRESS,BOOLEAN),
+		.Rotate_=MemC_Func_Casting_(boolean,BoxC_RS_Rotate_,BOXC_RS _PL_,ADDRESS,SINTPTR),
+		.Check_=MemC_Func_Casting_(boolean,BoxC_RS_Check_,BOXC_RS _PL_,ADDRESS),
+		.Read_=MemC_Func_Casting_(general*,BoxC_RS_Read_,BOXC_RS _PL_,ADDRESS,BOOLEAN),
+		.Spread_=MemC_Func_Casting_(address,BoxC_RS_Spread_,MEMC_MS _PL_,BOXC_RS _PL_,ADDRESS,SINTPTR,BOOLEAN)
+	},
+	.KS=
+	{
+		.Create_=BoxC_KS_Create_,
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ks *_PL_),
+		.Size_=BoxC_KS_Size_,
+		.Reset_=BoxC_KS_Reset_,
+		.Key=
+		{
+			.Enroll_=BoxC_KS_Insert_,
+			.Remove_=BoxC_KS_Desert_,
+			.Verify_=BoxC_KS_Verify_,
+			.Spread_=BoxC_KS_Spread_
+		},
+		.Value=
+		{
+			.Writer_=BoxC_KS_Writer_,
+			.Reader_=BoxC_KS_Reader_
+		},
+		.Index=
+		{
+			.Search_=BoxC_KS_Search_,
+			.Locate_=BoxC_KS_Locate_
+		}
+	},
+	.FS=
+	{
+		.Create_=BoxC_FS_Create_,
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_fs *_PL_),
+		.Size_=BoxC_FS_Size_,
+		.Reset_All_=BoxC_FS_Reset_All_,
+		.Writer_=BoxC_FS_Writer_,
+		.Reader_=BoxC_FS_Reader_,
+		.Toggle_=BoxC_FS_Toggle_
+	},
+	.Tr=
+	{
+		.Create_=BoxC_Tr_Create_,
+		.Delete_=BoxC_Tr_Delete_,
+		.Size_=BoxC_Tr_Size_,
+		.Used_=BoxC_Tr_Used_,
+		.Left_=BoxC_Tr_Left_,
+		.Origin_=BoxC_Tr_Origin_,
+		.Height_=BoxC_Tr_Height_,
+		.Move_=BoxC_Tr_Move_
+	},
+	.Sw=
+	{
+		.Create_=BoxC_Sw_Create_,
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_sw *_PL_),
+		.Size_=BoxC_Sw_Size_,
+		.Find_=BoxC_Sw_Find_
+	}
 };
+BOXCASE *BoxC_(general) { return &BoxC; }
 #endif
