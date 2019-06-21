@@ -42,7 +42,7 @@ set(CONFIG Release)
 set(DIR_SRC ./Sources)
 set(DIR_USE ./Mains)
 set(DIR_OBJ ${CMAKE_BINARY_DIR}/Objects)
-set(OPT_COMPILE /TC /WX /W4 /wd4201 /O2 /Ob2 /Oi /Ot /GL)
+set(OPT_COMPILE /TC /WX /W4 /wd4201 /O2 /Ob2 /Oi /Ot /GL /fp:fast /fp:except-)
 set(OPT_LINK /LTCG)
 
 set(CMAKE_CONFIGURATION_TYPES ${CONFIG})
