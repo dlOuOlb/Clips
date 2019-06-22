@@ -82,14 +82,14 @@ add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/lincros.c ${DIR_SRC}/
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
-# TimClip
-set(NAME timclip)
+# BoxClip
+set(NAME boxclip)
 add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
-# BoxClip
-set(NAME boxclip)
+# TimClip
+set(NAME timclip)
 add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
