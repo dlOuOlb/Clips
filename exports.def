@@ -1,0 +1,9 @@
+LIBRARY clips.dll
+EXPORTS
+	MemC_
+	PenC_
+	OCLC_
+	BitC_
+	LinC_
+	BoxC_
+	TimC_
