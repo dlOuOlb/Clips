@@ -41,7 +41,6 @@ set(DIR_INC ./Headers ${DIR_INC})
 set(CONFIG Release)
 set(DIR_SRC ./Sources)
 set(DIR_USE ./Mains)
-set(DIR_OBJ ${CMAKE_BINARY_DIR}/Objects)
 set(OPT_COMPILE /TC /WX /W4 /wd4201 /O2 /Ob2 /Oi /Ot /GL /fp:fast /fp:except-)
 set(OPT_LINK /LTCG)
 
