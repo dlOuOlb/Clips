@@ -1,4 +1,4 @@
-LIBRARY clips.dll
+﻿LIBRARY clips.dll
 EXPORTS
 	MemC_
 	PenC_
