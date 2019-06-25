@@ -1,4 +1,4 @@
-#include <CL/opencl.h>
+﻿#include <CL/opencl.h>
 #include <linclip.h>
 
 integer main(general)
