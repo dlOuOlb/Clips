@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------*/
+ï»¿/*------------------------------------------------------------------*/
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
@@ -457,10 +457,10 @@ struct _oclcase
 			const struct
 			{
 				//OCLClip : Program Build from Source Files with 8-bit String Path - Only Once per Program Manager
-				//£ªNot found kernels will be just ignored.
+				//ï¼ŠNot found kernels will be just ignored.
 				general(_PL_ T08_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ SourcePath,const cl_uint SourceNumber,oclc_ef _PL_ Error);
 				//OCLClip : Program Build from Source Files with 16-bit String Path - Only Once per Program Manager
-				//£ªNot found kernels will be just ignored.
+				//ï¼ŠNot found kernels will be just ignored.
 				general(_PL_ T16_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ SourcePath,const cl_uint SourceNumber,oclc_ef _PL_ Error);
 			}
 			Source;
@@ -468,12 +468,12 @@ struct _oclcase
 			const struct
 			{
 				//OCLClip : Program Build from Binary Files with 8-bit String Path - Only Once per Program Manager
-				//£ªThe number of paths must be same as the number of devices associated with the context.
-				//£ªNot found kernels will be just ignored.
+				//ï¼ŠThe number of paths must be same as the number of devices associated with the context.
+				//ï¼ŠNot found kernels will be just ignored.
 				general(_PL_ T08_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
 				//OCLClip : Program Build from Binary Files with 16-bit String Path - Only Once per Program Manager
-				//£ªThe number of paths must be same as the number of devices associated with the context.
-				//£ªNot found kernels will be just ignored.
+				//ï¼ŠThe number of paths must be same as the number of devices associated with the context.
+				//ï¼ŠNot found kernels will be just ignored.
 				general(_PL_ T16_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
 			}
 			Binary;
@@ -481,10 +481,10 @@ struct _oclcase
 			const struct
 			{
 				//OCLClip : Save the Binary Files with 8-bit String Path - Only after Program Building
-				//£ªThe number of paths must be same as the number of devices associated with the context.
+				//ï¼ŠThe number of paths must be same as the number of devices associated with the context.
 				general(_PL_ T08_)(OCLC_PM _PL_,TEXT_08 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
 				//OCLClip : Save the Binary Files with 16-bit String Path - Only after Program Building
-				//£ªThe number of paths must be same as the number of devices associated with the context.
+				//ï¼ŠThe number of paths must be same as the number of devices associated with the context.
 				general(_PL_ T16_)(OCLC_PM _PL_,TEXT_16 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
 			}
 			Save;
@@ -564,7 +564,7 @@ struct _oclcase
 		Info;
 
 		//OCLClip : Asynchronous Memory Fill
-		//£ªRequired (Value) size is (MemoryHolder)->Type->SizeType bytes.
+		//ï¼ŠRequired (Value) size is (MemoryHolder)->Type->SizeType bytes.
 		general(_PL_ Fill_)(oclc_qo _PL_ Queue,GENERAL _PL_ Value,OCLC_MH _PL_ MemoryHolder,OCLC_MP _PL_ FillLength,oclc_ef _PL_ Error);
 		//OCLClip : Asynchronous Memory Copy
 		general(_PL_ Copy_)(oclc_qo _PL_ Queue,OCLC_CF CopyMode,OCLC_MH _PL_ SourceHolder,OCLC_MH _PL_ TargetHolder,OCLC_MP _PL_ CopyLength,oclc_ef _PL_ Error);
@@ -644,8 +644,8 @@ struct _oclcase
 #define OCLC_MP_Length_(Pin,...) __dl{oclc_mp(_)={1,1,1,1};__VA_ARGS__;*(Pin)=(_);}lb__
 
 			//OCLClip : Validity Check
-			//£ªReturn value is 1 for any excess, otherwise 0.
-			//¡¡i.e. for any Start+Amount>Shape or Amount==0
+			//ï¼ŠReturn value is 1 for any excess, otherwise 0.
+			//ã€€i.e. for any Start+Amount>Shape or Amount==0
 			_Bool(_PL_ Invalid_)(OCLC_MP _PL_ Start,OCLC_MP _PL_ Amount,OCLC_MP _PL_ Shape);
 		}
 		Length;
@@ -664,14 +664,14 @@ struct _oclcase
 #define OCLC_MP_Offset_(Pin,...) __dl{oclc_mp(_)={0,0,0,0};__VA_ARGS__;*(Pin)=(_);}lb__
 
 			//OCLClip : Validity Check
-			//£ªReturn value is 1 for any excess, otherwise 0.
-			//¡¡i.e. for any Start>Shape
+			//ï¼ŠReturn value is 1 for any excess, otherwise 0.
+			//ã€€i.e. for any Start>Shape
 			_Bool(_PL_ Invalid_)(OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape);
 		}
 		Offset;
 
 		//OCLClip : Total Number of Elements
-		//¡¡i.e. N¡¿Z¡¿Y¡¿X
+		//ã€€i.e. NÃ—ZÃ—YÃ—X
 		address(_PL_ Total_)(OCLC_MP _PL_);
 
 		//OCLClip : Empty Pin

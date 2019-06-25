@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------*/
+ï»¿/*------------------------------------------------------------------*/
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
@@ -71,19 +71,19 @@ struct _timcase
 		const struct
 		{
 			//TimClip : Initialize All Timers in the Stopwatch
-			//£ªReturn value is "TimCStateStopped" for success, "TimCStateUnknown" for failure.
+			//ï¼ŠReturn value is "TimCStateStopped" for success, "TimCStateUnknown" for failure.
 			timc_sf(_PL_ Reset_)(TIMC_SW _PL_ Stopwatch);
 			//TimClip : Turn off All Timers in the Stopwatch
-			//£ªReturn value is "TimCStateStopped" for success, "TimCStateUnknown" for failure.
+			//ï¼ŠReturn value is "TimCStateStopped" for success, "TimCStateUnknown" for failure.
 			timc_sf(_PL_ Stop_)(TIMC_SW _PL_ Stopwatch);
 		}
 		All;
 
 		//TimClip : Initialize the Selected Timer
-		//£ªReturn value is "TimCStateStopped" for success, "TimCStateUnknown" for failure.
+		//ï¼ŠReturn value is "TimCStateStopped" for success, "TimCStateUnknown" for failure.
 		timc_sf(_PL_ Reset_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
 		//TimClip : Toggle the Selected Timer
-		//£ªReturn value is the timer's state after toggling.
+		//ï¼ŠReturn value is the timer's state after toggling.
 		timc_sf(_PL_ Toggle_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
 #define TimC_SW_Tick_Tock_(Stopwatch,TimerSelect,State) if(TimC.SW.Read.State_(Stopwatch,TimerSelect)){(State)=TimCStateUnknown;}else for((State)=TimC.SW.Toggle_(Stopwatch,TimerSelect);(State)==TimCStateRunning;(State)=TimC.SW.Toggle_(Stopwatch,TimerSelect))
 
@@ -91,7 +91,7 @@ struct _timcase
 		const struct
 		{
 			//TimClip : Read the Selected Timer's State Flag
-			//£ªReturn value is the timer's current state.
+			//ï¼ŠReturn value is the timer's current state.
 			timc_sf(_PL_ State_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
 			//TimClip : Read the Selected Timer's Running Count
 			integer(_PL_ Count_)(TIMC_SW _PL_ Stopwatch,ADDRESS TimerSelect);
@@ -117,21 +117,21 @@ struct _timcase
 		address(_PL_ Size_)(TIMC_RG _PL_ RandomGenerator);
 
 		//TimClip : Random Generator State Reset
-		//£ªRandomGenerator -> State[idx]£½time(NULL)£«idx;
-		//£ªReturn value is ~0 for success, 0 for failure.
+		//ï¼ŠRandomGenerator -> State[idx]ï¼time(NULL)ï¼‹idx;
+		//ï¼ŠReturn value is ~0 for success, 0 for failure.
 		boolean(_PL_ Reset_)(TIMC_RG _PL_ RandomGenerator);
 
 		//TimClip : Random Generation Functions
 		const struct
 		{
 			//TimClip : Random Generation for Specified Bytes
-			//£ªMWC64X algorithm is used.
-			//£ªReturn value is ~0 for success, 0 for failure.
+			//ï¼ŠMWC64X algorithm is used.
+			//ï¼ŠReturn value is ~0 for success, 0 for failure.
 			boolean(_PL_ Byte_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,general _PL_ _R_ ArrayData,ADDRESS ArraySize);
 			//TimClip : Random Permutation
-			//£ªKnuth shuffles algorithm is used.
-			//£ªAn array whose length exceeds ((2^64)-1) is not allowed.
-			//£ªReturn value is ~0 for success, 0 for failure.
+			//ï¼ŠKnuth shuffles algorithm is used.
+			//ï¼ŠAn array whose length exceeds ((2^64)-1) is not allowed.
+			//ï¼ŠReturn value is ~0 for success, 0 for failure.
 			boolean(_PL_ Perm_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,address _PL_ _R_ Array,ADDRESS Length);
 		}
 		Rand;
@@ -140,14 +140,14 @@ struct _timcase
 		const struct
 		{
 			//TimClip : 32-bit Integer Array of Uniform Distribution U[L, H]
-			//£ªReturn value is ~0 for success, 0 for failure.
+			//ï¼ŠReturn value is ~0 for success, 0 for failure.
 			boolean(_PL_ I32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,inte_32 _PL_ _R_ Array,ADDRESS Length,INTE_32 Low,INTE_32 High);
 
 			//TimClip : 32-bit Real Array of Uniform Distribution U[L, H)
-			//£ªReturn value is ~0 for success, 0 for failure.
+			//ï¼ŠReturn value is ~0 for success, 0 for failure.
 			boolean(_PL_ R32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Low,REAL_32 High);
 			//TimClip : 64-bit Real Array of Uniform Distribution U[L, H)
-			//£ªReturn value is ~0 for success, 0 for failure.
+			//ï¼ŠReturn value is ~0 for success, 0 for failure.
 			boolean(_PL_ R64_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Low,REAL_64 High);
 		}
 		Uni;
@@ -155,13 +155,13 @@ struct _timcase
 		//TimClip : Random Gaussian Functions
 		const struct
 		{
-			//TimClip : 32-bit Real Array of Gaussian Distribution N(¥ì, ¥ò©÷)
-			//£ªBox-Muller transform is used.
-			//£ªReturn value is ~0 for success, 0 for failure.
+			//TimClip : 32-bit Real Array of Gaussian Distribution N(Î¼, ÏƒÂ²)
+			//ï¼ŠBox-Muller transform is used.
+			//ï¼ŠReturn value is ~0 for success, 0 for failure.
 			boolean(_PL_ R32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Mean,REAL_32 Deviation);
-			//TimClip : 64-bit Real Array of Gaussian Distribution N(¥ì, ¥ò©÷)
-			//£ªBox-Muller transform is used.
-			//£ªReturn value is ~0 for success, 0 for failure.
+			//TimClip : 64-bit Real Array of Gaussian Distribution N(Î¼, ÏƒÂ²)
+			//ï¼ŠBox-Muller transform is used.
+			//ï¼ŠReturn value is ~0 for success, 0 for failure.
 			boolean(_PL_ R64_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Mean,REAL_64 Deviation);
 		}
 		Gau;

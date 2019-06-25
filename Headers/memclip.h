@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------*/
+ï»¿/*------------------------------------------------------------------*/
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
@@ -265,7 +265,7 @@ struct _memcase
 		//MemClip : Unit Memory Allocation - Deallocate with "MemC_Deloc_"
 #define MemC_Alloc_Unit_(type) MemC.Alloc.Byte_(sizeof(type))
 		//MemClip : ND Array Memory Allocation - Deallocate with "MemC_Deloc_"
-		//£ªDims and the number of variadic arguments must be equal!
+		//ï¼ŠDims and the number of variadic arguments must be equal!
 		general*(_PL_ DN_)(ADDRESS,ADDRESS,...);
 #define MemC_Alloc_ND_(type,Dims,...) MemC.Alloc.DN_(sizeof(type),Dims,__VA_ARGS__)
 	}
@@ -282,7 +282,7 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Batch Memory Allocation Check
-		//£ªReturn value is 0 for failure, 1 for success.
+		//ï¼ŠReturn value is 0 for failure, 1 for success.
 		integer(_PL_ Check_)(GENERAL _PL_ _PL_ MemorySet,ADDRESS Count);
 		//MemClip : Batch Memory Deallocation
 		general(_PL_ Deloc_)(general *_PL_ MemorySet,ADDRESS Count);
@@ -337,7 +337,7 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Reformed Target Shape Calculation
-		//£ªTargetShape[ReformingAxis[dim]] = SourceShape[dim]
+		//ï¼ŠTargetShape[ReformingAxis[dim]] = SourceShape[dim]
 		integer(_PL_ Shape_)(ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address _PL_ TargetShape,ADDRESS Dimensions);
 
 		//MemClip : Array Data Reformation - See also "MemC_Reform_Shape_"
@@ -360,14 +360,14 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Table Indexing
-		//£ªTable[idx]£½Mode£¿£¦(Table[idx])£ºidx
+		//ï¼ŠTable[idx]ï¼Modeï¼Ÿï¼†(Table[idx])ï¼šidx
 		general(_PL_ Index_)(address *_R_ Table,ADDRESS Count,INTEGER Mode);
 
 		//MemClip : Object Sorting
-		//£ªRequired ReferTable size is Count¡¿sizeof(general*) bytes.
-		//£ªIf IndexTable is not NULL, then its required size is Count¡¿sizeof(address) bytes.
-		//£ªRequired BufferSpace size is 2¡¿Count¡¿sizeof(address) bytes.
-		//£ªIf Comp_(ReferTable[m],ReferTable[n]) is not 0, then those two will be swapped during the process.
+		//ï¼ŠRequired ReferTable size is CountÃ—sizeof(general*) bytes.
+		//ï¼ŠIf IndexTable is not NULL, then its required size is CountÃ—sizeof(address) bytes.
+		//ï¼ŠRequired BufferSpace size is 2Ã—CountÃ—sizeof(address) bytes.
+		//ï¼ŠIf Comp_(ReferTable[m],ReferTable[n]) is not 0, then those two will be swapped during the process.
 		errno_t(_PL_ Do_)(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ ReferTable,address _PL_ IndexTable,address _PL_ BufferSpace,ADDRESS Count);
 	}
 	Sort;
@@ -376,11 +376,11 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Two Number Addition
-		//£ªReturn value is A£«B for no overflow, 0 for overflow.
+		//ï¼ŠReturn value is Aï¼‹B for no overflow, 0 for overflow.
 		address(_PL_ Add_)(ADDRESS A,ADDRESS B);
 		//MemClip : Two Number Multiplication
-		//£ªReturn value is A¡¿B for no overflow, 0 for overflow.
-		//£ªB must not be zero.
+		//ï¼ŠReturn value is AÃ—B for no overflow, 0 for overflow.
+		//ï¼ŠB must not be zero.
 		address(_PL_ Mul_)(ADDRESS A,ADDRESS B);
 	}
 	Size;
@@ -392,7 +392,7 @@ struct _memcase
 #define MemC_MS_Define_(SlotName,SlotsNumber) address(_##SlotName)[(SlotsNumber)+4];memc_ms _PL_(SlotName)=((((GENERAL**)(_##SlotName))[0]=(_##SlotName)),(((GENERAL**)(_##SlotName))[1]=MemC.Type.Add),((_##SlotName)[2]=(SlotsNumber)),(((GENERAL**)(_##SlotName))[3]=(_##SlotName)+4),(memc_ms*)(_##SlotName));
 
 		//MemClip : Memory Slot Memory Allocation - Deallocate with "MemC.MS.Delete_"
-		//£ªNums = SlotsNumber
+		//ï¼ŠNums = SlotsNumber
 		memc_ms*(_PL_ Create_)(GENERAL _PL_ Identification,ADDRESS SlotsNumber);
 		//MemClip : Memory Slot Memory Deallocation
 		general(_PL_ Delete_)(memc_ms *_PL_ MemorySlot);
@@ -407,16 +407,16 @@ struct _memcase
 		//MemClip : Memory Slot Data Reset
 		integer(_PL_ Init_)(MEMC_MS _PL_ MemorySlot);
 		//MemClip : Memory Slot NULL Check
-		//£ªCount = MemorySlot -> Slot.V[0]
-		//¡¡MemorySet = { P[1], P[2], ..., P[Count] | P = MemorySlot -> Slot.P }
-		//£ªMode 0 : Return value is 1 for all NULLs, otherwise 0.
-		//£ªMode 1 : Return value is 0 for any NULLs, otherwise 1.
+		//ï¼ŠCount = MemorySlot -> Slot.V[0]
+		//ã€€MemorySet = { P[1], P[2], ..., P[Count] | P = MemorySlot -> Slot.P }
+		//ï¼ŠMode 0 : Return value is 1 for all NULLs, otherwise 0.
+		//ï¼ŠMode 1 : Return value is 0 for any NULLs, otherwise 1.
 		integer(_PL_ Null_)(MEMC_MS _PL_ MemorySlot,INTEGER CheckMode);
 
 		//MemClip : Shape Information Setting
-		//£ªShapeInfo -> Slot.V[0] = Dims
-		//¡¡{ V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V } = { Arg1, Arg2, ..., ArgN }
-		//£ªDims and N must be equal!
+		//ï¼ŠShapeInfo -> Slot.V[0] = Dims
+		//ã€€{ V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V } = { Arg1, Arg2, ..., ArgN }
+		//ï¼ŠDims and N must be equal!
 		integer(_PL_ Dims_)(MEMC_MS _PL_ ShapeInfo,ADDRESS Dims,...);
 
 		//MemClip : Just kidding!
@@ -432,9 +432,9 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Memory Container Memory Allocation - Deallocate with "MemC.MC.Delete_"
-		//£ªUnit = TypeInfo -> SizeType
-		//¡¡Dims = ShapeInfo -> Slot.V[0]
-		//¡¡LngND = { V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V }
+		//ï¼ŠUnit = TypeInfo -> SizeType
+		//ã€€Dims = ShapeInfo -> Slot.V[0]
+		//ã€€LngND = { V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V }
 		memc_mc*(_PL_ Create_)(GENERAL _PL_ Identification,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo);
 		//MemClip : Memory Container Memory Deallocation
 		general(_PL_ Delete_)(memc_mc *_PL_ MemoryContainer);
@@ -444,8 +444,8 @@ struct _memcase
 		//MemClip : Memory Container Memory Occupation
 		address(_PL_ Size_)(MEMC_MC _PL_ MemoryContainer);
 		//MemClip : Memory Container Shape Information Copy
-		//£ªShapeInfo -> Slot.V[0] = MemoryContainer -> Dims
-		//¡¡{ V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V } = MemoryContainer -> LngND
+		//ï¼ŠShapeInfo -> Slot.V[0] = MemoryContainer -> Dims
+		//ã€€{ V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V } = MemoryContainer -> LngND
 		integer(_PL_ Form_)(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ ShapeInfo);
 		//MemClip : Memory Container Data Type Change
 		integer(_PL_ Change_)(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
@@ -456,39 +456,39 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Memory Lender Static Definition
-		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
-		//¡¡The memory lender's head occupies 2 chunks.
-		//¡¡Each memory slice's head occupies 1 chunk.
-		//£ªBe aware that it is not thread-safe.
+		//ï¼Š1 chunk is equal to 4Ã—sizeof(size_t) bytes.
+		//ã€€The memory lender's head occupies 2 chunks.
+		//ã€€Each memory slice's head occupies 1 chunk.
+		//ï¼ŠBe aware that it is not thread-safe.
 #define MemC_ML_Define_(LenderName,ChunksNumber) static address(_##LenderName)[(ChunksNumber)<<2]={(address)(_##LenderName),(address)(_##LenderName),(address)(_##LenderName),MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_(LenderName)=(memc_ml*)(_##LenderName);
 
 		//MemClip : Memory Lender Memory Allocation - Deallocate with "MemC.ML.Delete_"
-		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
-		//¡¡The memory lender's head occupies 2 chunks.
-		//¡¡Each memory slice's head occupies 1 chunk.
-		//£ªThe previous lender can be NULL, if linking is not wanted.
+		//ï¼Š1 chunk is equal to 4Ã—sizeof(size_t) bytes.
+		//ã€€The memory lender's head occupies 2 chunks.
+		//ã€€Each memory slice's head occupies 1 chunk.
+		//ï¼ŠThe previous lender can be NULL, if linking is not wanted.
 		memc_ml*(_PL_ Create_)(memc_ml _PL_ PreviousLender,ADDRESS ChunksNumber);
 		//MemClip : Memory Lender Memory Deallocation
-		//£ªReturn value is the memory lender's previous lender.
+		//ï¼ŠReturn value is the memory lender's previous lender.
 		memc_ml*(_PL_ Delete_)(memc_ml *_PL_ MemoryLender);
 
 		//MemClip : Memory Lender Memory Occupation
 		address(_PL_ Size_)(MEMC_ML _PL_ MemoryLender);
 		//MemClip : Kill all memory slices in the linked memory lenders.
-		//£ªReturn value is 0 for failure, 1 for success.
+		//ï¼ŠReturn value is 0 for failure, 1 for success.
 		integer(_PL_ Kill_)(memc_ml _PL_ MemoryLender);
 		//MemClip : Move all memory slices from the source lenders to the target lenders.
-		//£ªBufferSlot->Nums should not be less than the total number of the linked source and target lenders,
-		//¡¡and also should not be less than the 3¡¿total number of the used slices in the linked source lenders.
-		//£ªUsed slices in the source lenders will be overwritten with their corresponding new addresses.
-		//¡¡After you finish address mapping, reset the source lenders with "MemC_ML_Kill_"
-		//£ªReturn value is 0 for failure, 1 for success.
+		//ï¼ŠBufferSlot->Nums should not be less than the total number of the linked source and target lenders,
+		//ã€€and also should not be less than the 3Ã—total number of the used slices in the linked source lenders.
+		//ï¼ŠUsed slices in the source lenders will be overwritten with their corresponding new addresses.
+		//ã€€After you finish address mapping, reset the source lenders with "MemC_ML_Kill_"
+		//ï¼ŠReturn value is 0 for failure, 1 for success.
 		integer(_PL_ Move_)(memc_ml _PL_ SourceLender,memc_ml _PL_ TargetLender,memc_ms _PL_ BufferSlot);
 
 		//MemClip : Borrow a memory slice from the memory lender - Return with "MemC_ML_Return_"
 		general*(_PL_ Borrow_)(memc_ml _PL_ MemoryLender,ADDRESS SliceBytes);
 		//MemClip : Return the memory slice to its master.
-		//£ªReturn value is 0 for failure, 1 for success.
+		//ï¼ŠReturn value is 0 for failure, 1 for success.
 		integer(_PL_ Return_)(general _PL_ MemorySlice);
 #define MemC_ML_Return_(MemorySlice) __dl{if(MemC.ML.Return_(MemorySlice)){(MemorySlice)=NULL;}}lb__
 		//MemClip : Temporarily borrow and return a memory slice from the memory lender.

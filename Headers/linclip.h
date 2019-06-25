@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------*/
+ï»¿/*------------------------------------------------------------------*/
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
@@ -33,34 +33,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ I08_)(inte_08 *_R_ C,INTE_08 S,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ I16_)(inte_16 *_R_ C,INTE_16 S,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ I32_)(inte_32 *_R_ C,INTE_32 S,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ I64_)(inte_64 *_R_ C,INTE_64 S,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ D08_)(data_08 *_R_ C,DATA_08 S,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ D16_)(data_16 *_R_ C,DATA_16 S,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ D32_)(data_32 *_R_ C,DATA_32 S,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ D64_)(data_64 *_R_ C,DATA_64 S,DATA_64 K,ADDRESS N);
 			//LinClip : 32-bit Real Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ R32_)(real_32 *_R_ C,REAL_32 S,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Arithmetic Progression
-			//£ªC[n]£½S£«(n¡¿K)
+			//ï¼ŠC[n]ï¼Sï¼‹(nÃ—K)
 			general(_PL_ R64_)(real_64 *_R_ C,REAL_64 S,REAL_64 K,ADDRESS N);
 		}
 		Ari_0;
@@ -69,34 +69,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ I08_)(inte_08 *_R_ C,INTE_08 S,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ I16_)(inte_16 *_R_ C,INTE_16 S,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ I32_)(inte_32 *_R_ C,INTE_32 S,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ I64_)(inte_64 *_R_ C,INTE_64 S,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ D08_)(data_08 *_R_ C,DATA_08 S,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ D16_)(data_16 *_R_ C,DATA_16 S,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ D32_)(data_32 *_R_ C,DATA_32 S,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ D64_)(data_64 *_R_ C,DATA_64 S,DATA_64 K,ADDRESS N);
 			//LinClip : 32-bit Real Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ R32_)(real_32 *_R_ C,REAL_32 S,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Geometric Progression
-			//£ªC[n]£½S¡¿K©ú
+			//ï¼ŠC[n]ï¼SÃ—Kâ¿
 			general(_PL_ R64_)(real_64 *_R_ C,REAL_64 S,REAL_64 K,ADDRESS N);
 		}
 		Geo_0;
@@ -105,34 +105,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
 			//LinClip : 32-bit Real Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Increment
-			//£ªC[n]£½A[n]£«K
+			//ï¼ŠC[n]ï¼A[n]ï¼‹K
 			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 K,ADDRESS N);
 		}
 		Inc_1;
@@ -141,34 +141,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
 			//LinClip : 32-bit Real Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Amplification
-			//£ªC[n]£½K¡¿A[n]
+			//ï¼ŠC[n]ï¼KÃ—A[n]
 			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 K,ADDRESS N);
 		}
 		Amp_1;
@@ -177,34 +177,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
 			//LinClip : 16-bit Integer Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
 			//LinClip : 32-bit Integer Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
 			//LinClip : 64-bit Integer Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
 			//LinClip : 8-bit Natural Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
 			//LinClip : 16-bit Natural Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
 			//LinClip : 32-bit Natural Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
 			//LinClip : 64-bit Natural Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
 			//LinClip : 32-bit Real Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
 			//LinClip : 64-bit Real Line Addition
-			//£ªC[n]£½A[n]£«B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼‹B[n]
 			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
 		}
 		Add_2;
@@ -213,34 +213,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
 			//LinClip : 16-bit Integer Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
 			//LinClip : 32-bit Integer Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
 			//LinClip : 64-bit Integer Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
 			//LinClip : 8-bit Natural Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
 			//LinClip : 16-bit Natural Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
 			//LinClip : 32-bit Natural Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
 			//LinClip : 64-bit Natural Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
 			//LinClip : 32-bit Real Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
 			//LinClip : 64-bit Real Line Subtraction
-			//£ªC[n]£½A[n]£­B[n]
+			//ï¼ŠC[n]ï¼A[n]ï¼B[n]
 			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
 		}
 		Sub_2;
@@ -249,34 +249,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
 			//LinClip : 16-bit Integer Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
 			//LinClip : 32-bit Integer Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
 			//LinClip : 64-bit Integer Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
 			//LinClip : 8-bit Natural Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
 			//LinClip : 16-bit Natural Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
 			//LinClip : 32-bit Natural Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
 			//LinClip : 64-bit Natural Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
 			//LinClip : 32-bit Real Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
 			//LinClip : 64-bit Real Line Multiplication
-			//£ªC[n]£½A[n]¡¿B[n]
+			//ï¼ŠC[n]ï¼A[n]Ã—B[n]
 			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
 		}
 		Mul_2;
@@ -285,28 +285,28 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀK
+			//ï¼ŠC[n]ï¼A[n]Ã·K
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
 		}
 		Div_1;
@@ -315,34 +315,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
 			//LinClip : 32-bit Real Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Inverse
-			//£ªC[n]£½K¡ÀA[n]
+			//ï¼ŠC[n]ï¼KÃ·A[n]
 			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 K,ADDRESS N);
 		}
 		Inv_1;
@@ -351,34 +351,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
 			//LinClip : 16-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
 			//LinClip : 32-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
 			//LinClip : 64-bit Integer Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
 			//LinClip : 8-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
 			//LinClip : 16-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
 			//LinClip : 32-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
 			//LinClip : 64-bit Natural Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
 			//LinClip : 32-bit Real Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
 			//LinClip : 64-bit Real Line Division
-			//£ªC[n]£½A[n]¡ÀB[n]
+			//ï¼ŠC[n]ï¼A[n]Ã·B[n]
 			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
 		}
 		Div_2;
@@ -387,28 +387,28 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Natural Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
 			//LinClip : 8-bit Integer Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Modulo
-			//£ªC[n]£½A[n]£¥K
+			//ï¼ŠC[n]ï¼A[n]ï¼…K
 			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
 		}
 		Mod_1;
@@ -417,34 +417,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			inte_08(_PL_ I08_)(INTE_08 *_R_ A,ADDRESS N);
 			//LinClip : 16-bit Integer Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			inte_16(_PL_ I16_)(INTE_16 *_R_ A,ADDRESS N);
 			//LinClip : 32-bit Integer Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			inte_32(_PL_ I32_)(INTE_32 *_R_ A,ADDRESS N);
 			//LinClip : 64-bit Integer Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			inte_64(_PL_ I64_)(INTE_64 *_R_ A,ADDRESS N);
 			//LinClip : 8-bit Natural Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			data_08(_PL_ D08_)(DATA_08 *_R_ A,ADDRESS N);
 			//LinClip : 16-bit Natural Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			data_16(_PL_ D16_)(DATA_16 *_R_ A,ADDRESS N);
 			//LinClip : 32-bit Natural Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			data_32(_PL_ D32_)(DATA_32 *_R_ A,ADDRESS N);
 			//LinClip : 64-bit Natural Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			data_64(_PL_ D64_)(DATA_64 *_R_ A,ADDRESS N);
 			//LinClip : 32-bit Real Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			real_32(_PL_ R32_)(REAL_32 *_R_ A,ADDRESS N);
 			//LinClip : 64-bit Real Line Summation
-			//£ªS£½¢²A[n]
+			//ï¼ŠSï¼âˆ‘A[n]
 			real_64(_PL_ R64_)(REAL_64 *_R_ A,ADDRESS N);
 		}
 		Sum_1;
@@ -453,34 +453,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-bit Integer Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			inte_08(_PL_ I08_)(INTE_08 *A,INTE_08 *B,ADDRESS N);
 			//LinClip : 16-bit Integer Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			inte_16(_PL_ I16_)(INTE_16 *A,INTE_16 *B,ADDRESS N);
 			//LinClip : 32-bit Integer Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			inte_32(_PL_ I32_)(INTE_32 *A,INTE_32 *B,ADDRESS N);
 			//LinClip : 64-bit Integer Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			inte_64(_PL_ I64_)(INTE_64 *A,INTE_64 *B,ADDRESS N);
 			//LinClip : 8-bit Natural Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			data_08(_PL_ D08_)(DATA_08 *A,DATA_08 *B,ADDRESS N);
 			//LinClip : 16-bit Natural Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			data_16(_PL_ D16_)(DATA_16 *A,DATA_16 *B,ADDRESS N);
 			//LinClip : 32-bit Natural Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			data_32(_PL_ D32_)(DATA_32 *A,DATA_32 *B,ADDRESS N);
 			//LinClip : 64-bit Natural Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			data_64(_PL_ D64_)(DATA_64 *A,DATA_64 *B,ADDRESS N);
 			//LinClip : 32-bit Real Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			real_32(_PL_ R32_)(REAL_32 *A,REAL_32 *B,ADDRESS N);
 			//LinClip : 64-bit Real Line Dot Product
-			//£ªS£½¢²A[n]¡¿B[n]
+			//ï¼ŠSï¼âˆ‘A[n]Ã—B[n]
 			real_64(_PL_ R64_)(REAL_64 *A,REAL_64 *B,ADDRESS N);
 		}
 		Dot_2;
@@ -489,34 +489,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-Bit Integer Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ I08_)(INTE_08 _PL_ A,ADDRESS N);
 			//LinClip : 16-Bit Integer Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ I16_)(INTE_16 _PL_ A,ADDRESS N);
 			//LinClip : 32-Bit Integer Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ I32_)(INTE_32 _PL_ A,ADDRESS N);
 			//LinClip : 64-Bit Integer Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ I64_)(INTE_64 _PL_ A,ADDRESS N);
 			//LinClip : 8-Bit Natural Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ D08_)(DATA_08 _PL_ A,ADDRESS N);
 			//LinClip : 16-Bit Natural Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ D16_)(DATA_16 _PL_ A,ADDRESS N);
 			//LinClip : 32-Bit Natural Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ D32_)(DATA_32 _PL_ A,ADDRESS N);
 			//LinClip : 64-Bit Natural Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ D64_)(DATA_64 _PL_ A,ADDRESS N);
 			//LinClip : 32-Bit Real Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ R32_)(REAL_32 _PL_ A,ADDRESS N);
 			//LinClip : 64-Bit Real Line Maximum
-			//£ªn£½argmax{A}
+			//ï¼Šnï¼argmax{A}
 			address(_PL_ R64_)(REAL_64 _PL_ A,ADDRESS N);
 		}
 		Max_1;
@@ -525,34 +525,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-Bit Integer Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ I08_)(INTE_08 _PL_ A,ADDRESS N);
 			//LinClip : 16-Bit Integer Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ I16_)(INTE_16 _PL_ A,ADDRESS N);
 			//LinClip : 32-Bit Integer Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ I32_)(INTE_32 _PL_ A,ADDRESS N);
 			//LinClip : 64-Bit Integer Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ I64_)(INTE_64 _PL_ A,ADDRESS N);
 			//LinClip : 8-Bit Natural Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ D08_)(DATA_08 _PL_ A,ADDRESS N);
 			//LinClip : 16-Bit Natural Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ D16_)(DATA_16 _PL_ A,ADDRESS N);
 			//LinClip : 32-Bit Natural Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ D32_)(DATA_32 _PL_ A,ADDRESS N);
 			//LinClip : 64-Bit Natural Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ D64_)(DATA_64 _PL_ A,ADDRESS N);
 			//LinClip : 32-Bit Real Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ R32_)(REAL_32 _PL_ A,ADDRESS N);
 			//LinClip : 64-Bit Real Line Minimum
-			//£ªn£½argmin{A}
+			//ï¼Šnï¼argmin{A}
 			address(_PL_ R64_)(REAL_64 _PL_ A,ADDRESS N);
 		}
 		Min_1;
@@ -561,104 +561,104 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-Bit Integer Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿1 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«1) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿1 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—1 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹1) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—1 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ I08_)(inte_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 16-Bit Integer Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿2 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«2) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿2 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—2 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹2) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—2 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ I16_)(inte_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 32-Bit Integer Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿4 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«4) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿4 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—4 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹4) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—4 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ I32_)(inte_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 64-Bit Integer Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿8 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«8) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿8 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—8 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹8) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—8 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ I64_)(inte_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 8-Bit Natural Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿1 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«1) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿1 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—1 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹1) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—1 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ D08_)(data_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 16-Bit Natural Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿2 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«2) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿2 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—2 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹2) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—2 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ D16_)(data_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 32-Bit Natural Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿4 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«4) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿4 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—4 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹4) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—4 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ D32_)(data_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 64-Bit Natural Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿8 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«8) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿8 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—8 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹8) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—8 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ D64_)(data_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 32-Bit Real Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿4 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«4) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿4 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—4 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹4) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—4 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ R32_)(real_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 			//LinClip : 64-Bit Real Recursive Radix Sorting
-			//£ªRequired (ValueLine) size is (Length)¡¿8 bytes.
-			//¡¡If (IndexLine) is not NULL,
-			//¡¡then required (IndexLine) size is (Length)¡¿sizeof(address) bytes,
-			//¡¡and required (Buffer) size is (Length)¡¿(sizeof(address)£«8) bytes,
-			//¡¡else required (Buffer) size is (Length)¡¿8 bytes.
-			//£ªMode Null : Ascending Order
-			//¡¡Mode Full : Descending Order
-			//£ª(ValueLine) and (IndexLine) should be initialized before processing.
+			//ï¼ŠRequired (ValueLine) size is (Length)Ã—8 bytes.
+			//ã€€If (IndexLine) is not NULL,
+			//ã€€then required (IndexLine) size is (Length)Ã—sizeof(address) bytes,
+			//ã€€and required (Buffer) size is (Length)Ã—(sizeof(address)ï¼‹8) bytes,
+			//ã€€else required (Buffer) size is (Length)Ã—8 bytes.
+			//ï¼ŠMode Null : Ascending Order
+			//ã€€Mode Full : Descending Order
+			//ï¼Š(ValueLine) and (IndexLine) should be initialized before processing.
 			general(_PL_ R64_)(real_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
 		}
 		Order;
@@ -667,34 +667,34 @@ struct _lincase
 		const struct
 		{
 			//LinClip : 8-Bit Integer Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ I08_)(inte_08 *_R_ C,ADDRESS *_R_ I,INTE_08 _PL_ T,ADDRESS N);
 			//LinClip : 16-Bit Integer Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ I16_)(inte_16 *_R_ C,ADDRESS *_R_ I,INTE_16 _PL_ T,ADDRESS N);
 			//LinClip : 32-Bit Integer Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ I32_)(inte_32 *_R_ C,ADDRESS *_R_ I,INTE_32 _PL_ T,ADDRESS N);
 			//LinClip : 64-Bit Integer Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ I64_)(inte_64 *_R_ C,ADDRESS *_R_ I,INTE_64 _PL_ T,ADDRESS N);
 			//LinClip : 8-Bit Natural Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ D08_)(data_08 *_R_ C,ADDRESS *_R_ I,DATA_08 _PL_ T,ADDRESS N);
 			//LinClip : 16-Bit Natural Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ D16_)(data_16 *_R_ C,ADDRESS *_R_ I,DATA_16 _PL_ T,ADDRESS N);
 			//LinClip : 32-Bit Natural Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ D32_)(data_32 *_R_ C,ADDRESS *_R_ I,DATA_32 _PL_ T,ADDRESS N);
 			//LinClip : 64-Bit Natural Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ D64_)(data_64 *_R_ C,ADDRESS *_R_ I,DATA_64 _PL_ T,ADDRESS N);
 			//LinClip : 32-Bit Real Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ R32_)(real_32 *_R_ C,ADDRESS *_R_ I,REAL_32 _PL_ T,ADDRESS N);
 			//LinClip : 64-Bit Real Line Mapping
-			//£ªC[n]£½T[I[n]]
+			//ï¼ŠC[n]ï¼T[I[n]]
 			general(_PL_ R64_)(real_64 *_R_ C,ADDRESS *_R_ I,REAL_64 _PL_ T,ADDRESS N);
 		}
 		Map_1;
@@ -709,16 +709,16 @@ struct _lincase
 		const struct
 		{
 			//LinClip : Program Build into Binary Files with 8-bit String Path
-			//£ªThe number of binary paths must be same as the number of devices associated with the context.
-			//£ª(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-			//¡¡(SourcePath) Example : "../../Kernels/linclip.cl"
-			//¡¡(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+			//ï¼ŠThe number of binary paths must be same as the number of devices associated with the context.
+			//ï¼Š(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
+			//ã€€(SourcePath) Example : "../../Kernels/linclip.cl"
+			//ã€€(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
 			general(_PL_ T08_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
 			//LinClip : Program Build into Binary Files with 16-bit String Path
-			//£ªThe number of binary paths must be same as the number of devices associated with the context.
-			//£ª(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-			//¡¡(SourcePath) Example : "../../Kernels/linclip.cl"
-			//¡¡(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+			//ï¼ŠThe number of binary paths must be same as the number of devices associated with the context.
+			//ï¼Š(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
+			//ã€€(SourcePath) Example : "../../Kernels/linclip.cl"
+			//ã€€(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
 			general(_PL_ T16_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
 		}
 		Ready;
@@ -727,12 +727,12 @@ struct _lincase
 		const struct
 		{
 			//LinClip : Program Manager Creation with 8-bit String Path - Delete with "OCLC.PM.Delete_"
-			//£ªThe number of binary paths must be same as the number of devices associated with the context.
-			//£ª(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+			//ï¼ŠThe number of binary paths must be same as the number of devices associated with the context.
+			//ï¼Š(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
 			oclc_pm*(_PL_ T08_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
 			//LinClip : Program Manager Creation with 16-bit String Path - Delete with "OCLC.PM.Delete_"
-			//£ªThe number of binary paths must be same as the number of devices associated with the context.
-			//£ª(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+			//ï¼ŠThe number of binary paths must be same as the number of devices associated with the context.
+			//ï¼Š(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
 			oclc_pm*(_PL_ T16_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
 		}
 		Create;
@@ -740,67 +740,67 @@ struct _lincase
 		const struct
 		{
 			//LinClip : Increment
-			//£ªC and A's types should be same and one of BitC.Type.
-			//£ªRequired (Value) size is the type size of those to be calculated.
+			//ï¼ŠC and A's types should be same and one of BitC.Type.
+			//ï¼ŠRequired (Value) size is the type size of those to be calculated.
 			general(_PL_ Inc_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
 
 			//LinClip : Amplification
-			//£ªC and A's types should be same and one of BitC.Type.
-			//£ªRequired (Value) size is the type size of those to be calculated.
+			//ï¼ŠC and A's types should be same and one of BitC.Type.
+			//ï¼ŠRequired (Value) size is the type size of those to be calculated.
 			general(_PL_ Amp_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
 
 			//LinClip : Addition
-			//£ªC, A, and B's types should be same and one of BitC.Type.
+			//ï¼ŠC, A, and B's types should be same and one of BitC.Type.
 			general(_PL_ Add_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
 
 			//LinClip : Subtraction
-			//£ªC, A, and B's types should be same and one of BitC.Type.
+			//ï¼ŠC, A, and B's types should be same and one of BitC.Type.
 			general(_PL_ Sub_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
 
 			//LinClip : Multiplication
-			//£ªC, A, and B's types should be same and one of BitC.Type.
+			//ï¼ŠC, A, and B's types should be same and one of BitC.Type.
 			general(_PL_ Mul_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
 
 			//LinClip : Division
-			//£ªC and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
-			//£ªRequired (Value) size is the type size of those to be calculated.
+			//ï¼ŠC and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
+			//ï¼ŠRequired (Value) size is the type size of those to be calculated.
 			general(_PL_ Div_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
 
 			//LinClip : Inverse
-			//£ªC and A's types should be same and one of BitC.Type.
-			//£ªRequired (Value) size is the type size of those to be calculated.
+			//ï¼ŠC and A's types should be same and one of BitC.Type.
+			//ï¼ŠRequired (Value) size is the type size of those to be calculated.
 			general(_PL_ Inv_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
 
 			//LinClip : Division
-			//£ªC, A, and B's types should be same and one of BitC.Type.
+			//ï¼ŠC, A, and B's types should be same and one of BitC.Type.
 			general(_PL_ Div_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
 
 			//LinClip : Modulo
-			//£ªC and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
-			//£ªRequired (Value) size is the type size of those to be calculated.
+			//ï¼ŠC and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
+			//ï¼ŠRequired (Value) size is the type size of those to be calculated.
 			general(_PL_ Mod_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
 
 			//LinClip : Summation
-			//£ªC and A's types should be same and one of BitC.Type.
+			//ï¼ŠC and A's types should be same and one of BitC.Type.
 			general(_PL_ Sum_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
 
 			//LinClip : Dot Product
-			//£ªC, A, and B's types should be same and one of BitC.Type.
+			//ï¼ŠC, A, and B's types should be same and one of BitC.Type.
 			general(_PL_ Dot_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
 
 			//LinClip : Maximum
-			//£ªI's type size¡¿8 should be same as the device's address bits.
-			//£ªA's type should be one of BitC.Type.
+			//ï¼ŠI's type sizeÃ—8 should be same as the device's address bits.
+			//ï¼ŠA's type should be one of BitC.Type.
 			general(_PL_ Max_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
 
 			//LinClip : Minimum
-			//£ªI's type size¡¿8 should be same as the device's address bits.
-			//¡¡A's type should be one of BitC.Type.
+			//ï¼ŠI's type sizeÃ—8 should be same as the device's address bits.
+			//ã€€A's type should be one of BitC.Type.
 			general(_PL_ Min_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
 
 			//LinClip : Mapping
-			//£ªI's type size¡¿8 should be same as the device's address bits.
-			//¡¡C and A's type sizes should be same.
+			//ï¼ŠI's type sizeÃ—8 should be same as the device's address bits.
+			//ã€€C and A's type sizes should be same.
 			general(_PL_ Map_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
 		};
 	}

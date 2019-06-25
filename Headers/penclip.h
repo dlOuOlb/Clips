@@ -1,4 +1,4 @@
-/*------------------------------------------------------------------*/
+ï»¿/*------------------------------------------------------------------*/
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
@@ -248,7 +248,7 @@ struct _pencase
 		}
 		Opener;
 		//PenClip : File Close
-		//£ªReturn value is 0 for success, or an error code for failure.
+		//ï¼ŠReturn value is 0 for success, or an error code for failure.
 		integer(_PL_ Closer_)(FILE *_PL_ FilePointer);
 		//PenClip : File Pointer Usage in Local Scope - Handle with "PenC_Catch_"
 #define PenC_File_Using_(Stream,Name,Mode,Error) for(FILE*(_##Stream)[sizeof(*(Name))==sizeof(*(Mode))]={FULL},_PL_(Stream)=PenC_File_Opener_(Name,Mode);(_##Stream)[0];(_##Stream)[0]=NULL,(Error)=PenC.File.Closer_((FILE**)&(Stream)))if(!(Stream)){(Error)=EOF;break;}else
@@ -361,10 +361,10 @@ struct _pencase
 		const struct
 		{
 			//PenClip : 1D Array Data Read with 8-bit String
-			//£ªReturn value is 1 for success, or 0 for failure.
+			//ï¼ŠReturn value is 1 for success, or 0 for failure.
 			integer(_PL_ T08_)(general _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 			//PenClip : 1D Array Data Read with 16-bit String
-			//£ªReturn value is 1 for success, or 0 for failure.
+			//ï¼ŠReturn value is 1 for success, or 0 for failure.
 			integer(_PL_ T16_)(general _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 #define PenC_Buffer_Reader_(Line,FileName,Elements) ((sizeof(*(FileName))==1)?(PenC.Buffer.Reader.T08_(Line,(text_08*)(FileName),sizeof(*(Line)),Elements)):((sizeof(*(FileName))==2)?(PenC.Buffer.Reader.T16_(Line,(text_16*)(FileName),sizeof(*(Line)),Elements)):(0)))
 		}
@@ -374,10 +374,10 @@ struct _pencase
 		const struct
 		{
 			//PenClip : 1D Array Data Write with 8-bit String
-			//£ªReturn value is 1 for success, or 0 for failure.
+			//ï¼ŠReturn value is 1 for success, or 0 for failure.
 			integer(_PL_ T08_)(GENERAL _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 			//PenClip : 1D Array Data Write with 16-bit String
-			//£ªReturn value is 1 for success, or 0 for failure.
+			//ï¼ŠReturn value is 1 for success, or 0 for failure.
 			integer(_PL_ T16_)(GENERAL _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 #define PenC_Buffer_Writer_(Line,FileName,Elements) ((sizeof(*(FileName))==1)?(PenC.Buffer.Writer.T08_(Line,(text_08*)(FileName),sizeof(*(Line)),Elements)):((sizeof(*(FileName))==2)?(PenC.Buffer.Writer.T16_(Line,(text_16*)(FileName),sizeof(*(Line)),Elements)):(0)))
 		}
@@ -486,8 +486,8 @@ struct _pencase
 	const struct
 	{
 		//PenClip : SC Lender Memory Allocation - Deallocate with "PenC.SL.Delete_"
-		//£ª1 chunk is equal to 4¡¿sizeof(size_t) bytes.
-		//£ªEach SC node's head occupies 1 chunk.
+		//ï¼Š1 chunk is equal to 4Ã—sizeof(size_t) bytes.
+		//ï¼ŠEach SC node's head occupies 1 chunk.
 		penc_sl*(_PL_ Create_)(ADDRESS ChunksNumber);
 		//PenClip : SC Lender Memory Deallocation
 		general(_PL_ Delete_)(penc_sl *_PL_ SCLender);
