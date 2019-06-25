@@ -1,4 +1,4 @@
-#include "oclclip.h"
+﻿#include "oclclip.h"
 
 #if(Fold_(Definition:OCLClip Macros))
 #define _OCLC_ static

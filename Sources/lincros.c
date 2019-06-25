@@ -1,4 +1,4 @@
-#ifdef _INC_LINCLIP
+﻿#ifdef _INC_LINCLIP
 #ifdef _SRC_BITCROS
 
 #undef LinC_Min_

@@ -1,4 +1,4 @@
-#include <stdarg.h>
+﻿#include <stdarg.h>
 #include "memclip.h"
 
 #if(Fold_(Definition:MemClip Macros))

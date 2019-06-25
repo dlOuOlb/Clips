@@ -1,4 +1,4 @@
-#include <limits.h>
+﻿#include <limits.h>
 #include <math.h>
 #include <time.h>
 #include "timclip.h"

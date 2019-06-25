@@ -1,4 +1,4 @@
-#include "boxclip.h"
+﻿#include "boxclip.h"
 
 #if(Fold_(Definition:Internal Constants))
 static BYTE_08 IdiomVersion[16]="Date:2019.06.21";

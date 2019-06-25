@@ -1,4 +1,4 @@
-#include "penclip.h"
+﻿#include "penclip.h"
 
 #if(Fold_(Definition:PenClip Macros))
 #define _PENC_ static

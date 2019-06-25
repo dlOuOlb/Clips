@@ -1,4 +1,4 @@
-#include "linclip.h"
+﻿#include "linclip.h"
 
 #if(Fold_(Definition:LinCrux Macros))
 #include "lincros.c"

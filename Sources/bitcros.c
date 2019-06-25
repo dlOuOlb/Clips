@@ -1,4 +1,4 @@
-#ifdef _INC_BITCLIP
+﻿#ifdef _INC_BITCLIP
 #ifdef _SRC_BITCROS
 
 #undef BitC_RO_L_

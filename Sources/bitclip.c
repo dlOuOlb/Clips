@@ -1,4 +1,4 @@
-#include "bitclip.h"
+﻿#include "bitclip.h"
 
 #if(Fold_(Definition:Internal Macros))
 #define _BITC_ static

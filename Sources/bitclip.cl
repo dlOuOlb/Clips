@@ -1,4 +1,4 @@
-#include "bitclip.h"
+﻿#include "bitclip.h"
 
 #if(Fold_(Definition:BitCrux Macros))
 #include "bitcros.c"

@@ -1,4 +1,4 @@
-#include "linclip.h"
+﻿#include "linclip.h"
 
 #if(Fold_(Definition:Internal Macros))
 #define _LINC_ static
