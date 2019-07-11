@@ -2,7 +2,7 @@
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.11	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -162,7 +162,7 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 #else
 
 #if(1)
-#include <CL\opencl.h>
+#include <CL/opencl.h>
 #include <penclip.h>
 #ifdef _
 #error The macro "_" is already defined.
@@ -170,6 +170,7 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 #endif
 
 #if(Fold_(Redefinition:OpenCL Types))
+MemC_Type_Rename_(cl_int,oclc_en,OCLC_EN);						//OCLClip : OpenCL Error Number
 MemC_Type_Rename_(struct _cl_platform_id,oclc_pi,OCLC_PI);		//OCLClip : OpenCL Platform ID
 MemC_Type_Rename_(struct _cl_device_id,oclc_di,OCLC_DI);		//OCLClip : OpenCL Device ID
 MemC_Type_Rename_(struct _cl_context,oclc_co,OCLC_CO);			//OCLClip : OpenCL Context Object
@@ -240,8 +241,8 @@ MemC_Type_Declare_(enum,oclc_cf,OCLC_CF);	//OCLClip : Copy Flag Enumeration
 //OCLClip : Error Flag Union
 union _oclc_ef
 {
-	cl_int I;	//OCLClip : Access as Integer
-
+	oclc_en I;	//OCLClip : Access as Integer
+	
 	//OCLClip : Access as Enumeration
 	enum
 	{
@@ -310,7 +311,7 @@ union _oclc_ef
 	E;
 };
 MemC_Type_Declare_(union,oclc_ef,OCLC_EF);	//OCLClip : Error Flag Union
-static_assert((sizeof(oclc_ef)==sizeof(cl_int)),"sizeof(enum) != sizeof(integer)");
+static_assert((sizeof(oclc_ef)==sizeof(oclc_en)),"sizeof(enum) != sizeof(oclc_en)");
 static_assert(CLSuccess==0,"CLSuccess != 0");
 #endif
 

@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.11	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
@@ -20,8 +20,6 @@ MemC_Type_Rename_(char,text_08,TEXT_08);		//PenClip : 8-bit Character
 static_assert((sizeof(text_08)==1),"sizeof(text_08) != 1");
 MemC_Type_Rename_(wchar_t,text_16,TEXT_16);		//PenClip : 16-bit Character
 static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
-MemC_Type_Rename_(char32_t,text_32,TEXT_32);	//PenClip : 32-bit Character
-static_assert((sizeof(text_32)==4),"sizeof(text_32) != 4");
 
 static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
 #endif
@@ -32,7 +30,6 @@ union _penclip
 {
 	text_08 *T08;	//PenClip : 8-bit Access
 	text_16 *T16;	//PenClip : 16-bit Access
-	text_32 *T32;	//PenClip : 32-bit Access
 	general *X;		//PenClip : General Access
 	address A;		//PenClip : Address Value
 };
@@ -205,35 +202,6 @@ struct _pencase
 	}
 	String;
 	
-	//PenClip : Pipe Handling Functions
-	const struct
-	{
-		//PenClip : Pipe Open Functions
-		const struct
-		{
-			//PenClip : Pipe Open with 8-bit String - Close with "PenC.Pipe.Closer_"
-			FILE*(_PL_ T08_)(TEXT_08 _PL_ Command,TEXT_08 _PL_ Mode);
-			//PenClip : Pipe Open with 16-bit String - Close with "PenC.Pipe.Closer_"
-			FILE*(_PL_ T16_)(TEXT_16 _PL_ Command,TEXT_16 _PL_ Mode);
-#define PenC_Pipe_Opener_(Command,Mode) (MemC_Assert_(sizeof(*(Command))==sizeof(*(Mode))),((sizeof(*(Command))==1)?(PenC.Pipe.Opener.T08_((text_08*)(Command),(text_08*)(Mode))):((sizeof(*(Command))==2)?(PenC.Pipe.Opener.T16_((text_16*)(Command),(text_16*)(Mode))):(NULL))))
-		}
-		Opener;
-		//PenClip : Pipe Close
-		integer(_PL_ Closer_)(FILE *_PL_ Pipe);
-		//PenClip : Pipe Pointer Usage in Local Scope - Handle with "PenC_Catch_"
-#define PenC_Pipe_Using_(Stream,Command,Mode,Return) for(FILE*(_Temp##Stream)[sizeof(*(Command))==sizeof(*(Mode))]={FULL},_PL_(Stream)=PenC_Pipe_Opener_(Command,Mode);(_Temp##Stream)[0];(_Temp##Stream)[0]=NULL,(Return)=PenC.Pipe.Closer_((FILE**)&(Stream)))if(!(Stream)){(Return)=EOF;break;}else
-		//PenClip : Pipe Execute Functions
-		const struct
-		{
-			//PenClip : Execute an 8-bit string command.
-			integer(_PL_ T08_)(TEXT_08 _PL_ Command,FILE _PL_ MsgStream);
-			//PenClip : Execute a 16-bit string command.
-			integer(_PL_ T16_)(TEXT_16 _PL_ Command,FILE _PL_ MsgStream);
-		}
-		Action;
-	}
-	Pipe;
-
 	//PenClip : File Handling Functions
 	const struct
 	{
@@ -259,9 +227,11 @@ struct _pencase
 		address(_PL_ Reader_)(FILE _PL_ FilePointer,general _PL_ Buffer,ADDRESS Elements,ADDRESS TypeSize);
 #define PenC_File_Reader_(FilePointer,Buffer,Elements) PenC.File.Reader_(FilePointer,Buffer,Elements,sizeof(*(Buffer)))
 		//PenClip : Step Forward from Current Location
+		//＊Return value is 0 for success, or an error code for failure.
 		integer(_PL_ Jumper_)(FILE _PL_ FilePointer,const long Elements,ADDRESS TypeSize);
 #define PenC_File_Jumper_(FilePointer,Elements,type) PenC.File.Jumper_(FilePointer,Elements,sizeof(type))
 		//PenClip : Step Backward from Current Location
+		//＊Return value is 0 for success, or an error code for failure.
 		integer(_PL_ Backer_)(FILE _PL_ FilePointer,const long Elements,ADDRESS TypeSize);
 #define PenC_File_Backer_(FilePointer,Elements,type) PenC.File.Backer_(FilePointer,Elements,sizeof(type))
 		//PenClip : Pointer Restart
@@ -269,10 +239,13 @@ struct _pencase
 		//PenClip : Current Location from Start
 		long(_PL_ Teller_)(FILE _PL_ FilePointer);
 		//PenClip : Stream Flush
+		//＊Return value is 0 for success, or an error code for failure.
 		integer(_PL_ Washer_)(FILE _PL_ FilePointer);
 		//PenClip : End of File
+		//＊Return value is 0 if the end has not been reached.
 		integer(_PL_ Finish_)(FILE _PL_ FilePointer);
 		//PenClip : File Remove Functions
+		//＊Return value is 0 for success, or an error code for failure.
 		const struct
 		{
 			//PenClip : File Remove with 8-bit String
@@ -283,6 +256,7 @@ struct _pencase
 		}
 		Remove;
 		//PenClip : File Rename Functions
+		//＊Return value is 0 for success, or an error code for failure.
 		const struct
 		{
 			//PenClip : File Rename with 8-bit String
@@ -317,9 +291,9 @@ struct _pencase
 		const struct
 		{
 			//PenClip : 8-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
-			address(_PL_ T08_)(INTEGER Mode,FILE _PL_ Stream,text_08 _PL_ Buffer,ADDRESS Capacity);
+			address(_PL_ T08_)(LOGICAL Mode,FILE _PL_ Stream,text_08 _PL_ Buffer,ADDRESS Capacity);
 			//PenClip : 16-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
-			address(_PL_ T16_)(INTEGER Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity);
+			address(_PL_ T16_)(LOGICAL Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity);
 		}
 		Buffer;
 
@@ -327,9 +301,9 @@ struct _pencase
 		const struct
 		{
 			//PenClip : 8-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
-			address(_PL_ T08_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+			address(_PL_ T08_)(LOGICAL Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
 			//PenClip : 16-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
-			address(_PL_ T16_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+			address(_PL_ T16_)(LOGICAL Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
 		}
 		SC;
 	}
@@ -351,9 +325,9 @@ struct _pencase
 		const struct
 		{
 			//PenClip : 8-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
-			address(_PL_ T08_)(INTEGER Mode,FILE _PL_ Stream,text_08 _PL_ Buffer,ADDRESS Capacity);
+			address(_PL_ T08_)(LOGICAL Mode,FILE _PL_ Stream,text_08 _PL_ Buffer,ADDRESS Capacity);
 			//PenClip : 16-bit Buffer to Stream Print (Mode 0) or Stream to Buffer Scan (Mode 1)
-			address(_PL_ T16_)(INTEGER Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity);
+			address(_PL_ T16_)(LOGICAL Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity);
 		}
 		Stream;
 
@@ -362,10 +336,10 @@ struct _pencase
 		{
 			//PenClip : 1D Array Data Read with 8-bit String
 			//＊Return value is 1 for success, or 0 for failure.
-			integer(_PL_ T08_)(general _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+			logical(_PL_ T08_)(general _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 			//PenClip : 1D Array Data Read with 16-bit String
 			//＊Return value is 1 for success, or 0 for failure.
-			integer(_PL_ T16_)(general _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+			logical(_PL_ T16_)(general _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 #define PenC_Buffer_Reader_(Line,FileName,Elements) ((sizeof(*(FileName))==1)?(PenC.Buffer.Reader.T08_(Line,(text_08*)(FileName),sizeof(*(Line)),Elements)):((sizeof(*(FileName))==2)?(PenC.Buffer.Reader.T16_(Line,(text_16*)(FileName),sizeof(*(Line)),Elements)):(0)))
 		}
 		Reader;
@@ -375,10 +349,10 @@ struct _pencase
 		{
 			//PenClip : 1D Array Data Write with 8-bit String
 			//＊Return value is 1 for success, or 0 for failure.
-			integer(_PL_ T08_)(GENERAL _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+			logical(_PL_ T08_)(GENERAL _PL_ Line,TEXT_08 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 			//PenClip : 1D Array Data Write with 16-bit String
 			//＊Return value is 1 for success, or 0 for failure.
-			integer(_PL_ T16_)(GENERAL _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
+			logical(_PL_ T16_)(GENERAL _PL_ Line,TEXT_16 _PL_ FileName,ADDRESS TypeSize,ADDRESS Count);
 #define PenC_Buffer_Writer_(Line,FileName,Elements) ((sizeof(*(FileName))==1)?(PenC.Buffer.Writer.T08_(Line,(text_08*)(FileName),sizeof(*(Line)),Elements)):((sizeof(*(FileName))==2)?(PenC.Buffer.Writer.T16_(Line,(text_16*)(FileName),sizeof(*(Line)),Elements)):(0)))
 		}
 		Writer;
@@ -410,8 +384,6 @@ struct _pencase
 			general(_PL_ T08_)(PENC_SC _PL_);
 			//PenClip : String Container 16-bit Null End
 			general(_PL_ T16_)(PENC_SC _PL_);
-			//PenClip : String Container 32-bit Null End
-			general(_PL_ T32_)(PENC_SC _PL_);
 		}
 		Shut;
 
@@ -474,9 +446,9 @@ struct _pencase
 		const struct
 		{
 			//PenClip : 8-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
-			address(_PL_ T08_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+			address(_PL_ T08_)(LOGICAL Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
 			//PenClip : 16-bit String Container to Stream Print (Mode 0) or Stream to String Container Scan (Mode 1)
-			address(_PL_ T16_)(INTEGER Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
+			address(_PL_ T16_)(LOGICAL Mode,PENC_SC _PL_ SC,FILE _PL_ Stream);
 		}
 		Stream;
 	}
@@ -495,7 +467,8 @@ struct _pencase
 		//PenClip : SC Lender Memory Occupation
 		address(_PL_ Size_)(PENC_SL _PL_ SCLender);
 		//PenClip : Kill all SCs in the SC Lender
-		integer(_PL_ Reset_)(penc_sl _PL_ SCLender);
+		//＊Return value is 1 for success, or 0 for failure.
+		logical(_PL_ Reset_)(penc_sl _PL_ SCLender);
 
 		//PenClip : Borrow an SC from the SC Lender - Return with "PenC.SL.Return_"
 		penc_sc*(_PL_ Borrow_)(PENC_SL _PL_ SCLender,ADDRESS DemandBytes);
@@ -503,9 +476,9 @@ struct _pencase
 		const struct
 		{
 			//PenClip : Borrow an SC from the SC Lender with the Specified 8-bit Format - Return with "PenC.SL.Return_"
-#define PenC_SL_Borrow_Format_T08_(Lender,Container,...) __dl{PenC.SL.Return_(Lender,&(Container));(Container)=PenC.SL.Borrow_(Lender,PenC_Format_Length_T08_(__VA_ARGS__)+1);if(Container){PenC_SC_Format_T08_(0,Container,__VA_ARGS__);}}lb__
+#define PenC_SL_Borrow_Format_T08_(Lender,Container,...) __dl{PenC.SL.Return_(Lender,&(Container));(Container)=PenC.SL.Borrow_(Lender,PenC_Format_Length_T08_(__VA_ARGS__)+1);if(Container){PenC_SC_Format_T08_(0,Container,__VA_ARGS__);}else;}lb__
 			//PenClip : Borrow an SC from the SC Lender with the Specified 16-bit Format - Return with "PenC.SL.Return_"
-#define PenC_SL_Borrow_Format_T16_(Lender,Container,...) __dl{PenC.SL.Return_(Lender,&(Container));(Container)=PenC.SL.Borrow_(Lender,(PenC_Format_Length_T16_(__VA_ARGS__)+1)<<1);if(Container){PenC_SC_Format_T16_(0,Container,__VA_ARGS__);}}lb__
+#define PenC_SL_Borrow_Format_T16_(Lender,Container,...) __dl{PenC.SL.Return_(Lender,&(Container));(Container)=PenC.SL.Borrow_(Lender,(PenC_Format_Length_T16_(__VA_ARGS__)+1)<<1);if(Container){PenC_SC_Format_T16_(0,Container,__VA_ARGS__);}else;}lb__
 			//PenClip : Borrow an SC from the SC Lender Copying another SC
 			const struct
 			{
@@ -527,7 +500,8 @@ struct _pencase
 		}
 		Borrow;
 		//PenClip : Return the SC to the SC Lender
-		integer(_PL_ Return_)(PENC_SL _PL_ SCLender,PENC_SC *_PL_ StringContainer);
+		//＊Return value is 1 for success, or 0 for failure.
+		logical(_PL_ Return_)(PENC_SL _PL_ SCLender,PENC_SC *_PL_ StringContainer);
 	}
 	SL;
 };

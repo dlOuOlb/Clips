@@ -2,7 +2,7 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.11	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -90,26 +90,24 @@ static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
 #define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;
 #define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;
 
-#define MemC_Unit_Declare_(type,Unit,...) type(_##Unit)##__VA_ARGS__,_PL_(Unit)=&(_##Unit)
-
-#define MemC_Func_Declare_V_(Return,Func_,...) Return (*Func_)(__VA_ARGS__)
-#define MemC_Func_Declare_C_(Return,Func_,...) Return (_PL_ Func_)(__VA_ARGS__)
 #define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)
-#define MemC_Type_Func_Declare_(Return,func_type_,FUNC_TYPE_,...) typedef MemC_Func_Declare_V_(Return,func_type_,__VA_ARGS__);typedef MemC_Func_Declare_C_(Return,FUNC_TYPE_,__VA_ARGS__);
+#define MemC_Func_Declare_(Return,func_,FUNC_,...) typedef Return(*func_)(__VA_ARGS__);typedef Return(_PL_ FUNC_)(__VA_ARGS__);
 
 #define MemC_Assert_(Bool) ((GENERAL*[Bool]){FULL})
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))
+#define MemC_Unit_(type,Unit,...) type(_##Unit)##__VA_ARGS__,_PL_(Unit)=&(_##Unit)
 #define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)
 
 #define MemC_Max_Dimension 8
 #endif
 
 #if(Fold_(Definition:Primal Types))
-MemC_Type_Rename_(void,general,GENERAL);					//MemClip : Void Type
-MemC_Type_Rename_(char,byte_08,BYTE_08);					//MemClip : Byte Type
-MemC_Type_Rename_(int,integer,INTEGER);						//MemClip : Integer Type
-MemC_Type_Rename_(size_t,address,ADDRESS);					//MemClip : Address Type
-MemC_Type_Func_Declare_(general,func_p_,FUNC_P_,general);	//MemClip : Function Pointer Type
+MemC_Type_Rename_(_Bool,logical,LOGICAL);				//MemClip : Bool Type
+MemC_Type_Rename_(void,general,GENERAL);				//MemClip : Void Type
+MemC_Type_Rename_(char,byte_08,BYTE_08);				//MemClip : Byte Type
+MemC_Type_Rename_(int,integer,INTEGER);					//MemClip : Integer Type
+MemC_Type_Rename_(size_t,address,ADDRESS);				//MemClip : Address Type
+MemC_Func_Declare_(general,func_p_,FUNC_P_,general);	//MemClip : Function Pointer Type
 
 static_assert((sizeof(char)==1),"sizeof(char) != 1");
 static_assert((sizeof(void*)==sizeof(size_t)),"sizeof(void*) != sizeof(size_t)");
@@ -271,7 +269,7 @@ struct _memcase
 	}
 	Alloc;
 	//MemClip : Memory Deallocation
-#define MemC_Deloc_(Memory) __dl{if(Memory){_MemC_Free_(Memory);(Memory)=NULL;}}lb__
+#define MemC_Deloc_(Memory) __dl{if(Memory){_MemC_Free_(Memory);(Memory)=NULL;}else;}lb__
 
 	//MemClip : Temporary Memory Allocation and Deallocation
 #define MemC_Temp_Byte_(Temp,Size,FAIL) for(general _PL_(Temp)=MemC.Alloc.Byte_(Size),*(_##Temp)=FULL;_##Temp;_MemC_Free_(Temp),_##Temp=NULL)if(!(Temp)){FAIL}else
@@ -283,7 +281,7 @@ struct _memcase
 	{
 		//MemClip : Batch Memory Allocation Check
 		//＊Return value is 0 for failure, 1 for success.
-		integer(_PL_ Check_)(GENERAL _PL_ _PL_ MemorySet,ADDRESS Count);
+		logical(_PL_ Check_)(GENERAL _PL_ _PL_ MemorySet,ADDRESS Count);
 		//MemClip : Batch Memory Deallocation
 		general(_PL_ Deloc_)(general *_PL_ MemorySet,ADDRESS Count);
 	}
@@ -338,7 +336,8 @@ struct _memcase
 	{
 		//MemClip : Reformed Target Shape Calculation
 		//＊TargetShape[ReformingAxis[dim]] = SourceShape[dim]
-		integer(_PL_ Shape_)(ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address _PL_ TargetShape,ADDRESS Dimensions);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Shape_)(ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address _PL_ TargetShape,ADDRESS Dimensions);
 
 		//MemClip : Array Data Reformation - See also "MemC_Reform_Shape_"
 		errno_t(_PL_ DN_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
@@ -368,7 +367,7 @@ struct _memcase
 		//＊If IndexTable is not NULL, then its required size is Count×sizeof(address) bytes.
 		//＊Required BufferSpace size is 2×Count×sizeof(address) bytes.
 		//＊If Comp_(ReferTable[m],ReferTable[n]) is not 0, then those two will be swapped during the process.
-		errno_t(_PL_ Do_)(MemC_Func_Declare_C_(integer,Comp_,GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ ReferTable,address _PL_ IndexTable,address _PL_ BufferSpace,ADDRESS Count);
+		errno_t(_PL_ Do_)(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ ReferTable,address _PL_ IndexTable,address _PL_ BufferSpace,ADDRESS Count);
 	}
 	Sort;
 
@@ -402,27 +401,32 @@ struct _memcase
 		//MemClip : Memory Slot Memory Occupation
 		address(_PL_ Size_)(MEMC_MS _PL_ MemorySlot);
 		//MemClip : Memory Slot Memory Type Change
-		integer(_PL_ Change_)(MEMC_MS _PL_ MemorySlot,MEMC_DT _PL_ MemoryType);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Change_)(memc_ms _PL_ MemorySlot,MEMC_DT _PL_ MemoryType);
 
 		//MemClip : Memory Slot Data Reset
-		integer(_PL_ Init_)(MEMC_MS _PL_ MemorySlot);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Init_)(MEMC_MS _PL_ MemorySlot);
 		//MemClip : Memory Slot NULL Check
 		//＊Count = MemorySlot -> Slot.V[0]
 		//　MemorySet = { P[1], P[2], ..., P[Count] | P = MemorySlot -> Slot.P }
 		//＊Mode 0 : Return value is 1 for all NULLs, otherwise 0.
-		//＊Mode 1 : Return value is 0 for any NULLs, otherwise 1.
-		integer(_PL_ Null_)(MEMC_MS _PL_ MemorySlot,INTEGER CheckMode);
+		//　Mode 1 : Return value is 0 for any NULLs, otherwise 1.
+		logical(_PL_ Null_)(MEMC_MS _PL_ MemorySlot,INTEGER CheckMode);
 
 		//MemClip : Shape Information Setting
 		//＊ShapeInfo -> Slot.V[0] = Dims
 		//　{ V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V } = { Arg1, Arg2, ..., ArgN }
 		//＊Dims and N must be equal!
-		integer(_PL_ Dims_)(MEMC_MS _PL_ ShapeInfo,ADDRESS Dims,...);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Dims_)(MEMC_MS _PL_ ShapeInfo,ADDRESS Dims,...);
 
 		//MemClip : Just kidding!
-		integer(_PL_ Joke_)(MEMC_MS _PL_ MemorySlot);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Joke_)(MEMC_MS _PL_ MemorySlot);
 		//MemClip : Oops!
-		integer(_PL_ Oops_)(MEMC_MS _PL_ MemorySlot);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Oops_)(MEMC_MS _PL_ MemorySlot);
 
 #define MemC_MS_Foreach_(MemorySlot,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((MemorySlot)->Slot.P),_PL_(_End##Each)=(general*)(((MemorySlot)->Slot.P)+((MemorySlot)->Nums));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
 	}
@@ -446,9 +450,11 @@ struct _memcase
 		//MemClip : Memory Container Shape Information Copy
 		//＊ShapeInfo -> Slot.V[0] = MemoryContainer -> Dims
 		//　{ V[1], V[2], ..., V[Dims] | V = ShapeInfo -> Slot.V } = MemoryContainer -> LngND
-		integer(_PL_ Form_)(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ ShapeInfo);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Form_)(MEMC_MC _PL_ MemoryContainer,MEMC_MS _PL_ ShapeInfo);
 		//MemClip : Memory Container Data Type Change
-		integer(_PL_ Change_)(MEMC_MC _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Change_)(memc_mc _PL_ MemoryContainer,MEMC_DT _PL_ DataType);
 	}
 	MC;
 
@@ -476,21 +482,21 @@ struct _memcase
 		address(_PL_ Size_)(MEMC_ML _PL_ MemoryLender);
 		//MemClip : Kill all memory slices in the linked memory lenders.
 		//＊Return value is 0 for failure, 1 for success.
-		integer(_PL_ Kill_)(memc_ml _PL_ MemoryLender);
+		logical(_PL_ Kill_)(memc_ml _PL_ MemoryLender);
 		//MemClip : Move all memory slices from the source lenders to the target lenders.
 		//＊BufferSlot->Nums should not be less than the total number of the linked source and target lenders,
 		//　and also should not be less than the 3×total number of the used slices in the linked source lenders.
 		//＊Used slices in the source lenders will be overwritten with their corresponding new addresses.
 		//　After you finish address mapping, reset the source lenders with "MemC_ML_Kill_"
 		//＊Return value is 0 for failure, 1 for success.
-		integer(_PL_ Move_)(memc_ml _PL_ SourceLender,memc_ml _PL_ TargetLender,memc_ms _PL_ BufferSlot);
+		logical(_PL_ Move_)(memc_ml _PL_ SourceLender,memc_ml _PL_ TargetLender,memc_ms _PL_ BufferSlot);
 
 		//MemClip : Borrow a memory slice from the memory lender - Return with "MemC_ML_Return_"
 		general*(_PL_ Borrow_)(memc_ml _PL_ MemoryLender,ADDRESS SliceBytes);
 		//MemClip : Return the memory slice to its master.
 		//＊Return value is 0 for failure, 1 for success.
-		integer(_PL_ Return_)(general _PL_ MemorySlice);
-#define MemC_ML_Return_(MemorySlice) __dl{if(MemC.ML.Return_(MemorySlice)){(MemorySlice)=NULL;}}lb__
+		logical(_PL_ Return_)(general _PL_ MemorySlice);
+#define MemC_ML_Return_(MemorySlice) __dl{if(MemC.ML.Return_(MemorySlice)){(MemorySlice)=NULL;}else;}lb__
 		//MemClip : Temporarily borrow and return a memory slice from the memory lender.
 #define MemC_ML_Moment_(Lender,Temp,Size,FAIL) for(general _PL_(Temp)=MemC.ML.Borrow_(Lender,Size),*(_##Temp)=FULL;_##Temp;MemC.ML.Return_(Temp),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 
