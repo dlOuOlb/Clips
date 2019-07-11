@@ -15,7 +15,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="2019.06.21";
+static BYTE_08 IdiomVersion[16]="2019.07.11";
 static OCLC_MP ConstantZero={.N=0,.Z=0,.Y=0,.X=0};
 #endif
 
@@ -40,14 +40,20 @@ _OCLC_ general OCLC_EM_Delete_(oclc_em *_PL_ EM)
 							clFinish(PtrD->Queue);
 							clReleaseCommandQueue(PtrD->Queue);
 						}
+						else;
 				}
+				else;
+
 				if(PtrP->Context)
 					clReleaseContext(PtrP->Context);
+				else;
 			}
 		}
+		else;
 
 		MemC_Deloc_(*EM);
 	}
+	else;
 }
 _OCLC_ oclc_em *OCLC_EM_Create_(cl_int _PL_ Error)
 {
