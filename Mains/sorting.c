@@ -1,4 +1,5 @@
-﻿#include <penclip.h>
+﻿#include <stdbool.h>
+#include <penclip.h>
 #include <linclip.h>
 #include <timclip.h>
 
@@ -68,7 +69,7 @@ integer main(general)
 				TimC.RG.Uni.I32_(RG,0,Array,Length,0,RAND_MAX);
 
 				PenC_Stream_Format_T08_(0,Stream,"%d %d %d ... %d %d %d\r\n",Array[0],Array[1],Array[2],Array[Length-3],Array[Length-2],Array[Length-1]);
-				LinC.Order.I32_(Array,NULL,Buffer,Length,BitCNull);
+				LinC.Order.I32_(Array,NULL,Buffer,Length,false);
 				PenC_Stream_Format_T08_(0,Stream,"%d %d %d ... %d %d %d\r\n",Array[0],Array[1],Array[2],Array[Length-3],Array[Length-2],Array[Length-1]);
 			}
 			for(integer Try=0;Try<Trials;Try++)
@@ -79,7 +80,7 @@ integer main(general)
 					TimC.RG.Uni.I32_(RG,0,Array,Length,0,RAND_MAX);
 
 				TimC_SW_Tick_Tock_(SW,1,SWState[1])
-					LinC.Order.I32_(Array,NULL,Buffer,Length,BitCNull);
+					LinC.Order.I32_(Array,NULL,Buffer,Length,false);
 			}
 			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{

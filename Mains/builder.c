@@ -33,7 +33,7 @@ integer main(general)
 							penc_sc *TempContainer=NULL;
 
 							PenC_SL_Borrow_Format_T08_(StringLender,TempContainer,"../../Sources/%s.cl",NameList[IdxN]);
-							BitC.CL.Ready.T08_(EnvMan->Platform.List[IdxP].Context,"-I ../../Headers/ -I ../../Sources/ -D _BitC_R16_=0 -D _BitC_R64_=1",TempContainer->String.T08,(text_08**)BinaryPath,Stream,Error);
+							BitCL.Ready.T08_(EnvMan->Platform.List[IdxP].Context,"-I ../../Headers/ -I ../../Sources/ -D _BitC_R16_=0 -D _BitC_R64_=1",TempContainer->String.T08,(text_08**)BinaryPath,Stream,Error);
 						}
 						if(Error->E==CLSuccess)
 							PenC.SL.Reset_(StringLender);
