@@ -1,5 +1,13 @@
 ﻿#define __STDC_WANT_LIB_EXT1__ (1)
+#include <assert.h>
+#include <uchar.h>
 #include "penclip.h"
+
+#if(Fold_(Static Assertions))
+static_assert((sizeof(text_08)==1),"sizeof(text_08) != 1");
+static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
+static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
+#endif
 
 #if(Fold_(Definition:PenClip Macros))
 #define _PENC_ static
@@ -7,7 +15,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.07.11";
+static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
 static TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
 static TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
@@ -242,30 +250,30 @@ _PENC_ general PenC_Setter_T16_(text_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count)
 	wmemset(Buffer,Value,Count);
 }
 
-_PENC_ text_08 *PenC_Finder_T08_(TEXT_08 _PL_ Buffer,TEXT_08 Value,ADDRESS Count)
+_PENC_ text_08 *PenC_Finder_T08_(text_08 _PL_ Buffer,TEXT_08 Value,ADDRESS Count)
 {
 	return memchr(Buffer,Value,Count);
 }
-_PENC_ text_16 *PenC_Finder_T16_(TEXT_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count)
+_PENC_ text_16 *PenC_Finder_T16_(text_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count)
 {
 	return wmemchr(Buffer,Value,Count);
 }
 #endif
 
 #if(Fold_(Definition:String Functions))
-_PENC_ errno_t PenC_String_Caster_T08_T16_(TEXT_08 *StringS,text_16 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
+_PENC_ logical PenC_String_Caster_T08_T16_(TEXT_08 *StringS,text_16 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
 {
 	mbstate_t State={0};
 	size_t Length;
 
-	return mbsrtowcs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State);
+	return (mbsrtowcs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State)==0);
 }
-_PENC_ errno_t PenC_String_Caster_T16_T08_(TEXT_16 *StringS,text_08 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
+_PENC_ logical PenC_String_Caster_T16_T08_(TEXT_16 *StringS,text_08 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
 {
 	mbstate_t State={0};
 	size_t Length;
 
-	return wcsrtombs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State);
+	return (wcsrtombs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State)==0);
 }
 
 _PENC_ address PenC_String_Length_T08_(TEXT_08 _PL_ String,ADDRESS Capacity)
@@ -286,22 +294,22 @@ _PENC_ text_16 *PenC_String_Finder_T16_(TEXT_16 _PL_ String,TEXT_16 _PL_ SubStri
 	return wcsstr(String,SubString);
 }
 
-_PENC_ errno_t PenC_String_Concat_T08_(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity)
+_PENC_ logical PenC_String_Concat_T08_(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity)
 {
-	return strcat_s(Buffer,Capacity,Source);
+	return (strcat_s(Buffer,Capacity,Source)==0);
 }
-_PENC_ errno_t PenC_String_Concat_T16_(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity)
+_PENC_ logical PenC_String_Concat_T16_(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity)
 {
-	return wcscat_s(Buffer,Capacity,Source);
+	return (wcscat_s(Buffer,Capacity,Source)==0);
 }
 
-_PENC_ errno_t PenC_String_Copier_T08_(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity)
+_PENC_ logical PenC_String_Copier_T08_(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity)
 {
-	return strcpy_s(Buffer,Capacity,Source);
+	return (strcpy_s(Buffer,Capacity,Source)==0);
 }
-_PENC_ errno_t PenC_String_Copier_T16_(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity)
+_PENC_ logical PenC_String_Copier_T16_(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity)
 {
-	return wcscpy_s(Buffer,Capacity,Source);
+	return (wcscpy_s(Buffer,Capacity,Source)==0);
 }
 
 _PENC_ integer PenC_String_Compar_T08_(TEXT_08 _PL_ A,TEXT_08 _PL_ B)
@@ -315,6 +323,8 @@ _PENC_ integer PenC_String_Compar_T16_(TEXT_16 _PL_ A,TEXT_16 _PL_ B)
 #endif
 
 #if(Fold_(Definition:PenClip Managed Functions))
+_PENC_ general PenC_Delete_(general *_PL_ Object) { MemC_Deloc_(*Object); }
+
 #if(Fold_(Part:PenC_SC))
 _PENC_ penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity)
 {
@@ -325,7 +335,6 @@ _PENC_ penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity)
 
 	return SC;
 }
-
 static general _PenC_SC_Bound_(PENC_SC _PL_ SC)
 {
 	address Temp=SC->Capacity;
@@ -373,10 +382,6 @@ _PENC_ penc_sc *PenC_SC_Create_(ADDRESS Capacity)
 
 	return SC;
 }
-_PENC_ general PenC_SC_Delete_(penc_sc *_PL_ SC)
-{
-	MemC_Deloc_(*SC);
-}
 
 _PENC_ general PenC_SC_Init_(PENC_SC _PL_ SC)
 {
@@ -391,11 +396,11 @@ _PENC_ general PenC_SC_Shut_T16_(PENC_SC _PL_ SC)
 	SC->String.T16[(SC->Capacity>>1)-1]=0;
 }
 
-_PENC_ errno_t PenC_SC_Caster_T08_T16_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
+_PENC_ logical PenC_SC_Caster_T08_T16_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
 {
 	return PenC_String_Caster_T08_T16_(Source->String.T08,Target->String.T16,Source->Capacity,Target->Capacity>>1);
 }
-_PENC_ errno_t PenC_SC_Caster_T16_T08_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
+_PENC_ logical PenC_SC_Caster_T16_T08_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
 {
 	return PenC_String_Caster_T16_T08_(Source->String.T16,Target->String.T08,Source->Capacity>>1,Target->Capacity);
 }
@@ -409,20 +414,20 @@ _PENC_ address PenC_SC_Length_T16_(PENC_SC _PL_ SC)
 	return PenC.String.Length.T16_(SC->String.T16,SC->Capacity>>1);
 }
 
-_PENC_ errno_t PenC_SC_Copier_T08_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
+_PENC_ logical PenC_SC_Copier_T08_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
 {
 	return PenC_String_Copier_T08_(Target->String.T08,Source->String.T08,Target->Capacity);
 }
-_PENC_ errno_t PenC_SC_Copier_T16_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
+_PENC_ logical PenC_SC_Copier_T16_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
 {
 	return PenC_String_Copier_T16_(Target->String.T16,Source->String.T16,Target->Capacity>>1);
 }
 
-_PENC_ errno_t PenC_SC_Concat_T08_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
+_PENC_ logical PenC_SC_Concat_T08_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
 {
 	return PenC_String_Concat_T08_(Target->String.T08,Source->String.T08,Target->Capacity);
 }
-_PENC_ errno_t PenC_SC_Concat_T16_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
+_PENC_ logical PenC_SC_Concat_T16_(PENC_SC _PL_ Source,PENC_SC _PL_ Target)
 {
 	return PenC_String_Concat_T16_(Target->String.T16,Source->String.T16,Target->Capacity>>1);
 }
@@ -476,10 +481,7 @@ _PENC_ penc_sl *PenC_SL_Create_(ADDRESS Chunks)
 
 	return SL;
 }
-_PENC_ general PenC_SL_Delete_(penc_sl *_PL_ SL)
-{
-	MemC_Deloc_(*SL);
-}
+
 _PENC_ address PenC_SL_Size_(PENC_SL _PL_ SL)
 {
 	return ((SL)?(MemC_Size_(penc_sn,SL->Chunks+1)):(0));
@@ -700,7 +702,7 @@ _PENC_ penc_sc *PenC_SL_Borrow_Copier_T08_(PENC_SL _PL_ SL,PENC_SC _PL_ Source)
 	penc_sc *Target=PenC_SL_Borrow_(SL,PenC_SC_Length_T08_(Source)+1);
 
 	if(Target)
-		if(PenC_SC_Copier_T08_(Source,Target)==MemCErrZero);
+		if(PenC_SC_Copier_T08_(Source,Target));
 		else
 			PenC_SL_Return_(SL,(PENC_SC**)&Target);
 	else;
@@ -712,7 +714,7 @@ _PENC_ penc_sc *PenC_SL_Borrow_Copier_T16_(PENC_SL _PL_ SL,PENC_SC _PL_ Source)
 	penc_sc *Target=PenC_SL_Borrow_(SL,(PenC_SC_Length_T16_(Source)+1)<<1);
 
 	if(Target)
-		if(PenC_SC_Copier_T16_(Source,Target)==MemCErrZero);
+		if(PenC_SC_Copier_T16_(Source,Target));
 		else
 			PenC_SL_Return_(SL,(PENC_SC**)&Target);
 	else;
@@ -724,8 +726,8 @@ _PENC_ penc_sc *PenC_SL_Borrow_Concat_T08_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,P
 	penc_sc *Concat=PenC_SL_Borrow_(SL,PenC_SC_Length_T08_(Former)+PenC_SC_Length_T08_(Latter)+1);
 
 	if(Concat)
-		if(PenC_SC_Copier_T08_(Concat,Former)==MemCErrZero)
-			if(PenC_SC_Concat_T08_(Concat,Latter)==MemCErrZero);
+		if(PenC_SC_Copier_T08_(Concat,Former))
+			if(PenC_SC_Concat_T08_(Concat,Latter));
 			else
 				PenC_SL_Return_(SL,(PENC_SC**)&Concat);
 		else
@@ -739,8 +741,8 @@ _PENC_ penc_sc *PenC_SL_Borrow_Concat_T16_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,P
 	penc_sc *Concat=PenC_SL_Borrow_(SL,(PenC_SC_Length_T16_(Former)+PenC_SC_Length_T16_(Latter)+1)<<1);
 
 	if(Concat)
-		if(PenC_SC_Copier_T16_(Concat,Former)==MemCErrZero)
-			if(PenC_SC_Concat_T16_(Concat,Latter)==MemCErrZero);
+		if(PenC_SC_Copier_T16_(Concat,Former))
+			if(PenC_SC_Concat_T16_(Concat,Latter));
 			else
 				PenC_SL_Return_(SL,(PENC_SC**)&Concat);
 		else
@@ -905,7 +907,7 @@ PENCASE PenC=
 	{
 		.Assign_=_PenC_SC_Assign_,
 		.Create_=PenC_SC_Create_,
-		.Delete_=PenC_SC_Delete_,
+		.Delete_=MemC_Func_Casting_(general,PenC_Delete_,penc_sc*_PL_),
 		.Init_=PenC_SC_Init_,
 		.Shut=
 		{
@@ -946,7 +948,7 @@ PENCASE PenC=
 	.SL=
 	{
 		.Create_=PenC_SL_Create_,
-		.Delete_=PenC_SL_Delete_,
+		.Delete_=MemC_Func_Casting_(general,PenC_Delete_,penc_sl*_PL_),
 		.Size_=PenC_SL_Size_,
 		.Reset_=PenC_SL_Reset_,
 		.Borrow_=PenC_SL_Borrow_,

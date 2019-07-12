@@ -47,8 +47,8 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Build_,TXX)(oclc_pm _PL_ PM,const cl_context C
 
 											MemC_Assign_1D_N_(SrcList,Source,SrcLngs,SrcNums);
 											for(Idx=0;Idx<SrcNums;Idx++)
-												if(!PenC_Buffer_Reader_(SrcList[Idx],SrcPath[Idx],SrcLngs[Idx]))
-													break;
+												if(PenC_Buffer_Reader_(SrcList[Idx],SrcPath[Idx],SrcLngs[Idx]));
+												else break;
 
 											if(Idx<SrcNums)
 												*Error=CL_INVALID_HOST_PTR;
@@ -75,20 +75,25 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Build_,TXX)(oclc_pm _PL_ PM,const cl_context C
 															default:goto ESCAPE;
 															}
 														}
+													else;
 												}
+												else;
 											}
 ESCAPE:;
 										}
 									}
 								}
 							}
+							else;
 						}
 					}
+					else;
 				}
 				else
 					*Error=CL_INVALID_HOST_PTR;
 		else
 			*Error=CL_INVALID_HOST_PTR;
+	else;
 }
 _OCLC_ general OCLC_Func_(OCLC_PM_Load_,TXX)(oclc_pm _PL_ PM,const cl_context Context,BYTE_08 _PL_ Option,TEXT_XX _PL_ _PL_ NameList,cl_int _PL_ Error)
 {
@@ -170,17 +175,24 @@ INVALID_VALUE:
 														goto WRONG;
 													}
 												}
+											else;
 										}
+										else;
 									}
+									else;
 								}
+								else;
 WRONG:;
 							}
 						}
+						else;
 					}
 				}
+				else;
 			}
 		else
 			*Error=CL_INVALID_HOST_PTR;
+	else;
 }
 _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ NameList,cl_int _PL_ Error)
 {
@@ -211,6 +223,7 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ N
 									*Error=CL_INVALID_BINARY;
 									break;
 								}
+							else;
 
 						if(*Error==CL_SUCCESS)
 							if(SizeSums)
@@ -233,19 +246,27 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ N
 									if(*Error==CL_SUCCESS)
 										for(cl_uint Idx=0;Idx<Devices;Idx++)
 											if(NameList[Idx])
-												if(!PenC_Buffer_Writer_(BinaryList[Idx],NameList[Idx],SizeList[Idx]))
+												if(PenC_Buffer_Writer_(BinaryList[Idx],NameList[Idx],SizeList[Idx]));
+												else
 												{
 													*Error=CL_INVALID_VALUE;
 													break;
 												}
+											else;
+									else;
 								}
 							}
+							else;
+						else;
 					}
+					else;
 				}
 			}
+			else;
 		}
 		else
 			*Error=CL_INVALID_HOST_PTR;
+	else;
 }
 #endif
 

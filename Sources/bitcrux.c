@@ -333,6 +333,7 @@ _BITC_ general BitC_Func_(BitC_Expand_,TXX)(DATA_08 *_R_ DataI,type_xx *_R_ Data
 			DataO[0]=TempB;
 		}
 	}
+	else;
 }
 #endif
 #endif
@@ -387,6 +388,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 		DataC[0]&=Mask.C.D08[1];
 		DataC[0]|=Mask.C.D08[0];
 	}
+	else;
 }
 _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,TYPE_XX *_R_ DataB,ADDRESS Length)
 {
@@ -421,6 +423,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 		DataC[0]&=Mask.C.D08[1];
 		DataC[0]|=Mask.C.D08[0];
 	}
+	else;
 }
 #endif
 #endif
@@ -609,6 +612,6 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #ifdef __OPENCL_VERSION__
 #error This template cannot be built directly.
 #else
-static void _BitC_Void_(void) {}
+static void _BitC_Void_(void) { (void)(_BitC_Void_); }
 #endif
 #endif

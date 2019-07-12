@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ LinClip=&LinClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.06.21";
+static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
 #endif
 
 #if(Fold_(Domain:Host))
@@ -136,7 +136,7 @@ static inline general _LinC_Swap_Address_(address _PL_ _R_ A,INTEGER _PL_ _R_ T)
 #undef _LinC_Data_
 #undef _LinC_Mapping_
 
-_LINC_ general LinC_Order_D08_(data_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D08_(data_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
@@ -144,16 +144,17 @@ _LINC_ general LinC_Order_D08_(data_08 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_08 _PL_ _R_ ValueTemp=(data_08*)(IndexTemp+Length);
 
-			_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],7);
+			_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,Mode,7);
 		}
 		else
 		{
 			data_08 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D08_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],7);
+			_LinC_Recur_Lite_D08_(Line,ValueTemp,Length,Mode,7);
 		}
+	else;
 }
-_LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
@@ -161,16 +162,17 @@ _LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_16 _PL_ _R_ ValueTemp=(data_16*)(IndexTemp+Length);
 
-			_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],15);
+			_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,Mode,15);
 		}
 		else
 		{
 			data_16 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D16_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],15);
+			_LinC_Recur_Lite_D16_(Line,ValueTemp,Length,Mode,15);
 		}
+	else;
 }
-_LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
@@ -178,16 +180,17 @@ _LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_32 _PL_ _R_ ValueTemp=(data_32*)(IndexTemp+Length);
 
-			_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],31);
+			_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,Mode,31);
 		}
 		else
 		{
 			data_32 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D32_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],31);
+			_LinC_Recur_Lite_D32_(Line,ValueTemp,Length,Mode,31);
 		}
+	else;
 }
-_LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
@@ -195,164 +198,207 @@ _LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_64 _PL_ _R_ ValueTemp=(data_64*)(IndexTemp+Length);
 
-			_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,~BitC.Boolean[Mode&1],63);
+			_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,Mode,63);
 		}
 		else
 		{
 			data_64 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D64_(Line,ValueTemp,Length,~BitC.Boolean[Mode&1],63);
+			_LinC_Recur_Lite_D64_(Line,ValueTemp,Length,Mode,63);
 		}
+	else;
 }
-_LINC_ general LinC_Order_I08_(inte_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I08_(inte_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_08 _PL_ _R_ ValueTemp=(inte_08*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_08*)(_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80))-ValueTemp;
+			ADDRESS Offset=(inte_08*)(_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,Mode^1,0x80))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,Mode,6);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_D08_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,Mode,6);
+			else;
 		}
 		else
 		{
 			inte_08 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_08*)(_LinC_Radix_Lite_D08_((data_08*)ValueTemp,(data_08*)Line,Length,~BitC.Boolean[Mode&1],0x80))-ValueTemp;
+			ADDRESS Offset=(inte_08*)(_LinC_Radix_Lite_D08_((data_08*)ValueTemp,(data_08*)Line,Length,Mode^1,0x80))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_Lite_D08_((data_08*)ValueTemp,(data_08*)Line,Offset,Mode,6);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_Lite_D08_((data_08*)(ValueTemp+Offset),(data_08*)(Line+Offset),Length-Offset,Mode,6);
+			else;
 		}
+	else;
 }
-_LINC_ general LinC_Order_I16_(inte_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I16_(inte_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_16 _PL_ _R_ ValueTemp=(inte_16*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_16*)(_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000))-ValueTemp;
+			ADDRESS Offset=(inte_16*)(_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,Mode^1,0x8000))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,Mode,14);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_D16_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,Mode,14);
+			else;
 		}
 		else
 		{
 			inte_16 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_16*)(_LinC_Radix_Lite_D16_((data_16*)ValueTemp,(data_16*)Line,Length,~BitC.Boolean[Mode&1],0x8000))-ValueTemp;
+			ADDRESS Offset=(inte_16*)(_LinC_Radix_Lite_D16_((data_16*)ValueTemp,(data_16*)Line,Length,Mode^1,0x8000))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_Lite_D16_((data_16*)ValueTemp,(data_16*)Line,Offset,Mode,14);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_Lite_D16_((data_16*)(ValueTemp+Offset),(data_16*)(Line+Offset),Length-Offset,Mode,14);
+			else;
 		}
+	else;
 }
-_LINC_ general LinC_Order_I32_(inte_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I32_(inte_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_32 _PL_ _R_ ValueTemp=(inte_32*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+			ADDRESS Offset=(inte_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,Mode^1,0x80000000U))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,Mode,30);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,Mode,30);
+			else;
 		}
 		else
 		{
 			inte_32 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+			ADDRESS Offset=(inte_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,Mode^1,0x80000000U))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,Mode,30);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_Lite_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,Mode,30);
+			else;
 		}
+	else;
 }
-_LINC_ general LinC_Order_I64_(inte_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_I64_(inte_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_64 _PL_ _R_ ValueTemp=(inte_64*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+			ADDRESS Offset=(inte_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,Mode,62);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,Mode,62);
+			else;
 		}
 		else
 		{
 			inte_64 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+			ADDRESS Offset=(inte_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
 				_LinC_Recur_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,Mode,62);
+			else;
+
 			if(Offset<Length)
 				_LinC_Recur_Lite_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,Mode,62);
+			else;
 		}
+	else;
 }
-_LINC_ general LinC_Order_R32_(real_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_R32_(real_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			real_32 _PL_ _R_ ValueTemp=(real_32*)(IndexTemp+Length);
-			ADDRESS Offset=(real_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+			ADDRESS Offset=(real_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,Mode^1,0x80000000U))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,BitCFull,30);
+				_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,1,30);
+			else;
+
 			if(Offset<Length)
-				_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,30);
+				_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,0,30);
+			else;
 		}
 		else
 		{
 			real_32 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(real_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,~BitC.Boolean[Mode&1],0x80000000U))-ValueTemp;
+			ADDRESS Offset=(real_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,Mode^1,0x80000000U))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,BitCFull,30);
+				_LinC_Recur_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,1,30);
+			else;
+
 			if(Offset<Length)
-				_LinC_Recur_Lite_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,BitCNull,30);
+				_LinC_Recur_Lite_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,0,30);
+			else;
 		}
+	else;
 }
-_LINC_ general LinC_Order_R64_(real_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode)
+_LINC_ general LinC_Order_R64_(real_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
 	if(Length)
 		if(Index)
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			real_64 _PL_ _R_ ValueTemp=(real_64*)(IndexTemp+Length);
-			ADDRESS Offset=(real_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+			ADDRESS Offset=(real_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,BitCFull,62);
+				_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,1,62);
+			else;
+
 			if(Offset<Length)
-				_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,BitCNull,62);
+				_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,0,62);
+			else;
 		}
 		else
 		{
 			real_64 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(real_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,~BitC.Boolean[Mode&1],0x8000000000000000UL))-ValueTemp;
+			ADDRESS Offset=(real_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,BitCFull,62);
+				_LinC_Recur_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,1,62);
+			else;
+
 			if(Offset<Length)
-				_LinC_Recur_Lite_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,BitCNull,62);
+				_LinC_Recur_Lite_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,0,62);
+			else;
 		}
+	else;
 }
 #endif
 
@@ -447,7 +493,7 @@ static OCLC_MD LinCKernelList[LinCKernelNums]=
 #endif
 
 #if(Fold_(Part:Program Manager))
-_LINC_ general LinC_CL_Build_T08_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Build_T08_(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 	{
@@ -461,6 +507,7 @@ _LINC_ general LinC_CL_Build_T08_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,
 				OCLC.PM.Build.Log_(PM,Stream,Error);
 				if(Error->E==CLSuccess)
 					OCLC.PM.Build.Save.T08_(PM,BinaryPath,Error);
+				else;
 			}
 			else
 			{
@@ -473,8 +520,9 @@ _LINC_ general LinC_CL_Build_T08_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,
 		else
 			Error->E=CLOutOfHostMemory;
 	}
+	else;
 }
-_LINC_ general LinC_CL_Build_T16_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Build_T16_(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 	{
@@ -488,6 +536,7 @@ _LINC_ general LinC_CL_Build_T16_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,
 				OCLC.PM.Build.Log_(PM,Stream,Error);
 				if(Error->E==CLSuccess)
 					OCLC.PM.Build.Save.T16_(PM,BinaryPath,Error);
+				else;
 			}
 			else
 			{
@@ -500,9 +549,10 @@ _LINC_ general LinC_CL_Build_T16_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,
 		else
 			Error->E=CLOutOfHostMemory;
 	}
+	else;
 }
 
-_LINC_ oclc_pm *LinC_CL_Create_T08_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
+_LINC_ oclc_pm *LinC_CL_Create_T08_(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
 {
 	oclc_pm *PM;
 
@@ -515,7 +565,8 @@ _LINC_ oclc_pm *LinC_CL_Create_T08_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOptio
 			if(Error->E==CLSuccess)
 			{
 				OCLC.PM.Build.Log_(PM,Stream,Error);
-				if(Error->E!=CLSuccess)
+				if(Error->E==CLSuccess);
+				else
 					OCLC.PM.Delete_(&PM);
 			}
 			else
@@ -533,7 +584,7 @@ _LINC_ oclc_pm *LinC_CL_Create_T08_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOptio
 
 	return PM;
 }
-_LINC_ oclc_pm *LinC_CL_Create_T16_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
+_LINC_ oclc_pm *LinC_CL_Create_T16_(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
 {
 	oclc_pm *PM;
 
@@ -546,7 +597,8 @@ _LINC_ oclc_pm *LinC_CL_Create_T16_(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOptio
 			if(Error->E==CLSuccess)
 			{
 				OCLC.PM.Build.Log_(PM,Stream,Error);
-				if(Error->E!=CLSuccess)
+				if(Error->E==CLSuccess);
+				else
 					OCLC.PM.Delete_(&PM);
 			}
 			else
@@ -571,15 +623,15 @@ static inline address _LinC_CL_Min_(ADDRESS A,ADDRESS B,ADDRESS C)
 {
 	return ((A<B)?((A<C)?(A):(C)):((B<C)?(B):(C)));
 }
-static cl_uint _LinC_CL_Address_Bits_(OCLC_DI _PL_ Device,oclc_ef _PL_ Error)
+static cl_uint _LinC_CL_Address_Bits_(const cl_device_id Device,oclc_ef _PL_ Error)
 {
-	cl_uint Bits;OCLC_Info_(DI,Device,&Bits,CL_DEVICE_ADDRESS_BITS,Error);
+	cl_uint Bits;OCLC_Info_(Device,Device,&Bits,CL_DEVICE_ADDRESS_BITS,Error);
 
 	return Bits;
 }
-static OCLC_DI *_LinC_CL_Device_(OCLC_QO _PL_ Queue,oclc_ef _PL_ Error)
+static cl_device_id _LinC_CL_Device_(const cl_command_queue Queue,oclc_ef _PL_ Error)
 {
-	oclc_di *Device;OCLC_Info_(QO,Queue,&Device,CL_QUEUE_DEVICE,Error);
+	cl_device_id Device;OCLC_Info_(Queue,Queue,&Device,CL_QUEUE_DEVICE,Error);
 
 	return Device;
 }
@@ -593,10 +645,10 @@ static address _LinC_CL_Work_Safe_(address Works)
 
 	return Works;
 }
-static address _LinC_CL_Work_Nums_(OCLC_DI _PL_ Device,ADDRESS Length,ADDRESS Unit,oclc_ef _PL_ Error)
+static address _LinC_CL_Work_Nums_(const cl_device_id Device,ADDRESS Length,ADDRESS Unit,oclc_ef _PL_ Error)
 {
-	address MaxWorkGroupSize;OCLC_Info_(DI,Device,&MaxWorkGroupSize,CL_DEVICE_MAX_WORK_GROUP_SIZE,Error);
-	cl_ulong LocalMemSize;OCLC_Info_(DI,Device,&LocalMemSize,CL_DEVICE_LOCAL_MEM_SIZE,Error);
+	address MaxWorkGroupSize;OCLC_Info_(Device,Device,&MaxWorkGroupSize,CL_DEVICE_MAX_WORK_GROUP_SIZE,Error);
+	cl_ulong LocalMemSize;OCLC_Info_(Device,Device,&LocalMemSize,CL_DEVICE_LOCAL_MEM_SIZE,Error);
 
 	return _LinC_CL_Work_Safe_(_LinC_CL_Min_(Length,(address)MaxWorkGroupSize,((address)LocalMemSize)/Unit));
 }
@@ -604,7 +656,7 @@ static inline OCLC_MP *_LinC_CL_Pin_Default_(OCLC_MP _PL_ Pin,OCLC_MP _PL_ Defau
 {
 	return ((Pin)?(Pin):(Default));
 }
-static general _LinC_CL_Set_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
+static general _LinC_CL_Set_1_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
 	OCLC_MP _PL_ AOfs=_LinC_CL_Pin_Default_(ADesc->Start,OCLC.MP.Zero);
 	OCLC_MP _PL_ BOfs=_LinC_CL_Pin_Default_(BDesc->Start,OCLC.MP.Zero);
@@ -625,16 +677,16 @@ static general _LinC_CL_Set_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _P
 		ADDRESS PinSize=Bits>>1;
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.KO.Arg.G_(Kernel,0,ADesc->Memory,Error);
-		OCLC.KO.Arg.G_(Kernel,1,BDesc->Memory,Error);
-		OCLC.KO.Arg.P_(Kernel,2,BitC.CL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,3,BitC.CL.Pin_(BOfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,4,BitC.CL.Pin_(Region,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,5,BitC.CL.Pin_(AShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,6,BitC.CL.Pin_(BShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
+		OCLC.Kernel.Arg.G_(Kernel,1,BDesc->Memory,Error);
+		OCLC.Kernel.Arg.P_(Kernel,2,BitCL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,3,BitCL.Pin_(BOfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,4,BitCL.Pin_(Region,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,5,BitCL.Pin_(AShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,6,BitCL.Pin_(BShp,Buffer,Bits),PinSize,Error);
 	}
 }
-static general _LinC_CL_Set_2_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MH _PL_ CDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
+static general _LinC_CL_Set_2_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MH _PL_ CDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
 	OCLC_MP _PL_ AOfs=_LinC_CL_Pin_Default_(ADesc->Start,OCLC.MP.Zero);
 	OCLC_MP _PL_ BOfs=_LinC_CL_Pin_Default_(BDesc->Start,OCLC.MP.Zero);
@@ -661,30 +713,30 @@ static general _LinC_CL_Set_2_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _P
 		ADDRESS PinSize=Bits>>1;
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.KO.Arg.G_(Kernel,0,ADesc->Memory,Error);
-		OCLC.KO.Arg.G_(Kernel,1,BDesc->Memory,Error);
-		OCLC.KO.Arg.G_(Kernel,2,CDesc->Memory,Error);
-		OCLC.KO.Arg.P_(Kernel,3,BitC.CL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,4,BitC.CL.Pin_(BOfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,5,BitC.CL.Pin_(COfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,6,BitC.CL.Pin_(Region,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,7,BitC.CL.Pin_(AShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,8,BitC.CL.Pin_(BShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,9,BitC.CL.Pin_(CShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
+		OCLC.Kernel.Arg.G_(Kernel,1,BDesc->Memory,Error);
+		OCLC.Kernel.Arg.G_(Kernel,2,CDesc->Memory,Error);
+		OCLC.Kernel.Arg.P_(Kernel,3,BitCL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,4,BitCL.Pin_(BOfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,5,BitCL.Pin_(COfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,6,BitCL.Pin_(Region,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,7,BitCL.Pin_(AShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,8,BitCL.Pin_(BShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,9,BitCL.Pin_(CShp,Buffer,Bits),PinSize,Error);
 	}
 }
-static inline cl_int _LinC_CL_Enqueue_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,ADDRESS Total)
+static inline cl_int _LinC_CL_Enqueue_(const cl_command_queue Queue,const cl_kernel Kernel,ADDRESS Total)
 {
 	return clEnqueueNDRangeKernel(Queue,Kernel,1,NULL,&Total,NULL,0,NULL,NULL);
 }
-static inline cl_int _LinC_CL_Enqueue_Local_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,ADDRESS Local,ADDRESS Total)
+static inline cl_int _LinC_CL_Enqueue_Local_(const cl_command_queue Queue,const cl_kernel Kernel,ADDRESS Local,ADDRESS Total)
 {
 	return clEnqueueNDRangeKernel(Queue,Kernel,1,NULL,&Total,&Local,0,NULL,NULL);
 }
 #endif
 
 #if(Fold_(Part:Increment and Amplification Functions))
-_LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -697,12 +749,13 @@ _LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCInc1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
+						const cl_kernel Kernel=PM->Program.Kernel.List[LinCInc1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.KO.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+						else;
 					}
 				}
 				else
@@ -711,8 +764,9 @@ _LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
-_LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -725,12 +779,13 @@ _LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCAmp1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
+						const cl_kernel Kernel=PM->Program.Kernel.List[LinCAmp1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.KO.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+						else;
 					}
 				}
 				else
@@ -739,11 +794,12 @@ _LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 #endif
 
 #if(Fold_(Part:Addition, Subtraction, and Multiplication Functions))
-_LINC_ general LinC_CL_Add_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Add_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -757,11 +813,12 @@ _LINC_ general LinC_CL_Add_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 							Error->E=CLInvalidValue;
 						else
 						{
-							oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCAdd2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
+							const cl_kernel Kernel=PM->Program.Kernel.List[LinCAdd2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 							_LinC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
 								Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							else;
 						}
 					}
 					else
@@ -772,8 +829,9 @@ _LINC_ general LinC_CL_Add_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
-_LINC_ general LinC_CL_Sub_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Sub_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -787,11 +845,12 @@ _LINC_ general LinC_CL_Sub_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 							Error->E=CLInvalidValue;
 						else
 						{
-							oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCSub2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
+							const cl_kernel Kernel=PM->Program.Kernel.List[LinCSub2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 							_LinC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
 								Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							else;
 						}
 					}
 					else
@@ -802,8 +861,9 @@ _LINC_ general LinC_CL_Sub_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
-_LINC_ general LinC_CL_Mul_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Mul_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -817,11 +877,12 @@ _LINC_ general LinC_CL_Mul_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 							Error->E=CLInvalidValue;
 						else
 						{
-							oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCMul2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
+							const cl_kernel Kernel=PM->Program.Kernel.List[LinCMul2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 							_LinC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
 								Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							else;
 						}
 					}
 					else
@@ -832,11 +893,12 @@ _LINC_ general LinC_CL_Mul_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 #endif
 
 #if(Fold_(Part:Division Functions))
-_LINC_ general LinC_CL_Div_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Div_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -850,11 +912,12 @@ _LINC_ general LinC_CL_Div_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 							Error->E=CLInvalidValue;
 						else
 						{
-							oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCDiv2D08+Type].ID;
+							const cl_kernel Kernel=PM->Program.Kernel.List[LinCDiv2D08+Type].ID;
 
 							_LinC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
 								Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							else;
 						}
 					}
 					else
@@ -865,8 +928,9 @@ _LINC_ general LinC_CL_Div_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
-_LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -881,12 +945,13 @@ _LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCDiv1D08+Type].ID;
+						const cl_kernel Kernel=PM->Program.Kernel.List[LinCDiv1D08+Type].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.KO.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+						else;
 					}
 				}
 				else
@@ -895,8 +960,9 @@ _LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
-_LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -909,12 +975,13 @@ _LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCInv1D08+Type].ID;
+						const cl_kernel Kernel=PM->Program.Kernel.List[LinCInv1D08+Type].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.KO.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+						else;
 					}
 				}
 				else
@@ -923,11 +990,12 @@ _LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 #endif
 
 #if(Fold_(Part:Modulo Functions))
-_LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -942,12 +1010,13 @@ _LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCMod1D08+Type].ID;
+						const cl_kernel Kernel=PM->Program.Kernel.List[LinCMod1D08+Type].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.KO.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+						else;
 					}
 				}
 				else
@@ -956,11 +1025,12 @@ _LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 #endif
 
 #if(Fold_(Part:Summation and Dot-Product Functions))
-static general _LinC_CL_Set_Enq_Sum_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
+static general _LinC_CL_Set_Enq_Sum_1_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
 	oclc_mp CRegion=*ARegion;CRegion.S[Axis]=1;
 	OCLC_MP _PL_ COfs=_LinC_CL_Pin_Default_(CDesc->Start,OCLC.MP.Zero);
@@ -978,7 +1048,7 @@ static general _LinC_CL_Set_Enq_Sum_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OC
 		Error->E=CLInvalidValue;
 	else
 	{
-		OCLC_DI _PL_ Device=_LinC_CL_Device_(Queue,Error);
+		const cl_device_id Device=_LinC_CL_Device_(Queue,Error);
 		ADDRESS Bits=_LinC_CL_Address_Bits_(Device,Error);
 		ADDRESS PinSize=Bits>>1;
 		ADDRESS Unit=CDesc->Type->SizeType;
@@ -986,20 +1056,21 @@ static general _LinC_CL_Set_Enq_Sum_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OC
 		ADDRESS Work=_LinC_CL_Work_Nums_(Device,Length,Unit,Error);
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.KO.Arg.G_(Kernel,0,CDesc->Memory,Error);
-		OCLC.KO.Arg.G_(Kernel,1,ADesc->Memory,Error);
-		OCLC.KO.Arg.P_(Kernel,2,BitC.CL.Pin_(COfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,3,BitC.CL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,4,BitC.CL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,5,BitC.CL.Pin_(CShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,6,BitC.CL.Pin_(AShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,7,&Axis,sizeof(oclc_pa),Error);
-		OCLC.KO.Arg.L_(Kernel,8,Work*Unit,Error);
+		OCLC.Kernel.Arg.G_(Kernel,0,CDesc->Memory,Error);
+		OCLC.Kernel.Arg.G_(Kernel,1,ADesc->Memory,Error);
+		OCLC.Kernel.Arg.P_(Kernel,2,BitCL.Pin_(COfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,3,BitCL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,4,BitCL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,5,BitCL.Pin_(CShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,6,BitCL.Pin_(AShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,7,&Axis,sizeof(oclc_pa),Error);
+		OCLC.Kernel.Arg.L_(Kernel,8,Work*Unit,Error);
 		if(Error->E==CLSuccess)
 			Error->I=_LinC_CL_Enqueue_Local_(Queue,Kernel,Work,Work*(OCLC.MP.Total_(ARegion)/Length));
+		else;
 	}
 }
-_LINC_ general LinC_CL_Sum_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Sum_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1017,7 +1088,7 @@ _LINC_ general LinC_CL_Sum_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 							Error->E=CLInvalidValue;
 						else
 						{
-							oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCSum1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
+							const cl_kernel Kernel=PM->Program.Kernel.List[LinCSum1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 							_LinC_CL_Set_Enq_Sum_1_(Queue,Kernel,CDesc,ADesc,Region,Axis,Error);
 						}
@@ -1028,9 +1099,10 @@ _LINC_ general LinC_CL_Sum_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 
-static general _LinC_CL_Set_Enq_Dot_2_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
+static general _LinC_CL_Set_Enq_Dot_2_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
 	oclc_mp CRegion=*ARegion;CRegion.S[Axis]=1;
 	OCLC_MP _PL_ COfs=_LinC_CL_Pin_Default_(CDesc->Start,OCLC.MP.Zero);
@@ -1054,7 +1126,7 @@ static general _LinC_CL_Set_Enq_Dot_2_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OC
 		Error->E=CLInvalidValue;
 	else
 	{
-		OCLC_DI _PL_ Device=_LinC_CL_Device_(Queue,Error);
+		const cl_device_id Device=_LinC_CL_Device_(Queue,Error);
 		ADDRESS Bits=_LinC_CL_Address_Bits_(Device,Error);
 		ADDRESS PinSize=Bits>>1;
 		ADDRESS Unit=CDesc->Type->SizeType;
@@ -1062,23 +1134,24 @@ static general _LinC_CL_Set_Enq_Dot_2_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OC
 		ADDRESS Work=_LinC_CL_Work_Nums_(Device,Length,Unit,Error);
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.KO.Arg.G_(Kernel,0,CDesc->Memory,Error);
-		OCLC.KO.Arg.G_(Kernel,1,ADesc->Memory,Error);
-		OCLC.KO.Arg.G_(Kernel,2,BDesc->Memory,Error);
-		OCLC.KO.Arg.P_(Kernel,3,BitC.CL.Pin_(COfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,4,BitC.CL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,5,BitC.CL.Pin_(BOfs,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,6,BitC.CL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,7,BitC.CL.Pin_(CShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,8,BitC.CL.Pin_(AShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,9,BitC.CL.Pin_(BShp,Buffer,Bits),PinSize,Error);
-		OCLC.KO.Arg.P_(Kernel,10,&Axis,sizeof(oclc_pa),Error);
-		OCLC.KO.Arg.L_(Kernel,11,Work*Unit,Error);
+		OCLC.Kernel.Arg.G_(Kernel,0,CDesc->Memory,Error);
+		OCLC.Kernel.Arg.G_(Kernel,1,ADesc->Memory,Error);
+		OCLC.Kernel.Arg.G_(Kernel,2,BDesc->Memory,Error);
+		OCLC.Kernel.Arg.P_(Kernel,3,BitCL.Pin_(COfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,4,BitCL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,5,BitCL.Pin_(BOfs,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,6,BitCL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,7,BitCL.Pin_(CShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,8,BitCL.Pin_(AShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,9,BitCL.Pin_(BShp,Buffer,Bits),PinSize,Error);
+		OCLC.Kernel.Arg.P_(Kernel,10,&Axis,sizeof(oclc_pa),Error);
+		OCLC.Kernel.Arg.L_(Kernel,11,Work*Unit,Error);
 		if(Error->E==CLSuccess)
 			Error->I=_LinC_CL_Enqueue_Local_(Queue,Kernel,Work,Work*(OCLC.MP.Total_(ARegion)/Length));
+		else;
 	}
 }
-_LINC_ general LinC_CL_Dot_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Dot_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1097,7 +1170,7 @@ _LINC_ general LinC_CL_Dot_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 								Error->E=CLInvalidValue;
 							else
 							{
-								oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCDot2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
+								const cl_kernel Kernel=PM->Program.Kernel.List[LinCDot2I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 								_LinC_CL_Set_Enq_Dot_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Axis,Error);
 							}
@@ -1110,13 +1183,14 @@ _LINC_ general LinC_CL_Dot_2_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 #endif
 
 #if(Fold_(Part:Maximum and Minimum Functions))
-static general _LinC_CL_Set_Enq_M_M_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
+static general _LinC_CL_Set_Enq_M_M_1_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
-	OCLC_DI _PL_ Device=_LinC_CL_Device_(Queue,Error);
+	const cl_device_id Device=_LinC_CL_Device_(Queue,Error);
 	ADDRESS Bits=_LinC_CL_Address_Bits_(Device,Error);
 
 	if(Error->E==CLSuccess)
@@ -1144,23 +1218,25 @@ static general _LinC_CL_Set_Enq_M_M_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OC
 				ADDRESS Work=_LinC_CL_Work_Nums_(Device,Length,Unit,Error);
 				data_64 Buffer[OCLCPinAxes];
 
-				OCLC.KO.Arg.G_(Kernel,0,IDesc->Memory,Error);
-				OCLC.KO.Arg.G_(Kernel,1,ADesc->Memory,Error);
-				OCLC.KO.Arg.P_(Kernel,2,BitC.CL.Pin_(IOfs,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,3,BitC.CL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,4,BitC.CL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,5,BitC.CL.Pin_(IShp,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,6,BitC.CL.Pin_(AShp,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,7,&Axis,sizeof(oclc_pa),Error);
-				OCLC.KO.Arg.L_(Kernel,8,Work*Unit,Error);
+				OCLC.Kernel.Arg.G_(Kernel,0,IDesc->Memory,Error);
+				OCLC.Kernel.Arg.G_(Kernel,1,ADesc->Memory,Error);
+				OCLC.Kernel.Arg.P_(Kernel,2,BitCL.Pin_(IOfs,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,3,BitCL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,4,BitCL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,5,BitCL.Pin_(IShp,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,6,BitCL.Pin_(AShp,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,7,&Axis,sizeof(oclc_pa),Error);
+				OCLC.Kernel.Arg.L_(Kernel,8,Work*Unit,Error);
 				if(Error->E==CLSuccess)
 					Error->I=_LinC_CL_Enqueue_Local_(Queue,Kernel,Work,Work*(OCLC.MP.Total_(ARegion)/Length));
+				else;
 			}
 		}
 		else
 			Error->E=CLInvalidValue;
+	else;
 }
-_LINC_ general LinC_CL_Max_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Max_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1177,7 +1253,7 @@ _LINC_ general LinC_CL_Max_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ ID
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCMax1D08+Type].ID;
+						const cl_kernel Kernel=PM->Program.Kernel.List[LinCMax1D08+Type].ID;
 
 						_LinC_CL_Set_Enq_M_M_1_(Queue,Kernel,IDesc,ADesc,Region,Axis,Error);
 					}
@@ -1186,8 +1262,9 @@ _LINC_ general LinC_CL_Max_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ ID
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
-_LINC_ general LinC_CL_Min_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Min_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1204,7 +1281,7 @@ _LINC_ general LinC_CL_Min_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ ID
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=PM->Program.Kernel.List[LinCMin1D08+Type].ID;
+						const cl_kernel Kernel=PM->Program.Kernel.List[LinCMin1D08+Type].ID;
 
 						_LinC_CL_Set_Enq_M_M_1_(Queue,Kernel,IDesc,ADesc,Region,Axis,Error);
 					}
@@ -1213,13 +1290,14 @@ _LINC_ general LinC_CL_Min_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ ID
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 #endif
 
 #if(Fold_(Part:Mapping Functions))
-static oclc_ko *_LinC_CL_Map_1_Kernel_(OCLC_PM _PL_ PM,ADDRESS TypeSize)
+static cl_kernel _LinC_CL_Map_1_Kernel_(OCLC_PM _PL_ PM,ADDRESS TypeSize)
 {
-	oclc_ko *Kernel;
+	cl_kernel Kernel;
 
 	switch(TypeSize)
 	{
@@ -1241,9 +1319,9 @@ static oclc_ko *_LinC_CL_Map_1_Kernel_(OCLC_PM _PL_ PM,ADDRESS TypeSize)
 
 	return Kernel;
 }
-static general _LinC_CL_Set_Enq_Map_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
+static general _LinC_CL_Set_Enq_Map_1_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
-	OCLC_DI _PL_ Device=_LinC_CL_Device_(Queue,Error);
+	const cl_device_id Device=_LinC_CL_Device_(Queue,Error);
 	ADDRESS Bits=_LinC_CL_Address_Bits_(Device,Error);
 
 	if(Error->E==CLSuccess)
@@ -1275,25 +1353,27 @@ static general _LinC_CL_Set_Enq_Map_1_(oclc_qo _PL_ Queue,oclc_ko _PL_ Kernel,OC
 				ADDRESS Length=ARegion->S[Axis];
 				data_64 Buffer[OCLCPinAxes];
 
-				OCLC.KO.Arg.G_(Kernel,0,CDesc->Memory,Error);
-				OCLC.KO.Arg.G_(Kernel,1,IDesc->Memory,Error);
-				OCLC.KO.Arg.G_(Kernel,2,ADesc->Memory,Error);
-				OCLC.KO.Arg.P_(Kernel,3,BitC.CL.Pin_(COfs,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,4,BitC.CL.Pin_(IOfs,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,5,BitC.CL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,6,BitC.CL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,7,BitC.CL.Pin_(CShp,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,8,BitC.CL.Pin_(IShp,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,9,BitC.CL.Pin_(AShp,Buffer,Bits),PinSize,Error);
-				OCLC.KO.Arg.P_(Kernel,10,&Axis,sizeof(oclc_pa),Error);
+				OCLC.Kernel.Arg.G_(Kernel,0,CDesc->Memory,Error);
+				OCLC.Kernel.Arg.G_(Kernel,1,IDesc->Memory,Error);
+				OCLC.Kernel.Arg.G_(Kernel,2,ADesc->Memory,Error);
+				OCLC.Kernel.Arg.P_(Kernel,3,BitCL.Pin_(COfs,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,4,BitCL.Pin_(IOfs,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,5,BitCL.Pin_(AOfs,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,6,BitCL.Pin_(ARegion,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,7,BitCL.Pin_(CShp,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,8,BitCL.Pin_(IShp,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,9,BitCL.Pin_(AShp,Buffer,Bits),PinSize,Error);
+				OCLC.Kernel.Arg.P_(Kernel,10,&Axis,sizeof(oclc_pa),Error);
 				if(Error->E==CLSuccess)
 					Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(ARegion)/Length);
+				else;
 			}
 		}
 		else
 			Error->E=CLInvalidValue;
+	else;
 }
-_LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1305,7 +1385,7 @@ _LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 						Error->E=CLInvalidValue;
 					else
 					{
-						oclc_ko _PL_ Kernel=_LinC_CL_Map_1_Kernel_(PM,CDesc->Type->SizeType);
+						const cl_kernel Kernel=_LinC_CL_Map_1_Kernel_(PM,CDesc->Type->SizeType);
 
 						_LinC_CL_Set_Enq_Map_1_(Queue,Kernel,CDesc,IDesc,ADesc,Region,Axis,Error);
 					}
@@ -1315,6 +1395,7 @@ _LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 				Error->E=CLInvalidHostPtr;
 		else
 			Error->E=CLInvalidHostPtr;
+	else;
 }
 #endif
 
@@ -1329,35 +1410,6 @@ _LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,oclc_qo _PL_ Queue,OCLC_MH _PL_ CD
 LINCASE LinC=
 {
 	.Version=IdiomVersion,
-#ifdef __OPENCL_H
-	.CL=
-	{
-		.Ready=
-		{
-			.T08_=LinC_CL_Build_T08_,
-			.T16_=LinC_CL_Build_T16_
-		},
-		.Create=
-		{
-			.T08_=LinC_CL_Create_T08_,
-			.T16_=LinC_CL_Create_T16_
-		},
-		.Inc_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-		.Amp_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-		.Add_2_=LinC_CL_Add_2_,
-		.Sub_2_=LinC_CL_Sub_2_,
-		.Mul_2_=LinC_CL_Mul_2_,
-		.Div_1_=MemC_Func_Casting_(general,LinC_CL_Div_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-		.Inv_1_=MemC_Func_Casting_(general,LinC_CL_Inv_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-		.Div_2_=LinC_CL_Div_2_,
-		.Mod_1_=MemC_Func_Casting_(general,LinC_CL_Mod_1_,OCLC_PM _PL_,oclc_qo _PL_,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-		.Sum_1_=LinC_CL_Sum_1_,
-		.Dot_2_=LinC_CL_Dot_2_,
-		.Max_1_=LinC_CL_Max_1_,
-		.Min_1_=LinC_CL_Min_1_,
-		.Map_1_=LinC_CL_Map_1_
-	},
-#endif
 	.Ari_0=
 	{
 		.I08_=LinC_Ari_0_I08_,
@@ -1577,4 +1629,34 @@ LINCASE LinC=
 	}
 };
 LINCASE *LinC_(general) { return &LinC; }
+#ifdef __OPENCL_H
+LINC_CL LinCL=
+{
+	.Ready=
+	{
+		.T08_=LinC_CL_Build_T08_,
+		.T16_=LinC_CL_Build_T16_
+	},
+	.Create=
+	{
+		.T08_=LinC_CL_Create_T08_,
+		.T16_=LinC_CL_Create_T16_
+	},
+	.Inc_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Amp_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Add_2_=LinC_CL_Add_2_,
+	.Sub_2_=LinC_CL_Sub_2_,
+	.Mul_2_=LinC_CL_Mul_2_,
+	.Div_1_=MemC_Func_Casting_(general,LinC_CL_Div_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Inv_1_=MemC_Func_Casting_(general,LinC_CL_Inv_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Div_2_=LinC_CL_Div_2_,
+	.Mod_1_=MemC_Func_Casting_(general,LinC_CL_Mod_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Sum_1_=LinC_CL_Sum_1_,
+	.Dot_2_=LinC_CL_Dot_2_,
+	.Max_1_=LinC_CL_Max_1_,
+	.Min_1_=LinC_CL_Min_1_,
+	.Map_1_=LinC_CL_Map_1_
+};
+LINC_CL *LinCL_(general) { return &LinCL; }
+#endif
 #endif

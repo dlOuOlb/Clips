@@ -9,7 +9,7 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.06.21";
+static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
 #endif
 
 #if(Fold_(Definition:Functions))
@@ -39,6 +39,7 @@ _TIMC_ timc_sw *TimC_SW_Create_(ADDRESS Timers)
 				Acs_(timc_te*,SW->Timer)=MemC_Clear_1D_((timc_te*)(SW+1),Timers);
 				Acs_(address,SW->Nums)=Timers;
 			}
+			else;
 		}
 		else
 			SW=NULL;
@@ -48,6 +49,7 @@ _TIMC_ timc_sw *TimC_SW_Create_(ADDRESS Timers)
 		SW=MemC_Alloc_Unit_(timc_sw);
 		if(SW)
 			MemC_Clear_Unit_(SW);
+		else;
 	}
 
 	return SW;
@@ -63,16 +65,17 @@ _TIMC_ timc_sf TimC_SW_Reset_All_(TIMC_SW _PL_ SW)
 	{
 		if(SW->Nums)
 			MemC_Clear_1D_((timc_te*)(SW->Timer),SW->Nums);
-	}
-	else goto FAILURE;
+		else;
 
-	return TimCStateStopped;
-FAILURE:
-	return TimCStateUnknown;
+		return TimCStateStopped;
+	}
+	else
+		return TimCStateUnknown;
 }
 _TIMC_ timc_sf TimC_SW_Stop_All_(TIMC_SW _PL_ SW)
 {
 	if(SW)
+	{
 		for(timc_te *_R_ Ptr=(timc_te*)(SW->Timer),_PL_ End=Ptr+(SW->Nums);Ptr<End;Ptr++)
 			switch(Ptr->State)
 			{
@@ -86,29 +89,29 @@ _TIMC_ timc_sf TimC_SW_Stop_All_(TIMC_SW _PL_ SW)
 				Ptr->State=TimCStateStopped;
 			case TimCStateStopped:;
 			}
-	else goto FAILURE;
 
-	return TimCStateStopped;
-FAILURE:
-	return TimCStateUnknown;
+		return TimCStateStopped;
+	}
+	else
+		return TimCStateUnknown;
 }
 
 _TIMC_ timc_sf TimC_SW_Reset_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
 	if(SW)
 		if(Select<SW->Nums)
+		{
 			MemC_Clear_Unit_((timc_te*)(SW->Timer)+Select);
-		else goto FAILURE;
-	else goto FAILURE;
 
-	return TimCStateStopped;
-FAILURE:
+			return TimCStateStopped;
+		}
+		else;
+	else;
+
 	return TimCStateUnknown;
 }
 _TIMC_ timc_sf TimC_SW_Toggle_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
-	timc_sf Flag;
-
 	if(SW)
 		if(Select<SW->Nums)
 		{
@@ -124,7 +127,8 @@ _TIMC_ timc_sf TimC_SW_Toggle_(TIMC_SW _PL_ SW,ADDRESS Select)
 					Timer->Mark=clock();
 					break;
 				}
-				else goto UNKNOWN;
+				else
+					goto UNKNOWN;
 			case TimCStateRunning:
 				Timer->Sum+=clock()-(Timer->Mark);
 				if(Timer->Sum<0)
@@ -138,29 +142,38 @@ UNKNOWN:
 			default:
 				Timer->State=TimCStateUnknown;
 			}
-			Flag=Timer->State;
-		}
-		else
-			Flag=TimCStateUnknown;
-	else
-		Flag=TimCStateUnknown;
 
-	return Flag;
+			return (Timer->State);
+		}
+		else;
+	else;
+
+	return TimCStateUnknown;
 }
 
 _TIMC_ timc_sf TimC_SW_Read_State_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
-	return ((SW)?((Select<(SW->Nums))?(((timc_te*)(SW->Timer))[Select].State):(TimCStateUnknown)):(TimCStateUnknown));
+	if(SW)
+		if(Select<SW->Nums)
+			return (((timc_te*)(SW->Timer))[Select].State);
+		else;
+	else;
+
+	return TimCStateUnknown;
 }
 _TIMC_ integer TimC_SW_Read_Count_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
-	return ((SW)?((Select<(SW->Nums))?(((timc_te*)(SW->Timer))[Select].Count):(-1)):(-1));
+	if(SW)
+		if(Select<SW->Nums)
+			return (((timc_te*)(SW->Timer))[Select].Count);
+		else;
+	else;
+
+	return -1;
 }
 
 _TIMC_ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
-	real_32 Time;
-
 	if(SW)
 		if(Select<SW->Nums)
 		{
@@ -169,26 +182,19 @@ _TIMC_ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ SW,ADDRESS Select)
 			switch(Timer->State)
 			{
 			case TimCStateStopped:
-				Time=TimC.Clock.Frequency*(real_32)(Timer->Sum);
-				break;
+				return (TimC.Clock.Frequency*(real_32)(Timer->Sum));
 			case TimCStateRunning:
-				Time=TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum));
-				break;
-			default:
-				Time=-1.0F;
+				return (TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum)));
+			default:;
 			}
 		}
-		else
-			Time=-1.0F;
-	else
-		Time=-1.0F;
+		else;
+	else;
 
-	return Time;
+	return -1.0F;
 }
 _TIMC_ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ SW,ADDRESS Select)
 {
-	real_32 Time;
-
 	if(SW)
 		if(Select<SW->Nums)
 		{
@@ -197,21 +203,16 @@ _TIMC_ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ SW,ADDRESS Select)
 			switch(Timer->State)
 			{
 			case TimCStateStopped:
-				Time=(Timer->Count)?((TimC.Clock.Frequency*(real_32)(Timer->Sum))/((real_32)(Timer->Count))):(0.0F);
-				break;
+				return ((Timer->Count)?((TimC.Clock.Frequency*(real_32)(Timer->Sum))/((real_32)(Timer->Count))):(0.0F));
 			case TimCStateRunning:
-				Time=(TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum)))/((real_32)(Timer->Count));
-				break;
-			default:
-				Time=-1.0F;
+				return ((TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum)))/((real_32)(Timer->Count)));
+			default:;
 			}
 		}
-		else
-			Time=-1.0F;
-	else
-		Time=-1.0F;
+		else;
+	else;
 
-	return Time;
+	return -1.0F;
 }
 #endif
 
@@ -239,12 +240,14 @@ _TIMC_ timc_rg *TimC_RG_Create_(ADDRESS States)
 
 			_TimC_RG_Setup_(RG->State,States);
 		}
+		else;
 	}
 	else
 	{
 		RG=MemC_Alloc_Unit_(timc_rg);
 		if(RG)
 			MemC_Clear_Unit_(RG);
+		else;
 	}
 
 	return RG;
@@ -253,12 +256,19 @@ _TIMC_ address TimC_RG_Size_(TIMC_RG _PL_ RG)
 {
 	return ((RG)?(sizeof(timc_rg)+MemC_Size_(data_64,RG->Nums)):(0));
 }
-_TIMC_ boolean TimC_RG_Reset_(TIMC_RG _PL_ RG)
+_TIMC_ logical TimC_RG_Reset_(TIMC_RG _PL_ RG)
 {
-	return ((RG)?(_TimC_RG_Setup_(RG->State,RG->Nums),BitCFull):(BitCNull));
+	if(RG)
+	{
+		_TimC_RG_Setup_(RG->State,RG->Nums);
+
+		return 1;
+	}
+	else
+		return 0;
 }
 
-static inline data_32 _TimC_RG_Rand_(bitclip State)
+static data_32 _TimC_RG_Rand_(bitclip State)
 {
 	DATA_64 Temp=(State.C.D64[0])>>32;
 
@@ -268,7 +278,7 @@ static inline data_32 _TimC_RG_Rand_(bitclip State)
 
 	return ((State.C.D32[0])^(State.C.D32[1]));
 }
-_TIMC_ boolean TimC_RG_Byte_(TIMC_RG _PL_ RG,ADDRESS Select,general _PL_ _R_ Array,ADDRESS Length)
+_TIMC_ logical TimC_RG_Byte_(TIMC_RG _PL_ RG,ADDRESS Select,general _PL_ _R_ Array,ADDRESS Length)
 {
 	if(RG)
 		if(Select<RG->Nums)
@@ -291,22 +301,26 @@ _TIMC_ boolean TimC_RG_Byte_(TIMC_RG _PL_ RG,ADDRESS Select,general _PL_ _R_ Arr
 			}
 			for(End+=(Batch&(BitC.Const.Mask.Rest[3]));Ptr<End;Ptr++)
 				Ptr[0]=_TimC_RG_Rand_(State);
+
 			MemC_Temp_(ADDRESS,Rest=Length&(BitC.Const.Mask.Rest[2]))
 				if(Rest)
 				{
 					DATA_32 Last=_TimC_RG_Rand_(State);
 
-					MemC_Copy_Byte_(&Last,Ptr,Rest);
+					if(MemC_Copy_Byte_(&Last,Ptr,Rest));
+					else
+						return 0;
 				}
-		}
-		else goto FAILURE;
-	else goto FAILURE;
+				else;
 
-	return BitCFull;
-FAILURE:
-	return BitCNull;
+			return 1;
+		}
+		else;
+	else;
+
+	return 0;
 }
-static inline data_32 _TimC_RG_Cage_I32_(data_64 Value,DATA_64 Add,DATA_64 Mul)
+static data_32 _TimC_RG_Cage_I32_(data_64 Value,DATA_64 Add,DATA_64 Mul)
 {
 	Value*=Mul;
 	Value+=Add;
@@ -314,7 +328,7 @@ static inline data_32 _TimC_RG_Cage_I32_(data_64 Value,DATA_64 Add,DATA_64 Mul)
 
 	return ((data_32)Value);
 }
-_TIMC_ boolean TimC_RG_Uni_I32_(TIMC_RG _PL_ RG,ADDRESS Select,data_32 _PL_ _R_ Array,ADDRESS Length,INTE_32 Min,INTE_32 Max)
+_TIMC_ logical TimC_RG_Uni_I32_(TIMC_RG _PL_ RG,ADDRESS Select,data_32 _PL_ _R_ Array,ADDRESS Length,INTE_32 Min,INTE_32 Max)
 {
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(data_32,Length)))
 	{
@@ -350,22 +364,21 @@ _TIMC_ boolean TimC_RG_Uni_I32_(TIMC_RG _PL_ RG,ADDRESS Select,data_32 _PL_ _R_ 
 		}
 		for(End+=(Length&(BitC.Const.Mask.Rest[3]));Ptr<End;Ptr++)
 			Ptr[0]=_TimC_RG_Cage_I32_((data_64)(Ptr[0]),Add,Mul);
-	}
-	else goto FAILURE;
 
-	return BitCFull;
-FAILURE:
-	return BitCNull;
+		return 1;
+	}
+	else
+		return 0;
 }
 
-static inline real_32 _TimC_RG_Cage_R32_(real_32 Value,REAL_32 Add,REAL_32 Mul)
+static real_32 _TimC_RG_Cage_R32_(real_32 Value,REAL_32 Add,REAL_32 Mul)
 {
 	Value*=Mul;
 	Value+=Add;
 
 	return Value;
 }
-_TIMC_ boolean TimC_RG_Uni_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Min,REAL_32 Max)
+_TIMC_ logical TimC_RG_Uni_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Min,REAL_32 Max)
 {
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_32,Length)))
 	{
@@ -387,21 +400,20 @@ _TIMC_ boolean TimC_RG_Uni_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ 
 		}
 		for(End.C.R32+=(Length&(BitC.Const.Mask.Rest[3]));Ptr.C.R32<End.C.R32;Ptr.C.R32++)
 			Ptr.V.R32[0]=_TimC_RG_Cage_R32_((real_32)(Ptr.C.D32[0]),Min,Scale);
-	}
-	else goto FAILURE;
 
-	return BitCFull;
-FAILURE:
-	return BitCNull;
+		return 1;
+	}
+	else
+		return 0;
 }
-static inline real_64 _TimC_RG_Cage_R64_(real_64 Value,REAL_64 Add,REAL_64 Mul)
+static real_64 _TimC_RG_Cage_R64_(real_64 Value,REAL_64 Add,REAL_64 Mul)
 {
 	Value*=Mul;
 	Value+=Add;
 
 	return Value;
 }
-_TIMC_ boolean TimC_RG_Uni_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Min,REAL_64 Max)
+_TIMC_ logical TimC_RG_Uni_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Min,REAL_64 Max)
 {
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_64,Length)))
 	{
@@ -423,15 +435,14 @@ _TIMC_ boolean TimC_RG_Uni_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ 
 		}
 		for(End.C.R64+=(Length&(BitC.Const.Mask.Rest[3]));Ptr.C.R64<End.C.R64;Ptr.C.R64++)
 			Ptr.V.R64[0]=_TimC_RG_Cage_R64_((real_64)(Ptr.C.D64[0]),Min,Scale);
-	}
-	else goto FAILURE;
 
-	return BitCFull;
-FAILURE:
-	return BitCNull;
+		return 1;
+	}
+	else
+		return 0;
 }
 
-_TIMC_ boolean TimC_RG_Gau_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Mean,REAL_32 Deviation)
+_TIMC_ logical TimC_RG_Gau_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Mean,REAL_32 Deviation)
 {
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_32,Length)))
 	{
@@ -448,7 +459,7 @@ _TIMC_ boolean TimC_RG_Gau_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ 
 		{
 			Temp.V.D32[0]=0x00000001|Ptr.C.D32[0];
 			Temp.V.D32[1]=0xFFFFFFFE&Ptr.C.D32[1];
-			
+
 			Temp.V.R32[0]=ScaleU*((real_32)(Temp.C.D32[0]));
 			Temp.V.R32[1]=ScaleV*((real_32)(Temp.C.D32[1]));
 
@@ -480,14 +491,14 @@ _TIMC_ boolean TimC_RG_Gau_R32_(TIMC_RG _PL_ RG,ADDRESS Select,real_32 _PL_ _R_ 
 
 			Ptr.V.R32[0]+=Mean;
 		}
-	}
-	else goto FAILURE;
+		else;
 
-	return BitCFull;
-FAILURE:
-	return BitCNull;
+		return 1;
+	}
+	else
+		return 0;
 }
-_TIMC_ boolean TimC_RG_Gau_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Mean,REAL_64 Deviation)
+_TIMC_ logical TimC_RG_Gau_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Mean,REAL_64 Deviation)
 {
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_64,Length)))
 	{
@@ -536,59 +547,64 @@ _TIMC_ boolean TimC_RG_Gau_R64_(TIMC_RG _PL_ RG,ADDRESS Select,real_64 _PL_ _R_ 
 
 			Ptr.V.R64[0]+=Mean;
 		}
-	}
-	else goto FAILURE;
+		else;
 
-	return BitCFull;
-FAILURE:
-	return BitCNull;
+		return 1;
+	}
+	else
+		return 0;
 }
 
-static inline address _TimC_RG_Perm_(data_64 Value,DATA_64 Mul)
+static address _TimC_RG_Perm_(data_64 Value,DATA_64 Mul)
 {
 	Value*=Mul;
 	Value>>=32;
 
 	return ((address)Value);
 }
-static inline general _TimC_RG_Swap_(address _PL_ _R_ Ptr,ADDRESS S)
+static general _TimC_RG_Swap_(address _PL_ _R_ Ptr,ADDRESS S)
 {
 	ADDRESS Temp=Ptr[0];
 
 	Ptr[0]=Ptr[S];
 	Ptr[S]=Temp;
 }
-_TIMC_ boolean TimC_RG_Perm_(TIMC_RG _PL_ RG,ADDRESS Select,address _PL_ _R_ Array,ADDRESS Length)
+_TIMC_ logical TimC_RG_Perm_(TIMC_RG _PL_ RG,ADDRESS Select,address _PL_ _R_ Array,ADDRESS Length)
 {
-	if(Length)
-	{
-		data_64 Mul=(data_64)Length;
-
-		if(Length>((address)Mul))
-			goto FAILURE;
-		else
-		{
-			ADDRESS *End=Array;
-			address *_R_ Ptr=Array;
-			bitclip State;State.C.G=RG->State+Select;
-
-			MemC.Sort.Index_(Array,Length,0);
-
-			for(End+=(Length&(BitC.Const.Mask.Safe[2]));Ptr<End;)
+	if(RG)
+		if(Select<RG->Nums)
+			if(Length)
 			{
-				_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
-				_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
-				_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
-				_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
-			}
-			for(End+=(Length&(BitC.Const.Mask.Rest[2]));Ptr<End;)
-				_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
-		}
-	}
+				data_64 Mul=(data_64)Length;
 
-	return BitCFull;
-FAILURE:
-	return BitCNull;
+				if(Length>((address)Mul));
+				else
+				{
+					ADDRESS *End=Array;
+					address *_R_ Ptr=Array;
+					bitclip State;State.C.G=RG->State+Select;
+
+					MemC.Sort.Index_(Array,Length,0);
+
+					for(End+=(Length&(BitC.Const.Mask.Safe[2]));Ptr<End;)
+					{
+						_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
+						_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
+						_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
+						_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
+					}
+					for(End+=(Length&(BitC.Const.Mask.Rest[2]));Ptr<End;)
+						_TimC_RG_Swap_(Ptr++,_TimC_RG_Perm_((data_64)_TimC_RG_Rand_(State),Mul--));
+
+					return 1;
+				}
+			}
+			else
+				return 1;
+		else;
+	else;
+
+	return 0;
 }
 #endif
 
@@ -637,7 +653,7 @@ TIMCASE TimC=
 		},
 		.Uni=
 		{
-			.I32_=MemC_Func_Casting_(boolean,TimC_RG_Uni_I32_,TIMC_RG _PL_,ADDRESS,inte_32 _PL_ _R_,ADDRESS,INTE_32,INTE_32),
+			.I32_=MemC_Func_Casting_(logical,TimC_RG_Uni_I32_,TIMC_RG _PL_,ADDRESS,inte_32 _PL_ _R_,ADDRESS,INTE_32,INTE_32),
 			.R32_=TimC_RG_Uni_R32_,
 			.R64_=TimC_RG_Uni_R64_
 		},

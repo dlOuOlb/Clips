@@ -35,6 +35,7 @@ _LINC_ general LinC_Oper_(LinC_Op_,0,TXX)(type_xx *_R_ Line,TYPE_XX Start,TYPE_X
 		for(End+=(Last&BitC.Const.Mask.Rest[3]);Line<End;Line++)
 			Line[1]=LinC_Op_(Line[0],Step);
 	}
+	else;
 }
 #endif
 #endif
@@ -127,7 +128,8 @@ _K_ LinC_Func_(LinC_Sum_1_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P
 		Work_Wait_L_();
 		Value=LData[LStart]+LData[LStart^LJump];
 	}
-	if(!LStart)
+	if(LStart);
+	else
 		CData[Work_Into_(LSelect,CStart,CShape)]=Value;
 }
 _K_ LinC_Func_(LinC_Dot_2_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G_ TYPE_XX _PL_ BData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP BStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,_P_ OCLCLIP BShape,_P_ OCLC_PA Axis,_L_ type_xx _PL_ LData)
@@ -160,7 +162,8 @@ _K_ LinC_Func_(LinC_Dot_2_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G
 		Work_Wait_L_();
 		Value=LData[LStart]+LData[LStart^LJump];
 	}
-	if(!LStart)
+	if(LStart);
+	else
 		CData[Work_Into_(LSelect,CStart,CShape)]=Value;
 }
 #else
@@ -257,6 +260,7 @@ _K_ LinC_Oper_(LinC_Op_,1,TXX)(_G_ address _PL_ IData,_G_ TYPE_XX _PL_ AData,_P_
 				Value=Thing;
 				Index=Idx;
 			}
+			else;
 		}
 		LSelect.S[Axis]-=LStart;
 	}
@@ -281,10 +285,12 @@ _K_ LinC_Oper_(LinC_Op_,1,TXX)(_G_ address _PL_ IData,_G_ TYPE_XX _PL_ AData,_P_
 				Value=LThing;
 				Index=LThere;
 			}
+			else;
 			Work_Wait_L_();
 		}
 	}
-	if(!LStart)
+	if(LStart);
+	else
 		IData[Work_Into_(LSelect,IStart,IShape)]=Index;
 }
 #else
@@ -305,6 +311,7 @@ _LINC_ address LinC_Oper_(LinC_Op_,1,TXX)(TYPE_XX _PL_ Line,ADDRESS Length)
 				Value=*Ptr;
 				Here=Ptr;
 			}
+			else;
 		Index=Here-Line;
 	}
 	else
@@ -353,7 +360,7 @@ static inline general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ _R_ A,INTEGER _PL
 	A[0]=A[T[0]];
 	A[1]=Temp;
 }
-static type_xx *LinC_Func_(_LinC_Radix_,TXX)(type_xx *_R_ ValueFirst,address *_R_ IndexFirst,TYPE_XX *_R_ ValueMess,ADDRESS *_R_ IndexMess,ADDRESS Length,BOOLEAN Mode,TYPE_XX Scan)
+static type_xx *LinC_Func_(_LinC_Radix_,TXX)(type_xx *_R_ ValueFirst,address *_R_ IndexFirst,TYPE_XX *_R_ ValueMess,ADDRESS *_R_ IndexMess,ADDRESS Length,LOGICAL Mode,TYPE_XX Scan)
 {
 	type_xx *_R_ ValueLast=ValueFirst+Length;
 	address *_R_ IndexLast=IndexFirst+Length;
@@ -385,7 +392,7 @@ static type_xx *LinC_Func_(_LinC_Radix_,TXX)(type_xx *_R_ ValueFirst,address *_R
 
 	return ValueFirst;
 }
-static type_xx *LinC_Func_(_LinC_Radix_Lite_,TXX)(type_xx *_R_ ValueFirst,TYPE_XX *_R_ ValueMess,ADDRESS Length,BOOLEAN Mode,TYPE_XX Scan)
+static type_xx *LinC_Func_(_LinC_Radix_Lite_,TXX)(type_xx *_R_ ValueFirst,TYPE_XX *_R_ ValueMess,ADDRESS Length,LOGICAL Mode,TYPE_XX Scan)
 {
 	type_xx *_R_ ValueLast=ValueFirst+Length;
 
@@ -404,18 +411,18 @@ static type_xx *LinC_Func_(_LinC_Radix_Lite_,TXX)(type_xx *_R_ ValueFirst,TYPE_X
 
 	return ValueFirst;
 }
-static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA,LOGICAL Mode)
 {
 	integer T[2];
 
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=Mode&1;
+		T[0]=(integer)Mode;
 		T[1]=T[0]^1;
 	}
 	else
 	{
-		T[1]=Mode&1;
+		T[1]=(integer)Mode;
 		T[0]=T[1]^1;
 	}
 	{
@@ -423,36 +430,36 @@ static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ _R_ ValueA,addres
 		_LinC_Swap_Address_(IndexA,T);
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(type_xx _PL_ _R_ ValueA,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(type_xx _PL_ _R_ ValueA,LOGICAL Mode)
 {
 	integer T[2];
 
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=Mode&1;
+		T[0]=(integer)Mode;
 		T[1]=T[0]^1;
 	}
 	else
 	{
-		T[1]=Mode&1;
+		T[1]=(integer)Mode;
 		T[0]=T[1]^1;
 	}
 	{
 		LinC_Func_(_LinC_Swap_,TXX)(ValueA,T);
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB,LOGICAL Mode)
 {
 	integer T[2];
 
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=Mode&1;
+		T[0]=(integer)Mode;
 		T[1]=T[0]^1;
 	}
 	else
 	{
-		T[1]=Mode&1;
+		T[1]=(integer)Mode;
 		T[0]=T[1]^1;
 	}
 	{
@@ -463,18 +470,18 @@ static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ _R_ ValueA,type_x
 		IndexB[1]=IndexA[T[1]];
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,BOOLEAN Mode)
+static general LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,LOGICAL Mode)
 {
 	integer T[2];
 
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=Mode&1;
+		T[0]=(integer)Mode;
 		T[1]=T[0]^1;
 	}
 	else
 	{
-		T[1]=Mode&1;
+		T[1]=(integer)Mode;
 		T[0]=T[1]^1;
 	}
 	{
@@ -482,7 +489,7 @@ static general LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(type_xx _PL_ _R_ ValueA,t
 		ValueB[1]=ValueA[T[1]];
 	}
 }
-static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,BOOLEAN Mode,integer Bits)
+static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,LOGICAL Mode,integer Bits)
 {
 	address Offset=LinC_Func_(_LinC_Radix_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
@@ -552,7 +559,7 @@ JUMP_B:
 			}
 	}
 }
-static general LinC_Func_(_LinC_Recur_Lite_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,BOOLEAN Mode,integer Bits)
+static general LinC_Func_(_LinC_Recur_Lite_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,LOGICAL Mode,integer Bits)
 {
 	address Offset=LinC_Func_(_LinC_Radix_Lite_,TXX)(ValueTarget,ValueSource,Length,Mode,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
@@ -709,6 +716,6 @@ JUMP_B:
 #ifdef __OPENCL_VERSION__
 #error This template cannot be built directly.
 #else
-static void _LinC_Void_(void) {}
+static void _LinC_Void_(void) { (void)(_LinC_Void_); }
 #endif
 #endif
