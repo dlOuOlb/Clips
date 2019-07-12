@@ -2,7 +2,7 @@
 /*	BoxClip is a simple data structure library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -112,15 +112,15 @@ struct _boxcase
 		address(_PL_ Size_)(BOXC_SS _PL_ StackSet);
 
 		//BoxClip : Reset All Stacks
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_All_)(BOXC_SS _PL_ StackSet);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_All_)(BOXC_SS _PL_ StackSet);
 		//BoxClip : Reset the Selected Stack
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect);
 
 		//BoxClip : Push an Object into the Selected Stack
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Push_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect,general _PL_ Object);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Push_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect,general _PL_ Object);
 		//BoxClip : Pop an Object from the Selected Stack
 		//＊Return value is the stored address.
 		general*(_PL_ Pop_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect);
@@ -130,8 +130,8 @@ struct _boxcase
 #define BoxC_SS_Foreach_(StackSet,StackSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(StackSet)?(((StackSelect)<((StackSet)->Number))?((general*)(((StackSet)->Count)+(StackSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.SS.Pop_(StackSet,StackSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Check the Selected Stack
-		//＊Return value is ~0 only if the selected stack has no NULL object, otherwise 0.
-		boolean(_PL_ Check_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect);
+		//＊Return value is 1 only if the selected stack has no NULL object, otherwise 0.
+		logical(_PL_ Check_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect);
 		//BoxClip : Peek an Object in the Seleted Stack without Change
 		//＊Return value is the stored address.
 		general*(_PL_ Peek_)(BOXC_SS _PL_ StackSet,ADDRESS StackSelect,ADDRESS Depth);
@@ -149,15 +149,15 @@ struct _boxcase
 		address(_PL_ Size_)(BOXC_QS _PL_ QueueSet);
 
 		//BoxClip : Reset All Queues
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_All_)(BOXC_QS _PL_ QueueSet);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_All_)(BOXC_QS _PL_ QueueSet);
 		//BoxClip : Reset the Selected Queue
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect);
 
 		//BoxClip : Enqueue an Object into the Selected Queue
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Enque_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect,general _PL_ Object);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Enque_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect,general _PL_ Object);
 		//BoxClip : Dequeue an Object from the Selected Queue
 		//＊Return value is the stored address.
 		general*(_PL_ Deque_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect);
@@ -167,8 +167,8 @@ struct _boxcase
 #define BoxC_QS_Foreach_(QueueSet,QueueSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(QueueSet)?(((QueueSelect)<((QueueSet)->Number))?((general*)(((QueueSet)->Count)+(QueueSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.QS.Deque_(QueueSet,QueueSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Check the Selected Queue
-		//＊Return value is ~0 only if the selected queue has no NULL object, otherwise 0.
-		boolean(_PL_ Check_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect);
+		//＊Return value is 1 only if the selected queue has no NULL object, otherwise 0.
+		logical(_PL_ Check_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect);
 		//BoxClip : Peek an Object in the Seleted Queue without Change
 		//＊Return value is the stored address.
 		general*(_PL_ Peek_)(BOXC_QS _PL_ QueueSet,ADDRESS QueueSelect,ADDRESS Depth);
@@ -186,35 +186,35 @@ struct _boxcase
 		address(_PL_ Size_)(BOXC_RS _PL_ RingSet);
 
 		//BoxClip : Reset All Rings
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_All_)(BOXC_RS _PL_ RingSet);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_All_)(BOXC_RS _PL_ RingSet);
 		//BoxClip : Reset the Selected Ring
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect);
 
 		//BoxClip : Insert an Object into the Selected Ring
-		//＊Enqueue left for direction 0, right for direction ~0.
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Insert_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,general _PL_ Object,BOOLEAN Direction);
+		//＊Enqueue left for direction 0, right for direction 1.
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Insert_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,general _PL_ Object,LOGICAL Direction);
 		//BoxClip : Desert an Object from the Selected Ring
-		//＊Dequeue left for direction 0, right for direction ~0.
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Desert_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,BOOLEAN Direction);
+		//＊Dequeue left for direction 0, right for direction 1.
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Desert_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,LOGICAL Direction);
 		//BoxClip : Rotate the Selected Ring
 		//＊Move the pin left for negative rotation, right for positive rotation.
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Rotate_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,SINTPTR Rotation);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Rotate_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,SINTPTR Rotation);
 
 		//BoxClip : Check the Selected Ring
-		//＊Return value is ~0 only if the selected ring has no NULL object, otherwise 0.
-		boolean(_PL_ Check_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect);
+		//＊Return value is 1 only if the selected ring has no NULL object, otherwise 0.
+		logical(_PL_ Check_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect);
 		//BoxClip : Read an Object in the Selected Ring without Change
-		//＊Read left for direction 0, right for direction ~0.
+		//＊Read left for direction 0, right for direction 1.
 		//＊Return value is the stored address.
-		general*(_PL_ Read_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,BOOLEAN Direction);
+		general*(_PL_ Read_)(BOXC_RS _PL_ RingSet,ADDRESS RingSelect,LOGICAL Direction);
 		//BoxClip : Spread Objects into the Memory Slot
 		//＊Return value is the number of read objects.
-		address(_PL_ Spread_)(MEMC_MS _PL_ MemorySlot,BOXC_RS _PL_ RingSet,ADDRESS RingSelect,SINTPTR Rotation,BOOLEAN Mode);
+		address(_PL_ Spread_)(MEMC_MS _PL_ MemorySlot,BOXC_RS _PL_ RingSet,ADDRESS RingSelect,SINTPTR Rotation,LOGICAL Mode);
 #define BoxC_RS_Foreach_(RingSet,RingSelect,Rotation,Direction,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_ _PL_(_Mark##Each)=(RingSet)?(((RingSelect)<((RingSet)->Number))?((general*)(((address*)((RingSet)->Ring))+((RingSelect)<<1))):(NULL)):(NULL),_PL_(_Stop##Each)=*(_Mark##Each),*(_Temp##Each)=FULL;(_Temp##Each)?((Acs_(general*,Each)=BoxC.RS.Read_(RingSet,RingSelect,Direction)),1):(0);(_Temp##Each)=(BoxC.RS.Rotate_(RingSet,RingSelect,Rotation))?(((_Stop##Each)==*(_Mark##Each))?(NULL):(FULL)):(NULL))
 	}
 	RS;
@@ -229,18 +229,18 @@ struct _boxcase
 		//BoxClip : Key Set Memory Occupation
 		address(_PL_ Size_)(BOXC_KS _PL_ KeySet);
 		//BoxClip : Remove All Keys
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_)(boxc_ks _PL_ KeySet);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_)(boxc_ks _PL_ KeySet);
 
 		//BoxClip : Key Functions
 		const struct
 		{
 			//BoxClip : Enroll a Key into the Key Set
-			boolean(_PL_ Enroll_)(boxc_ks _PL_ KeySet,general _PL_ Key);
+			logical(_PL_ Enroll_)(boxc_ks _PL_ KeySet,general _PL_ Key);
 			//BoxClip : Remove a Key from the Key Set
-			boolean(_PL_ Remove_)(boxc_ks _PL_ KeySet,GENERAL _PL_ Key);
+			logical(_PL_ Remove_)(boxc_ks _PL_ KeySet,GENERAL _PL_ Key);
 			//BoxClip : Verify a Key's Existence
-			boolean(_PL_ Verify_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
+			logical(_PL_ Verify_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
 			//BoxClip : Spread Keys into the Memory Slot
 			//＊Return value is the number of copied keys.
 			address(_PL_ Spread_)(MEMC_MS _PL_ MemorySlot,BOXC_KS _PL_ KeySet);
@@ -252,7 +252,7 @@ struct _boxcase
 		const struct
 		{
 			//BoxClip : Write a Value at the Key
-			boolean(_PL_ Writer_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key,general _PL_ Value);
+			logical(_PL_ Writer_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key,general _PL_ Value);
 			//BoxClip : Read a Value at the Key
 			general*(_PL_ Reader_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
 		}
@@ -264,7 +264,7 @@ struct _boxcase
 			//BoxClip : Convert from an Index to a Key
 			general*(_PL_ Search_)(BOXC_KS _PL_ KeySet,ADDRESS Index);
 			//BoxClip : Convert from a key to an Index
-			//＊Return value is ~0 for failure.
+			//＊Return value is 1 for failure.
 			address(_PL_ Locate_)(BOXC_KS _PL_ KeySet,GENERAL _PL_ Key);
 		}
 		Index;
@@ -281,15 +281,15 @@ struct _boxcase
 		//BoxClip : Flag Set Memory Occupation
 		address(_PL_ Size_)(BOXC_FS _PL_ FlagSet);
 		//BoxClip : Reset All Flags
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_All_)(BOXC_FS _PL_ FlagSet);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_All_)(BOXC_FS _PL_ FlagSet);
 
 		//BoxClip : Write a Boolean into the Selected Flag
-		//＊Boolean value should be 0 or ~0.
-		general(_PL_ Writer_)(BOXC_FS _PL_ FlagSet,ADDRESS FlagSelect,BOOLEAN Boolean);
+		//＊Boolean value should be 0 or 1.
+		general(_PL_ Writer_)(BOXC_FS _PL_ FlagSet,ADDRESS FlagSelect,LOGICAL Boolean);
 		//BoxClip : Read a Boolean from the Selected Flag
-		//＊Return Value is the stored boolean.
-		boolean(_PL_ Reader_)(BOXC_FS _PL_ FlagSet,ADDRESS FlagSelect);
+		//＊Return Value is the stored logical.
+		logical(_PL_ Reader_)(BOXC_FS _PL_ FlagSet,ADDRESS FlagSelect);
 		//BoxClip : Toggle a Boolean of the Selected Flag
 		general(_PL_ Toggle_)(BOXC_FS _PL_ FlagSet,ADDRESS FlagSelect);
 	}
@@ -317,8 +317,8 @@ struct _boxcase
 		address(_PL_ Height_)(BOXC_TR _PL_ Tree);
 
 		//BoxClip : Move the Tree on the New Root
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Move_)(boxc_tr _PL_ Tree,boxc_tr _PL_ NewRoot);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Move_)(boxc_tr _PL_ Tree,boxc_tr _PL_ NewRoot);
 	}
 	Tr;
 
@@ -337,9 +337,9 @@ struct _boxcase
 
 		//BoxClip : Case Finding
 		//＊Mode 0 : Naive Search
-		//　Mode ~0 : Binary Search
-		//＊Return value is a corresponding index of the found case, 0 for NULL, or ~0 for the unknown.
-		address(_PL_ Find_)(BOXC_SW _PL_ Switch,GENERAL _PL_ Case,BOOLEAN SearchMode);
+		//　Mode 1 : Binary Search
+		//＊Return value is a corresponding index of the found case, 0 for NULL, or 1 for the unknown.
+		address(_PL_ Find_)(BOXC_SW _PL_ Switch,GENERAL _PL_ Case,LOGICAL SearchMode);
 	}
 	Sw;
 };

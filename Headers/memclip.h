@@ -2,7 +2,7 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.07.11	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -13,8 +13,6 @@
 #define __STDC_WANT_LIB_EXT1__ (1)
 #endif
 
-#include <assert.h>
-#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,15 +24,11 @@
 #endif
 
 #if(Fold_(Definition:Primal Macros))
-#ifdef NULL
-static_assert(((size_t)(NULL))==((size_t)(0)),"NULL != 0");
-#else
+#ifndef NULL
 #define NULL ((void*)(0))
 #endif
 
-#ifdef FULL
-static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
-#else
+#ifndef FULL
 #define FULL ((void*)(~((size_t)(0))))
 #endif
 
@@ -108,9 +102,6 @@ MemC_Type_Rename_(char,byte_08,BYTE_08);				//MemClip : Byte Type
 MemC_Type_Rename_(int,integer,INTEGER);					//MemClip : Integer Type
 MemC_Type_Rename_(size_t,address,ADDRESS);				//MemClip : Address Type
 MemC_Func_Declare_(general,func_p_,FUNC_P_,general);	//MemClip : Function Pointer Type
-
-static_assert((sizeof(char)==1),"sizeof(char) != 1");
-static_assert((sizeof(void*)==sizeof(size_t)),"sizeof(void*) != sizeof(size_t)");
 #endif
 
 #if(Fold_(Definition:Advanced Types))
@@ -121,24 +112,6 @@ union _memclip
 	address V;	//MemClip : Access as Numeric Value
 };
 MemC_Type_Declare_(union,memclip,MEMCLIP);	//MemClip : Address Union
-
-//MemClip : Error Note Union
-union _memc_en
-{
-	//MemClip : Access as Enumerated Value
-	enum
-	{
-		MemCErrZero=0,
-		MemCErrDomain=EDOM,
-		MemCErrRange=ERANGE,
-		MemCErrIllegalSequence=EILSEQ,
-		MemCErrCustom=0x4D656D43
-	}
-	E;
-	errno_t I;	//MemClip : Access as Raw Value
-};
-MemC_Type_Declare_(union,memc_en,MEMC_EN);	//MemClip : Error Note Union
-static_assert(sizeof(memc_en)==sizeof(errno_t),"sizeof(memc_en)!=sizeof(errno_t)");
 
 //MemClip : Data Type Structure
 struct _memc_dt
@@ -297,11 +270,14 @@ struct _memcase
 #define MemC_Clear_1D_(Line,Elements) memset(Line,0,(Elements)*sizeof(*(Line)))
 
 	//MemClip : Data Copy in Byte Size
-#define MemC_Copy_Byte_(Source,Target,ByteSize) memcpy_s(Target,ByteSize,Source,ByteSize)
+	//＊Return value is 0 for failure, 1 for success.
+#define MemC_Copy_Byte_(Source,Target,ByteSize) (memcpy_s(Target,ByteSize,Source,ByteSize)==0)
 	//MemClip : Unit Data Copy
-#define MemC_Copy_Unit_(Source,Target) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),memcpy_s(Target,sizeof(*(Target)),Source,sizeof(*(Source))))
+	//＊Return value is 0 for failure, 1 for success.
+#define MemC_Copy_Unit_(Source,Target) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),(memcpy_s(Target,sizeof(*(Target)),Source,sizeof(*(Source)))==0))
 	//MemClip : 1D Array Data Copy
-#define MemC_Copy_1D_(Source,Target,Elements) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),memcpy_s(Target,(Elements)*sizeof(*(Target)),Source,(Elements)*sizeof(*(Source))))
+	//＊Return value is 0 for failure, 1 for success.
+#define MemC_Copy_1D_(Source,Target,Elements) (MemC_Assert_(sizeof(*(Source))==sizeof(*(Target))),(memcpy_s(Target,(Elements)*sizeof(*(Target)),Source,(Elements)*sizeof(*(Source)))==0))
 
 	//MemClip : Data Compare in Byte Size
 #define MemC_Compare_Byte_(MemoryA,MemoryB,ByteSize) memcmp(MemoryA,MemoryB,ByteSize)
@@ -315,10 +291,12 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Array Data Copy
-		errno_t(_PL_ DN_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ DN_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS _PL_ SourceOffset,ADDRESS _PL_ TargetOffset,ADDRESS _PL_ CopyLength,ADDRESS _PL_ SourceShape,ADDRESS _PL_ TargetShape,ADDRESS Dimensions,ADDRESS TypeSize);
 #define MemC_Copy_ND_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims) (MemC_Assert_(sizeof(*(S))==sizeof(*(T))),MemC.Copy.DN_(S,T,SOfs,TOfs,Lng,SShp,TShp,Dims,sizeof(*(S))))
 		//MemClip : Array Data Copy with Step
-		errno_t(_PL_ Step_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS CopyNums,ADDRESS SourceStepBytes,ADDRESS TargetStepBytes,ADDRESS EachCopyBytes);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Step_)(GENERAL _PL_ _R_ Source1DAccess,general _PL_ _R_ Target1DAccess,ADDRESS CopyNums,ADDRESS SourceStepBytes,ADDRESS TargetStepBytes,ADDRESS EachCopyBytes);
 	}
 	Copy;
 
@@ -326,7 +304,8 @@ struct _memcase
 	const struct
 	{
 		//MemClip : 1D Array Data Preset
-		errno_t(_PL_ D1_)(general _PL_ Memory,GENERAL _PL_ Tile,ADDRESS Number,ADDRESS TypeSize);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ D1_)(general _PL_ _R_ Memory,GENERAL _PL_ _R_ Tile,ADDRESS Number,ADDRESS TypeSize);
 #define MemC_Preset_1D_(Memory,Tile,Elements) (MemC_Assert_(sizeof(*(Memory))==sizeof(*(Tile))),MemC.Preset.D1_(Memory,Tile,Elements,sizeof(*(Tile))))
 	}
 	Preset;
@@ -340,7 +319,8 @@ struct _memcase
 		logical(_PL_ Shape_)(ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address _PL_ TargetShape,ADDRESS Dimensions);
 
 		//MemClip : Array Data Reformation - See also "MemC_Reform_Shape_"
-		errno_t(_PL_ DN_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ DN_)(GENERAL _PL_ Source1DAccess,general _PL_ Target1DAccess,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,address Dimensions,address TypeSize);
 #define MemC_Reform_ND_(S,T,SShp,Axis,Dims) (MemC_Assert_(sizeof(*(S))==sizeof(*(T))),MemC.Reform.DN_(S,T,SShp,Axis,Dims,sizeof(*(S))))
 	}
 	Reform;
@@ -367,7 +347,8 @@ struct _memcase
 		//＊If IndexTable is not NULL, then its required size is Count×sizeof(address) bytes.
 		//＊Required BufferSpace size is 2×Count×sizeof(address) bytes.
 		//＊If Comp_(ReferTable[m],ReferTable[n]) is not 0, then those two will be swapped during the process.
-		errno_t(_PL_ Do_)(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ ReferTable,address _PL_ IndexTable,address _PL_ BufferSpace,ADDRESS Count);
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ Do_)(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ ReferTable,address _PL_ IndexTable,address _PL_ BufferSpace,ADDRESS Count);
 	}
 	Sort;
 

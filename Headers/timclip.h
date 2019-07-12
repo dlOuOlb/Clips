@@ -2,7 +2,7 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
@@ -118,21 +118,21 @@ struct _timcase
 
 		//TimClip : Random Generator State Reset
 		//＊RandomGenerator -> State[idx]＝time(NULL)＋idx;
-		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reset_)(TIMC_RG _PL_ RandomGenerator);
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Reset_)(TIMC_RG _PL_ RandomGenerator);
 
 		//TimClip : Random Generation Functions
 		const struct
 		{
 			//TimClip : Random Generation for Specified Bytes
 			//＊MWC64X algorithm is used.
-			//＊Return value is ~0 for success, 0 for failure.
-			boolean(_PL_ Byte_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,general _PL_ _R_ ArrayData,ADDRESS ArraySize);
+			//＊Return value is 1 for success, 0 for failure.
+			logical(_PL_ Byte_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,general _PL_ _R_ ArrayData,ADDRESS ArraySize);
 			//TimClip : Random Permutation
 			//＊Knuth shuffles algorithm is used.
 			//＊An array whose length exceeds ((2^64)-1) is not allowed.
-			//＊Return value is ~0 for success, 0 for failure.
-			boolean(_PL_ Perm_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,address _PL_ _R_ Array,ADDRESS Length);
+			//＊Return value is 1 for success, 0 for failure.
+			logical(_PL_ Perm_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,address _PL_ _R_ Array,ADDRESS Length);
 		}
 		Rand;
 
@@ -140,15 +140,15 @@ struct _timcase
 		const struct
 		{
 			//TimClip : 32-bit Integer Array of Uniform Distribution U[L, H]
-			//＊Return value is ~0 for success, 0 for failure.
-			boolean(_PL_ I32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,inte_32 _PL_ _R_ Array,ADDRESS Length,INTE_32 Low,INTE_32 High);
+			//＊Return value is 1 for success, 0 for failure.
+			logical(_PL_ I32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,inte_32 _PL_ _R_ Array,ADDRESS Length,INTE_32 Low,INTE_32 High);
 
 			//TimClip : 32-bit Real Array of Uniform Distribution U[L, H)
-			//＊Return value is ~0 for success, 0 for failure.
-			boolean(_PL_ R32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Low,REAL_32 High);
+			//＊Return value is 1 for success, 0 for failure.
+			logical(_PL_ R32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Low,REAL_32 High);
 			//TimClip : 64-bit Real Array of Uniform Distribution U[L, H)
-			//＊Return value is ~0 for success, 0 for failure.
-			boolean(_PL_ R64_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Low,REAL_64 High);
+			//＊Return value is 1 for success, 0 for failure.
+			logical(_PL_ R64_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Low,REAL_64 High);
 		}
 		Uni;
 
@@ -157,12 +157,12 @@ struct _timcase
 		{
 			//TimClip : 32-bit Real Array of Gaussian Distribution N(μ, σ²)
 			//＊Box-Muller transform is used.
-			//＊Return value is ~0 for success, 0 for failure.
-			boolean(_PL_ R32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Mean,REAL_32 Deviation);
+			//＊Return value is 1 for success, 0 for failure.
+			logical(_PL_ R32_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_32 _PL_ _R_ Array,ADDRESS Length,REAL_32 Mean,REAL_32 Deviation);
 			//TimClip : 64-bit Real Array of Gaussian Distribution N(μ, σ²)
 			//＊Box-Muller transform is used.
-			//＊Return value is ~0 for success, 0 for failure.
-			boolean(_PL_ R64_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Mean,REAL_64 Deviation);
+			//＊Return value is 1 for success, 0 for failure.
+			logical(_PL_ R64_)(TIMC_RG _PL_ RandomGenerator,ADDRESS StateSelect,real_64 _PL_ _R_ Array,ADDRESS Length,REAL_64 Mean,REAL_64 Deviation);
 		}
 		Gau;
 	}

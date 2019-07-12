@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -75,8 +75,6 @@
 #if(Fold_(Definition:Scalar and Vector Types))
 #define _Parse_(oldtype,newtype,NEWTYPE) OCLC_Type_Rename_(oldtype,newtype,NEWTYPE);OCLC_Type_Rename_(oldtype##2,_02_##newtype,_02_##NEWTYPE);OCLC_Type_Rename_(oldtype##3,_03_##newtype,_03_##NEWTYPE);OCLC_Type_Rename_(oldtype##4,_04_##newtype,_04_##NEWTYPE);OCLC_Type_Rename_(oldtype##8,_08_##newtype,_08_##NEWTYPE);OCLC_Type_Rename_(oldtype##16,_16_##newtype,_16_##NEWTYPE);
 
-enum _boolean { BitCNull=0,BitCFull=~0 };
-OCLC_Type_Declare_(enum,boolean,BOOLEAN);
 OCLC_Type_Rename_(intptr_t,sintptr,SINTPTR);
 OCLC_Type_Rename_(uintptr_t,uintptr,UINTPTR);
 
@@ -152,7 +150,7 @@ OCLC_Type_Declare_(union,bitc_pp,BITC_PP);
 #if(1)
 #include <stdint.h>
 #ifdef _CL
-#include <CL\opencl.h>
+#include <CL/opencl.h>
 #endif
 #ifdef __OPENCL_H
 #include <oclclip.h>
@@ -184,15 +182,6 @@ static_assert((~((address)(0)))==((address)((inte_08)(~0))),"Casting from a sign
 #endif
 
 #if(Fold_(Definition:Derived Types))
-//BitClip : Boolean Enumeration
-enum _boolean
-{
-	BitCNull=0,	//BitClip : All Bits Off
-	BitCFull=~0	//BitClip : All Bits On
-};
-MemC_Type_Declare_(enum,boolean,BOOLEAN);	//BitClip : Boolean Enumeration
-static_assert(sizeof(boolean)==sizeof(integer),"sizeof(boolean)!=sizeof(integer)");
-
 //BitClip : Pointer Union
 union _bitclip
 {
@@ -330,13 +319,6 @@ struct _bitcase
 	//BitClip : Library Version
 	BYTE_08 _PL_ Version;
 
-	//BitClip : Boolean Table
-	//＊[~1] : !1
-	//　[~0] : !0
-	//　[0] : 0
-	//　[1] : ~0
-	BOOLEAN _PL_ Boolean;
-
 	//BitClip : Type Descriptor Set
 	const struct
 	{
@@ -429,13 +411,12 @@ struct _bitcase
 	}
 	Const;
 
-#if(Fold_(Domain:Host))
 	const struct
 	{
 		//BitClip : Array Reformation
 		//＊SourceShape[dim] == TargetShape[ReformingAxis[dim]] where dim＜Dimensions.
 		//＊Return value is ~0 for success, 0 for failure.
-		boolean(_PL_ Reform_)(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,ADDRESS Dimensions,ADDRESS TypeSize);
+		logical(_PL_ Reform_)(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,ADDRESS Dimensions,ADDRESS TypeSize);
 #define BitC_Reform_(S,T,SShp,StoTAxis,Dims) ((sizeof(*(S))==sizeof(*(T)))?(BitC.Reform_(S,T,SShp,StoTAxis,Dims,sizeof(*(S)))):(BitCNull))
 
 		//BitClip : Endian Flipping Function Set
@@ -1341,151 +1322,13 @@ struct _bitcase
 			bitc_bp(_PL_ Jumper_)(BITC_BP BitPointer,SINTPTR Move);
 			//BitClip : Bit Pointer Read
 			//＊Return value is 0 or ~0.
-			boolean(_PL_ Reader_)(BITC_BP BitPointer);
+			logical(_PL_ Reader_)(BITC_BP BitPointer);
 			//BitClip : Bit Pointer Write
 			//＊Bool value should be 0 or ~0.
-			general(_PL_ Writer_)(BITC_BP BitPointer,BOOLEAN Boolean);
+			general(_PL_ Writer_)(BITC_BP BitPointer,LOGICAL Boolean);
 		}
 		BP;
 	};
-#endif
-
-#if(Fold_(Domain:Device)&&defined(__OPENCL_H))
-	//BitClip : OpenCL Function Set
-	const struct
-	{
-		//BitClip : Program Build Functions
-		const struct
-		{
-			//BitClip : Program Build into Binary Files with 8-bit String Path
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-			//　(SourcePath) Example : "../../Kernels/bitclip.cl"
-			//　(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
-			general(_PL_ T08_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error);
-			//BitClip : Program Build into Binary Files with 16-bit String Path
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-			//　(SourcePath) Example : "../../Kernels/bitclip.cl"
-			//　(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
-			general(_PL_ T16_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error);
-		}
-		Ready;
-
-		//BitClip : Program Creation Functions
-		const struct
-		{
-			//BitClip : Program Manager Creation with 8-bit String Path - Delete with "OCLC.PM.Delete_"
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
-			oclc_pm*(_PL_ T08_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-			//BitClip : Program Manager Creation with 16-bit String Path - Delete with "OCLC.PM.Delete_"
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
-			oclc_pm*(_PL_ T16_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-		}
-		Create;
-
-		//BitClip : Pin Value Casting
-		//＊Required (Buffer) size is 4×((DeviceAddressBits)÷8) bytes.
-		//＊Return address is (Pin) for the same address bits between the host and the device, or (Buffer) otherwise.
-		GENERAL*(_PL_ Pin_)(OCLC_MP _PL_ Pin,general _PL_ Buffer,ADDRESS DeviceAddressBits);
-
-		const struct
-		{
-			//BitClip : Endian Flipping
-			general(_PL_ Endian_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ Data,OCLC_MP _PL_ Amount,oclc_ef _PL_ Error);
-
-			//BitClip : Array Reformation
-			//＊SourceAmount->S[dim] == TargetAmount->S[ReformingAxis->S[dim]] where dim＝0, 1, 2, 3.
-			//＊Source and Target's type sizes should be same.
-			general(_PL_ Reform_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ Source,OCLC_MH _PL_ Target,OCLC_MP _PL_ SourceAmount,OCLC_MP _PL_ ReformingAxis,oclc_ef _PL_ Error);
-
-			//BitClip : Type Casting Function
-			general(_PL_ Caster_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutO,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-
-			//BitClip : Bit Operation Function Set
-			const struct
-			{
-				//BitClip : NOT Operation
-				//＊C and A's type sizes should be same.
-				general(_PL_ N_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-				//BitClip : Shift Operation
-				//＊C and A's types should be same.
-				general(_PL_ S_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,INTEGER Shift,oclc_ef _PL_ Error);
-				//BitClip : AND Operation
-				//＊C and A's type sizes should be same.
-				//＊Required (Mask) size is the type size of those to be calculated.
-				general(_PL_ A_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Mask,oclc_ef _PL_ Error);
-				//BitClip : AND Operation
-				//＊C, A, and B's type sizes should be same.
-				general(_PL_ A_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-				//BitClip : OR Operation
-				//＊C and A's type sizes should be same.
-				//＊Required (Mask) size is the type size of those to be calculated.
-				general(_PL_ O_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Mask,oclc_ef _PL_ Error);
-				//BitClip : OR Operation
-				//＊C, A, and B's type sizes should be same.
-				general(_PL_ O_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-				//BitClip : XOR Operation
-				//＊C and A's type sizes should be same.
-				//＊Required (Mask) size is the type size of those to be calculated.
-				general(_PL_ X_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Mask,oclc_ef _PL_ Error);
-				//BitClip : XOR Operation
-				//＊C, A, and B's type sizes should be same.
-				general(_PL_ X_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-			}
-			BO;
-
-			//BitClip : Relational Operation Function Set
-			const struct
-			{
-				//BitClip : EQ Operation
-				//＊C and A's type sizes should be same.
-				//　C's type should be inte_xx.
-				//＊Required (Value) size is the type size of those to be calculated.
-				general(_PL_ E_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-				//BitClip : EQ Operation
-				//＊C, A, and B's type sizes should be same.
-				//　C's type should be inte_xx.
-				//　A and B's types should be same.
-				general(_PL_ E_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-				//BitClip : NE Operation
-				//＊C and A's type sizes should be same.
-				//　C's type should be inte_xx.
-				//＊Required (Value) size is the type size of those to be calculated.
-				general(_PL_ N_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-				//BitClip : NE Operation
-				//＊C, A, and B's type sizes should be same.
-				//　C's type should be inte_xx.
-				//　A and B's types should be same.
-				general(_PL_ N_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-				//BitClip : GE Operation
-				//＊C and A's type sizes should be same.
-				//　C's type should be inte_xx.
-				//＊Required (Value) size is the type size of those to be calculated.
-				general(_PL_ G_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-				//BitClip : GE Operation
-				//＊C, A, and B's type sizes should be same.
-				//　C's type should be inte_xx.
-				//　A and B's types should be same.
-				general(_PL_ G_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-				//BitClip : LT Operation
-				//＊C and A's type sizes should be same.
-				//　C's type should be inte_xx.
-				//＊Required (Value) size is the type size of those to be calculated.
-				general(_PL_ L_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-				//BitClip : LT Operation
-				//＊C, A, and B's type sizes should be same.
-				//　C's type should be inte_xx.
-				//　A and B's types should be same.
-				general(_PL_ L_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-			}
-			RO;
-		};
-	}
-	CL;
-#endif
 };
 MemC_Type_Declare_(struct,bitcase,BITCASE);	//BitClip : Library Case Structure
 
@@ -1493,6 +1336,148 @@ MemC_Type_Declare_(struct,bitcase,BITCASE);	//BitClip : Library Case Structure
 extern BITCASE BitC;
 //BitClip : Indirect access to the library case object.
 extern BITCASE *BitC_(general);
+
+#ifdef __OPENCL_H
+//BitClip : OpenCL Extension Structure
+struct _bitc_cl
+{
+	//BitClip : Program Build Functions
+	const struct
+	{
+		//BitClip : Program Build into Binary Files with 8-bit String Path
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
+		//　(SourcePath) Example : "../../Kernels/bitclip.cl"
+		//　(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
+		general(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error);
+		//BitClip : Program Build into Binary Files with 16-bit String Path
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
+		//　(SourcePath) Example : "../../Kernels/bitclip.cl"
+		//　(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
+		general(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error);
+	}
+	Ready;
+
+	//BitClip : Program Creation Functions
+	const struct
+	{
+		//BitClip : Program Manager Creation with 8-bit String Path - Delete with "OCLC.PM.Delete_"
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
+		oclc_pm*(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+		//BitClip : Program Manager Creation with 16-bit String Path - Delete with "OCLC.PM.Delete_"
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
+		oclc_pm*(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+	}
+	Create;
+
+	//BitClip : Pin Value Casting
+	//＊Required (Buffer) size is 4×((DeviceAddressBits)÷8) bytes.
+	//＊Return address is (Pin) for the same address bits between the host and the device, or (Buffer) otherwise.
+	GENERAL*(_PL_ Pin_)(OCLC_MP _PL_ Pin,general _PL_ Buffer,ADDRESS DeviceAddressBits);
+
+	const struct
+	{
+		//BitClip : Endian Flipping
+		general(_PL_ Endian_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ Data,OCLC_MP _PL_ Amount,oclc_ef _PL_ Error);
+
+		//BitClip : Array Reformation
+		//＊SourceAmount->S[dim] == TargetAmount->S[ReformingAxis->S[dim]] where dim＝0, 1, 2, 3.
+		//＊Source and Target's type sizes should be same.
+		general(_PL_ Reform_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ Source,OCLC_MH _PL_ Target,OCLC_MP _PL_ SourceAmount,OCLC_MP _PL_ ReformingAxis,oclc_ef _PL_ Error);
+
+		//BitClip : Type Casting Function
+		general(_PL_ Caster_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutO,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+
+		//BitClip : Bit Operation Function Set
+		const struct
+		{
+			//BitClip : NOT Operation
+			//＊C and A's type sizes should be same.
+			general(_PL_ N_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+			//BitClip : Shift Operation
+			//＊C and A's types should be same.
+			general(_PL_ S_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,INTEGER Shift,oclc_ef _PL_ Error);
+			//BitClip : AND Operation
+			//＊C and A's type sizes should be same.
+			//＊Required (Mask) size is the type size of those to be calculated.
+			general(_PL_ A_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Mask,oclc_ef _PL_ Error);
+			//BitClip : AND Operation
+			//＊C, A, and B's type sizes should be same.
+			general(_PL_ A_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+			//BitClip : OR Operation
+			//＊C and A's type sizes should be same.
+			//＊Required (Mask) size is the type size of those to be calculated.
+			general(_PL_ O_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Mask,oclc_ef _PL_ Error);
+			//BitClip : OR Operation
+			//＊C, A, and B's type sizes should be same.
+			general(_PL_ O_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+			//BitClip : XOR Operation
+			//＊C and A's type sizes should be same.
+			//＊Required (Mask) size is the type size of those to be calculated.
+			general(_PL_ X_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Mask,oclc_ef _PL_ Error);
+			//BitClip : XOR Operation
+			//＊C, A, and B's type sizes should be same.
+			general(_PL_ X_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+		}
+		BO;
+
+		//BitClip : Relational Operation Function Set
+		const struct
+		{
+			//BitClip : EQ Operation
+			//＊C and A's type sizes should be same.
+			//　C's type should be inte_xx.
+			//＊Required (Value) size is the type size of those to be calculated.
+			general(_PL_ E_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+			//BitClip : EQ Operation
+			//＊C, A, and B's type sizes should be same.
+			//　C's type should be inte_xx.
+			//　A and B's types should be same.
+			general(_PL_ E_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+			//BitClip : NE Operation
+			//＊C and A's type sizes should be same.
+			//　C's type should be inte_xx.
+			//＊Required (Value) size is the type size of those to be calculated.
+			general(_PL_ N_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+			//BitClip : NE Operation
+			//＊C, A, and B's type sizes should be same.
+			//　C's type should be inte_xx.
+			//　A and B's types should be same.
+			general(_PL_ N_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+			//BitClip : GE Operation
+			//＊C and A's type sizes should be same.
+			//　C's type should be inte_xx.
+			//＊Required (Value) size is the type size of those to be calculated.
+			general(_PL_ G_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+			//BitClip : GE Operation
+			//＊C, A, and B's type sizes should be same.
+			//　C's type should be inte_xx.
+			//　A and B's types should be same.
+			general(_PL_ G_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+			//BitClip : LT Operation
+			//＊C and A's type sizes should be same.
+			//　C's type should be inte_xx.
+			//＊Required (Value) size is the type size of those to be calculated.
+			general(_PL_ L_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+			//BitClip : LT Operation
+			//＊C, A, and B's type sizes should be same.
+			//　C's type should be inte_xx.
+			//　A and B's types should be same.
+			general(_PL_ L_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+		}
+		RO;
+	};
+};
+MemC_Type_Declare_(struct,bitc_cl,BITC_CL);	//BitClip : OpenCL Extension Structure
+
+//BitClip : OpenCL Extension Object
+extern BITC_CL BitCL;
+//BitClip : Indirect access to the OpenCL extension object.
+extern BITC_CL *BitCL_(general);
+#endif
 #endif
 #endif
 #endif

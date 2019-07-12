@@ -2,7 +2,7 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.06.21	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_LINCLIP
@@ -14,7 +14,7 @@
 
 #if(1)
 #ifdef _CL
-#include <CL\opencl.h>
+#include <CL/opencl.h>
 #endif
 #include <bitclip.h>
 #endif
@@ -26,7 +26,6 @@ struct _lincase
 	//LinClip : Library Version
 	BYTE_08 _PL_ Version;
 
-#if(Fold_(Domain:Host))
 	const struct
 	{
 		//LinClip : Arithmetic Progression Functions
@@ -566,100 +565,100 @@ struct _lincase
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋1) bytes,
 			//　else required (Buffer) size is (Length)×1 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I08_)(inte_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I08_)(inte_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 16-Bit Integer Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×2 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋2) bytes,
 			//　else required (Buffer) size is (Length)×2 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I16_)(inte_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I16_)(inte_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 32-Bit Integer Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×4 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋4) bytes,
 			//　else required (Buffer) size is (Length)×4 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I32_)(inte_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I32_)(inte_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 64-Bit Integer Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×8 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋8) bytes,
 			//　else required (Buffer) size is (Length)×8 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ I64_)(inte_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ I64_)(inte_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 8-Bit Natural Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×1 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋1) bytes,
 			//　else required (Buffer) size is (Length)×1 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D08_)(data_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D08_)(data_08 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 16-Bit Natural Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×2 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋2) bytes,
 			//　else required (Buffer) size is (Length)×2 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D16_)(data_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D16_)(data_16 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 32-Bit Natural Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×4 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋4) bytes,
 			//　else required (Buffer) size is (Length)×4 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D32_)(data_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D32_)(data_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 64-Bit Natural Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×8 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋8) bytes,
 			//　else required (Buffer) size is (Length)×8 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ D64_)(data_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ D64_)(data_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 32-Bit Real Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×4 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋4) bytes,
 			//　else required (Buffer) size is (Length)×4 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ R32_)(real_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ R32_)(real_32 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 			//LinClip : 64-Bit Real Recursive Radix Sorting
 			//＊Required (ValueLine) size is (Length)×8 bytes.
 			//　If (IndexLine) is not NULL,
 			//　then required (IndexLine) size is (Length)×sizeof(address) bytes,
 			//　and required (Buffer) size is (Length)×(sizeof(address)＋8) bytes,
 			//　else required (Buffer) size is (Length)×8 bytes.
-			//＊Mode Null : Ascending Order
-			//　Mode Full : Descending Order
+			//＊Mode 0 : Ascending Order
+			//　Mode 1 : Descending Order
 			//＊(ValueLine) and (IndexLine) should be initialized before processing.
-			general(_PL_ R64_)(real_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,BOOLEAN Mode);
+			general(_PL_ R64_)(real_64 _PL_ _R_ ValueLine,address _PL_ _R_ IndexLine,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode);
 		}
 		Order;
 
@@ -699,113 +698,6 @@ struct _lincase
 		}
 		Map_1;
 	};
-#endif
-
-#if(Fold_(Domain:Device)&&defined(__OPENCL_H))
-	//LinClip : OpenCL Function Set
-	const struct
-	{
-		//LinClip : Program Build Functions
-		const struct
-		{
-			//LinClip : Program Build into Binary Files with 8-bit String Path
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-			//　(SourcePath) Example : "../../Kernels/linclip.cl"
-			//　(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-			general(_PL_ T08_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-			//LinClip : Program Build into Binary Files with 16-bit String Path
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-			//　(SourcePath) Example : "../../Kernels/linclip.cl"
-			//　(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-			general(_PL_ T16_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-		}
-		Ready;
-
-		//LinClip : Program Creation Functions
-		const struct
-		{
-			//LinClip : Program Manager Creation with 8-bit String Path - Delete with "OCLC.PM.Delete_"
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-			oclc_pm*(_PL_ T08_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-			//LinClip : Program Manager Creation with 16-bit String Path - Delete with "OCLC.PM.Delete_"
-			//＊The number of binary paths must be same as the number of devices associated with the context.
-			//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-			oclc_pm*(_PL_ T16_)(oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-		}
-		Create;
-
-		const struct
-		{
-			//LinClip : Increment
-			//＊C and A's types should be same and one of BitC.Type.
-			//＊Required (Value) size is the type size of those to be calculated.
-			general(_PL_ Inc_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-
-			//LinClip : Amplification
-			//＊C and A's types should be same and one of BitC.Type.
-			//＊Required (Value) size is the type size of those to be calculated.
-			general(_PL_ Amp_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-
-			//LinClip : Addition
-			//＊C, A, and B's types should be same and one of BitC.Type.
-			general(_PL_ Add_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-
-			//LinClip : Subtraction
-			//＊C, A, and B's types should be same and one of BitC.Type.
-			general(_PL_ Sub_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-
-			//LinClip : Multiplication
-			//＊C, A, and B's types should be same and one of BitC.Type.
-			general(_PL_ Mul_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-
-			//LinClip : Division
-			//＊C and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
-			//＊Required (Value) size is the type size of those to be calculated.
-			general(_PL_ Div_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-
-			//LinClip : Inverse
-			//＊C and A's types should be same and one of BitC.Type.
-			//＊Required (Value) size is the type size of those to be calculated.
-			general(_PL_ Inv_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-
-			//LinClip : Division
-			//＊C, A, and B's types should be same and one of BitC.Type.
-			general(_PL_ Div_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
-
-			//LinClip : Modulo
-			//＊C and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
-			//＊Required (Value) size is the type size of those to be calculated.
-			general(_PL_ Mod_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
-
-			//LinClip : Summation
-			//＊C and A's types should be same and one of BitC.Type.
-			general(_PL_ Sum_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
-
-			//LinClip : Dot Product
-			//＊C, A, and B's types should be same and one of BitC.Type.
-			general(_PL_ Dot_2_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
-
-			//LinClip : Maximum
-			//＊I's type size×8 should be same as the device's address bits.
-			//＊A's type should be one of BitC.Type.
-			general(_PL_ Max_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
-
-			//LinClip : Minimum
-			//＊I's type size×8 should be same as the device's address bits.
-			//　A's type should be one of BitC.Type.
-			general(_PL_ Min_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
-
-			//LinClip : Mapping
-			//＊I's type size×8 should be same as the device's address bits.
-			//　C and A's type sizes should be same.
-			general(_PL_ Map_1_)(OCLC_PM _PL_,oclc_qo _PL_ Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
-		};
-	}
-	CL;
-#endif
 };
 MemC_Type_Declare_(struct,lincase,LINCASE);	//LinClip : Library Case Structure
 
@@ -813,6 +705,117 @@ MemC_Type_Declare_(struct,lincase,LINCASE);	//LinClip : Library Case Structure
 extern LINCASE LinC;
 //LinClip : Indirect access to the library case object.
 extern LINCASE *LinC_(general);
+
+#ifdef __OPENCL_H
+//LinClip : OpenCL Extension Structure
+struct _linc_cl
+{
+	//LinClip : Program Build Functions
+	const struct
+	{
+		//LinClip : Program Build into Binary Files with 8-bit String Path
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
+		//　(SourcePath) Example : "../../Kernels/linclip.cl"
+		//　(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+		general(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+		//LinClip : Program Build into Binary Files with 16-bit String Path
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
+		//　(SourcePath) Example : "../../Kernels/linclip.cl"
+		//　(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+		general(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+	}
+	Ready;
+
+	//LinClip : Program Creation Functions
+	const struct
+	{
+		//LinClip : Program Manager Creation with 8-bit String Path - Delete with "OCLC.PM.Delete_"
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+		oclc_pm*(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+		//LinClip : Program Manager Creation with 16-bit String Path - Delete with "OCLC.PM.Delete_"
+		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
+		oclc_pm*(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+	}
+	Create;
+
+	const struct
+	{
+		//LinClip : Increment
+		//＊C and A's types should be same and one of BitC.Type.
+		//＊Required (Value) size is the type size of those to be calculated.
+		general(_PL_ Inc_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+
+		//LinClip : Amplification
+		//＊C and A's types should be same and one of BitC.Type.
+		//＊Required (Value) size is the type size of those to be calculated.
+		general(_PL_ Amp_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+
+		//LinClip : Addition
+		//＊C, A, and B's types should be same and one of BitC.Type.
+		general(_PL_ Add_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+
+		//LinClip : Subtraction
+		//＊C, A, and B's types should be same and one of BitC.Type.
+		general(_PL_ Sub_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+
+		//LinClip : Multiplication
+		//＊C, A, and B's types should be same and one of BitC.Type.
+		general(_PL_ Mul_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+
+		//LinClip : Division
+		//＊C and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
+		//＊Required (Value) size is the type size of those to be calculated.
+		general(_PL_ Div_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+
+		//LinClip : Inverse
+		//＊C and A's types should be same and one of BitC.Type.
+		//＊Required (Value) size is the type size of those to be calculated.
+		general(_PL_ Inv_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+
+		//LinClip : Division
+		//＊C, A, and B's types should be same and one of BitC.Type.
+		general(_PL_ Div_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+
+		//LinClip : Modulo
+		//＊C and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
+		//＊Required (Value) size is the type size of those to be calculated.
+		general(_PL_ Mod_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+
+		//LinClip : Summation
+		//＊C and A's types should be same and one of BitC.Type.
+		general(_PL_ Sum_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+
+		//LinClip : Dot Product
+		//＊C, A, and B's types should be same and one of BitC.Type.
+		general(_PL_ Dot_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+
+		//LinClip : Maximum
+		//＊I's type size×8 should be same as the device's address bits.
+		//＊A's type should be one of BitC.Type.
+		general(_PL_ Max_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+
+		//LinClip : Minimum
+		//＊I's type size×8 should be same as the device's address bits.
+		//　A's type should be one of BitC.Type.
+		general(_PL_ Min_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+
+		//LinClip : Mapping
+		//＊I's type size×8 should be same as the device's address bits.
+		//　C and A's type sizes should be same.
+		general(_PL_ Map_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+	};
+};
+MemC_Type_Declare_(struct,linc_cl,LINC_CL);	//LinClip : OpenCL Extension Structure
+
+//LinClip : OpenCL Extension Object
+extern LINC_CL LinCL;
+//LinClip : Indirect access to the OpenCL extension object.
+extern LINC_CL *LinCL_(general);
+#endif
 #endif
 #endif
 #endif

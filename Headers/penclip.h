@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.07.11	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
@@ -10,18 +10,13 @@
 
 #if(1)
 #include <stdio.h>
-#include <uchar.h>
 #include <wchar.h>
 #include <memclip.h>
 #endif
 
 #if(Fold_(Definition:Primal Types))
 MemC_Type_Rename_(char,text_08,TEXT_08);		//PenClip : 8-bit Character
-static_assert((sizeof(text_08)==1),"sizeof(text_08) != 1");
 MemC_Type_Rename_(wchar_t,text_16,TEXT_16);		//PenClip : 16-bit Character
-static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
-
-static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
 #endif
 
 #if(Fold_(Definition:Advanced Types))
@@ -123,7 +118,7 @@ struct _pencase
 		general(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 Value,ADDRESS Count);
 		//PenClip : 16-bit Character Setting
 		general(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count);
-#define PenC_Setter_(Buffer,Value,Count) __dl{switch(sizeof(Value)){case 1:PenC.Setter.T08_((text_08*)(Buffer),(text_08)(Value),Count);break;case 2:PenC.Setter.T16_((text_16*)(Buffer),(text_16)(Value),Count);break;default:{static_assert(sizeof(*(Buffer))==sizeof(Value),"Type Size Mismatch");static_assert((sizeof(Value)==1)|(sizeof(Value)==2),"Type Size Unsupported");}}}lb__
+#define PenC_Setter_(Buffer,Value,Count) __dl{switch(sizeof(Value)){case 1:PenC.Setter.T08_((text_08*)(Buffer),(text_08)(Value),Count);break;case 2:PenC.Setter.T16_((text_16*)(Buffer),(text_16)(Value),Count);break;default:{MemC_Assert_(sizeof(*(Buffer))==sizeof(Value));MemC_Assert_((sizeof(Value)==1)|(sizeof(Value)==2));}}}lb__
 	}
 	Setter;
 
@@ -131,9 +126,9 @@ struct _pencase
 	const struct
 	{
 		//PenClip : 8-bit Character Finding
-		text_08*(_PL_ T08_)(TEXT_08 _PL_ Buffer,TEXT_08 Value,ADDRESS Count);
+		text_08*(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 Value,ADDRESS Count);
 		//PenClip : 16-bit Character Finding
-		text_16*(_PL_ T16_)(TEXT_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count);
+		text_16*(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count);
 	}
 	Finder;
 
@@ -141,12 +136,13 @@ struct _pencase
 	const struct
 	{
 		//PenClip : String Conversion Functions
+		//＊Return value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PenClip : Narrow Multi-byte to Wide String Conversion
-			errno_t(_PL_ T08_T16_)(TEXT_08 _PL_ SourceString,text_16 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
+			logical(_PL_ T08_T16_)(TEXT_08 _PL_ SourceString,text_16 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
 			//PenClip : Wide to Narrow Multi-byte String Conversion
-			errno_t(_PL_ T16_T08_)(TEXT_16 _PL_ SourceString,text_08 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
+			logical(_PL_ T16_T08_)(TEXT_16 _PL_ SourceString,text_08 _PL_ TargetString,ADDRESS SourceCapacity,ADDRESS TargetCapacity);
 		}
 		Caster;
 
@@ -171,22 +167,24 @@ struct _pencase
 		Finder;
 
 		//PenClip : String Concatenation Functions
+		//＊Return value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PenClip : 8-bit String Concatenation
-			errno_t(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity);
+			logical(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity);
 			//PenClip : 16-bit String Concatenation
-			errno_t(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity);
+			logical(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity);
 		}
 		Concat;
 
 		//PenClip : String Copy Functions
+		//＊Return value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PenClip : 8-bit String Copy
-			errno_t(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity);
+			logical(_PL_ T08_)(text_08 _PL_ Buffer,TEXT_08 _PL_ Source,ADDRESS Capacity);
 			//PenClip : 16-bit String Copy
-			errno_t(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity);
+			logical(_PL_ T16_)(text_16 _PL_ Buffer,TEXT_16 _PL_ Source,ADDRESS Capacity);
 		}
 		Copier;
 
@@ -388,12 +386,13 @@ struct _pencase
 		Shut;
 
 		//PenClip : Conversion Functions
+		//＊Return value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PenClip : String Container multi-byte to 2-byte Conversion
-			errno_t(_PL_ T08_T16_)(PENC_SC _PL_ Source,PENC_SC _PL_ Target);
+			logical(_PL_ T08_T16_)(PENC_SC _PL_ Source,PENC_SC _PL_ Target);
 			//PenClip : String Container 2-byte to multi-byte Conversion
-			errno_t(_PL_ T16_T08_)(PENC_SC _PL_ Source,PENC_SC _PL_ Target);
+			logical(_PL_ T16_T08_)(PENC_SC _PL_ Source,PENC_SC _PL_ Target);
 		}
 		Caster;
 
@@ -408,22 +407,24 @@ struct _pencase
 		Length;
 
 		//PenClip : Copy Functions
+		//＊Return value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PenClip : String Container 8-bit Copy
-			errno_t(_PL_ T08_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+			logical(_PL_ T08_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
 			//PenClip : String Container 16-bit Copy
-			errno_t(_PL_ T16_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+			logical(_PL_ T16_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
 		}
 		Copier;
 
 		//PenClip : Concatenation Functions
+		//＊Return value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PenClip : String Container 8-bit Concatenation
-			errno_t(_PL_ T08_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+			logical(_PL_ T08_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
 			//PenClip : String Container 16-bit Concatenation
-			errno_t(_PL_ T16_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
+			logical(_PL_ T16_)(PENC_SC _PL_ Target,PENC_SC _PL_ Source);
 		}
 		Concat;
 

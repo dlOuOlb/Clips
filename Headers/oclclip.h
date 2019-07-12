@@ -2,7 +2,7 @@
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.07.11	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -92,6 +92,7 @@
 #endif
 
 #if(Fold_(Primal Types))
+OCLC_Type_Rename_(bool,logical,LOGICAL);
 OCLC_Type_Rename_(void,general,GENERAL);
 OCLC_Type_Rename_(char,byte_08,BYTE_08);
 OCLC_Type_Rename_(int,integer,INTEGER);
@@ -169,17 +170,6 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 #endif
 #endif
 
-#if(Fold_(Redefinition:OpenCL Types))
-MemC_Type_Rename_(cl_int,oclc_en,OCLC_EN);						//OCLClip : OpenCL Error Number
-MemC_Type_Rename_(struct _cl_platform_id,oclc_pi,OCLC_PI);		//OCLClip : OpenCL Platform ID
-MemC_Type_Rename_(struct _cl_device_id,oclc_di,OCLC_DI);		//OCLClip : OpenCL Device ID
-MemC_Type_Rename_(struct _cl_context,oclc_co,OCLC_CO);			//OCLClip : OpenCL Context Object
-MemC_Type_Rename_(struct _cl_program,oclc_po,OCLC_PO);			//OCLClip : OpenCL Program Object
-MemC_Type_Rename_(struct _cl_kernel,oclc_ko,OCLC_KO);			//OCLClip : OpenCL Kernel Object
-MemC_Type_Rename_(struct _cl_command_queue,oclc_qo,OCLC_QO);	//OCLClip : OpenCL Command Queue Object
-MemC_Type_Rename_(struct _cl_mem,oclc_mo,OCLC_MO);				//OCLClip : OpenCL Memory Object
-#endif
-
 #if(Fold_(Definition:Primal Types))
 //OCLClip : Meta-Data Structure
 struct _oclc_md
@@ -199,7 +189,6 @@ enum _oclc_pa
 	OCLCPinAxes		//OCLClip : The Number of Axes
 };
 MemC_Type_Declare_(enum,oclc_pa,OCLC_PA);	//OCLClip : 4D Pin Axis Enumeration
-static_assert(OCLCPinAxes==4,"The pin must be 4D.");
 
 //OCLClip : 4D Memory Pin Structure
 struct _oclc_mp
@@ -241,8 +230,8 @@ MemC_Type_Declare_(enum,oclc_cf,OCLC_CF);	//OCLClip : Copy Flag Enumeration
 //OCLClip : Error Flag Union
 union _oclc_ef
 {
-	oclc_en I;	//OCLClip : Access as Integer
-	
+	cl_int I;	//OCLClip : Access as Integer
+
 	//OCLClip : Access as Enumeration
 	enum
 	{
@@ -311,8 +300,6 @@ union _oclc_ef
 	E;
 };
 MemC_Type_Declare_(union,oclc_ef,OCLC_EF);	//OCLClip : Error Flag Union
-static_assert((sizeof(oclc_ef)==sizeof(oclc_en)),"sizeof(enum) != sizeof(oclc_en)");
-static_assert(CLSuccess==0,"CLSuccess != 0");
 #endif
 
 #if(Fold_(Definition:Manager Types))
@@ -328,11 +315,11 @@ struct _oclc_em
 		const struct _oclc_em_platform
 		{
 			//OCLClip : Platform ID
-			oclc_pi _PL_ ID;
+			const cl_platform_id ID;
 			//OCLClip : Platform Name
 			OCLC_MD Name;
 			//OCLClip : Context Object
-			oclc_co _PL_ Context;
+			const cl_context Context;
 			//OCLClip : Device Manager
 			const struct
 			{
@@ -342,11 +329,11 @@ struct _oclc_em
 				const struct _oclc_em_device
 				{
 					//OCLClip : Device ID
-					oclc_di _PL_ ID;
+					const cl_device_id ID;
 					//OCLClip : Device Name
 					OCLC_MD Name;
 					//OCLClip : Command Queue
-					oclc_qo _PL_ Queue;
+					const cl_command_queue Queue;
 					//OCLClip : Device Information
 					const struct _oclc_em_device_info
 					{
@@ -381,7 +368,6 @@ struct _oclc_em
 	Platform;
 };
 MemC_Type_Declare_(struct,oclc_em,OCLC_EM);	//OCLClip : Environment Manager Structure
-static_assert((sizeof(struct _oclc_em_device_info)%sizeof(address))==0,"Structure Misalign");
 
 //OCLClip : Program Manager Structure
 struct _oclc_pm
@@ -391,7 +377,7 @@ struct _oclc_pm
 	//OCLClip : Program Manager
 	const struct
 	{
-		oclc_po _PL_ ID;	//OCLClip : Program Object
+		const cl_program ID;	//OCLClip : Program Object
 
 		//OCLClip : Kernel Manager
 		const struct
@@ -407,7 +393,7 @@ struct _oclc_pm
 			//OCLClip : Kernel List
 			const struct _oclc_pm_kernel
 			{
-				oclc_ko _PL_ ID;	//OCLClip : Kernel Object
+				const cl_kernel ID;	//OCLClip : Kernel Object
 				OCLC_MD Name;		//OCLClip : Kernel Name
 			}
 			_PL_ List;
@@ -438,9 +424,9 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get a Context Object
-			oclc_co*(_PL_ Context_)(OCLC_EM _PL_,ADDRESS PlatformSelect);
+			cl_context(_PL_ Context_)(OCLC_EM _PL_,ADDRESS PlatformSelect);
 			//OCLClip : Get a Command Queue Object
-			oclc_qo*(_PL_ Queue_)(OCLC_EM _PL_,ADDRESS PlatformSelect,ADDRESS DeviceSelect);
+			cl_command_queue(_PL_ Queue_)(OCLC_EM _PL_,ADDRESS PlatformSelect,ADDRESS DeviceSelect);
 		}
 		Select;
 	}
@@ -459,10 +445,10 @@ struct _oclcase
 			{
 				//OCLClip : Program Build from Source Files with 8-bit String Path - Only Once per Program Manager
 				//＊Not found kernels will be just ignored.
-				general(_PL_ T08_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ SourcePath,const cl_uint SourceNumber,oclc_ef _PL_ Error);
+				general(_PL_ T08_)(oclc_pm _PL_,const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ SourcePath,const cl_uint SourceNumber,oclc_ef _PL_ Error);
 				//OCLClip : Program Build from Source Files with 16-bit String Path - Only Once per Program Manager
 				//＊Not found kernels will be just ignored.
-				general(_PL_ T16_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ SourcePath,const cl_uint SourceNumber,oclc_ef _PL_ Error);
+				general(_PL_ T16_)(oclc_pm _PL_,const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ SourcePath,const cl_uint SourceNumber,oclc_ef _PL_ Error);
 			}
 			Source;
 			//OCLClip : Build from Binary Files
@@ -471,11 +457,11 @@ struct _oclcase
 				//OCLClip : Program Build from Binary Files with 8-bit String Path - Only Once per Program Manager
 				//＊The number of paths must be same as the number of devices associated with the context.
 				//＊Not found kernels will be just ignored.
-				general(_PL_ T08_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
+				general(_PL_ T08_)(oclc_pm _PL_,const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
 				//OCLClip : Program Build from Binary Files with 16-bit String Path - Only Once per Program Manager
 				//＊The number of paths must be same as the number of devices associated with the context.
 				//＊Not found kernels will be just ignored.
-				general(_PL_ T16_)(oclc_pm _PL_,oclc_co _PL_ Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
+				general(_PL_ T16_)(oclc_pm _PL_,const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,oclc_ef _PL_ Error);
 			}
 			Binary;
 			//OCLClip : Save Binary Files after Building
@@ -500,7 +486,7 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get a Kernel Object
-			oclc_ko*(_PL_ Kernel_)(OCLC_PM _PL_,ADDRESS KernelSelect);
+			cl_kernel(_PL_ Kernel_)(OCLC_PM _PL_,ADDRESS KernelSelect);
 		}
 		Select;
 	}
@@ -513,13 +499,13 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get the Size of Information
-			address(_PL_ Size_)(OCLC_PI _PL_ Platform,const cl_platform_info Flag,oclc_ef _PL_ Error);
+			address(_PL_ Size_)(const cl_platform_id Platform,const cl_platform_info Flag,oclc_ef _PL_ Error);
 			//OCLClip : Get Information
-			general(_PL_ What_)(OCLC_PI _PL_ Platform,const cl_platform_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
+			general(_PL_ What_)(const cl_platform_id Platform,const cl_platform_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Info;
 	}
-	PI;
+	Platform;
 
 	//OCLClip : Device ID Functions
 	const struct
@@ -528,13 +514,13 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get the Size of Information
-			address(_PL_ Size_)(OCLC_DI _PL_ Device,const cl_device_info Flag,oclc_ef _PL_ Error);
+			address(_PL_ Size_)(const cl_device_id Device,const cl_device_info Flag,oclc_ef _PL_ Error);
 			//OCLClip : Get Information
-			general(_PL_ What_)(OCLC_DI _PL_ Device,const cl_device_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
+			general(_PL_ What_)(const cl_device_id Device,const cl_device_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Info;
 	}
-	DI;
+	Device;
 
 	//OCLClip : Context Object Functions
 	const struct
@@ -543,13 +529,13 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get the Size of Information
-			address(_PL_ Size_)(OCLC_CO _PL_ Context,const cl_context_info Flag,oclc_ef _PL_ Error);
+			address(_PL_ Size_)(const cl_context Context,const cl_context_info Flag,oclc_ef _PL_ Error);
 			//OCLClip : Get Information
-			general(_PL_ What_)(OCLC_CO _PL_ Context,const cl_context_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
+			general(_PL_ What_)(const cl_context Context,const cl_context_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Info;
 	}
-	CO;
+	Context;
 
 	//OCLClip : Queue Object Functions
 	const struct
@@ -558,21 +544,21 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get the Size of Information
-			address(_PL_ Size_)(OCLC_QO _PL_ Queue,const cl_command_queue_info Flag,oclc_ef _PL_ Error);
+			address(_PL_ Size_)(const cl_command_queue Queue,const cl_command_queue_info Flag,oclc_ef _PL_ Error);
 			//OCLClip : Get Information
-			general(_PL_ What_)(OCLC_QO _PL_ Queue,const cl_command_queue_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
+			general(_PL_ What_)(const cl_command_queue Queue,const cl_command_queue_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Info;
 
 		//OCLClip : Asynchronous Memory Fill
 		//＊Required (Value) size is (MemoryHolder)->Type->SizeType bytes.
-		general(_PL_ Fill_)(oclc_qo _PL_ Queue,GENERAL _PL_ Value,OCLC_MH _PL_ MemoryHolder,OCLC_MP _PL_ FillLength,oclc_ef _PL_ Error);
+		general(_PL_ Fill_)(const cl_command_queue Queue,GENERAL _PL_ Value,OCLC_MH _PL_ MemoryHolder,OCLC_MP _PL_ FillLength,oclc_ef _PL_ Error);
 		//OCLClip : Asynchronous Memory Copy
-		general(_PL_ Copy_)(oclc_qo _PL_ Queue,OCLC_CF CopyMode,OCLC_MH _PL_ SourceHolder,OCLC_MH _PL_ TargetHolder,OCLC_MP _PL_ CopyLength,oclc_ef _PL_ Error);
+		general(_PL_ Copy_)(const cl_command_queue Queue,OCLC_CF CopyMode,OCLC_MH _PL_ SourceHolder,OCLC_MH _PL_ TargetHolder,OCLC_MP _PL_ CopyLength,oclc_ef _PL_ Error);
 		//OCLClip : Synchronization
-		general(_PL_ Wait_)(oclc_qo _PL_ Queue,oclc_ef _PL_ Error);
+		general(_PL_ Wait_)(const cl_command_queue Queue,oclc_ef _PL_ Error);
 	}
-	QO;
+	Queue;
 
 	//OCLClip : Kernel Object Functions
 	const struct
@@ -581,9 +567,9 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get the Size of Information
-			address(_PL_ Size_)(OCLC_KO _PL_ Kernel,const cl_kernel_info Flag,oclc_ef _PL_ Error);
+			address(_PL_ Size_)(const cl_kernel Kernel,const cl_kernel_info Flag,oclc_ef _PL_ Error);
 			//OCLClip : Get Information
-			general(_PL_ What_)(OCLC_KO _PL_ Kernel,const cl_kernel_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
+			general(_PL_ What_)(const cl_kernel Kernel,const cl_kernel_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Info;
 
@@ -591,15 +577,15 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Pass a Memory Object
-			general(_PL_ G_)(oclc_ko _PL_,const cl_uint ArgIndex,OCLC_MO _PL_ MemoryObject,oclc_ef _PL_ Error);
+			general(_PL_ G_)(const cl_kernel,const cl_uint ArgIndex,const cl_mem MemoryObject,oclc_ef _PL_ Error);
 			//OCLClip : Pass a Local Memory Size
-			general(_PL_ L_)(oclc_ko _PL_,const cl_uint ArgIndex,ADDRESS LocalMemorySize,oclc_ef _PL_ Error);
+			general(_PL_ L_)(const cl_kernel,const cl_uint ArgIndex,ADDRESS LocalMemorySize,oclc_ef _PL_ Error);
 			//OCLClip : Pass a Value
-			general(_PL_ P_)(oclc_ko _PL_,const cl_uint ArgIndex,GENERAL _PL_ ValueAddress,ADDRESS ValueSize,oclc_ef _PL_ Error);
+			general(_PL_ P_)(const cl_kernel,const cl_uint ArgIndex,GENERAL _PL_ ValueAddress,ADDRESS ValueSize,oclc_ef _PL_ Error);
 		}
 		Arg;
 	}
-	KO;
+	Kernel;
 
 	//OCLClip : Memory Object Functions
 	const struct
@@ -608,9 +594,9 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Get the Size of Information
-			address(_PL_ Size_)(OCLC_MO _PL_ Memory,const cl_mem_info Flag,oclc_ef _PL_ Error);
+			address(_PL_ Size_)(const cl_mem Memory,const cl_mem_info Flag,oclc_ef _PL_ Error);
 			//OCLClip : Get Information
-			general(_PL_ What_)(OCLC_MO _PL_ Memory,const cl_mem_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
+			general(_PL_ What_)(const cl_mem Memory,const cl_mem_info Flag,general _PL_ Info,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Info;
 
@@ -618,15 +604,15 @@ struct _oclcase
 		const struct
 		{
 			//OCLClip : Buffer Creation - Delete with "OCLC.MO.Delete_"
-			oclc_mo*(_PL_ Buffer_)(oclc_co _PL_ Context,ADDRESS Size,oclc_ef _PL_ Error);
+			cl_mem(_PL_ Buffer_)(const cl_context Context,ADDRESS Size,oclc_ef _PL_ Error);
 			//OCLClip : Sub-Buffer Creation - Delete with "OCLC.MO.Delete_"
-			oclc_mo*(_PL_ Sub_)(oclc_mo _PL_ RootBuffer,ADDRESS Offset,ADDRESS Size,oclc_ef _PL_ Error);
+			cl_mem(_PL_ Sub_)(const cl_mem RootBuffer,ADDRESS Offset,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Create;
 		//OCLClip : Memory Object Deletion
-		general(_PL_ Delete_)(oclc_mo *_PL_);
+		general(_PL_ Delete_)(cl_mem _PL_);
 	}
-	MO;
+	Memory;
 
 	//OCLClip : Memory Pin Functions
 	const struct
