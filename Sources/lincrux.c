@@ -353,145 +353,172 @@ _LINC_ general LinC_Func_(LinC_Map_1_,TXX)(type_xx *_R_ Line,ADDRESS *_R_ Index,
 		Line[0]=Table[Index[0]];
 }
 
-static inline general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ _R_ A,INTEGER _PL_ _R_ T)
+static inline general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ _R_ A)
 {
-	TYPE_XX Temp=A[T[1]];
+	TYPE_XX Temp=A[0];
 
-	A[0]=A[T[0]];
+	A[0]=A[1];
 	A[1]=Temp;
 }
-static type_xx *LinC_Func_(_LinC_Radix_,TXX)(type_xx *_R_ ValueFirst,address *_R_ IndexFirst,TYPE_XX *_R_ ValueMess,ADDRESS *_R_ IndexMess,ADDRESS Length,LOGICAL Mode,TYPE_XX Scan)
+static type_xx *LinC_Func_(_LinC_Radix_M0_,TXX)(type_xx *_R_ ValueFirst,address *_R_ IndexFirst,TYPE_XX *_R_ ValueMess,ADDRESS *_R_ IndexMess,ADDRESS Length,TYPE_XX Scan)
 {
 	type_xx *_R_ ValueLast=ValueFirst+Length;
 	address *_R_ IndexLast=IndexFirst+Length;
 
-	if(Mode)
-		for(;ValueFirst<ValueLast;ValueMess++,IndexMess++)
-			if((*ValueMess)&Scan)
-			{
-				*(ValueFirst++)=*ValueMess;
-				*(IndexFirst++)=*IndexMess;
-			}
-			else
-			{
-				*(--ValueLast)=*ValueMess;
-				*(--IndexLast)=*IndexMess;
-			}
-	else
-		for(;ValueFirst<ValueLast;ValueMess++,IndexMess++)
-			if((*ValueMess)&Scan)
-			{
-				*(--ValueLast)=*ValueMess;
-				*(--IndexLast)=*IndexMess;
-			}
-			else
-			{
-				*(ValueFirst++)=*ValueMess;
-				*(IndexFirst++)=*IndexMess;
-			}
+	for(;ValueFirst<ValueLast;ValueMess++,IndexMess++)
+		if((*ValueMess)&Scan)
+		{
+			*(--ValueLast)=*ValueMess;
+			*(--IndexLast)=*IndexMess;
+		}
+		else
+		{
+			*(ValueFirst++)=*ValueMess;
+			*(IndexFirst++)=*IndexMess;
+		}
 
 	return ValueFirst;
 }
-static type_xx *LinC_Func_(_LinC_Radix_Lite_,TXX)(type_xx *_R_ ValueFirst,TYPE_XX *_R_ ValueMess,ADDRESS Length,LOGICAL Mode,TYPE_XX Scan)
+static type_xx *LinC_Func_(_LinC_Radix_M1_,TXX)(type_xx *_R_ ValueFirst,address *_R_ IndexFirst,TYPE_XX *_R_ ValueMess,ADDRESS *_R_ IndexMess,ADDRESS Length,TYPE_XX Scan)
+{
+	type_xx *_R_ ValueLast=ValueFirst+Length;
+	address *_R_ IndexLast=IndexFirst+Length;
+
+	for(;ValueFirst<ValueLast;ValueMess++,IndexMess++)
+		if((*ValueMess)&Scan)
+		{
+			*(ValueFirst++)=*ValueMess;
+			*(IndexFirst++)=*IndexMess;
+		}
+		else
+		{
+			*(--ValueLast)=*ValueMess;
+			*(--IndexLast)=*IndexMess;
+		}
+
+	return ValueFirst;
+}
+static type_xx *LinC_Func_(_LinC_Radix_Lite_M0_,TXX)(type_xx *_R_ ValueFirst,TYPE_XX *_R_ ValueMess,ADDRESS Length,TYPE_XX Scan)
 {
 	type_xx *_R_ ValueLast=ValueFirst+Length;
 
-	if(Mode)
-		for(;ValueFirst<ValueLast;ValueMess++)
-			if((*ValueMess)&Scan)
-				*(ValueFirst++)=*ValueMess;
-			else
-				*(--ValueLast)=*ValueMess;
-	else
-		for(;ValueFirst<ValueLast;ValueMess++)
-			if((*ValueMess)&Scan)
-				*(--ValueLast)=*ValueMess;
-			else
-				*(ValueFirst++)=*ValueMess;
+	for(;ValueFirst<ValueLast;ValueMess++)
+		if((*ValueMess)&Scan)
+			*(--ValueLast)=*ValueMess;
+		else
+			*(ValueFirst++)=*ValueMess;
 
 	return ValueFirst;
 }
-static general LinC_Func_(_LinC_Sort_2_Here_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA,LOGICAL Mode)
+static type_xx *LinC_Func_(_LinC_Radix_Lite_M1_,TXX)(type_xx *_R_ ValueFirst,TYPE_XX *_R_ ValueMess,ADDRESS Length,TYPE_XX Scan)
 {
-	integer T[2];
+	type_xx *_R_ ValueLast=ValueFirst+Length;
 
+	for(;ValueFirst<ValueLast;ValueMess++)
+		if((*ValueMess)&Scan)
+			*(ValueFirst++)=*ValueMess;
+		else
+			*(--ValueLast)=*ValueMess;
+
+	return ValueFirst;
+}
+static inline general LinC_Func_(_LinC_Sort_2_Here_M0_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA)
+{
+	if(ValueA[0]<ValueA[1]);
+	else
+	{
+		LinC_Func_(_LinC_Swap_,TXX)(ValueA);
+		_LinC_Swap_Address_(IndexA);
+	}
+}
+static inline general LinC_Func_(_LinC_Sort_2_Here_M1_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA)
+{
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=(integer)Mode;
-		T[1]=T[0]^1;
+		LinC_Func_(_LinC_Swap_,TXX)(ValueA);
+		_LinC_Swap_Address_(IndexA);
+	}
+	else;
+}
+static inline general LinC_Func_(_LinC_Sort_2_Here_Lite_M0_,TXX)(type_xx _PL_ _R_ ValueA)
+{
+	if(ValueA[0]<ValueA[1]);
+	else
+		LinC_Func_(_LinC_Swap_,TXX)(ValueA);
+}
+static inline general LinC_Func_(_LinC_Sort_2_Here_Lite_M1_,TXX)(type_xx _PL_ _R_ ValueA)
+{
+	if(ValueA[0]<ValueA[1])
+		LinC_Func_(_LinC_Swap_,TXX)(ValueA);
+	else;
+}
+static inline general LinC_Func_(_LinC_Sort_2_Move_M0_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB)
+{
+	if(ValueA[0]<ValueA[1])
+	{
+		ValueB[0]=ValueA[0];
+		ValueB[1]=ValueA[1];
+
+		IndexB[0]=IndexA[0];
+		IndexB[1]=IndexA[1];
 	}
 	else
 	{
-		T[1]=(integer)Mode;
-		T[0]=T[1]^1;
-	}
-	{
-		LinC_Func_(_LinC_Swap_,TXX)(ValueA,T);
-		_LinC_Swap_Address_(IndexA,T);
+		ValueB[0]=ValueA[1];
+		ValueB[1]=ValueA[0];
+
+		IndexB[0]=IndexA[1];
+		IndexB[1]=IndexA[0];
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(type_xx _PL_ _R_ ValueA,LOGICAL Mode)
+static inline general LinC_Func_(_LinC_Sort_2_Move_M1_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB)
 {
-	integer T[2];
-
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=(integer)Mode;
-		T[1]=T[0]^1;
+		ValueB[0]=ValueA[1];
+		ValueB[1]=ValueA[0];
+
+		IndexB[0]=IndexA[1];
+		IndexB[1]=IndexA[0];
 	}
 	else
 	{
-		T[1]=(integer)Mode;
-		T[0]=T[1]^1;
-	}
-	{
-		LinC_Func_(_LinC_Swap_,TXX)(ValueA,T);
+		ValueB[0]=ValueA[0];
+		ValueB[1]=ValueA[1];
+
+		IndexB[0]=IndexA[0];
+		IndexB[1]=IndexA[1];
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Move_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB,LOGICAL Mode)
+static inline general LinC_Func_(_LinC_Sort_2_Move_Lite_M0_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB)
 {
-	integer T[2];
-
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=(integer)Mode;
-		T[1]=T[0]^1;
+		ValueB[0]=ValueA[0];
+		ValueB[1]=ValueA[1];
 	}
 	else
 	{
-		T[1]=(integer)Mode;
-		T[0]=T[1]^1;
-	}
-	{
-		ValueB[0]=ValueA[T[0]];
-		ValueB[1]=ValueA[T[1]];
-
-		IndexB[0]=IndexA[T[0]];
-		IndexB[1]=IndexA[T[1]];
+		ValueB[0]=ValueA[1];
+		ValueB[1]=ValueA[0];
 	}
 }
-static general LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,LOGICAL Mode)
+static inline general LinC_Func_(_LinC_Sort_2_Move_Lite_M1_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB)
 {
-	integer T[2];
-
 	if(ValueA[0]<ValueA[1])
 	{
-		T[0]=(integer)Mode;
-		T[1]=T[0]^1;
+		ValueB[0]=ValueA[1];
+		ValueB[1]=ValueA[0];
 	}
 	else
 	{
-		T[1]=(integer)Mode;
-		T[0]=T[1]^1;
-	}
-	{
-		ValueB[0]=ValueA[T[0]];
-		ValueB[1]=ValueA[T[1]];
+		ValueB[0]=ValueA[0];
+		ValueB[1]=ValueA[1];
 	}
 }
-static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,LOGICAL Mode,integer Bits)
+static general LinC_Func_(_LinC_Recur_M0_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,integer Bits)
 {
-	address Offset=LinC_Func_(_LinC_Radix_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,Mode,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
+	address Offset=LinC_Func_(_LinC_Radix_M0_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
 	if(Bits)
 	{
@@ -500,10 +527,10 @@ static general LinC_Func_(_LinC_Recur_,TXX)(type_xx *_R_ ValueSource,address *_R
 			switch(Offset)
 			{
 			default:
-				LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				LinC_Func_(_LinC_Recur_M0_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
 				goto JUMP_A;
 			case 2:
-				LinC_Func_(_LinC_Sort_2_Here_,TXX)(ValueTarget,IndexTarget,Mode);
+				LinC_Func_(_LinC_Sort_2_Here_M0_,TXX)(ValueTarget,IndexTarget);
 			case 1:
 JUMP_A:
 				ValueSource+=Offset;
@@ -515,11 +542,10 @@ JUMP_A:
 				switch(Offset)
 				{
 				default:
-					LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					LinC_Func_(_LinC_Recur_M0_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
 					break;
 				case 2:
-					LinC_Func_(_LinC_Sort_2_Here_,TXX)(ValueTarget,IndexTarget,Mode);
-					break;
+					LinC_Func_(_LinC_Sort_2_Here_M0_,TXX)(ValueTarget,IndexTarget);
 				case 1:
 				case 0:;
 				}
@@ -528,10 +554,10 @@ JUMP_A:
 			switch(Offset)
 			{
 			default:
-				LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+				LinC_Func_(_LinC_Recur_M0_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
 				goto JUMP_B;
 			case 2:
-				LinC_Func_(_LinC_Sort_2_Move_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+				LinC_Func_(_LinC_Sort_2_Move_M0_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource);
 				goto JUMP_B;
 			case 1:
 				ValueSource[0]=ValueTarget[0];
@@ -546,10 +572,10 @@ JUMP_B:
 				switch(Offset)
 				{
 				default:
-					LinC_Func_(_LinC_Recur_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Mode,Bits);
+					LinC_Func_(_LinC_Recur_M0_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
 					break;
 				case 2:
-					LinC_Func_(_LinC_Sort_2_Move_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource,Mode);
+					LinC_Func_(_LinC_Sort_2_Move_M0_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource);
 					break;
 				case 1:
 					ValueSource[0]=ValueTarget[0];
@@ -559,9 +585,9 @@ JUMP_B:
 			}
 	}
 }
-static general LinC_Func_(_LinC_Recur_Lite_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,LOGICAL Mode,integer Bits)
+static general LinC_Func_(_LinC_Recur_M1_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,integer Bits)
 {
-	address Offset=LinC_Func_(_LinC_Radix_Lite_,TXX)(ValueTarget,ValueSource,Length,Mode,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
+	address Offset=LinC_Func_(_LinC_Radix_M1_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
 	if(Bits)
 	{
@@ -570,10 +596,79 @@ static general LinC_Func_(_LinC_Recur_Lite_,TXX)(type_xx *_R_ ValueSource,type_x
 			switch(Offset)
 			{
 			default:
-				LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+				LinC_Func_(_LinC_Recur_M1_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
 				goto JUMP_A;
 			case 2:
-				LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(ValueTarget,Mode);
+				LinC_Func_(_LinC_Sort_2_Here_M1_,TXX)(ValueTarget,IndexTarget);
+			case 1:
+JUMP_A:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					LinC_Func_(_LinC_Recur_M1_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
+					break;
+				case 2:
+					LinC_Func_(_LinC_Sort_2_Here_M1_,TXX)(ValueTarget,IndexTarget);
+				case 1:
+				case 0:;
+				}
+			}
+		else
+			switch(Offset)
+			{
+			default:
+				LinC_Func_(_LinC_Recur_M1_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
+				goto JUMP_B;
+			case 2:
+				LinC_Func_(_LinC_Sort_2_Move_M1_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource);
+				goto JUMP_B;
+			case 1:
+				ValueSource[0]=ValueTarget[0];
+				IndexSource[0]=IndexTarget[0];
+JUMP_B:
+				ValueSource+=Offset;
+				IndexSource+=Offset;
+				ValueTarget+=Offset;
+				IndexTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					LinC_Func_(_LinC_Recur_M1_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Offset,Bits);
+					break;
+				case 2:
+					LinC_Func_(_LinC_Sort_2_Move_M1_,TXX)(ValueTarget,ValueSource,IndexTarget,IndexSource);
+					break;
+				case 1:
+					ValueSource[0]=ValueTarget[0];
+					IndexSource[0]=IndexTarget[0];
+				case 0:;
+				}
+			}
+	}
+}
+static general LinC_Func_(_LinC_Recur_Lite_M0_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,integer Bits)
+{
+	address Offset=LinC_Func_(_LinC_Radix_Lite_M0_,TXX)(ValueTarget,ValueSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
+
+	if(Bits)
+	{
+		Bits--;
+		if(Bits&1)
+			switch(Offset)
+			{
+			default:
+				LinC_Func_(_LinC_Recur_Lite_M0_,TXX)(ValueTarget,ValueSource,Offset,Bits);
+				goto JUMP_A;
+			case 2:
+				LinC_Func_(_LinC_Sort_2_Here_Lite_M0_,TXX)(ValueTarget);
 			case 1:
 JUMP_A:
 				ValueSource+=Offset;
@@ -583,11 +678,10 @@ JUMP_A:
 				switch(Offset)
 				{
 				default:
-					LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+					LinC_Func_(_LinC_Recur_Lite_M0_,TXX)(ValueTarget,ValueSource,Offset,Bits);
 					break;
 				case 2:
-					LinC_Func_(_LinC_Sort_2_Here_Lite_,TXX)(ValueTarget,Mode);
-					break;
+					LinC_Func_(_LinC_Sort_2_Here_Lite_M0_,TXX)(ValueTarget);
 				case 1:
 				case 0:;
 				}
@@ -596,10 +690,10 @@ JUMP_A:
 			switch(Offset)
 			{
 			default:
-				LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+				LinC_Func_(_LinC_Recur_Lite_M0_,TXX)(ValueTarget,ValueSource,Offset,Bits);
 				goto JUMP_B;
 			case 2:
-				LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(ValueTarget,ValueSource,Mode);
+				LinC_Func_(_LinC_Sort_2_Move_Lite_M0_,TXX)(ValueTarget,ValueSource);
 				goto JUMP_B;
 			case 1:
 				ValueSource[0]=ValueTarget[0];
@@ -611,10 +705,73 @@ JUMP_B:
 				switch(Offset)
 				{
 				default:
-					LinC_Func_(_LinC_Recur_Lite_,TXX)(ValueTarget,ValueSource,Offset,Mode,Bits);
+					LinC_Func_(_LinC_Recur_Lite_M0_,TXX)(ValueTarget,ValueSource,Offset,Bits);
 					break;
 				case 2:
-					LinC_Func_(_LinC_Sort_2_Move_Lite_,TXX)(ValueTarget,ValueSource,Mode);
+					LinC_Func_(_LinC_Sort_2_Move_Lite_M0_,TXX)(ValueTarget,ValueSource);
+					break;
+				case 1:
+					ValueSource[0]=ValueTarget[0];
+				case 0:;
+				}
+			}
+	}
+}
+static general LinC_Func_(_LinC_Recur_Lite_M1_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,integer Bits)
+{
+	address Offset=LinC_Func_(_LinC_Radix_Lite_M1_,TXX)(ValueTarget,ValueSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
+
+	if(Bits)
+	{
+		Bits--;
+		if(Bits&1)
+			switch(Offset)
+			{
+			default:
+				LinC_Func_(_LinC_Recur_Lite_M1_,TXX)(ValueTarget,ValueSource,Offset,Bits);
+				goto JUMP_A;
+			case 2:
+				LinC_Func_(_LinC_Sort_2_Here_Lite_M1_,TXX)(ValueTarget);
+			case 1:
+JUMP_A:
+				ValueSource+=Offset;
+				ValueTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					LinC_Func_(_LinC_Recur_Lite_M1_,TXX)(ValueTarget,ValueSource,Offset,Bits);
+					break;
+				case 2:
+					LinC_Func_(_LinC_Sort_2_Here_Lite_M1_,TXX)(ValueTarget);
+				case 1:
+				case 0:;
+				}
+			}
+		else
+			switch(Offset)
+			{
+			default:
+				LinC_Func_(_LinC_Recur_Lite_M1_,TXX)(ValueTarget,ValueSource,Offset,Bits);
+				goto JUMP_B;
+			case 2:
+				LinC_Func_(_LinC_Sort_2_Move_Lite_M1_,TXX)(ValueTarget,ValueSource);
+				goto JUMP_B;
+			case 1:
+				ValueSource[0]=ValueTarget[0];
+JUMP_B:
+				ValueSource+=Offset;
+				ValueTarget+=Offset;
+			case 0:
+				Offset=Length-Offset;
+				switch(Offset)
+				{
+				default:
+					LinC_Func_(_LinC_Recur_Lite_M1_,TXX)(ValueTarget,ValueSource,Offset,Bits);
+					break;
+				case 2:
+					LinC_Func_(_LinC_Sort_2_Move_Lite_M1_,TXX)(ValueTarget,ValueSource);
 					break;
 				case 1:
 					ValueSource[0]=ValueTarget[0];

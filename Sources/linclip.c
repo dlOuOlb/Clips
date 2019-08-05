@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ LinClip=&LinClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
+static BYTE_08 IdiomVersion[16]="Date:2019.08.05";
 #endif
 
 #if(Fold_(Domain:Host))
@@ -122,11 +122,11 @@ static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
 #endif
 
 #if(Fold_(Part:Mapping and Radix Sorting Functions))
-static inline general _LinC_Swap_Address_(address _PL_ _R_ A,INTEGER _PL_ _R_ T)
+static inline general _LinC_Swap_Address_(address _PL_ _R_ A)
 {
-	ADDRESS Temp=A[T[1]];
+	ADDRESS Temp=A[0];
 
-	A[0]=A[T[0]];
+	A[0]=A[1];
 	A[1]=Temp;
 }
 
@@ -144,13 +144,13 @@ _LINC_ general LinC_Order_D08_(data_08 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_08 _PL_ _R_ ValueTemp=(data_08*)(IndexTemp+Length);
 
-			_LinC_Recur_D08_(Line,Index,ValueTemp,IndexTemp,Length,Mode,7);
+			((Mode)?(_LinC_Recur_M1_D08_):(_LinC_Recur_M0_D08_))(Line,Index,ValueTemp,IndexTemp,Length,7);
 		}
 		else
 		{
 			data_08 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D08_(Line,ValueTemp,Length,Mode,7);
+			((Mode)?(_LinC_Recur_Lite_M1_D08_):(_LinC_Recur_Lite_M0_D08_))(Line,ValueTemp,Length,7);
 		}
 	else;
 }
@@ -162,13 +162,13 @@ _LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_16 _PL_ _R_ ValueTemp=(data_16*)(IndexTemp+Length);
 
-			_LinC_Recur_D16_(Line,Index,ValueTemp,IndexTemp,Length,Mode,15);
+			((Mode)?(_LinC_Recur_M1_D16_):(_LinC_Recur_M0_D16_))(Line,Index,ValueTemp,IndexTemp,Length,15);
 		}
 		else
 		{
 			data_16 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D16_(Line,ValueTemp,Length,Mode,15);
+			((Mode)?(_LinC_Recur_Lite_M1_D16_):(_LinC_Recur_Lite_M0_D16_))(Line,ValueTemp,Length,15);
 		}
 	else;
 }
@@ -180,13 +180,13 @@ _LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_32 _PL_ _R_ ValueTemp=(data_32*)(IndexTemp+Length);
 
-			_LinC_Recur_D32_(Line,Index,ValueTemp,IndexTemp,Length,Mode,31);
+			((Mode)?(_LinC_Recur_M1_D32_):(_LinC_Recur_M0_D32_))(Line,Index,ValueTemp,IndexTemp,Length,31);
 		}
 		else
 		{
 			data_32 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D32_(Line,ValueTemp,Length,Mode,31);
+			((Mode)?(_LinC_Recur_Lite_M1_D32_):(_LinC_Recur_Lite_M0_D32_))(Line,ValueTemp,Length,31);
 		}
 	else;
 }
@@ -198,13 +198,13 @@ _LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			address _PL_ _R_ IndexTemp=Buffer;
 			data_64 _PL_ _R_ ValueTemp=(data_64*)(IndexTemp+Length);
 
-			_LinC_Recur_D64_(Line,Index,ValueTemp,IndexTemp,Length,Mode,63);
+			((Mode)?(_LinC_Recur_M1_D64_):(_LinC_Recur_M0_D64_))(Line,Index,ValueTemp,IndexTemp,Length,63);
 		}
 		else
 		{
 			data_64 _PL_ _R_ ValueTemp=Buffer;
 
-			_LinC_Recur_Lite_D64_(Line,ValueTemp,Length,Mode,63);
+			((Mode)?(_LinC_Recur_Lite_M1_D64_):(_LinC_Recur_Lite_M0_D64_))(Line,ValueTemp,Length,63);
 		}
 	else;
 }
@@ -215,27 +215,29 @@ _LINC_ general LinC_Order_I08_(inte_08 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_08 _PL_ _R_ ValueTemp=(inte_08*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_08*)(_LinC_Radix_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,Mode^1,0x80))-ValueTemp;
-
+			general(_PL_ Recur_)(data_08 *_R_,address *_R_,data_08 *_R_,address *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_M1_D08_):(_LinC_Recur_M0_D08_);
+			ADDRESS Offset=(inte_08*)(((Mode)?(_LinC_Radix_M0_D08_):(_LinC_Radix_M1_D08_))((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Length,0x80))-ValueTemp;
+			
 			if(Offset)
-				_LinC_Recur_D08_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,Mode,6);
+				Recur_((data_08*)ValueTemp,IndexTemp,(data_08*)Line,Index,Offset,6);
 			else;
-
+			
 			if(Offset<Length)
-				_LinC_Recur_D08_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,Mode,6);
+				Recur_((data_08*)(ValueTemp+Offset),IndexTemp+Offset,(data_08*)(Line+Offset),Index+Offset,Length-Offset,6);
 			else;
 		}
 		else
 		{
 			inte_08 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_08*)(_LinC_Radix_Lite_D08_((data_08*)ValueTemp,(data_08*)Line,Length,Mode^1,0x80))-ValueTemp;
+			general(_PL_ Recur_)(data_08 *_R_,data_08 *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_Lite_M1_D08_):(_LinC_Recur_Lite_M0_D08_);
+			ADDRESS Offset=(inte_08*)(((Mode)?(_LinC_Radix_Lite_M0_D08_):(_LinC_Radix_Lite_M1_D08_))((data_08*)ValueTemp,(data_08*)Line,Length,0x80))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D08_((data_08*)ValueTemp,(data_08*)Line,Offset,Mode,6);
+				Recur_((data_08*)ValueTemp,(data_08*)Line,Offset,6);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_Lite_D08_((data_08*)(ValueTemp+Offset),(data_08*)(Line+Offset),Length-Offset,Mode,6);
+				Recur_((data_08*)(ValueTemp+Offset),(data_08*)(Line+Offset),Length-Offset,6);
 			else;
 		}
 	else;
@@ -247,27 +249,29 @@ _LINC_ general LinC_Order_I16_(inte_16 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_16 _PL_ _R_ ValueTemp=(inte_16*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_16*)(_LinC_Radix_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,Mode^1,0x8000))-ValueTemp;
+			general(_PL_ Recur_)(data_16 *_R_,address *_R_,data_16 *_R_,address *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_M1_D16_):(_LinC_Recur_M0_D16_);
+			ADDRESS Offset=(inte_16*)(((Mode)?(_LinC_Radix_M0_D16_):(_LinC_Radix_M1_D16_))((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Length,0x8000))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_D16_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,Mode,14);
+				Recur_((data_16*)ValueTemp,IndexTemp,(data_16*)Line,Index,Offset,14);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_D16_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,Mode,14);
+				Recur_((data_16*)(ValueTemp+Offset),IndexTemp+Offset,(data_16*)(Line+Offset),Index+Offset,Length-Offset,14);
 			else;
 		}
 		else
 		{
 			inte_16 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_16*)(_LinC_Radix_Lite_D16_((data_16*)ValueTemp,(data_16*)Line,Length,Mode^1,0x8000))-ValueTemp;
+			general(_PL_ Recur_)(data_16 *_R_,data_16 *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_Lite_M1_D16_):(_LinC_Recur_Lite_M0_D16_);
+			ADDRESS Offset=(inte_16*)(((Mode)?(_LinC_Radix_Lite_M0_D16_):(_LinC_Radix_Lite_M1_D16_))((data_16*)ValueTemp,(data_16*)Line,Length,0x8000))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D16_((data_16*)ValueTemp,(data_16*)Line,Offset,Mode,14);
+				Recur_((data_16*)ValueTemp,(data_16*)Line,Offset,14);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_Lite_D16_((data_16*)(ValueTemp+Offset),(data_16*)(Line+Offset),Length-Offset,Mode,14);
+				Recur_((data_16*)(ValueTemp+Offset),(data_16*)(Line+Offset),Length-Offset,14);
 			else;
 		}
 	else;
@@ -279,27 +283,29 @@ _LINC_ general LinC_Order_I32_(inte_32 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_32 _PL_ _R_ ValueTemp=(inte_32*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,Mode^1,0x80000000U))-ValueTemp;
+			general(_PL_ Recur_)(data_32 *_R_,address *_R_,data_32 *_R_,address *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_M1_D32_):(_LinC_Recur_M0_D32_);
+			ADDRESS Offset=(inte_32*)(((Mode)?(_LinC_Radix_M0_D32_):(_LinC_Radix_M1_D32_))((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,0x80000000U))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,Mode,30);
+				Recur_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,30);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,Mode,30);
+				Recur_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,30);
 			else;
 		}
 		else
 		{
 			inte_32 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,Mode^1,0x80000000U))-ValueTemp;
+			general(_PL_ Recur_)(data_32 *_R_,data_32 *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_Lite_M1_D32_):(_LinC_Recur_Lite_M0_D32_);
+			ADDRESS Offset=(inte_32*)(((Mode)?(_LinC_Radix_Lite_M0_D32_):(_LinC_Radix_Lite_M1_D32_))((data_32*)ValueTemp,(data_32*)Line,Length,0x80000000U))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,Mode,30);
+				Recur_((data_32*)ValueTemp,(data_32*)Line,Offset,30);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_Lite_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,Mode,30);
+				Recur_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,30);
 			else;
 		}
 	else;
@@ -311,27 +317,29 @@ _LINC_ general LinC_Order_I64_(inte_64 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			inte_64 _PL_ _R_ ValueTemp=(inte_64*)(IndexTemp+Length);
-			ADDRESS Offset=(inte_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
+			general(_PL_ Recur_)(data_64 *_R_,address *_R_,data_64 *_R_,address *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_M1_D64_):(_LinC_Recur_M0_D64_);
+			ADDRESS Offset=(inte_64*)(((Mode)?(_LinC_Radix_M0_D64_):(_LinC_Radix_M1_D64_))((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,Mode,62);
+				Recur_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,62);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,Mode,62);
+				Recur_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,62);
 			else;
 		}
 		else
 		{
 			inte_64 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(inte_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
+			general(_PL_ Recur_)(data_64 *_R_,data_64 *_R_,ADDRESS,integer)=(Mode)?(_LinC_Recur_Lite_M1_D64_):(_LinC_Recur_Lite_M0_D64_);
+			ADDRESS Offset=(inte_64*)(((Mode)?(_LinC_Radix_Lite_M0_D64_):(_LinC_Radix_Lite_M1_D64_))((data_64*)ValueTemp,(data_64*)Line,Length,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,Mode,62);
+				Recur_((data_64*)ValueTemp,(data_64*)Line,Offset,62);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_Lite_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,Mode,62);
+				Recur_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,62);
 			else;
 		}
 	else;
@@ -343,27 +351,27 @@ _LINC_ general LinC_Order_R32_(real_32 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			real_32 _PL_ _R_ ValueTemp=(real_32*)(IndexTemp+Length);
-			ADDRESS Offset=(real_32*)(_LinC_Radix_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,Mode^1,0x80000000U))-ValueTemp;
+			ADDRESS Offset=(real_32*)(((Mode)?(_LinC_Radix_M0_D32_):(_LinC_Radix_M1_D32_))((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Length,0x80000000U))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,1,30);
+				_LinC_Recur_M1_D32_((data_32*)ValueTemp,IndexTemp,(data_32*)Line,Index,Offset,30);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,0,30);
+				_LinC_Recur_M0_D32_((data_32*)(ValueTemp+Offset),IndexTemp+Offset,(data_32*)(Line+Offset),Index+Offset,Length-Offset,30);
 			else;
 		}
 		else
 		{
 			real_32 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(real_32*)(_LinC_Radix_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Length,Mode^1,0x80000000U))-ValueTemp;
+			ADDRESS Offset=(real_32*)(((Mode)?(_LinC_Radix_Lite_M0_D32_):(_LinC_Radix_Lite_M1_D32_))((data_32*)ValueTemp,(data_32*)Line,Length,0x80000000U))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,1,30);
+				_LinC_Recur_Lite_M1_D32_((data_32*)ValueTemp,(data_32*)Line,Offset,30);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_Lite_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,0,30);
+				_LinC_Recur_Lite_M0_D32_((data_32*)(ValueTemp+Offset),(data_32*)(Line+Offset),Length-Offset,30);
 			else;
 		}
 	else;
@@ -375,27 +383,27 @@ _LINC_ general LinC_Order_R64_(real_64 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 		{
 			address _PL_ _R_ IndexTemp=Buffer;
 			real_64 _PL_ _R_ ValueTemp=(real_64*)(IndexTemp+Length);
-			ADDRESS Offset=(real_64*)(_LinC_Radix_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
+			ADDRESS Offset=(real_64*)(((Mode)?(_LinC_Radix_M0_D64_):(_LinC_Radix_M1_D64_))((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Length,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,1,62);
+				_LinC_Recur_M1_D64_((data_64*)ValueTemp,IndexTemp,(data_64*)Line,Index,Offset,62);
 			else;
 
 			if(Offset<Length)
-				_LinC_Recur_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,0,62);
+				_LinC_Recur_M0_D64_((data_64*)(ValueTemp+Offset),IndexTemp+Offset,(data_64*)(Line+Offset),Index+Offset,Length-Offset,62);
 			else;
 		}
 		else
 		{
 			real_64 _PL_ _R_ ValueTemp=Buffer;
-			ADDRESS Offset=(real_64*)(_LinC_Radix_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Length,Mode^1,0x8000000000000000UL))-ValueTemp;
+			ADDRESS Offset=(real_64*)(((Mode)?(_LinC_Radix_Lite_M0_D64_):(_LinC_Radix_Lite_M1_D64_))((data_64*)ValueTemp,(data_64*)Line,Length,0x8000000000000000UL))-ValueTemp;
 
 			if(Offset)
-				_LinC_Recur_Lite_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,1,62);
+				_LinC_Recur_Lite_M1_D64_((data_64*)ValueTemp,(data_64*)Line,Offset,62);
 			else;
-
+			
 			if(Offset<Length)
-				_LinC_Recur_Lite_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,0,62);
+				_LinC_Recur_Lite_M0_D64_((data_64*)(ValueTemp+Offset),(data_64*)(Line+Offset),Length-Offset,62);
 			else;
 		}
 	else;
