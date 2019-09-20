@@ -1,7 +1,7 @@
 ﻿#include "boxclip.h"
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
+static BYTE_08 IdiomVersion[16]="Date:2019.09.20";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -17,6 +17,8 @@ static general _BoxC_L2_Assign_(boxc_l2 *_R_ Ptr,BOXC_L2 _PL_ Last)
 		Ptr++;
 
 	Ptr[0].L[1]=NULL;
+
+	return;
 }
 static logical _BoxC_L2_Check_(BOXC_L2 *_R_ Ptr)
 {
@@ -47,17 +49,27 @@ struct _boxc_vs
 };
 MemC_Type_Declare_(struct,boxc_vs,BOXC_VS);
 
-static general _BoxC_VS_Delete_(boxc_vs *_PL_ V)
+static general _BoxC_VS_Delete_(boxc_vs *_PL_ _R_ V)
 {
 	MemC_Deloc_(*V);
+
+	return;
+}
+static logical _BoxC_VS_Verify_(BOXC_VS _PL_ _R_ V,ADDRESS Select)
+{
+	return ((V)?((Select<(V->Number))?(1):(0)):(0));
+}
+static logical _BoxC_MS_Verify_(MEMC_MS _PL_ _R_ MS)
+{
+	return ((MS)?((MS->Nums)?(1):(0)):(0));
 }
 #endif
 
 #if(Fold_(Part:BoxC_SS))
-static general _BoxC_SS_Setup_(BOXC_VS _PL_ S)
+static general _BoxC_SS_Setup_(BOXC_VS _PL_ _R_ S)
 {
-	boxc_l2 *_PL_ Stack=S->Thing;
-	address _PL_ Count=S->Count;
+	boxc_l2 *_PL_ _R_ Stack=S->Thing;
+	address _PL_ _R_ Count=S->Count;
 
 	if(S->Number)
 	{
@@ -75,10 +87,12 @@ static general _BoxC_SS_Setup_(BOXC_VS _PL_ S)
 	}
 	else
 		Stack[-1]=NULL;
+
+	return;
 }
 _BOXC_ boxc_vs *BoxC_SS_Create_(ADDRESS Number,ADDRESS Capacity)
 {
-	boxc_vs *S;
+	boxc_vs *_R_ S;
 
 	MemC_Temp_(address,Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2*)+sizeof(address)))
 		if(Size)
@@ -114,7 +128,7 @@ _BOXC_ boxc_vs *BoxC_SS_Create_(ADDRESS Number,ADDRESS Capacity)
 
 	return S;
 }
-_BOXC_ address BoxC_SS_Size_(BOXC_VS _PL_ S)
+_BOXC_ address BoxC_SS_Size_(BOXC_VS _PL_ _R_ S)
 {
 	address Temp;
 
@@ -129,10 +143,10 @@ _BOXC_ address BoxC_SS_Size_(BOXC_VS _PL_ S)
 	return Temp;
 }
 
-static general _BoxC_SS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general *_PL_ Port)
+static general _BoxC_SS_Swap_(boxc_l2 *_PL_ _R_ Source,boxc_l2 *_PL_ _R_ Target,general *_PL_ _R_ Port)
 {
 	{
-		boxc_l2 _PL_ Temp=*Source;
+		boxc_l2 _PL_ _R_ Temp=*Source;
 
 		*Source=Temp->L[1];
 		Temp->L[1]=*Target;
@@ -144,104 +158,21 @@ static general _BoxC_SS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 		*Port=(*Target)->L[0];
 		(*Target)->L[0]=Temp;
 	}
+
+	return;
 }
-_BOXC_ logical BoxC_SS_Push_(BOXC_VS _PL_ S,ADDRESS Select,general *Contents)
+_BOXC_ logical BoxC_SS_Push_(BOXC_VS _PL_ _R_ S,ADDRESS Select,general *Contents)
 {
-	if(S)
-		if(Select<S->Number)
-			if(S->Count[-1])
-			{
-				boxc_l2 *_PL_ Stack=S->Thing;
-				address _PL_ Count=S->Count;
-
-				_BoxC_SS_Swap_(Stack-1,Stack+Select,&Contents);
-
-				Count[-1]--;
-				Count[Select]++;
-
-				return 1;
-			}
-			else;
-		else;
-	else;
-
-	return 0;
-}
-_BOXC_ general *BoxC_SS_Pop_(BOXC_VS _PL_ S,ADDRESS Select)
-{
-	if(S)
-		if(Select<S->Number)
-			if(S->Count[Select])
-			{
-				boxc_l2 *_PL_ Stack=S->Thing;
-				address _PL_ Count=S->Count;
-				general *Object;
-
-				_BoxC_SS_Swap_(Stack+Select,Stack-1,&Object);
-
-				Count[-1]++;
-				Count[Select]--;
-
-				return Object;
-			}
-			else;
-		else;
-	else;
-
-	return NULL;
-}
-_BOXC_ address BoxC_SS_Spread_(MEMC_MS _PL_ MS,BOXC_VS _PL_ SS,ADDRESS Select)
-{
-	if(MS)
-		if(SS)
-			if(Select<SS->Number)
-			{
-				boxc_l2 *_PL_ Stack=SS->Thing;
-				address _PL_ Count=SS->Count;
-				ADDRESS Number=((MS->Nums)<(SS->Count[Select]))?(MS->Nums):(SS->Count[Select]);
-
-				MemC_Temp_(boxc_l2,*_PL_ From=Stack+Select,*_PL_ Into=Stack-1)
-					for(general **Ptr=MS->Slot.P,_PL_ _PL_ End=Ptr+Number;Ptr<End;Ptr++)
-						_BoxC_SS_Swap_(From,Into,Ptr);
-
-				Count[-1]+=Number;
-				Count[Select]-=Number;
-
-				return Number;
-			}
-			else;
-		else;
-	else;
-
-	return 0;
-}
-
-static general _BoxC_SS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
-{
-	boxc_l2 *Temp;
-
-	for(Temp=*Source;Temp->L[1];Temp=Temp->L[1]);
-	Temp->L[1]=*Target;
-
-	*Target=*Source;
-	*Source=NULL;
-}
-_BOXC_ logical BoxC_SS_Reset_(BOXC_VS _PL_ S,ADDRESS Select)
-{
-	if(S)
-		if(Select<S->Number)
+	if(_BoxC_VS_Verify_(S,Select))
+		if(S->Count[-1])
 		{
-			if(S->Count[Select])
-			{
-				boxc_l2 *_PL_ Stack=S->Thing;
-				address _PL_ Count=S->Count;
+			boxc_l2 *_PL_ Stack=S->Thing;
+			address _PL_ _R_ Count=S->Count;
 
-				_BoxC_SS_Reset_(Stack+Select,Stack-1);
+			_BoxC_SS_Swap_(Stack-1,Stack+Select,&Contents);
 
-				Count[-1]+=Count[Select];
-				Count[Select]=0;
-			}
-			else;
+			Count[-1]--;
+			Count[Select]++;
 
 			return 1;
 		}
@@ -250,35 +181,115 @@ _BOXC_ logical BoxC_SS_Reset_(BOXC_VS _PL_ S,ADDRESS Select)
 
 	return 0;
 }
-_BOXC_ logical BoxC_SS_Reset_All_(BOXC_VS _PL_ S)
+_BOXC_ general *BoxC_SS_Pop_(BOXC_VS _PL_ _R_ S,ADDRESS Select)
 {
-	if(S)
+	if(_BoxC_VS_Verify_(S,Select))
+		if(S->Count[Select])
+		{
+			boxc_l2 *_PL_ Stack=S->Thing;
+			address _PL_ _R_ Count=S->Count;
+			general *Object;
+
+			_BoxC_SS_Swap_(Stack+Select,Stack-1,&Object);
+
+			Count[-1]++;
+			Count[Select]--;
+
+			return Object;
+		}
+		else;
+	else;
+
+	return NULL;
+}
+_BOXC_ logical BoxC_SS_Spread_(MEMC_MS _PL_ _R_ MS,BOXC_VS _PL_ _R_ SS,ADDRESS Select)
+{
+	if(_BoxC_MS_Verify_(MS))
+		if(_BoxC_VS_Verify_(SS,Select))
+		{
+			boxc_l2 *_PL_ Stack=SS->Thing;
+			address _PL_ _R_ Count=SS->Count;
+			ADDRESS Number=MS->Slot.V[0]=((SS->Count[Select])<(MS->Nums))?(SS->Count[Select]):(MS->Nums-1);
+
+			MemC_Temp_(boxc_l2,*_PL_ From=Stack+Select,*_PL_ Into=Stack-1)
+				for(general **Ptr=MS->Slot.P+1,_PL_ _PL_ End=Ptr+Number;Ptr<End;Ptr++)
+					_BoxC_SS_Swap_(From,Into,Ptr);
+
+			Count[-1]+=Number;
+			Count[Select]-=Number;
+
+			return 1;
+		}
+		else;
+	else;
+
+	return 0;
+}
+
+static general _BoxC_SS_Reset_(boxc_l2 *_PL_ _R_ Source,boxc_l2 *_PL_ _R_ Target)
+{
+	boxc_l2 *_R_ Temp;
+
+	for(Temp=*Source;Temp->L[1];Temp=Temp->L[1]);
+	Temp->L[1]=*Target;
+
+	*Target=*Source;
+	*Source=NULL;
+
+	return;
+}
+_BOXC_ logical BoxC_SS_Reset_(BOXC_VS _PL_ _R_ S,ADDRESS Select)
+{
+	if(_BoxC_VS_Verify_(S,Select))
 	{
-		_BoxC_SS_Setup_(S);
+		if(S->Count[Select])
+		{
+			boxc_l2 *_PL_ Stack=S->Thing;
+			address _PL_ _R_ Count=S->Count;
+
+			_BoxC_SS_Reset_(Stack+Select,Stack-1);
+
+			Count[-1]+=Count[Select];
+			Count[Select]=0;
+		}
+		else;
 
 		return 1;
 	}
 	else
 		return 0;
 }
-
-_BOXC_ logical BoxC_SS_Check_(BOXC_VS _PL_ S,ADDRESS Select)
+_BOXC_ logical BoxC_SS_Reset_All_(BOXC_VS _PL_ _R_ S)
 {
-	if(S)
-		if(Select<S->Number)
-			return _BoxC_L2_Check_(((boxc_l2**)(S->Thing))[Select]);
-		else;
-	else;
-
-	return 0;
+	return ((S)?(_BoxC_SS_Setup_(S),1):(0));
 }
-_BOXC_ general *BoxC_SS_Peek_(BOXC_VS _PL_ S,ADDRESS Select,ADDRESS Index)
+
+_BOXC_ logical BoxC_SS_Check_(BOXC_VS _PL_ _R_ S,ADDRESS Select)
+{
+	if(_BoxC_VS_Verify_(S,Select))
+		return _BoxC_L2_Check_(((boxc_l2**)(S->Thing))[Select]);
+	else
+		return 0;
+}
+_BOXC_ logical BoxC_SS_Check_All_(BOXC_VS _PL_ _R_ S)
 {
 	if(S)
-		if(Select<S->Number)
-			if(Index<S->Count[Select])
-				return _BoxC_L2_Peek_(((boxc_l2**)(S->Thing))[Select],Index);
-			else;
+	{
+		for(BOXC_L2 _PL_ *_R_ Ptr=S->Thing,_PL_ _PL_ End=Ptr+(S->Number);Ptr<End;Ptr++)
+			if(_BoxC_L2_Check_(*Ptr));
+			else
+				return 0;
+
+		return 1;
+	}
+	else
+		return 0;
+}
+_BOXC_ general *BoxC_SS_Peek_(BOXC_VS _PL_ _R_ S,ADDRESS Select,ADDRESS Index)
+{
+	if(_BoxC_VS_Verify_(S,Select))
+		if(Index<S->Count[Select])
+			return _BoxC_L2_Peek_(((boxc_l2**)(S->Thing))[Select],Index);
 		else;
 	else;
 
@@ -287,10 +298,10 @@ _BOXC_ general *BoxC_SS_Peek_(BOXC_VS _PL_ S,ADDRESS Select,ADDRESS Index)
 #endif
 
 #if(Fold_(Part:BoxC_QS))
-static general _BoxC_QS_Setup_(BOXC_VS _PL_ Q)
+static general _BoxC_QS_Setup_(BOXC_VS _PL_ _R_ Q)
 {
-	boxc_l2 _PL_ Queue=Q->Thing;
-	address _PL_ Count=Q->Count;
+	boxc_l2 _PL_ _R_ Queue=Q->Thing;
+	address _PL_ _R_ Count=Q->Count;
 
 	if(Q->Number)
 	{
@@ -313,10 +324,12 @@ static general _BoxC_QS_Setup_(BOXC_VS _PL_ Q)
 		Queue[-1].L[0]=NULL;
 		Queue[-1].L[1]=NULL;
 	}
+
+	return;
 }
 _BOXC_ boxc_vs *BoxC_QS_Create_(ADDRESS Number,ADDRESS Capacity)
 {
-	boxc_vs *Q;
+	boxc_vs *_R_ Q;
 
 	MemC_Temp_(address,Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2)+sizeof(address)))
 		if(Size)
@@ -352,7 +365,7 @@ _BOXC_ boxc_vs *BoxC_QS_Create_(ADDRESS Number,ADDRESS Capacity)
 
 	return Q;
 }
-_BOXC_ address BoxC_QS_Size_(BOXC_VS _PL_ Q)
+_BOXC_ address BoxC_QS_Size_(BOXC_VS _PL_ _R_ Q)
 {
 	address Temp;
 
@@ -367,7 +380,7 @@ _BOXC_ address BoxC_QS_Size_(BOXC_VS _PL_ Q)
 	return Temp;
 }
 
-static general _BoxC_QS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general *_PL_ Port)
+static general _BoxC_QS_Swap_(boxc_l2 *_PL_ _R_ Source,boxc_l2 *_PL_ _R_ Target,general *_PL_ _R_ Port)
 {
 	if(Target[1])
 	{
@@ -393,79 +406,75 @@ static general _BoxC_QS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 		Target[1]->L[0]=Temp;
 		Target[1]->L[1]=NULL;
 	}
+
+	return;
 }
-_BOXC_ logical BoxC_QS_Enque_(BOXC_VS _PL_ Q,ADDRESS Select,general *Contents)
+_BOXC_ logical BoxC_QS_Enque_(BOXC_VS _PL_ _R_ Q,ADDRESS Select,general *Contents)
 {
-	if(Q)
-		if(Select<Q->Number)
-			if(Q->Count[-1])
-			{
-				boxc_l2 _PL_ Queue=Q->Thing;
-				address _PL_ Count=Q->Count;
+	if(_BoxC_VS_Verify_(Q,Select))
+		if(Q->Count[-1])
+		{
+			boxc_l2 _PL_ _R_ Queue=Q->Thing;
+			address _PL_ _R_ Count=Q->Count;
 
-				_BoxC_QS_Swap_(Queue[-1].L,Queue[Select].L,&Contents);
+			_BoxC_QS_Swap_(Queue[-1].L,Queue[Select].L,&Contents);
 
-				Count[-1]--;
-				Count[Select]++;
+			Count[-1]--;
+			Count[Select]++;
 
-				return 1;
-			}
-			else;
+			return 1;
+		}
 		else;
 	else;
 
 	return 0;
 }
-_BOXC_ general *BoxC_QS_Deque_(BOXC_VS _PL_ Q,ADDRESS Select)
+_BOXC_ general *BoxC_QS_Deque_(BOXC_VS _PL_ _R_ Q,ADDRESS Select)
 {
-	if(Q)
-		if(Select<Q->Number)
-			if(Q->Count[Select])
-			{
-				boxc_l2 _PL_ Queue=Q->Thing;
-				address _PL_ Count=Q->Count;
-				general *Object;
+	if(_BoxC_VS_Verify_(Q,Select))
+		if(Q->Count[Select])
+		{
+			boxc_l2 _PL_ _R_ Queue=Q->Thing;
+			address _PL_ _R_ Count=Q->Count;
+			general *Object;
 
-				_BoxC_QS_Swap_(Queue[Select].L,Queue[-1].L,&Object);
+			_BoxC_QS_Swap_(Queue[Select].L,Queue[-1].L,&Object);
 
-				Count[-1]++;
-				Count[Select]--;
+			Count[-1]++;
+			Count[Select]--;
 
-				return Object;
-			}
-			else;
+			return Object;
+		}
 		else;
 	else;
 
 	return NULL;
 }
-_BOXC_ address BoxC_QS_Spread_(MEMC_MS _PL_ MS,BOXC_VS _PL_ QS,ADDRESS Select)
+_BOXC_ logical BoxC_QS_Spread_(MEMC_MS _PL_ _R_ MS,BOXC_VS _PL_ _R_ QS,ADDRESS Select)
 {
-	if(MS)
-		if(QS)
-			if(Select<QS->Number)
-			{
-				boxc_l2 _PL_ Queue=QS->Thing;
-				address _PL_ Count=QS->Count;
-				ADDRESS Number=((MS->Nums)<(QS->Count[Select]))?(MS->Nums):(QS->Count[Select]);
+	if(_BoxC_MS_Verify_(MS))
+		if(_BoxC_VS_Verify_(QS,Select))
+		{
+			boxc_l2 _PL_ Queue=QS->Thing;
+			address _PL_ _R_ Count=QS->Count;
+			ADDRESS Number=MS->Slot.V[0]=((QS->Count[Select])<(MS->Nums))?(QS->Count[Select]):(MS->Nums-1);
 
-				MemC_Temp_(boxc_l2,_PL_ From=Queue+Select,_PL_ Into=Queue-1)
-					for(general **Ptr=MS->Slot.P,_PL_ _PL_ End=Ptr+Number;Ptr<End;Ptr++)
-						_BoxC_QS_Swap_(From->L,Into->L,Ptr);
+			MemC_Temp_(boxc_l2,_PL_ _R_ From=Queue+Select,_PL_ _R_ Into=Queue-1)
+				for(general **Ptr=MS->Slot.P+1,_PL_ _PL_ End=Ptr+Number;Ptr<End;Ptr++)
+					_BoxC_QS_Swap_(From->L,Into->L,Ptr);
 
-				Count[-1]+=Number;
-				Count[Select]-=Number;
+			Count[-1]+=Number;
+			Count[Select]-=Number;
 
-				return Number;
-			}
-			else;
+			return 1;
+		}
 		else;
 	else;
 
 	return 0;
 }
 
-static general _BoxC_QS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
+static general _BoxC_QS_Reset_(boxc_l2 *_PL_ _R_ Source,boxc_l2 *_PL_ _R_ Target)
 {
 	if(Target[1])
 		Target[1]->L[1]=Source[0];
@@ -477,37 +486,36 @@ static general _BoxC_QS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
 		Source[0]=NULL;
 		Source[1]=NULL;
 	}
+
+	return;
 }
-_BOXC_ logical BoxC_QS_Reset_(BOXC_VS _PL_ Q,ADDRESS Select)
+_BOXC_ logical BoxC_QS_Reset_(BOXC_VS _PL_ _R_ Q,ADDRESS Select)
 {
-	if(Q)
-		if(Select<Q->Number)
+	if(_BoxC_VS_Verify_(Q,Select))
+	{
+		if(Q->Count[Select])
 		{
-			if(Q->Count[Select])
-			{
-				boxc_l2 _PL_ Queue=Q->Thing;
-				address _PL_ Count=Q->Count;
+			boxc_l2 _PL_ _R_ Queue=Q->Thing;
+			address _PL_ _R_ Count=Q->Count;
 
-				_BoxC_QS_Reset_(Queue[Select].L,Queue[-1].L);
+			_BoxC_QS_Reset_(Queue[Select].L,Queue[-1].L);
 
-				Count[-1]+=Count[Select];
-				Count[Select]=0;
-			}
-			else;
-
-			return 1;
+			Count[-1]+=Count[Select];
+			Count[Select]=0;
 		}
 		else;
-	else;
 
-	return 0;
+		return 1;
+	}
+	else
+		return 0;
 }
-_BOXC_ logical BoxC_QS_Reset_All_(BOXC_VS _PL_ Q)
+_BOXC_ logical BoxC_QS_Reset_All_(BOXC_VS _PL_ _R_ Q)
 {
 	if(Q)
 	{
-		boxc_l2 _PL_ Queue=Q->Thing;
-		address _PL_ Count=Q->Count;
+		boxc_l2 _PL_ _R_ Queue=Q->Thing;
+		address _PL_ _R_ Count=Q->Count;
 
 		for(address Select=0;Select<Q->Number;Select++)
 			if(Count[Select])
@@ -525,23 +533,32 @@ _BOXC_ logical BoxC_QS_Reset_All_(BOXC_VS _PL_ Q)
 		return 0;
 }
 
-_BOXC_ logical BoxC_QS_Check_(BOXC_VS _PL_ Q,ADDRESS Select)
+_BOXC_ logical BoxC_QS_Check_(BOXC_VS _PL_ _R_ Q,ADDRESS Select)
 {
-	if(Q)
-		if(Select<Q->Number)
-			return _BoxC_L2_Check_(((boxc_l2*)(Q->Thing))[Select].L[0]);
-		else;
-	else;
-
-	return 0;
+	if(_BoxC_VS_Verify_(Q,Select))
+		return _BoxC_L2_Check_(((boxc_l2*)(Q->Thing))[Select].L[0]);
+	else
+		return 0;
 }
-_BOXC_ general *BoxC_QS_Peek_(BOXC_VS _PL_ Q,ADDRESS Select,ADDRESS Index)
+_BOXC_ logical BoxC_QS_Check_All_(BOXC_VS _PL_ _R_ Q)
 {
 	if(Q)
-		if(Select<Q->Number)
-			if(Index<Q->Count[Select])
-				return _BoxC_L2_Peek_(((boxc_l2*)(Q->Thing))[Select].L[0],Index);
-			else;
+	{
+		for(BOXC_L2 *_R_ Ptr=Q->Thing,_PL_ End=Ptr+(Q->Number);Ptr<End;Ptr++)
+			if(_BoxC_L2_Check_(Ptr->L[0]));
+			else
+				return 0;
+
+		return 1;
+	}
+	else
+		return 0;
+}
+_BOXC_ general *BoxC_QS_Peek_(BOXC_VS _PL_ _R_ Q,ADDRESS Select,ADDRESS Index)
+{
+	if(_BoxC_VS_Verify_(Q,Select))
+		if(Index<Q->Count[Select])
+			return _BoxC_L2_Peek_(((boxc_l2*)(Q->Thing))[Select].L[0],Index);
 		else;
 	else;
 
@@ -556,11 +573,13 @@ static general _BoxC_RS_Assign_(boxc_l2 *_R_ Ptr,BOXC_L2 _PL_ Last)
 {
 	for(Ptr++;Ptr<Last;Ptr++)
 		Ptr->L[1]=_BoxC_L2_Twist_(Ptr-1,Ptr+1);
+
+	return;
 }
-static general _BoxC_RS_Setup_(BOXC_VS _PL_ R)
+static general _BoxC_RS_Setup_(BOXC_VS _PL_ _R_ R)
 {
-	boxc_l2 _PL_ Ring=R->Thing;
-	address _PL_ Count=R->Count;
+	boxc_l2 _PL_ _R_ Ring=R->Thing;
+	address _PL_ _R_ Count=R->Count;
 
 	if(R->Number)
 	{
@@ -594,10 +613,12 @@ static general _BoxC_RS_Setup_(BOXC_VS _PL_ R)
 		Ring[-1].L[0]=NULL;
 		Ring[-1].L[1]=NULL;
 	}
+
+	return;
 }
 _BOXC_ boxc_vs *BoxC_RS_Create_(ADDRESS Number,ADDRESS Capacity)
 {
-	boxc_vs *R;
+	boxc_vs *_R_ R;
 
 	MemC_Temp_(address,Size=MemC.Size.Mul_(Number+1,sizeof(boxc_l2)+sizeof(address)))
 		if(Size)
@@ -633,7 +654,7 @@ _BOXC_ boxc_vs *BoxC_RS_Create_(ADDRESS Number,ADDRESS Capacity)
 
 	return R;
 }
-_BOXC_ address BoxC_RS_Size_(BOXC_VS _PL_ R)
+_BOXC_ address BoxC_RS_Size_(BOXC_VS _PL_ _R_ R)
 {
 	address Temp;
 
@@ -648,10 +669,10 @@ _BOXC_ address BoxC_RS_Size_(BOXC_VS _PL_ R)
 	return Temp;
 }
 
-static general _BoxC_RS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general *_PL_ Port,LOGICAL Posi)
+static general _BoxC_RS_Swap_(boxc_l2 *_PL_ _R_ Source,boxc_l2 *_PL_ _R_ Target,general *_PL_ _R_ Port,LOGICAL Posi)
 {
 	LOGICAL Nega=Posi^1;
-	boxc_l2 _PL_ Here=Source[Posi];
+	boxc_l2 _PL_ _R_ Here=Source[Posi];
 
 	if(Source[0]==Source[1])
 	{
@@ -660,8 +681,8 @@ static general _BoxC_RS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 	}
 	else
 	{
-		boxc_l2 _PL_ NearA=_BoxC_L2_Twist_(Here->L[1],Source[Nega]);
-		boxc_l2 _PL_ NearB=_BoxC_L2_Twist_(Here->L[1],NearA);
+		boxc_l2 _PL_ _R_ NearA=_BoxC_L2_Twist_(Here->L[1],Source[Nega]);
+		boxc_l2 _PL_ _R_ NearB=_BoxC_L2_Twist_(Here->L[1],NearA);
 
 		NearA->L[1]=_BoxC_L2_Twist_(NearA->L[1],_BoxC_L2_Twist_(Here,NearB));
 		NearB->L[1]=_BoxC_L2_Twist_(NearB->L[1],_BoxC_L2_Twist_(Here,NearA));
@@ -683,59 +704,57 @@ static general _BoxC_RS_Swap_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target,general 
 	else
 		Target[Posi]=Here;
 	Target[Nega]=Here;
+
+	return;
 }
-_BOXC_ logical BoxC_RS_Insert_(BOXC_VS _PL_ R,ADDRESS Select,general *Contents,LOGICAL Mode)
+_BOXC_ logical BoxC_RS_Insert_(BOXC_VS _PL_ _R_ R,ADDRESS Select,general *Contents,LOGICAL Mode)
 {
-	if(R)
-		if(Select<R->Number)
-			if(R->Count[-1])
-			{
-				boxc_l2 _PL_ Ring=R->Thing;
-				address _PL_ Count=R->Count;
+	if(_BoxC_VS_Verify_(R,Select))
+		if(R->Count[-1])
+		{
+			boxc_l2 _PL_ _R_ Ring=R->Thing;
+			address _PL_ _R_ Count=R->Count;
 
-				_BoxC_RS_Swap_(Ring[-1].L,Ring[Select].L,&Contents,Mode);
+			_BoxC_RS_Swap_(Ring[-1].L,Ring[Select].L,&Contents,Mode);
 
-				Count[-1]--;
-				Count[Select]++;
+			Count[-1]--;
+			Count[Select]++;
 
-				return 1;
-			}
-			else;
+			return 1;
+		}
 		else;
 	else;
 
 	return 0;
 }
-_BOXC_ logical BoxC_RS_Desert_(BOXC_VS _PL_ R,ADDRESS Select,LOGICAL Mode)
+_BOXC_ logical BoxC_RS_Desert_(BOXC_VS _PL_ _R_ R,ADDRESS Select,LOGICAL Mode)
 {
-	if(R)
-		if(Select<R->Number)
-			if(R->Count[Select])
-			{
-				boxc_l2 _PL_ Ring=R->Thing;
-				address _PL_ Count=R->Count;
-				general *Temp;
+	if(_BoxC_VS_Verify_(R,Select))
+		if(R->Count[Select])
+		{
+			boxc_l2 _PL_ _R_ Ring=R->Thing;
+			address _PL_ _R_ Count=R->Count;
+			general *Temp;
 
-				_BoxC_RS_Swap_(Ring[Select].L,Ring[-1].L,&Temp,Mode&1);
+			_BoxC_RS_Swap_(Ring[Select].L,Ring[-1].L,&Temp,Mode&1);
 
-				Count[-1]++;
-				Count[Select]--;
+			Count[-1]++;
+			Count[Select]--;
 
-				return 1;
-			}
-			else;
+			return 1;
+		}
 		else;
 	else;
 
 	return 0;
 }
 
-static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ Ring,sintptr Rotation)
+static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ _R_ Ring,sintptr Rotation)
 {
 	SINTPTR Mask=(Rotation>0);
 	SINTPTR Nega=Mask^1;
-	BOXC_L2 *Here=Ring[Mask];
-	BOXC_L2 *Prop=_BoxC_L2_Twist_(Ring[Nega],Here->L[1]);
+	BOXC_L2 *_R_ Here=Ring[Mask];
+	BOXC_L2 *_R_ Prop=_BoxC_L2_Twist_(Ring[Nega],Here->L[1]);
 
 	for(SINTPTR Step=1-(Mask<<1);Rotation;Rotation+=Step)
 	{
@@ -748,27 +767,26 @@ static general _BoxC_RS_Rotate_(BOXC_L2 *_PL_ Ring,sintptr Rotation)
 		Ring[Mask]=Here;
 		Ring[Nega]=_BoxC_L2_Twist_(Prop,Here->L[1]);
 	}
+
+	return;
 }
-_BOXC_ logical BoxC_RS_Rotate_(BOXC_VS _PL_ R,ADDRESS Select,SINTPTR Rotation)
+_BOXC_ logical BoxC_RS_Rotate_(BOXC_VS _PL_ _R_ R,ADDRESS Select,SINTPTR Rotation)
 {
-	if(R)
-		if(Select<R->Number)
-		{
-			ADDRESS Count=R->Count[Select];
+	if(_BoxC_VS_Verify_(R,Select))
+	{
+		ADDRESS Count=R->Count[Select];
 
-			if(Count)
-				_BoxC_RS_Rotate_(((boxc_l2*)(R->Thing))[Select].L,Rotation%Acs_(sintptr,Count));
-			else;
-
-			return 1;
-		}
+		if(Count)
+			_BoxC_RS_Rotate_(((boxc_l2*)(R->Thing))[Select].L,Rotation%Acs_(sintptr,Count));
 		else;
-	else;
 
-	return 0;
+		return 1;
+	}
+	else
+		return 0;
 }
 
-static general _BoxC_RS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
+static general _BoxC_RS_Reset_(boxc_l2 *_PL_ _R_ Source,boxc_l2 *_PL_ _R_ Target)
 {
 	if(Target[0])
 	{
@@ -790,37 +808,36 @@ static general _BoxC_RS_Reset_(boxc_l2 *_PL_ Source,boxc_l2 *_PL_ Target)
 		Source[0]=NULL;
 		Source[1]=NULL;
 	}
+
+	return;
 }
-_BOXC_ logical BoxC_RS_Reset_(BOXC_VS _PL_ R,ADDRESS Select)
+_BOXC_ logical BoxC_RS_Reset_(BOXC_VS _PL_ _R_ R,ADDRESS Select)
 {
-	if(R)
-		if(Select<R->Number)
+	if(_BoxC_VS_Verify_(R,Select))
+	{
+		if(R->Count[Select])
 		{
-			if(R->Count[Select])
-			{
-				boxc_l2 _PL_ Ring=R->Thing;
-				address _PL_ Count=R->Count;
+			boxc_l2 _PL_ _R_ Ring=R->Thing;
+			address _PL_ _R_ Count=R->Count;
 
-				_BoxC_RS_Reset_(Ring[Select].L,Ring[-1].L);
+			_BoxC_RS_Reset_(Ring[Select].L,Ring[-1].L);
 
-				Count[-1]+=Count[Select];
-				Count[Select]=0;
-			}
-			else;
-
-			return 1;
+			Count[-1]+=Count[Select];
+			Count[Select]=0;
 		}
 		else;
-	else;
 
-	return 0;
+		return 1;
+	}
+	else
+		return 0;
 }
-_BOXC_ logical BoxC_RS_Reset_All_(BOXC_VS _PL_ R)
+_BOXC_ logical BoxC_RS_Reset_All_(BOXC_VS _PL_ _R_ R)
 {
 	if(R)
 	{
-		boxc_l2 _PL_ Ring=R->Thing;
-		address _PL_ Count=R->Count;
+		boxc_l2 _PL_ _R_ Ring=R->Thing;
+		address _PL_ _R_ Count=R->Count;
 		address Select;
 
 		for(Select=0;Select<R->Number;Select++)
@@ -839,14 +856,14 @@ _BOXC_ logical BoxC_RS_Reset_All_(BOXC_VS _PL_ R)
 		return 0;
 }
 
-static logical _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ Ring)
+static logical _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ _R_ Ring)
 {
 	if(Ring[0]==Ring[1])
 		return (Ring[0]->L[0]!=NULL);
 	else
 	{
-		BOXC_L2 *Here=Ring[1];
-		BOXC_L2 *Next=_BoxC_L2_Twist_(Ring[0],Here->L[1]);
+		BOXC_L2 *_R_ Here=Ring[1];
+		BOXC_L2 *_R_ Next=_BoxC_L2_Twist_(Ring[0],Here->L[1]);
 
 		while(Next!=Ring[1])
 			if(Here->L[0])
@@ -857,28 +874,37 @@ static logical _BoxC_RS_Check_(BOXC_L2 _PL_ _PL_ Ring)
 				Here=Temp;
 			}
 			else
-				break;
+				return 0;
 
-		return (Next==Ring[1]);
+		return 1;
 	}
 }
-_BOXC_ logical BoxC_RS_Check_(BOXC_VS _PL_ R,ADDRESS Select)
+_BOXC_ logical BoxC_RS_Check_(BOXC_VS _PL_ _R_ R,ADDRESS Select)
 {
-	if(R)
-		if(Select<R->Number)
-			return _BoxC_RS_Check_(((boxc_l2*)(R->Thing))[Select].L);
-		else;
-	else;
-
-	return 0;
+	if(_BoxC_VS_Verify_(R,Select))
+		return _BoxC_RS_Check_(((boxc_l2*)(R->Thing))[Select].L);
+	else
+		return 0;
 }
-_BOXC_ general *BoxC_RS_Read_(BOXC_VS _PL_ R,ADDRESS Select,LOGICAL Mode)
+_BOXC_ logical BoxC_RS_Check_All_(BOXC_VS _PL_ _R_ R)
 {
 	if(R)
-		if(Select<R->Number)
-			if(R->Count[Select])
-				return (((boxc_l2*)(R->Thing))[Select].L[Mode&1]->L[0]);
-			else;
+	{
+		for(BOXC_L2 *_R_ Ptr=R->Thing,_PL_ End=Ptr+(R->Number);Ptr<End;Ptr++)
+			if(_BoxC_RS_Check_(Ptr->L));
+			else
+				return 0;
+
+		return 1;
+	}
+	else
+		return 0;
+}
+_BOXC_ general *BoxC_RS_Read_(BOXC_VS _PL_ _R_ R,ADDRESS Select,LOGICAL Mode)
+{
+	if(_BoxC_VS_Verify_(R,Select))
+		if(R->Count[Select])
+			return (((boxc_l2*)(R->Thing))[Select].L[Mode&1]->L[0]);
 		else;
 	else;
 
@@ -917,13 +943,13 @@ static address _BoxC_RS_GCD_(address M,address N)
 			return (M<<S);
 	}
 }
-static general _BoxC_RS_Spread_(general **Slot,BOXC_L2 *_PL_ Ring,ADDRESS Count,SINTPTR Rotation,LOGICAL Mode)
+static general _BoxC_RS_Spread_(general **_R_ Slot,BOXC_L2 *_PL_ _R_ Ring,ADDRESS Count,SINTPTR Rotation,LOGICAL Mode)
 {
 	SINTPTR Mask=(Rotation>0);
 	SINTPTR Nega=Mask^1;
 	SINTPTR Step=1-(Mask<<1);
-	BOXC_L2 *Here=Ring[Mask];
-	BOXC_L2 *Prop=_BoxC_L2_Twist_(Ring[Nega],Here->L[1]);
+	BOXC_L2 *_R_ Here=Ring[Mask];
+	BOXC_L2 *_R_ Prop=_BoxC_L2_Twist_(Ring[Nega],Here->L[1]);
 	
 	for(GENERAL _PL_ _PL_ End=Slot+Count;Slot<End;Slot++)
 	{
@@ -942,37 +968,44 @@ static general _BoxC_RS_Spread_(general **Slot,BOXC_L2 *_PL_ Ring,ADDRESS Count,
 			Here=Temp;
 		}
 	}
+
+	return;
 }
-_BOXC_ address BoxC_RS_Spread_(MEMC_MS _PL_ MS,BOXC_VS _PL_ RS,ADDRESS Select,sintptr Rotation,LOGICAL Mode)
+_BOXC_ logical BoxC_RS_Spread_(MEMC_MS _PL_ _R_ MS,BOXC_VS _PL_ _R_ RS,ADDRESS Select,sintptr Rotation,LOGICAL Mode)
 {
-	if(MS)
-		if(RS)
-			if(Select<RS->Number)
-				if(RS->Count[Select])
+	if(_BoxC_MS_Verify_(MS))
+		if(_BoxC_VS_Verify_(RS,Select))
+			if(RS->Count[Select])
+			{
+				address Number;
+
+				if(Rotation)
 				{
-					address Return;
+					ADDRESS Count=RS->Count[Select];
 
-					if(Rotation)
-					{
-						ADDRESS Count=RS->Count[Select];
+					Rotation%=Acs_(sintptr,Count);
+					Number=(Rotation<0)?(-Rotation):(+Rotation);
+					Number=_BoxC_RS_GCD_(Count,Number);
+					Number=Count/Number;
+				}
+				else
+					Number=1;
 
-						Rotation%=Acs_(sintptr,Count);
-						Return=(Rotation<0)?(-Rotation):(+Rotation);
-						Return=_BoxC_RS_GCD_(Count,Return);
-						Return=Count/Return;
-					}
-					else
-						Return=1;
+				if(Number<(MS->Nums))
+				{
+					MS->Slot.V[0]=Number;
+					_BoxC_RS_Spread_(MS->Slot.P+1,((boxc_l2*)(RS->Thing))[Select].L,Number,Rotation,Mode);
 
-					if(Return>MS->Nums)
-						Return=0;
-					else
-						_BoxC_RS_Spread_(MS->Slot.P,((boxc_l2*)(RS->Thing))[Select].L,Return,Rotation,Mode);
-
-					return Return;
+					return 1;
 				}
 				else;
-			else;
+			}
+			else
+			{
+				MS->Slot.V[0]=0;
+
+				return 1;
+			}
 		else;
 	else;
 
@@ -998,49 +1031,52 @@ static inline integer _BoxC_KN_Comp_(GENERAL _PL_ A,GENERAL _PL_ B)
 {
 	return ((A>B)-(A<B));
 }
-static inline address _BoxC_KN_Height_Old_(BOXC_KN _PL_ Node)
+static inline address _BoxC_KN_Height_Old_(BOXC_KN _PL_ _R_ Node)
 {
 	return ((Node)?(Node->Height):(0));
 }
-static inline general _BoxC_KN_Height_New_(boxc_kn _PL_ Node)
+static inline general _BoxC_KN_Height_New_(boxc_kn _PL_ _R_ Node)
 {
 	ADDRESS H0=_BoxC_KN_Height_Old_(Node->Leaf[0]);
 	ADDRESS H1=_BoxC_KN_Height_Old_(Node->Leaf[1]);
 
 	Node->Height=(H0>H1)?(H0):(H1);
 	Node->Height++;
+
+	return;
 }
-static inline sintptr _BoxC_KN_Height_Bal_(BOXC_KN _PL_ Node)
+static inline sintptr _BoxC_KN_Height_Bal_(BOXC_KN _PL_ _R_ Node)
 {
 	return ((Node)?(_BoxC_KN_Height_Old_(Node->Leaf[0])-_BoxC_KN_Height_Old_(Node->Leaf[1])):(0));
 }
-static inline address _BoxC_KN_Weight_Old_(BOXC_KN _PL_ Node)
+static inline address _BoxC_KN_Weight_Old_(BOXC_KN _PL_ _R_ Node)
 {
 	return ((Node)?(Node->Weight):(0));
 }
-static inline general _BoxC_KN_Weight_New_(boxc_kn _PL_ Node)
+static inline general _BoxC_KN_Weight_New_(boxc_kn _PL_ _R_ Node)
 {
 	ADDRESS W0=_BoxC_KN_Weight_Old_(Node->Leaf[0]);
 	ADDRESS W1=_BoxC_KN_Weight_Old_(Node->Leaf[1]);
 
 	Node->Weight=W0+W1;
 	Node->Weight++;
+
+	return;
 }
-static boxc_kn *_BoxC_KN_Deeper_(boxc_kn *Node)
+static boxc_kn *_BoxC_KN_Deeper_(boxc_kn *_R_ Node)
 {
 	while(Node->Height>1)
 		Node=Node->Leaf[_BoxC_KN_Height_Old_(Node->Leaf[0])<_BoxC_KN_Height_Old_(Node->Leaf[1])];
 
 	return Node;
 }
-static boxc_kn *_BoxC_KN_Diving_(boxc_kn *Node)
+static boxc_kn *_BoxC_KN_Diving_(boxc_kn *_R_ Node)
 {
-	while(Node->Leaf[0])
-		Node=Node->Leaf[0];
+	for(;Node->Leaf[0];Node=Node->Leaf[0]);
 
 	return Node;
 }
-static boxc_kn *_BoxC_KN_Verify_(BOXC_C_ Comp_,boxc_kn *Node,GENERAL _PL_ Key)
+static boxc_kn *_BoxC_KN_Verify_(BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key)
 {
 	while(Node)
 	{
@@ -1054,7 +1090,7 @@ static boxc_kn *_BoxC_KN_Verify_(BOXC_C_ Comp_,boxc_kn *Node,GENERAL _PL_ Key)
 
 	return Node;
 }
-static boxc_kn *_BoxC_KN_Search_(boxc_kn *Node,ADDRESS Index)
+static boxc_kn *_BoxC_KN_Search_(boxc_kn *_R_ Node,ADDRESS Index)
 {
 	for(address Offset=0;1;)
 	{
@@ -1071,7 +1107,7 @@ static boxc_kn *_BoxC_KN_Search_(boxc_kn *Node,ADDRESS Index)
 			return Node;
 	}
 }
-static memclip _BoxC_KN_Locate_(BOXC_C_ Comp_,boxc_kn *Node,GENERAL _PL_ Key)
+static memclip _BoxC_KN_Locate_(BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key)
 {
 	memclip Index={.V=0};
 
@@ -1106,7 +1142,7 @@ WRONG:
 	
 	return Index;
 }
-static general _BoxC_KN_Travel_(BOXC_KN _PL_ Node,memclip *List)
+static general _BoxC_KN_Travel_(BOXC_KN _PL_ _R_ Node,memclip *_R_ List)
 {
 	if(Node->Leaf[0])
 	{
@@ -1120,12 +1156,14 @@ static general _BoxC_KN_Travel_(BOXC_KN _PL_ Node,memclip *List)
 	if(Node->Leaf[1])
 		_BoxC_KN_Travel_(Node->Leaf[1],List+1);
 	else;
+
+	return;
 }
-static boxc_kn *_BoxC_KN_Rotate_(boxc_kn _PL_ Node,LOGICAL Mode)
+static boxc_kn *_BoxC_KN_Rotate_(boxc_kn _PL_ _R_ Node,LOGICAL Mode)
 {
 	INTEGER Togg=Mode^1;
-	boxc_kn _PL_ Leaf=Node->Leaf[Togg];
-	boxc_kn _PL_ Temp=Leaf->Leaf[Mode];
+	boxc_kn _PL_ _R_ Leaf=Node->Leaf[Togg];
+	boxc_kn _PL_ _R_ Temp=Leaf->Leaf[Mode];
 
 	Leaf->Leaf[Mode]=Node;
 	Node->Leaf[Togg]=Temp;
@@ -1139,11 +1177,11 @@ static boxc_kn *_BoxC_KN_Rotate_(boxc_kn _PL_ Node,LOGICAL Mode)
 	return Leaf;
 }
 
-static boxc_kn *_BoxC_KN_Insert_(boxc_kn _PL_,BOXC_C_,boxc_kn*,general _PL_);
-static boxc_kn *_BoxC_KN_Desert_(boxc_kn _PL_,BOXC_C_,boxc_kn*,GENERAL _PL_);
+static boxc_kn *_BoxC_KN_Insert_(boxc_kn _PL_,BOXC_C_,boxc_kn*_R_,general _PL_);
+static boxc_kn *_BoxC_KN_Desert_(boxc_kn _PL_,BOXC_C_,boxc_kn*_R_,GENERAL _PL_);
 static boxc_kn *_BoxC_KN_Create_(boxc_kn _PL_ Pair,general _PL_ Key)
 {
-	boxc_kn *Node;
+	boxc_kn *_R_ Node;
 
 	if(Pair)
 	{
@@ -1171,8 +1209,10 @@ static general _BoxC_KN_Delete_(boxc_kn _PL_ Pair,boxc_kn _PL_ Node)
 	if(Pair)
 		_BoxC_KN_Insert_(NULL,_BoxC_KN_Comp_,Pair,Node);
 	else;
+
+	return;
 }
-static boxc_kn *_BoxC_KN_Insert_(boxc_kn _PL_ Pair,BOXC_C_ Comp_,boxc_kn *Node,general _PL_ Key)
+static boxc_kn *_BoxC_KN_Insert_(boxc_kn _PL_ Pair,BOXC_C_ Comp_,boxc_kn *_R_ Node,general _PL_ Key)
 {
 	if(Node)
 	{
@@ -1208,7 +1248,7 @@ static boxc_kn *_BoxC_KN_Insert_(boxc_kn _PL_ Pair,BOXC_C_ Comp_,boxc_kn *Node,g
 
 	return Node;
 }
-static boxc_kn *_BoxC_KN_Desert_(boxc_kn _PL_ Pair,BOXC_C_ Comp_,boxc_kn *Node,GENERAL _PL_ Key)
+static boxc_kn *_BoxC_KN_Desert_(boxc_kn _PL_ Pair,BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key)
 {
 	if(Node)
 	{
@@ -1274,19 +1314,21 @@ static boxc_kn *_BoxC_KN_Desert_(boxc_kn _PL_ Pair,BOXC_C_ Comp_,boxc_kn *Node,G
 	return Node;
 }
 
-static general _BoxC_KS_Setup_(BOXC_KS _PL_ Head)
+static general _BoxC_KS_Setup_(BOXC_KS _PL_ _R_ Head)
 {
-	boxc_kn *_PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+	boxc_kn *_PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
 
 	Root[0]=NULL;
 	Root[1]=NULL;
 
 	for(boxc_kn *Ptr=(boxc_kn*)(Root+2),_PL_ End=Ptr+(Head->Capacity);Ptr<End;Ptr++)
 		Root[0]=_BoxC_KN_Insert_(NULL,_BoxC_KN_Comp_,Root[0],Ptr);
+
+	return;
 }
 _BOXC_ boxc_ks *BoxC_KS_Create_(BOXC_C_ Comp_,ADDRESS Capacity)
 {
-	boxc_ks *Head;
+	boxc_ks *_R_ Head;
 
 	if(Capacity)
 	{
@@ -1310,11 +1352,11 @@ _BOXC_ boxc_ks *BoxC_KS_Create_(BOXC_C_ Comp_,ADDRESS Capacity)
 
 	return Head;
 }
-_BOXC_ address BoxC_KS_Size_(BOXC_KS _PL_ Head)
+_BOXC_ address BoxC_KS_Size_(BOXC_KS _PL_ _R_ Head)
 {
 	return ((Head)?(sizeof(boxc_ks)+sizeof(boxc_l2)+MemC_Size_(boxc_kn,Head->Capacity)):(0));
 }
-_BOXC_ logical BoxC_KS_Reset_(boxc_ks _PL_ Head)
+_BOXC_ logical BoxC_KS_Reset_(boxc_ks _PL_ _R_ Head)
 {
 	if(Head)
 	{
@@ -1328,12 +1370,12 @@ _BOXC_ logical BoxC_KS_Reset_(boxc_ks _PL_ Head)
 		return 0;
 }
 
-_BOXC_ logical BoxC_KS_Insert_(boxc_ks _PL_ Head,general _PL_ Key)
+_BOXC_ logical BoxC_KS_Insert_(boxc_ks _PL_ _R_ Head,general _PL_ Key)
 {
 	if(Head)
 		if((Head->Number)<(Head->Capacity))
 		{
-			boxc_kn *_PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+			boxc_kn *_PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
 
 			if(_BoxC_KN_Verify_(Head->Comp_,Root[1],Key));
 			else
@@ -1349,11 +1391,11 @@ _BOXC_ logical BoxC_KS_Insert_(boxc_ks _PL_ Head,general _PL_ Key)
 
 	return 0;
 }
-_BOXC_ logical BoxC_KS_Desert_(boxc_ks _PL_ Head,GENERAL _PL_ Key)
+_BOXC_ logical BoxC_KS_Desert_(boxc_ks _PL_ _R_ Head,GENERAL _PL_ Key)
 {
 	if(Head)
 	{
-		boxc_kn *_PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+		boxc_kn *_PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
 
 		if(_BoxC_KN_Verify_(Head->Comp_,Root[1],Key))
 		{
@@ -1368,11 +1410,11 @@ _BOXC_ logical BoxC_KS_Desert_(boxc_ks _PL_ Head,GENERAL _PL_ Key)
 
 	return 0;
 }
-_BOXC_ logical BoxC_KS_Verify_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
+_BOXC_ logical BoxC_KS_Verify_(BOXC_KS _PL_ _R_ Head,GENERAL _PL_ Key)
 {
 	if(Head)
 	{
-		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+		boxc_kn _PL_ _PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
 
 		if(_BoxC_KN_Verify_(Head->Comp_,Root[1],Key))
 			return 1;
@@ -1383,12 +1425,12 @@ _BOXC_ logical BoxC_KS_Verify_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
 	return 0;
 }
 
-_BOXC_ logical BoxC_KS_Writer_(BOXC_KS _PL_ Head,GENERAL _PL_ Key,general _PL_ Value)
+_BOXC_ logical BoxC_KS_Writer_(BOXC_KS _PL_ _R_ Head,GENERAL _PL_ Key,general _PL_ Value)
 {
 	if(Head)
 	{
-		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
-		boxc_kn _PL_ Node=_BoxC_KN_Verify_(Head->Comp_,Root[1],Key);
+		boxc_kn _PL_ _PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+		boxc_kn _PL_ _R_ Node=_BoxC_KN_Verify_(Head->Comp_,Root[1],Key);
 
 		if(Node)
 		{
@@ -1402,15 +1444,15 @@ _BOXC_ logical BoxC_KS_Writer_(BOXC_KS _PL_ Head,GENERAL _PL_ Key,general _PL_ V
 
 	return 0;
 }
-_BOXC_ general *BoxC_KS_Reader_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
+_BOXC_ general *BoxC_KS_Reader_(BOXC_KS _PL_ _R_ Head,GENERAL _PL_ Key)
 {
 	if(Head)
 	{
-		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
-		boxc_kn _PL_ Node=_BoxC_KN_Verify_(Head->Comp_,Root[1],Key);
+		boxc_kn _PL_ _PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+		boxc_kn _PL_ _R_ Node=_BoxC_KN_Verify_(Head->Comp_,Root[1],Key);
 
 		if(Node)
-			return Node->Value;
+			return (Node->Value);
 		else;
 	}
 	else;
@@ -1418,12 +1460,12 @@ _BOXC_ general *BoxC_KS_Reader_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
 	return NULL;
 }
 
-_BOXC_ general *BoxC_KS_Search_(BOXC_KS _PL_ Head,ADDRESS Index)
+_BOXC_ general *BoxC_KS_Search_(BOXC_KS _PL_ _R_ Head,ADDRESS Index)
 {
 	if(Head)
 		if(Index<Head->Number)
 		{
-			boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+			boxc_kn _PL_ _PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
 
 			return (_BoxC_KN_Search_(Root[1],Index)->Key);
 		}
@@ -1432,13 +1474,13 @@ _BOXC_ general *BoxC_KS_Search_(BOXC_KS _PL_ Head,ADDRESS Index)
 
 	return NULL;
 }
-_BOXC_ address BoxC_KS_Locate_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
+_BOXC_ address BoxC_KS_Locate_(BOXC_KS _PL_ _R_ Head,GENERAL _PL_ Key)
 {
 	memclip Return;
 
 	if(Head)
 	{
-		boxc_kn _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
+		boxc_kn _PL_ _PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
 
 		Return=_BoxC_KN_Locate_(Head->Comp_,Root[1],Key);
 	}
@@ -1448,19 +1490,20 @@ _BOXC_ address BoxC_KS_Locate_(BOXC_KS _PL_ Head,GENERAL _PL_ Key)
 	return Return.V;
 }
 
-_BOXC_ address BoxC_KS_Spread_(MEMC_MS _PL_ MS,BOXC_KS _PL_ KS)
+_BOXC_ logical BoxC_KS_Spread_(MEMC_MS _PL_ _R_ MS,BOXC_KS _PL_ _R_ KS)
 {
 	if(MS)
 		if(KS)
-			if((MS->Nums)<(KS->Number));
-			else
+			if((KS->Number)<(MS->Nums))
 			{
-				BOXC_KN _PL_ _PL_ Root=(boxc_kn**)(((boxc_l2*)(KS->Key))->L);
+				BOXC_KN _PL_ _PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(KS->Key))->L);
 
-				_BoxC_KN_Travel_(Root[1],MS->Cell);
+				MS->Cell[0].V=Root[1]->Weight;
+				_BoxC_KN_Travel_(Root[1],MS->Cell+1);
 
-				return (Root[1]->Weight);
+				return 1;
 			}
+			else;
 		else;
 	else;
 
@@ -1471,7 +1514,7 @@ _BOXC_ address BoxC_KS_Spread_(MEMC_MS _PL_ MS,BOXC_KS _PL_ KS)
 #if(Fold_(Part:BoxC_FS))
 _BOXC_ boxc_fs *BoxC_FS_Create_(ADDRESS Number)
 {
-	boxc_fs *F;
+	boxc_fs *_R_ F;
 
 	MemC_Temp_(ADDRESS,Size=MemC.Size.Add_(Number,7))
 		F=(Size)?(MemC.Alloc.Byte_(MemC.Size.Add_(Size>>3,sizeof(boxc_fs)))):(NULL);
@@ -1485,11 +1528,11 @@ _BOXC_ boxc_fs *BoxC_FS_Create_(ADDRESS Number)
 
 	return F;
 }
-_BOXC_ address BoxC_FS_Size_(BOXC_FS _PL_ F)
+_BOXC_ address BoxC_FS_Size_(BOXC_FS _PL_ _R_ F)
 {
 	return (F)?(((F->Number+7)>>3)+sizeof(boxc_fs)):(0);
 }
-_BOXC_ logical BoxC_FS_Reset_All_(BOXC_FS _PL_ F)
+_BOXC_ logical BoxC_FS_Reset_All_(BOXC_FS _PL_ _R_ F)
 {
 	if(F)
 	{
@@ -1503,46 +1546,47 @@ _BOXC_ logical BoxC_FS_Reset_All_(BOXC_FS _PL_ F)
 		return 0;
 }
 
-_BOXC_ general BoxC_FS_Writer_(BOXC_FS _PL_ F,ADDRESS Select,LOGICAL Mode)
+static logical _BoxC_FS_Verify_(BOXC_FS _PL_ _R_ F,ADDRESS Select)
 {
-	if(F)
-		if(Select<F->Number)
-		{
-			byte_08 _PL_ Flag=((byte_08*)(F->Flag))+(Select>>3);
-			byte_08 Mask=1<<(Select&7);
-			byte_08 Temp=(byte_08)Mode;
-
-			*Flag|=Mask;
-			Mask=~Mask;
-			Temp=-Temp;
-			Mask|=Temp;
-			*Flag&=Mask;
-		}
-		else;
-	else;
+	return ((F)?((Select<(F->Number))?(1):(0)):(0));
 }
-_BOXC_ logical BoxC_FS_Reader_(BOXC_FS _PL_ F,ADDRESS Select)
+_BOXC_ general BoxC_FS_Writer_(BOXC_FS _PL_ _R_ F,ADDRESS Select,LOGICAL Mode)
 {
-	if(F)
-		if(Select<F->Number)
-			return (logical)((((byte_08*)(F->Flag))[Select>>3]>>(Select&7))&1);
-		else;
+	if(_BoxC_FS_Verify_(F,Select))
+	{
+		byte_08 _PL_ _R_ Flag=((byte_08*)(F->Flag))+(Select>>3);
+		byte_08 Mask=1<<(Select&7);
+		byte_08 Temp=(byte_08)Mode;
+
+		*Flag|=Mask;
+		Mask=~Mask;
+		Temp=-Temp;
+		Mask|=Temp;
+		*Flag&=Mask;
+	}
 	else;
 
-	return 0;
+	return;
 }
-_BOXC_ general BoxC_FS_Toggle_(BOXC_FS _PL_ F,ADDRESS Select)
+_BOXC_ logical BoxC_FS_Reader_(BOXC_FS _PL_ _R_ F,ADDRESS Select)
 {
-	if(F)
-		if(Select<F->Number)
-			((byte_08*)(F->Flag))[Select>>3]^=1<<(Select&7);
-		else;
+	if(_BoxC_FS_Verify_(F,Select))
+		return (logical)((((byte_08*)(F->Flag))[Select>>3]>>(Select&7))&1);
+	else
+		return 0;
+}
+_BOXC_ general BoxC_FS_Toggle_(BOXC_FS _PL_ _R_ F,ADDRESS Select)
+{
+	if(_BoxC_FS_Verify_(F,Select))
+		((byte_08*)(F->Flag))[Select>>3]^=1<<(Select&7);
 	else;
+
+	return;
 }
 #endif
 
 #if(Fold_(Part:BoxC_Tr))
-static general _BoxC_Tr_Init_(boxc_tr _PL_ Root,ADDRESS Chunks)
+static general _BoxC_Tr_Init_(boxc_tr _PL_ _R_ Root,ADDRESS Chunks)
 {
 	boxc_tr *_R_ Ptr=Root->Leaf;
 
@@ -1586,6 +1630,8 @@ static general _BoxC_Tr_Init_(boxc_tr _PL_ Root,ADDRESS Chunks)
 		Acs_(address,Ptr->Count)=0;
 		Acs_(address,Ptr->Total)=0;
 	}
+
+	return;
 }
 static boxc_tr *_BoxC_Tr_Most_Root_(boxc_tr *_R_ Ptr)
 {
@@ -1601,7 +1647,7 @@ static boxc_tr *_BoxC_Tr_Most_Leaf_(boxc_tr *_R_ Ptr)
 
 	return Ptr;
 }
-static general _BoxC_Tr_Swap_(boxc_tr _PL_ This,boxc_tr _PL_ Root)
+static general _BoxC_Tr_Swap_(boxc_tr _PL_ _R_ This,boxc_tr _PL_ _R_ Root)
 {
 	if(This==This->Next)
 		Acs_(boxc_tr*,This->Root->Leaf)=NULL;
@@ -1628,6 +1674,8 @@ static general _BoxC_Tr_Swap_(boxc_tr _PL_ This,boxc_tr _PL_ Root)
 		Acs_(boxc_tr*,This->Root)=Root;
 		Acs_(boxc_tr*,Root->Leaf)=This;
 	}
+
+	return;
 }
 static general _BoxC_Tr_Numb_Inc_(boxc_tr *_R_ Ptr)
 {
@@ -1636,6 +1684,8 @@ static general _BoxC_Tr_Numb_Inc_(boxc_tr *_R_ Ptr)
 	Ptr=Ptr->Root;
 	for(Acs_(address,Ptr->Count)++;Ptr;Ptr=Ptr->Root)
 		Acs_(address,Ptr->Total)+=Increment;
+
+	return;
 }
 static general _BoxC_Tr_Numb_Dec_(boxc_tr *_R_ Ptr)
 {
@@ -1644,17 +1694,19 @@ static general _BoxC_Tr_Numb_Dec_(boxc_tr *_R_ Ptr)
 	Ptr=Ptr->Root;
 	for(Acs_(address,Ptr->Count)--;Ptr;Ptr=Ptr->Root)
 		Acs_(address,Ptr->Total)-=Decrement;
+
+	return;
 }
-_BOXC_ boxc_tr *BoxC_Tr_Create_(boxc_tr _PL_ Root,ADDRESS Capacity)
+_BOXC_ boxc_tr *BoxC_Tr_Create_(boxc_tr _PL_ _R_ Root,ADDRESS Capacity)
 {
-	boxc_tr *Tree;
+	boxc_tr *_R_ Tree;
 
 	if(Root)
 		if(Capacity)
 			Tree=NULL;
 		else
 		{
-			boxc_tr *Origin=_BoxC_Tr_Most_Root_(Root);
+			boxc_tr *_R_ Origin=_BoxC_Tr_Most_Root_(Root);
 
 			if(Origin<(boxc_tr*)(Origin->Link))
 			{
@@ -1710,13 +1762,13 @@ _BOXC_ boxc_tr *BoxC_Tr_Create_(boxc_tr _PL_ Root,ADDRESS Capacity)
 
 	return Tree;
 }
-_BOXC_ general BoxC_Tr_Delete_(boxc_tr *_PL_ Tree)
+_BOXC_ general BoxC_Tr_Delete_(boxc_tr *_PL_ _R_ Tree)
 {
 	if(*Tree)
 		if((*Tree)->Root)
 		{
 			boxc_tr _PL_ Root=(*Tree)->Root;
-			boxc_tr _PL_ Origin=_BoxC_Tr_Most_Root_(Root);
+			boxc_tr _PL_ _R_ Origin=_BoxC_Tr_Most_Root_(Root);
 
 			if(Origin<(boxc_tr*)(Origin->Link))
 			{
@@ -1738,8 +1790,10 @@ _BOXC_ general BoxC_Tr_Delete_(boxc_tr *_PL_ Tree)
 			MemC_Deloc_(*Tree);
 		}
 	else;
+
+	return;
 }
-_BOXC_ address BoxC_Tr_Size_(BOXC_TR *Tree)
+_BOXC_ address BoxC_Tr_Size_(BOXC_TR *_R_ Tree)
 {
 	address Return;
 
@@ -1753,11 +1807,11 @@ _BOXC_ address BoxC_Tr_Size_(BOXC_TR *Tree)
 
 	return Return;
 }
-_BOXC_ address BoxC_Tr_Used_(BOXC_TR _PL_ Tree)
+_BOXC_ address BoxC_Tr_Used_(BOXC_TR _PL_ _R_ Tree)
 {
 	if(Tree)
 	{
-		BOXC_TR _PL_ Origin=_BoxC_Tr_Most_Root_((boxc_tr*)Tree);
+		BOXC_TR _PL_ _R_ Origin=_BoxC_Tr_Most_Root_((boxc_tr*)Tree);
 
 		if(Origin<(boxc_tr*)(Origin->Link))
 			return MemC_Size_(boxc_tr,Tree->Total+1);
@@ -1768,13 +1822,13 @@ _BOXC_ address BoxC_Tr_Used_(BOXC_TR _PL_ Tree)
 	return 0;
 }
 
-_BOXC_ address BoxC_Tr_Left_(BOXC_TR _PL_ Tree)
+_BOXC_ address BoxC_Tr_Left_(BOXC_TR _PL_ _R_ Tree)
 {
 	if(Tree)
 	{
-		boxc_tr *Origin=_BoxC_Tr_Most_Root_((boxc_tr*)Tree);
+		BOXC_TR *_R_ Origin=_BoxC_Tr_Most_Root_((boxc_tr*)Tree);
 
-		if(Origin<(boxc_tr*)(Origin->Link))
+		if(Origin<(BOXC_TR*)(Origin->Link))
 			Origin=Origin->Link;
 		else;
 
@@ -1783,9 +1837,9 @@ _BOXC_ address BoxC_Tr_Left_(BOXC_TR _PL_ Tree)
 	else
 		return 0;
 }
-_BOXC_ boxc_tr *BoxC_Tr_Origin_(boxc_tr _PL_ Tree)
+_BOXC_ boxc_tr *BoxC_Tr_Origin_(boxc_tr _PL_ _R_ Tree)
 {
-	boxc_tr *Return;
+	boxc_tr *_R_ Return;
 
 	if(Tree)
 	{
@@ -1799,14 +1853,14 @@ _BOXC_ boxc_tr *BoxC_Tr_Origin_(boxc_tr _PL_ Tree)
 
 	return Return;
 }
-_BOXC_ address BoxC_Tr_Height_(BOXC_TR *Tree)
+_BOXC_ address BoxC_Tr_Height_(BOXC_TR *_R_ _R_ Tree)
 {
 	if(Tree)
 	{
 		address Height;
 
 		for(Height=0;Tree->Root;Tree=Tree->Root,Height++);
-		if(Tree>(boxc_tr*)(Tree->Link));
+		if(Tree>(BOXC_TR*)(Tree->Link));
 		else
 			return Height;
 	}
@@ -1830,7 +1884,7 @@ static logical _BoxC_Tr_Okay_(BOXC_TR *Source,BOXC_TR *Target)
 				return 0;
 			else;
 
-			if(Target>(boxc_tr*)(Target->Link))
+			if(Target>(BOXC_TR*)(Target->Link))
 				return 0;
 			else;
 
@@ -1863,7 +1917,7 @@ static logical _BoxC_Sw_Comp_(GENERAL _PL_ A,GENERAL _PL_ B)
 {
 	return (A>B);
 }
-static address _BoxC_Sw_Count_(ADDRESS _PL_ Slot)
+static address _BoxC_Sw_Count_(ADDRESS _PL_ _R_ Slot)
 {
 	address Count=0;
 
@@ -1874,7 +1928,7 @@ static address _BoxC_Sw_Count_(ADDRESS _PL_ Slot)
 
 	return Count;
 }
-static general _BoxC_Sw_Compact_(ADDRESS _PL_ Slot,address *_R_ PtrL,address *_R_ PtrI)
+static general _BoxC_Sw_Compact_(ADDRESS _PL_ _R_ Slot,address *_R_ PtrL,address *_R_ PtrI)
 {
 	*(PtrL++)=0;
 	*(PtrI++)=0;
@@ -1885,6 +1939,8 @@ static general _BoxC_Sw_Compact_(ADDRESS _PL_ Slot,address *_R_ PtrL,address *_R
 			*(PtrI++)=PtrS-Slot;
 		}
 		else;
+
+	return;
 }
 static general _BoxC_Sw_Take_(general _PL_ *_R_ PtrL,ADDRESS *_R_ PtrI,boxclip *_R_ PtrC,ADDRESS Nums)
 {
@@ -1893,6 +1949,8 @@ static general _BoxC_Sw_Take_(general _PL_ *_R_ PtrL,ADDRESS *_R_ PtrI,boxclip *
 		PtrC->L=*PtrL;
 		PtrC->I=*PtrI;
 	}
+
+	return;
 }
 static logical _BoxC_Sw_Unique_(GENERAL _PL_ *_R_ Ptr,ADDRESS Valid)
 {
@@ -1903,59 +1961,55 @@ static logical _BoxC_Sw_Unique_(GENERAL _PL_ *_R_ Ptr,ADDRESS Valid)
 
 	return 1;
 }
-_BOXC_ boxc_sw *BoxC_Sw_Create_(MEMC_MS _PL_ MS)
+_BOXC_ boxc_sw *BoxC_Sw_Create_(MEMC_MS _PL_ _R_ MS)
 {
-	boxc_sw *Switch;
+	if(_BoxC_MS_Verify_(MS))
+		if((MS->Slot.V[0])<(MS->Nums))
+		{
+			ADDRESS Valid=_BoxC_Sw_Count_(MS->Slot.V);
+			ADDRESS Number=Valid+1;
+			boxc_sw *_R_ Switch;
 
-	if(MS)
-		if(MS->Nums)
-			if((MS->Slot.V[0])<(MS->Nums))
+			MemC_Temp_(ADDRESS,Temp=MemC.Size.Mul_(Number,sizeof(boxclip)))
+				Switch=(Temp)?(MemC.Alloc.Byte_(MemC.Size.Add_(Temp,sizeof(boxc_sw)))):(NULL);
+
+			if(Switch)
 			{
-				ADDRESS Valid=_BoxC_Sw_Count_(MS->Slot.V);
-				ADDRESS Number=Valid+1;
+				boxclip _PL_ Case=(boxclip*)(Switch+1);
 
-				MemC_Temp_(ADDRESS,Temp=MemC.Size.Mul_(Number,sizeof(boxclip)))
-					Switch=(Temp)?(MemC.Alloc.Byte_(MemC.Size.Add_(Temp,sizeof(boxc_sw)))):(NULL);
-
-				if(Switch)
+				Acs_(boxclip*,Switch->Case)=Case;
+				Acs_(address,Switch->Number)=Number;
+				MemC_Temp_ND_(general*,Space,KILL:_BoxC_VS_Delete_((boxc_vs**)(&Switch));,1,Number<<1)
 				{
-					boxclip _PL_ Case=(boxclip*)(Switch+1);
+					general *_PL_ TableL=Space;
+					address _PL_ TableI=(address*)(TableL+Number);
 
-					Acs_(boxclip*,Switch->Case)=Case;
-					Acs_(address,Switch->Number)=Number;
-					MemC_Temp_ND_(general*,Space,KILL:_BoxC_VS_Delete_((boxc_vs**)(&Switch));,1,Number<<1)
-					{
-						general *_PL_ TableL=Space;
-						address _PL_ TableI=(address*)(TableL+Number);
+					_BoxC_Sw_Compact_(MS->Slot.V,(address*)TableL,TableI);
 
-						_BoxC_Sw_Compact_(MS->Slot.V,(address*)TableL,TableI);
-
-						if(MemC.Sort.Do_(_BoxC_Sw_Comp_,TableL,TableI,(address*)Case,Number))
-							if(_BoxC_Sw_Unique_(TableL,Valid))
-								_BoxC_Sw_Take_(TableL,TableI,Case,Number);
-							else
-								goto KILL;
+					if(MemC.Sort.Do_(_BoxC_Sw_Comp_,TableL,TableI,(address*)Case,Number))
+						if(_BoxC_Sw_Unique_(TableL,Valid))
+							_BoxC_Sw_Take_(TableL,TableI,Case,Number);
 						else
 							goto KILL;
-					}
+					else
+						goto KILL;
 				}
-				else;
 			}
-			else
-				Switch=NULL;
-		else
-			Switch=NULL;
-	else
-		Switch=NULL;
+			else;
 
-	return Switch;
+			return Switch;
+		}
+		else;
+	else;
+
+	return NULL;
 }
-_BOXC_ address BoxC_Sw_Size_(BOXC_SW _PL_ Switch)
+_BOXC_ address BoxC_Sw_Size_(BOXC_SW _PL_ _R_ Switch)
 {
 	return ((Switch)?(sizeof(boxc_sw)+MemC_Size_(boxclip,Switch->Number)):(0));
 }
 
-_BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ Switch,GENERAL _PL_ Key,LOGICAL Mode)
+_BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ _R_ Switch,GENERAL _PL_ Key,LOGICAL Mode)
 {
 	if(Switch)
 		if(Mode)
@@ -1965,7 +2019,7 @@ _BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ Switch,GENERAL _PL_ Key,LOGICAL Mode)
 			__dlOuOlb__
 			{
 				ADDRESS Pick=Scope.I>>1;
-				BOXCLIP _PL_ Case=((boxclip*)(Scope.L))+Pick;
+				BOXCLIP _PL_ _R_ Case=((boxclip*)(Scope.L))+Pick;
 
 				if(Pick)
 					if(Key<(Case->L))
@@ -1996,6 +2050,216 @@ _BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ Switch,GENERAL _PL_ Key,LOGICAL Mode)
 }
 #endif
 
+#if(Fold_(Part:BoxC_Li))
+_BOXC_ boxc_li *BoxC_Li_Create_(ADDRESS Caps)
+{
+	boxc_li *_R_ List;
+
+	if(Caps)
+	{
+		ADDRESS Fill=MemC.Size.Mul_(Caps,sizeof(general*));
+		
+		List=(Fill)?(MemC.Alloc.Byte_(MemC.Size.Add_(Fill,sizeof(boxc_li)))):(NULL);
+		if(List)
+		{
+			Acs_(address,List->Capacity)=Caps;
+			Acs_(address,List->Count)=0;
+			memset(List->Item,0xFF,Fill);
+		}
+		else;
+	}
+	else
+	{
+		List=MemC_Alloc_Unit_(boxc_li);
+		if(List)
+			MemC_Clear_Unit_(List);
+		else;
+	}
+
+	return List;
+}
+_BOXC_ address BoxC_Li_Size_(BOXC_LI _PL_ _R_ List)
+{
+	return ((List)?(sizeof(boxc_li)+MemC_Size_(general*,List->Capacity)):(0));
+}
+_BOXC_ logical BoxC_Li_Reset_(boxc_li _PL_ _R_ List)
+{
+	if(List)
+	{
+		memset(List->Item,0xFF,MemC_Size_(general*,List->Count));
+		Acs_(address,List->Count)=0;
+	}
+	else;
+
+	return 0;
+}
+_BOXC_ logical BoxC_Li_Check_(BOXC_LI _PL_ _R_ List)
+{
+	return ((List)?(MemC.Set.Check_(List->Item,List->Count)):(0));
+}
+
+_BOXC_ logical BoxC_Li_Tip_Append_(boxc_li _PL_ _R_ List,general _PL_ Tip)
+{
+	if(List)
+		if((List->Count)<(List->Capacity))
+		{
+			((general**)(List->Item))[List->Count]=Tip;
+			Acs_(address,List->Count)++;
+
+			return 1;
+		}
+		else;
+	else;
+
+	return 0;
+}
+_BOXC_ logical BoxC_Li_Tip_Remove_(boxc_li _PL_ _R_ List)
+{
+	if(List)
+		if(List->Count)
+		{
+			ADDRESS After=(List->Count)-1;
+
+			((general**)(List->Item))[After]=FULL;
+			Acs_(address,List->Count)=After;
+
+			return 1;
+		}
+		else;
+	else;
+
+	return 0;
+}
+
+_BOXC_ logical BoxC_Li_One_Insert_(boxc_li _PL_ _R_ List,ADDRESS Offset,general _PL_ One)
+{
+	if(List)
+		if(Offset>(List->Count));
+		else if((List->Count)<(List->Capacity))
+		{
+			ADDRESS Move=MemC_Size_(general*,(List->Count)-Offset);
+			general *_PL_ _R_ Here=(general**)(List->Item)+Offset;
+
+			if(Move)
+				if(memmove_s(Here+1,Move,Here,Move))
+					return 0;
+				else;
+			else;
+
+			*Here=One;
+			Acs_(address,List->Count)++;
+
+			return 1;
+		}
+		else;
+	else;
+
+	return 0;
+}
+_BOXC_ logical BoxC_Li_One_Desert_(boxc_li _PL_ _R_ List,ADDRESS Offset)
+{
+	if(List)
+		if(Offset<(List->Count))
+		{
+			ADDRESS After=(List->Count)-1;
+			ADDRESS Move=MemC_Size_(general*,After-Offset);
+			general *_PL_ _R_ Here=(general**)(List->Item)+Offset;
+
+			if(Move)
+				if(memmove_s(Here,Move,Here+1,Move))
+					return 0;
+				else;
+			else;
+
+			((general**)(List->Item))[After]=FULL;
+			Acs_(address,List->Count)=After;
+
+			return 1;
+		}
+		else;
+	else;
+
+	return 0;
+}
+
+_BOXC_ logical BoxC_Li_Lot_Insert_(boxc_li _PL_ _R_ List,ADDRESS Offset,MEMC_MS _PL_ _R_ Lot)
+{
+	if(List)
+		if(Offset>(List->Count));
+		else if(Lot)
+		{
+			ADDRESS Length=Lot->Slot.V[0];
+
+			if(Length<(Lot->Nums))
+			{
+				ADDRESS After=(List->Count)+Length;
+
+				if(After<(List->Count));
+				else if(After>(List->Capacity));
+				else
+				{
+					if(Length)
+					{
+						ADDRESS Move=MemC_Size_(general*,(List->Count)-Offset);
+						general *_PL_ Here=(general**)(List->Item)+Offset;
+
+						if(Move)
+							if(memmove_s(Here+Length,Move,Here,Move))
+								return 0;
+							else;
+						else;
+
+						MemC_Copy_1D_(Lot->Slot.P+1,Here,Length);
+						Acs_(address,List->Count)=After;
+					}
+					else;
+
+					return 1;
+				}
+			}
+			else;
+		}
+		else;
+	else;
+
+	return 0;
+}
+_BOXC_ logical BoxC_Li_Lot_Desert_(boxc_li _PL_ _R_ List,ADDRESS Offset,ADDRESS Length)
+{
+	if(List)
+	{
+		ADDRESS Bound=Offset+Length;
+
+		if(Bound<Offset);
+		else if(Bound>(List->Count));
+		else
+		{
+			if(Length)
+			{
+				ADDRESS After=(List->Count)-Length;
+				ADDRESS Move=MemC_Size_(general*,After-Offset);
+				general *_PL_ Here=(general**)(List->Item)+Offset;
+
+				if(Move)
+					if(memmove_s(Here,Move,Here+Length,Move))
+						return 0;
+					else;
+				else;
+
+				memset(List->Item+After,0xFF,MemC_Size_(general*,Length));
+				Acs_(address,List->Count)=After;
+			}
+			else;
+
+			return 1;
+		}
+	}
+	else;
+
+	return 0;
+}
+#endif
+
 #undef _BOXC_
 #endif
 
@@ -2006,47 +2270,59 @@ BOXCASE BoxC=
 	.SS=
 	{
 		.Create_=MemC_Func_Casting_(boxc_ss*,BoxC_SS_Create_,ADDRESS,ADDRESS),
-		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ss *_PL_),
-		.Size_=MemC_Func_Casting_(address,BoxC_SS_Size_,BOXC_SS _PL_),
-		.Reset_All_=MemC_Func_Casting_(logical,BoxC_SS_Reset_All_,BOXC_SS _PL_),
-		.Reset_=MemC_Func_Casting_(logical,BoxC_SS_Reset_,BOXC_SS _PL_,ADDRESS),
-		.Push_=MemC_Func_Casting_(logical,BoxC_SS_Push_,BOXC_SS _PL_,ADDRESS,general _PL_),
-		.Pop_=MemC_Func_Casting_(general*,BoxC_SS_Pop_,BOXC_SS _PL_,ADDRESS),
-		.Spread_=MemC_Func_Casting_(address,BoxC_SS_Spread_,MEMC_MS _PL_,BOXC_SS _PL_,ADDRESS),
-		.Check_=MemC_Func_Casting_(logical,BoxC_SS_Check_,BOXC_SS _PL_,ADDRESS),
-		.Peek_=MemC_Func_Casting_(general*,BoxC_SS_Peek_,BOXC_SS _PL_,ADDRESS,ADDRESS)
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ss *_PL_ _R_),
+		.Size_=MemC_Func_Casting_(address,BoxC_SS_Size_,BOXC_SS _PL_ _R_),
+		.All=
+		{
+			.Reset_=MemC_Func_Casting_(logical,BoxC_SS_Reset_All_,BOXC_SS _PL_ _R_),
+			.Check_=MemC_Func_Casting_(logical,BoxC_SS_Check_All_,BOXC_SS _PL_ _R_)
+		},
+		.Reset_=MemC_Func_Casting_(logical,BoxC_SS_Reset_,BOXC_SS _PL_ _R_,ADDRESS),
+		.Check_=MemC_Func_Casting_(logical,BoxC_SS_Check_,BOXC_SS _PL_ _R_,ADDRESS),
+		.Push_=MemC_Func_Casting_(logical,BoxC_SS_Push_,BOXC_SS _PL_ _R_,ADDRESS,general _PL_),
+		.Pop_=MemC_Func_Casting_(general*,BoxC_SS_Pop_,BOXC_SS _PL_ _R_,ADDRESS),
+		.Spread_=MemC_Func_Casting_(logical,BoxC_SS_Spread_,MEMC_MS _PL_ _R_,BOXC_SS _PL_ _R_,ADDRESS),
+		.Peek_=MemC_Func_Casting_(general*,BoxC_SS_Peek_,BOXC_SS _PL_ _R_,ADDRESS,ADDRESS)
 	},
 	.QS=
 	{
 		.Create_=MemC_Func_Casting_(boxc_qs*,BoxC_QS_Create_,ADDRESS,ADDRESS),
-		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_qs *_PL_),
-		.Size_=MemC_Func_Casting_(address,BoxC_QS_Size_,BOXC_QS _PL_),
-		.Reset_All_=MemC_Func_Casting_(logical,BoxC_QS_Reset_All_,BOXC_QS _PL_),
-		.Reset_=MemC_Func_Casting_(logical,BoxC_QS_Reset_,BOXC_QS _PL_,ADDRESS),
-		.Enque_=MemC_Func_Casting_(logical,BoxC_QS_Enque_,BOXC_QS _PL_,ADDRESS,general _PL_),
-		.Deque_=MemC_Func_Casting_(general*,BoxC_QS_Deque_,BOXC_QS _PL_,ADDRESS),
-		.Spread_=MemC_Func_Casting_(address,BoxC_QS_Spread_,MEMC_MS _PL_,BOXC_QS _PL_,ADDRESS),
-		.Check_=MemC_Func_Casting_(logical,BoxC_QS_Check_,BOXC_QS _PL_,ADDRESS),
-		.Peek_=MemC_Func_Casting_(general*,BoxC_QS_Peek_,BOXC_QS _PL_,ADDRESS,ADDRESS)
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_qs *_PL_ _R_),
+		.Size_=MemC_Func_Casting_(address,BoxC_QS_Size_,BOXC_QS _PL_ _R_),
+		.All=
+		{
+			.Reset_=MemC_Func_Casting_(logical,BoxC_QS_Reset_All_,BOXC_QS _PL_ _R_),
+			.Check_=MemC_Func_Casting_(logical,BoxC_QS_Check_All_,BOXC_QS _PL_ _R_)
+		},
+		.Reset_=MemC_Func_Casting_(logical,BoxC_QS_Reset_,BOXC_QS _PL_ _R_,ADDRESS),
+		.Check_=MemC_Func_Casting_(logical,BoxC_QS_Check_,BOXC_QS _PL_ _R_,ADDRESS),
+		.Enque_=MemC_Func_Casting_(logical,BoxC_QS_Enque_,BOXC_QS _PL_ _R_,ADDRESS,general _PL_),
+		.Deque_=MemC_Func_Casting_(general*,BoxC_QS_Deque_,BOXC_QS _PL_ _R_,ADDRESS),
+		.Spread_=MemC_Func_Casting_(logical,BoxC_QS_Spread_,MEMC_MS _PL_ _R_,BOXC_QS _PL_ _R_,ADDRESS),
+		.Peek_=MemC_Func_Casting_(general*,BoxC_QS_Peek_,BOXC_QS _PL_ _R_,ADDRESS,ADDRESS)
 	},
 	.RS=
 	{
 		.Create_=MemC_Func_Casting_(boxc_rs*,BoxC_RS_Create_,ADDRESS,ADDRESS),
-		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_rs *_PL_),
-		.Size_=MemC_Func_Casting_(address,BoxC_RS_Size_,BOXC_RS _PL_),
-		.Reset_All_=MemC_Func_Casting_(logical,BoxC_RS_Reset_All_,BOXC_RS _PL_),
-		.Reset_=MemC_Func_Casting_(logical,BoxC_RS_Reset_,BOXC_RS _PL_,ADDRESS),
-		.Insert_=MemC_Func_Casting_(logical,BoxC_RS_Insert_,BOXC_RS _PL_,ADDRESS,general _PL_,LOGICAL),
-		.Desert_=MemC_Func_Casting_(logical,BoxC_RS_Desert_,BOXC_RS _PL_,ADDRESS,LOGICAL),
-		.Rotate_=MemC_Func_Casting_(logical,BoxC_RS_Rotate_,BOXC_RS _PL_,ADDRESS,SINTPTR),
-		.Check_=MemC_Func_Casting_(logical,BoxC_RS_Check_,BOXC_RS _PL_,ADDRESS),
-		.Read_=MemC_Func_Casting_(general*,BoxC_RS_Read_,BOXC_RS _PL_,ADDRESS,LOGICAL),
-		.Spread_=MemC_Func_Casting_(address,BoxC_RS_Spread_,MEMC_MS _PL_,BOXC_RS _PL_,ADDRESS,SINTPTR,LOGICAL)
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_rs *_PL_ _R_),
+		.Size_=MemC_Func_Casting_(address,BoxC_RS_Size_,BOXC_RS _PL_ _R_),
+		.All=
+		{
+			.Reset_=MemC_Func_Casting_(logical,BoxC_RS_Reset_All_,BOXC_RS _PL_ _R_),
+			.Check_=MemC_Func_Casting_(logical,BoxC_RS_Check_All_,BOXC_RS _PL_ _R_)
+		},
+		.Reset_=MemC_Func_Casting_(logical,BoxC_RS_Reset_,BOXC_RS _PL_ _R_,ADDRESS),
+		.Check_=MemC_Func_Casting_(logical,BoxC_RS_Check_,BOXC_RS _PL_ _R_,ADDRESS),
+		.Insert_=MemC_Func_Casting_(logical,BoxC_RS_Insert_,BOXC_RS _PL_ _R_,ADDRESS,general _PL_,LOGICAL),
+		.Desert_=MemC_Func_Casting_(logical,BoxC_RS_Desert_,BOXC_RS _PL_ _R_,ADDRESS,LOGICAL),
+		.Rotate_=MemC_Func_Casting_(logical,BoxC_RS_Rotate_,BOXC_RS _PL_ _R_,ADDRESS,SINTPTR),
+		.Read_=MemC_Func_Casting_(general*,BoxC_RS_Read_,BOXC_RS _PL_ _R_,ADDRESS,LOGICAL),
+		.Spread_=MemC_Func_Casting_(logical,BoxC_RS_Spread_,MEMC_MS _PL_ _R_,BOXC_RS _PL_ _R_,ADDRESS,SINTPTR,LOGICAL)
 	},
 	.KS=
 	{
 		.Create_=BoxC_KS_Create_,
-		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ks *_PL_),
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_ks *_PL_ _R_),
 		.Size_=BoxC_KS_Size_,
 		.Reset_=BoxC_KS_Reset_,
 		.Key=
@@ -2070,9 +2346,9 @@ BOXCASE BoxC=
 	.FS=
 	{
 		.Create_=BoxC_FS_Create_,
-		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_fs *_PL_),
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_fs *_PL_ _R_),
 		.Size_=BoxC_FS_Size_,
-		.Reset_All_=BoxC_FS_Reset_All_,
+		.All.Reset_=BoxC_FS_Reset_All_,
 		.Writer_=BoxC_FS_Writer_,
 		.Reader_=BoxC_FS_Reader_,
 		.Toggle_=BoxC_FS_Toggle_
@@ -2091,9 +2367,31 @@ BOXCASE BoxC=
 	.Sw=
 	{
 		.Create_=BoxC_Sw_Create_,
-		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_sw *_PL_),
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_sw *_PL_ _R_),
 		.Size_=BoxC_Sw_Size_,
 		.Find_=BoxC_Sw_Find_
+	},
+	.Li=
+	{
+		.Create_=BoxC_Li_Create_,
+		.Delete_=MemC_Func_Casting_(general,_BoxC_VS_Delete_,boxc_li *_PL_ _R_),
+		.Reset_=BoxC_Li_Reset_,
+		.Check_=BoxC_Li_Check_,
+		.Tip=
+		{
+			.Insert_=BoxC_Li_Tip_Append_,
+			.Desert_=BoxC_Li_Tip_Remove_
+		},
+		.One=
+		{
+			.Insert_=BoxC_Li_One_Insert_,
+			.Desert_=BoxC_Li_One_Desert_
+		},
+		.Lot=
+		{
+			.Insert_=BoxC_Li_Lot_Insert_,
+			.Desert_=BoxC_Li_Lot_Desert_
+		}
 	}
 };
 BOXCASE *BoxC_(general) { return &BoxC; }
