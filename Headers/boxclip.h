@@ -1,8 +1,8 @@
 ﻿/*------------------------------------------------------------------*/
-/*	BoxClip is a simple data structure library.						*/
+/*	BoxClip provides some simple data structures.					*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.09.20	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.09.26	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -110,7 +110,7 @@ struct _boxcase
 	//BoxClip : Library Version
 	BYTE_08 _PL_ Version;
 
-	//BoxClip : Stack Functions
+	//BoxClip : Stack Set Functions
 	const struct
 	{
 		//BoxClip : Stack Set Memory Allocation - Deallocate with "BoxC.SS.Delete_"
@@ -145,11 +145,11 @@ struct _boxcase
 		//BoxClip : Pop an object from the selected stack.
 		//＊Return value is the stored address.
 		general*(_PL_ Pop_)(BOXC_SS _PL_ _R_ StackSet,ADDRESS StackSelect);
-		//BoxClip : Pop and spread objects into the object slot.
-		//＊Nums = ObjectSlot -> Slot.V[0]
-		//　Object = { V[1], V[2], ..., V[Nums] | V = ObjectSlot -> Slot.V }
+		//BoxClip : Pop and spread objects into the list.
+		//＊Popping will be stopped when the list's count reaches its capacity.
+		//＊Original items in the list will be just over-written.
 		//＊Return value is 1 for success, 0 for failure.
-		logical(_PL_ Spread_)(MEMC_MS _PL_ _R_ ObjectSlot,BOXC_SS _PL_ _R_ StackSet,ADDRESS StackSelect);
+		logical(_PL_ Spread_)(boxc_li _PL_ _R_ List,BOXC_SS _PL_ _R_ StackSet,ADDRESS StackSelect);
 #define BoxC_SS_Foreach_(StackSet,StackSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(StackSet)?(((StackSelect)<((StackSet)->Number))?((general*)(((StackSet)->Count)+(StackSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.SS.Pop_(StackSet,StackSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Peek an object in the seleted stack without change.
@@ -158,7 +158,7 @@ struct _boxcase
 	}
 	SS;
 
-	//BoxClip : Queue Functions
+	//BoxClip : Queue Set Functions
 	const struct
 	{
 		//BoxClip : Queue Set Memory Allocation - Deallocate with "BoxC.QS.Delete_"
@@ -193,11 +193,11 @@ struct _boxcase
 		//BoxClip : Dequeue an object from the selected queue.
 		//＊Return value is the stored address.
 		general*(_PL_ Deque_)(BOXC_QS _PL_ _R_ QueueSet,ADDRESS QueueSelect);
-		//BoxClip : Dequeue and spread objects into the object slot.
-		//＊Nums = ObjectSlot -> Slot.V[0]
-		//　Object = { V[1], V[2], ..., V[Nums] | V = ObjectSlot -> Slot.V }
+		//BoxClip : Dequeue and spread objects into the list.
+		//＊Dequeueing will be stopped when the list's count reaches its capacity.
+		//＊Original items in the list will be just over-written.
 		//＊Return value is 1 for success, 0 for failure.
-		logical(_PL_ Spread_)(MEMC_MS _PL_ _R_ ObjectSlot,BOXC_QS _PL_ _R_ QueueSet,ADDRESS QueueSelect);
+		logical(_PL_ Spread_)(boxc_li _PL_ _R_ List,BOXC_QS _PL_ _R_ QueueSet,ADDRESS QueueSelect);
 #define BoxC_QS_Foreach_(QueueSet,QueueSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(QueueSet)?(((QueueSelect)<((QueueSet)->Number))?((general*)(((QueueSet)->Count)+(QueueSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.QS.Deque_(QueueSet,QueueSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Peek an object in the seleted queue without change.
@@ -206,7 +206,7 @@ struct _boxcase
 	}
 	QS;
 
-	//BoxClip : Ring Functions
+	//BoxClip : Ring Set Functions
 	const struct
 	{
 		//BoxClip : Ring Set Memory Allocation - Deallocate with "BoxC.RS.Delete_"
@@ -252,16 +252,16 @@ struct _boxcase
 		//＊Read left for direction 0, right for direction 1.
 		//＊Return value is the stored address.
 		general*(_PL_ Read_)(BOXC_RS _PL_ _R_ RingSet,ADDRESS RingSelect,LOGICAL Direction);
-		//BoxClip : Read and spread objects into the object slot.
-		//＊Nums = ObjectSlot -> Slot.V[0]
-		//　Object = { V[1], V[2], ..., V[Nums] | V = ObjectSlot -> Slot.V }
+		//BoxClip : Read and spread objects into the list.
+		//＊The list's capacity should not be less than the number of objects to be read.
+		//＊Original items in the list will be just over-written.
 		//＊Return value is 1 for success, 0 for failure.
-		logical(_PL_ Spread_)(MEMC_MS _PL_ _R_ ObjectSlot,BOXC_RS _PL_ _R_ RingSet,ADDRESS RingSelect,SINTPTR Rotation,LOGICAL Mode);
+		logical(_PL_ Spread_)(boxc_li _PL_ _R_ List,BOXC_RS _PL_ _R_ RingSet,ADDRESS RingSelect,SINTPTR Rotation,LOGICAL Mode);
 #define BoxC_RS_Foreach_(RingSet,RingSelect,Rotation,Direction,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_ _PL_(_Mark##Each)=(RingSet)?(((RingSelect)<((RingSet)->Number))?((general*)(((address*)((RingSet)->Ring))+((RingSelect)<<1))):(NULL)):(NULL),_PL_(_Stop##Each)=*(_Mark##Each),*(_Temp##Each)=FULL;(_Temp##Each)?((Acs_(general*,Each)=BoxC.RS.Read_(RingSet,RingSelect,Direction)),1):(0);(_Temp##Each)=(BoxC.RS.Rotate_(RingSet,RingSelect,Rotation))?(((_Stop##Each)==*(_Mark##Each))?(NULL):(FULL)):(NULL))
 	}
 	RS;
 
-	//BoxClip : Map Functions
+	//BoxClip : Key Set Functions
 	const struct
 	{
 		//BoxClip : Key Set Memory Allocation - Deallocate with "BoxC.KS.Delete_"
@@ -287,11 +287,11 @@ struct _boxcase
 			//BoxClip : Verify whether a key exists or not.
 			//＊Return value is 1 for success, 0 for failure.
 			logical(_PL_ Verify_)(BOXC_KS _PL_ _R_ KeySet,GENERAL _PL_ Key);
-			//BoxClip : Spread keys into the object slot.
-			//＊Nums = ObjectSlot -> Slot.V[0]
-			//　Object = { V[1], V[2], ..., V[Nums] | V = ObjectSlot -> Slot.V }
+			//BoxClip : Spread keys into the list.
+			//＊The list's capacity should not be less than the number of keys.
+			//＊Original items in the list will be just over-written.
 			//＊Return value is 1 for success, 0 for failure.
-			logical(_PL_ Spread_)(MEMC_MS _PL_ _R_ ObjectSlot,BOXC_KS _PL_ _R_ KeySet);
+			logical(_PL_ Spread_)(boxc_li _PL_ _R_ List,BOXC_KS _PL_ _R_ KeySet);
 #define BoxC_KS_Foreach_(KeySet,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Num##Each)=Acs_(general*,(KeySet)->Number),*(_Idx##Each)=NULL;(Acs_(address,_Idx##Each)<Acs_(address,_Num##Each))?((Acs_(type,Each)=BoxC.KS.Index.Search_(KeySet,Acs_(address,_Idx##Each))),1):(0);Acs_(address,_Idx##Each)++)
 		}
 		Key;
@@ -321,7 +321,7 @@ struct _boxcase
 	}
 	KS;
 
-	//BoxClip : Flag Functions
+	//BoxClip : Flag Set Functions
 	const struct
 	{
 		//BoxClip : Flag Set Memory Allocation - Deallocate with "BoxC.FS.Delete_"
@@ -383,10 +383,10 @@ struct _boxcase
 	const struct
 	{
 		//BoxClip : Switch Creation - Delete with "BoxC.Sw.Delete_"
-		//＊Number = CaseSlot -> Slot.V[0]
-		//　Switch -> Case[idx].L = CaseSlot -> Slot.P[Switch -> Case[idx].I]
-		//＊All NULL cases will be mapped to 0, and duplicated non-NULL cases are not allowed.
-		boxc_sw*(_PL_ Create_)(MEMC_MS _PL_ _R_ CaseSlot);
+		//＊Number = List -> Count
+		//　Switch -> Case[idx].L = List -> Item[Switch -> Case[idx].I]
+		//＊Duplicated cases are not allowed.
+		boxc_sw*(_PL_ Create_)(BOXC_LI _PL_ _R_ List);
 		//BoxClip : Switch Deletion
 		general(_PL_ Delete_)(boxc_sw *_PL_ _R_ Switch);
 		//BoxClip : Switch Memory Occupation
@@ -395,7 +395,7 @@ struct _boxcase
 		//BoxClip : Case Finding
 		//＊Mode 0 : Naive Search
 		//　Mode 1 : Binary Search
-		//＊Return value is a corresponding index of the found case, 0 for NULL, or 1 for the unknown.
+		//＊Return value is a corresponding index of the found case, or FULL for the unknown case.
 		address(_PL_ Find_)(BOXC_SW _PL_ _R_ Switch,GENERAL _PL_ Case,LOGICAL SearchMode);
 	}
 	Sw;
@@ -403,10 +403,15 @@ struct _boxcase
 	//BoxClip : List Functions
 	const struct
 	{
+		//BoxClip : Automatic List
+#define BoxC_Li_Auto_(List,Capacity) address(_##List)[(Capacity)+2]={[0]=(Capacity),[1]=0};boxc_li _PL_(List)=(boxc_li*)(_##List);
+
 		//BoxClip : List Creation - Delete with "BoxC.Li.Delete_"
 		boxc_li*(_PL_ Create_)(ADDRESS Capacity);
 		//BoxClip : List Deletion
 		general(_PL_ Delete_)(boxc_li *_PL_ _R_ List);
+		//BoxClip : List Memory Occupation
+		address(_PL_ Size_)(BOXC_LI _PL_ _R_ List);
 
 		//BoxClip : Desert all items.
 		//＊Return value is 1 for success, 0 for failure.
@@ -420,10 +425,10 @@ struct _boxcase
 		const struct
 		{
 			//BoxClip : Append an item.
-			//＊Equivalent to BoxC.Li.One_( List, List -> Count, Item ).
+			//＊Equivalent to BoxC.Li.One.Insert_( List, List -> Count, Item ).
 			logical(_PL_ Insert_)(boxc_li _PL_ _R_ List,general _PL_ Item);
 			//BoxClip : Remove an item.
-			//＊Equivalent to BoxC.Li.One_( List, List -> Count - 1 ).
+			//＊Equivalent to BoxC.Li.One.Desert_( List, List -> Count - 1 ).
 			logical(_PL_ Desert_)(boxc_li _PL_ _R_ List);
 		}
 		Tip;
@@ -444,13 +449,23 @@ struct _boxcase
 		const struct
 		{
 			//BoxClip : Insert items.
-			//＊Nums = ItemSlot -> Slot.V[0]
-			//　Item = { V[1], V[2], ..., V[Nums] | V = ItemSlot -> Slot.V }
-			logical(_PL_ Insert_)(boxc_li _PL_ _R_ List,ADDRESS Offset,MEMC_MS _PL_ _R_ ItemSlot);
+			//＊(Number) and the number of variadic arguments must be equal!
+			logical(_PL_ Insert_)(boxc_li _PL_ _R_ List,ADDRESS Offset,ADDRESS Number,...);
 			//BoxClip : Desert items.
 			logical(_PL_ Desert_)(boxc_li _PL_ _R_ List,ADDRESS Offset,ADDRESS Number);
 		}
 		Lot;
+
+		//BoxClip : Copy some items.
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Copy_)(boxc_li _PL_ _R_ TargetList,BOXC_LI _PL_ _R_ SourceList,ADDRESS TargetOffset,ADDRESS SourceOffset,ADDRESS CopyNumber);
+		//BoxClip : Filter all items.
+		//＊The target list's capacity should not be less than the source list's count.
+		//＊Original items in the target list will be just over-written.
+		//＊Return value is 1 for success, 0 for failure.
+		logical(_PL_ Filter_)(boxc_li _PL_ _R_ TargetList,BOXC_LI _PL_ _R_ SourceList,logical(_PL_ ItemFilter_)(general _PL_ _R_ SourceItem));
+
+#define BoxC_Li_Foreach_(List,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((List)->Item),_PL_(_End##Each)=(general*)(((List)->Item)+((List)->Count));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
 	}
 	Li;
 };

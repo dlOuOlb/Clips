@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.09.26	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -175,10 +175,6 @@ MemC_Type_Rename_(double,real_64,REAL_64);		//BitClip : 64-bit Double Precision 
 
 MemC_Type_Rename_(intptr_t,sintptr,SINTPTR);	//BitClip : Signed Address
 MemC_Type_Rename_(uintptr_t,uintptr,UINTPTR);	//BitClip : Unsigned Address
-
-static_assert((-1)==(((inte_08)(-1))>>1),"The bit-shift-right operation of a signed integer must preserve the sign.");
-static_assert((-1)!=(((data_08)(-1))>>1),"The bit-shift-right operation of an unsigned integer must not preserve the sign.");
-static_assert((~((address)(0)))==((address)((inte_08)(~0))),"Casting from a signed integer to an address value must preserve the sign.");
 #endif
 
 #if(Fold_(Definition:Derived Types))
@@ -415,7 +411,7 @@ struct _bitcase
 	{
 		//BitClip : Array Reformation
 		//＊SourceShape[dim] == TargetShape[ReformingAxis[dim]] where dim＜Dimensions.
-		//＊Return value is ~0 for success, 0 for failure.
+		//＊Return value is 1 for success, 0 for failure.
 		logical(_PL_ Reform_)(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,ADDRESS Dimensions,ADDRESS TypeSize);
 #define BitC_Reform_(S,T,SShp,StoTAxis,Dims) ((sizeof(*(S))==sizeof(*(T)))?(BitC.Reform_(S,T,SShp,StoTAxis,Dims,sizeof(*(S)))):(BitCNull))
 
@@ -1321,10 +1317,10 @@ struct _bitcase
 			//＊Return value is the moved pointer.
 			bitc_bp(_PL_ Jumper_)(BITC_BP BitPointer,SINTPTR Move);
 			//BitClip : Bit Pointer Read
-			//＊Return value is 0 or ~0.
+			//＊Return value is 0 or 1.
 			logical(_PL_ Reader_)(BITC_BP BitPointer);
 			//BitClip : Bit Pointer Write
-			//＊Bool value should be 0 or ~0.
+			//＊Bool value should be 0 or 1.
 			general(_PL_ Writer_)(BITC_BP BitPointer,LOGICAL Boolean);
 		}
 		BP;

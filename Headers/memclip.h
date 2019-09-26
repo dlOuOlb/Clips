@@ -2,7 +2,7 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.09.26	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -91,8 +91,6 @@
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))
 #define MemC_Unit_(type,Unit,...) type(_##Unit)##__VA_ARGS__,_PL_(Unit)=&(_##Unit)
 #define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)
-
-#define MemC_Max_Dimension 8
 #endif
 
 #if(Fold_(Definition:Primal Types))
@@ -205,6 +203,7 @@ general _MemC_Free_(general _PL_ Memory);
 struct _memcase
 {
 	BYTE_08 _PL_ Version;	//MemClip : Library Version
+	ADDRESS MaxDims;		//MemClip : Maximum Dimension
 
 	//MemClip : Do nothing.
 	general(_PL_ Void_)(general);
@@ -329,7 +328,9 @@ struct _memcase
 	const struct
 	{
 		//MemClip :  1D Array Uniform or Non-Uniform Interval Addressing
-		address(_PL_ D1_)(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,INTEGER Mode);
+		//＊Mode 0 : Uniform Interval
+		//　Mode 1 : Non-Uniform Interval
+		address(_PL_ D1_)(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,LOGICAL Mode);
 #define MemC_Assign_1D_U_(Address,Line,Jump,Number) MemC.Assign.D1_(Address,Line,Jump,Number,sizeof(*(Line)),0)
 #define MemC_Assign_1D_N_(Address,Line,Jump,Number) MemC.Assign.D1_(Address,Line,(address)(Jump),Number,sizeof(*(Line)),1)
 	}
@@ -340,7 +341,7 @@ struct _memcase
 	{
 		//MemClip : Table Indexing
 		//＊Table[idx]＝Mode？＆(Table[idx])：idx
-		general(_PL_ Index_)(address *_R_ Table,ADDRESS Count,INTEGER Mode);
+		general(_PL_ Index_)(address *_R_ Table,ADDRESS Count,LOGICAL Mode);
 
 		//MemClip : Object Sorting
 		//＊Required ReferTable size is Count×sizeof(general*) bytes.
@@ -368,16 +369,14 @@ struct _memcase
 	//MemClip : Memory Slot Functions
 	const struct
 	{
-		//MemClip : Memory Slot Automatic Definition
-#define MemC_MS_Define_(SlotName,SlotsNumber) address(_##SlotName)[(SlotsNumber)+4];memc_ms _PL_(SlotName)=((((GENERAL**)(_##SlotName))[0]=(_##SlotName)),(((GENERAL**)(_##SlotName))[1]=MemC.Type.Add),((_##SlotName)[2]=(SlotsNumber)),(((GENERAL**)(_##SlotName))[3]=(_##SlotName)+4),(memc_ms*)(_##SlotName));
+		//MemClip : Automatic Memory Slot
+#define MemC_MS_Auto_(SlotName,SlotsNumber) address(_##SlotName)[(SlotsNumber)+4];memc_ms _PL_(SlotName)=((((GENERAL**)(_##SlotName))[0]=(_##SlotName)),(((GENERAL**)(_##SlotName))[1]=MemC.Type.Add),((_##SlotName)[2]=(SlotsNumber)),(((GENERAL**)(_##SlotName))[3]=(_##SlotName)+4),(memc_ms*)(_##SlotName));
 
 		//MemClip : Memory Slot Memory Allocation - Deallocate with "MemC.MS.Delete_"
 		//＊Nums = SlotsNumber
 		memc_ms*(_PL_ Create_)(GENERAL _PL_ Identification,ADDRESS SlotsNumber);
 		//MemClip : Memory Slot Memory Deallocation
 		general(_PL_ Delete_)(memc_ms *_PL_ MemorySlot);
-		//MemClip : Temporarily allocate and deallocate a memory slot.
-#define MemC_MS_Temp_(Temp,Nums,FAIL) for(memc_ms _PL_(Temp)=MemC.MS.Create_(NULL,Nums),*(_##Temp)=FULL;_##Temp;MemC.MS.Delete_((memc_ms**)&(Temp)),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 
 		//MemClip : Memory Slot Memory Occupation
 		address(_PL_ Size_)(MEMC_MS _PL_ MemorySlot);
@@ -393,7 +392,7 @@ struct _memcase
 		//　MemorySet = { P[1], P[2], ..., P[Count] | P = MemorySlot -> Slot.P }
 		//＊Mode 0 : Return value is 1 for all NULLs, otherwise 0.
 		//　Mode 1 : Return value is 0 for any NULLs, otherwise 1.
-		logical(_PL_ Null_)(MEMC_MS _PL_ MemorySlot,INTEGER CheckMode);
+		logical(_PL_ Null_)(MEMC_MS _PL_ MemorySlot,LOGICAL CheckMode);
 
 		//MemClip : Shape Information Setting
 		//＊ShapeInfo -> Slot.V[0] = Dims
@@ -423,8 +422,6 @@ struct _memcase
 		memc_mc*(_PL_ Create_)(GENERAL _PL_ Identification,MEMC_MS _PL_ ShapeInfo,MEMC_DT _PL_ TypeInfo);
 		//MemClip : Memory Container Memory Deallocation
 		general(_PL_ Delete_)(memc_mc *_PL_ MemoryContainer);
-		//MemClip : Temporarily allocate and deallocate a memory container.
-#define MemC_MC_Temp_(Temp,Shape,Type,FAIL) for(memc_mc _PL_(Temp)=MemC.MC.Create_(NULL,Shape,Type),*(_##Temp)=FULL;_##Temp;MemC.MC.Delete_((memc_mc**)&(Temp)),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 
 		//MemClip : Memory Container Memory Occupation
 		address(_PL_ Size_)(MEMC_MC _PL_ MemoryContainer);
