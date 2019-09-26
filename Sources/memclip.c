@@ -13,12 +13,13 @@ static_assert((sizeof(void*)==sizeof(size_t)),"sizeof(void*) != sizeof(size_t)")
 
 #if(Fold_(Definition:MemClip Macros))
 #define _MEMC_ static
+#define _MemC_Dims_ ((address)8)
 #endif
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
-static ADDRESS ConstantZero[MemC_Max_Dimension]={0};
+static BYTE_08 IdiomVersion[16]="Date:2019.09.26";
+static ADDRESS ConstantZero[_MemC_Dims_]={0};
 #endif
 
 #if(Fold_(Definition:Type Descriptors))
@@ -93,6 +94,7 @@ _MEMC_ general MemC_Deloc_Set_(general **Memory,ADDRESS Sets)
 	}
 }
 #endif
+
 #if(Fold_(Part:ND Array Memory Allocation))
 _MEMC_ address _MemC_Size_Add_(ADDRESS A,ADDRESS B)
 {
@@ -189,11 +191,11 @@ _MEMC_ general *_MemC_Alloc_ND_(ADDRESS TypeSize,ADDRESS Dims,...)
 {
 	general *Return;
 
-	if(Dims>MemC_Max_Dimension)
+	if(Dims>_MemC_Dims_)
 		Return=NULL;
 	else
 	{
-		address Buffer[MemC_Max_Dimension];
+		address Buffer[_MemC_Dims_];
 		va_list Arg;
 
 		va_start(Arg,Dims);
@@ -209,6 +211,7 @@ _MEMC_ general *_MemC_Alloc_ND_(ADDRESS TypeSize,ADDRESS Dims,...)
 	return Return;
 }
 #endif
+
 #if(Fold_(Part:1D Array Trivials))
 static address _MemC_Safe_2_(address Num)
 {
@@ -270,6 +273,7 @@ _MEMC_ logical MemC_Copy_Step_(BYTE_08 *_R_ Source,byte_08 *_R_ Target,ADDRESS N
 	return 1;
 }
 #endif
+
 #if(Fold_(Part:ND Array Data Copy))
 static general _MemC_Jump_Offset_(address _PL_ Jump,ADDRESS _PL_ Shape,ADDRESS Dimension,ADDRESS Bytes)
 {
@@ -355,12 +359,12 @@ _MEMC_ logical _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL
 		default:
 			if(Bytes)
 				if(_MemC_Array_Non_Zero_(Length,Dimensions))
-					if(Dimensions>MemC_Max_Dimension)
+					if(Dimensions>_MemC_Dims_)
 						return 0;
 					else
 					{
-						address JumpS[MemC_Max_Dimension];
-						address JumpT[MemC_Max_Dimension];
+						address JumpS[_MemC_Dims_];
+						address JumpT[_MemC_Dims_];
 
 						if(ShapeS)
 							_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
@@ -383,10 +387,11 @@ _MEMC_ logical _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL
 		return 0;
 }
 #endif
+
 #if(Fold_(Part:ND Array Data Reformation))
 static logical _MemC_Reform_Valid_(ADDRESS *_R_ Map,ADDRESS Dims)
 {
-	address Table[MemC_Max_Dimension]={0};
+	address Table[_MemC_Dims_]={0};
 
 	for(ADDRESS _PL_ End=Map+Dims;Map<End;Map++)
 		if((*Map)<Dims)
@@ -449,7 +454,7 @@ static general _MemC_Reform_Merge_(address _PL_ Shape,address _PL_ Map,address _
 }
 static logical _MemC_Reform_Order_(BYTE_08 _PL_ Source,byte_08 _PL_ Target,ADDRESS _PL_ Shape,ADDRESS _PL_ Map,ADDRESS Total,ADDRESS Dims,ADDRESS Bytes)
 {
-	address Jump[MemC_Max_Dimension];
+	address Jump[_MemC_Dims_];
 	ADDRESS Last=Dims-1;
 
 	for(address IdxT=0;IdxT<Total;IdxT++)
@@ -481,15 +486,15 @@ _MEMC_ logical _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _
 	{
 		_MemC_Reform_Short_(ShapeS,AxisStoT,&Dimensions,&Bytes);
 		if(Dimensions>1)
-			if(Dimensions<MemC_Max_Dimension)
+			if(Dimensions<_MemC_Dims_)
 				if(_MemC_Reform_Valid_(AxisStoT,Dimensions))
 				{
 					ADDRESS Total=_MemC_Array_Prod_(ShapeS,Dimensions);
 
 					if(Total)
 					{
-						address ShapeSNew[MemC_Max_Dimension];
-						address MapTNew[MemC_Max_Dimension];
+						address ShapeSNew[_MemC_Dims_];
+						address MapTNew[_MemC_Dims_];
 
 						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions));
 						else
@@ -530,7 +535,7 @@ _MEMC_ logical _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _
 _MEMC_ logical MemC_Reform_Shape_(ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,address _PL_ ShapeT,ADDRESS Dimensions)
 {
 	if(Dimensions)
-		if(Dimensions<MemC_Max_Dimension)
+		if(Dimensions<_MemC_Dims_)
 			if(_MemC_Reform_Valid_(AxisStoT,Dimensions))
 				for(address Index=0;Index<Dimensions;Index++)
 					ShapeT[AxisStoT[Index]]=ShapeS[Index];
@@ -543,6 +548,7 @@ _MEMC_ logical MemC_Reform_Shape_(ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,addr
 	return 1;
 }
 #endif
+
 #if(Fold_(Part:Object Sorting))
 static address _MemC_Sort_Lng_2_(ADDRESS Length)
 {
@@ -708,9 +714,10 @@ _MEMC_ logical MemC_Sort_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL
 	return 1;
 }
 #endif
+
 #if(Fold_(Part:Others))
-_MEMC_ general MemC_Void_(general) {}
-_MEMC_ general MemC_Self_(address *_R_ Table,ADDRESS Length,INTEGER Mode)
+_MEMC_ general MemC_Void_(general) { return; }
+_MEMC_ general MemC_Self_(address *_R_ Table,ADDRESS Length,LOGICAL Mode)
 {
 	if(Mode)
 		for(ADDRESS _PL_ End=Table+Length;Table<End;Table++)
@@ -718,8 +725,10 @@ _MEMC_ general MemC_Self_(address *_R_ Table,ADDRESS Length,INTEGER Mode)
 	else
 		for(address Idx=0;Idx<Length;Idx++)
 			Table[Idx]=Idx;
+
+	return;
 }
-_MEMC_ address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,INTEGER Mode)
+_MEMC_ address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,LOGICAL Mode)
 {
 	if(Indices)
 	{
@@ -756,7 +765,7 @@ _MEMC_ address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRES
 #endif
 
 #if(Fold_(Definition:MemClip Structure Functions))
-_MEMC_ general MemC_Delete_(general *_PL_ Object) { MemC_Deloc_(*Object); }
+_MEMC_ general MemC_Delete_(general *_PL_ Object) { MemC_Deloc_(*Object);return; }
 
 #if(Fold_(Part:MemC_MS))
 _MEMC_ memc_ms *MemC_MS_Create_(GENERAL _PL_ ID,ADDRESS Slots)
@@ -838,7 +847,7 @@ _MEMC_ logical MemC_MS_Init_(MEMC_MS _PL_ MS)
 	else
 		return 0;
 }
-_MEMC_ logical MemC_MS_Null_(MEMC_MS _PL_ MS,INTEGER Mode)
+_MEMC_ logical MemC_MS_Null_(MEMC_MS _PL_ MS,LOGICAL Mode)
 {
 	if(MS)
 		if(MS->Slot.V)
@@ -988,6 +997,7 @@ _MEMC_ logical MemC_MS_Oops_(MEMC_MS _PL_ MS)
 	return 0;
 }
 #endif
+
 #if(Fold_(Part:MemC_MC))
 static address _MemC_Shape_Overflow_(ADDRESS _PL_ Shape,ADDRESS Dims)
 {
@@ -1255,6 +1265,7 @@ _MEMC_ logical MemC_MC_Change_(memc_mc _PL_ MC,MEMC_DT _PL_ DT)
 	return 0;
 }
 #endif
+
 #if(Fold_(Part:MemC_ML))
 #define _MemC_ML_Malloc_(Chunks) ((_MemC_Size_Mul_(Chunks,sizeof(memc_mn)))?(malloc(MemC_Size_(memc_mn,Chunks))):(NULL))
 #define _MemC_ML_Free_(Memory) __dl{free(Memory);(Memory)=NULL;}lb__
@@ -1890,6 +1901,7 @@ _MEMC_ logical MemC_ML_Move_(memc_ml _PL_ Source,memc_ml _PL_ Target,memc_ms _PL
 MEMCASE MemC=
 {
 	.Version=IdiomVersion,
+	.MaxDims=_MemC_Dims_,
 	.Void_=MemC_Void_,
 	.Type=
 	{

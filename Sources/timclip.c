@@ -12,17 +12,12 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 struct _timc_vc { general *Thing;address Nums; };
 MemC_Type_Declare_(struct,timc_vc,TIMC_VC);
 
-_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.09.20";
+_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.09.26";
 #endif
 
 #if(Fold_(Definition:Advanced Type Functions))
 #if(Fold_(Part:Common))
-_TIMC_ general TimC_Delete_(general *_PL_ _R_ Object)
-{
-	MemC_Deloc_(*Object);
-
-	return;
-}
+_TIMC_ general TimC_Delete_(general *_PL_ _R_ Object) { MemC_Deloc_(*Object);return; }
 static logical _TimC_Check_(TIMC_VC _PL_ _R_ VC,ADDRESS Select)
 {
 	return ((VC)?((Select<(VC->Nums))?(1):(0)):(0));

@@ -1,13 +1,20 @@
 ﻿#include "bitclip.h"
 
+#if(Fold_(Static Assertions))
+static_assert((-1)==(((inte_08)(-1))>>1),"The bit-shift-right operation of a signed integer must preserve the sign.");
+static_assert((-1)!=(((data_08)(-1))>>1),"The bit-shift-right operation of an unsigned integer must not preserve the sign.");
+static_assert((~((address)(0)))==((address)((inte_08)(~0))),"Casting from a signed integer to an address value must preserve the sign.");
+#endif
+
 #if(Fold_(Definition:Internal Macros))
 #define _BITC_ static
+#define _BitC_Dims_ ((address)8)
 #include "bitcros.c"
 #endif
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
+static BYTE_08 IdiomVersion[16]="Date:2019.09.26";
 
 static ADDRESS ConstantSafe[8]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127};
 static ADDRESS ConstantRest[8]={(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
@@ -468,7 +475,7 @@ _BITC_ general BitC_Shrink_D64_(DATA_64 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Le
 #if(Fold_(Definition:Reformation Functions))
 static logical _BitC_Reform_Valid_(ADDRESS *_R_ Map,ADDRESS Dims)
 {
-	logical Table[MemC_Max_Dimension]={0};
+	logical Table[_BitC_Dims_]={0};
 	logical Flag=1;
 
 	for(address Idx=0;Idx<Dims;Idx++)
@@ -547,7 +554,7 @@ static general _BitC_Reform_Order_(BITCLIP Source,BITCLIP Target,ADDRESS _PL_ Sh
 	ADDRESS Switch=Bytes&ConstantRest[3];
 	ADDRESS Loop=Bytes>>TableReform[Switch];
 	ADDRESS Last=Dims-1;
-	address Jump[MemC_Max_Dimension];
+	address Jump[_BitC_Dims_];
 	address Prod;
 	address IdxS;
 	address IdxT;
@@ -634,15 +641,15 @@ _BITC_ logical _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,ADDRESS _PL
 	{
 		_BitC_Reform_Short_(ShapeS,AxisStoT,&Dimensions,&Bytes);
 		if(Dimensions>1)
-			if(Dimensions<MemC_Max_Dimension)
+			if(Dimensions<_BitC_Dims_)
 				if(_BitC_Reform_Valid_(AxisStoT,Dimensions))
 				{
 					ADDRESS Total=_BitC_Reform_Total_(ShapeS,Dimensions);
 
 					if(Total)
 					{
-						address ShapeSNew[MemC_Max_Dimension];
-						address MapTNew[MemC_Max_Dimension];
+						address ShapeSNew[_BitC_Dims_];
+						address MapTNew[_BitC_Dims_];
 
 						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions));
 						else
@@ -712,6 +719,8 @@ _BITC_ general BitC_BP_Writer_(BITC_BP BP,LOGICAL Bool)
 	Temp=-Temp;
 	Mask|=Temp;
 	*(BP.Base)&=Mask;
+
+	return;
 }
 #endif
 
@@ -1776,6 +1785,7 @@ _BITC_ general BitC_CL_Reform_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 #if(Fold_(Undefinition:Internal Macros))
 #include "bitcros.c"
+#undef _BitC_Dims_
 #undef _BITC_
 #endif
 
