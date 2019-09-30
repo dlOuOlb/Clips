@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.09.30	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
@@ -281,9 +281,13 @@ struct _pencase
 	const struct
 	{
 		//PenClip : 8-bit Stream Print (Mode 0) or Scan (Mode 1)
-#define PenC_Stream_Format_T08_(Mode,Stream,...) ((Mode)?((Stream)?(fscanf_s(Stream,__VA_ARGS__)):(scanf_s(__VA_ARGS__))):((Stream)?(fprintf_s(Stream,__VA_ARGS__)):(printf_s(__VA_ARGS__))))
+#define PenC_Stream_Format_T08_(Mode,Stream,...) _PenC_Stream_Format_##Mode##_T08_(Stream,__VA_ARGS__)
+#define _PenC_Stream_Format_0_T08_(Stream,...) ((Stream)?(fprintf_s(Stream,__VA_ARGS__)):(printf_s(__VA_ARGS__)))
+#define _PenC_Stream_Format_1_T08_(Stream,...) ((Stream)?(fscanf_s(Stream,__VA_ARGS__)):(scanf_s(__VA_ARGS__)))
 		//PenClip : 16-bit Stream Print (Mode 0) or Scan (Mode 1)
-#define PenC_Stream_Format_T16_(Mode,Stream,...) ((Mode)?((Stream)?(fwscanf_s(Stream,__VA_ARGS__)):(wscanf_s(__VA_ARGS__))):((Stream)?(fwprintf_s(Stream,__VA_ARGS__)):(wprintf_s(__VA_ARGS__))))
+#define PenC_Stream_Format_T16_(Mode,Stream,...) _PenC_Stream_Format_##Mode##_T16_(Stream,__VA_ARGS__)
+#define _PenC_Stream_Format_0_T16_(Stream,...) ((Stream)?(fwprintf_s(Stream,__VA_ARGS__)):(wprintf_s(__VA_ARGS__)))
+#define _PenC_Stream_Format_1_T16_(Stream,...) ((Stream)?(fwscanf_s(Stream,__VA_ARGS__)):(wscanf_s(__VA_ARGS__)))
 
 		//PenClip : Stream-Buffer I/O Functions
 		const struct
@@ -315,9 +319,13 @@ struct _pencase
 		//PenClip : 16-bit Format String Length Expectation
 #define PenC_Format_Length_T16_(...) swprintf(NULL,0,__VA_ARGS__)
 		//PenClip : 8-bit Buffer Print (Mode 0) or Scan (Mode 1)
-#define PenC_Buffer_Format_T08_(Mode,Buffer,Capacity,...) ((Mode)?(sscanf_s(Buffer,__VA_ARGS__)):(sprintf_s(Buffer,Capacity,__VA_ARGS__)))
+#define PenC_Buffer_Format_T08_(Mode,Buffer,Capacity,...) _PenC_Buffer_Format_##Mode##_T08_(Buffer,Capacity,__VA_ARGS__)
+#define _PenC_Buffer_Format_0_T08_(Buffer,Capacity,...) (sprintf_s(Buffer,Capacity,__VA_ARGS__))
+#define _PenC_Buffer_Format_1_T08_(Buffer,Capacity,...) (sscanf_s(Buffer,__VA_ARGS__))
 		//PenClip : 16-bit Buffer Print (Mode 0) or Scan (Mode 1)
-#define PenC_Buffer_Format_T16_(Mode,Buffer,Capacity,...) ((Mode)?(swscanf_s(Buffer,__VA_ARGS__)):(swprintf_s(Buffer,Capacity,__VA_ARGS__)))
+#define PenC_Buffer_Format_T16_(Mode,Buffer,Capacity,...) _PenC_Buffer_Format_##Mode##_T16_(Buffer,Capacity,__VA_ARGS__)
+#define _PenC_Buffer_Format_0_T16_(Buffer,Capacity,...) (swprintf_s(Buffer,Capacity,__VA_ARGS__))
+#define _PenC_Buffer_Format_1_T16_(Buffer,Capacity,...) (swscanf_s(Buffer,__VA_ARGS__))
 
 		//PenClip : Buffer-Stream I/O Functions
 		const struct
