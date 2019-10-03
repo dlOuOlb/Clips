@@ -5,25 +5,25 @@
 
 _MemC_Default_;
 static general _Naive_Rand_(inte_32 *_R_,ADDRESS);
-static integer _Naive_Comp_(INTE_32 _PL_,INTE_32 _PL_);
-static real_64 _Time_Cast_(REAL_32 Time);
+static integer _Naive_Comp_(INTE_32 _PL_ _R_,INTE_32 _PL_ _R_);
+static real_64 _Time_Cast_(REAL_32);
 
 integer main(general)
 {
-	FILE _PL_ Stream=NULL;
-	ADDRESS Length=1<<20;
-	INTEGER Trials=256;
-	inte_32 *Array=MemC_Alloc_ND_(inte_32,1,Length);
-	general *Buffer=MemC.Alloc.Byte_(MemC_Size_(inte_32,Length));
-	timc_sw *SW=TimC.SW.Create_(2);
-	timc_rg *RG=TimC.RG.Create_(1);
-	integer MainFlag=0;
+	FILE _PL_ Stream=NULL;//the stream to print outputs
+	ADDRESS Length=1<<20;//the number of random integers
+	INTEGER Trials=256;//the number of trials
+	inte_32 *Array=MemC_Alloc_ND_(inte_32,1,Length);//an array for random integers
+	general *Buffer=MemC.Alloc.Byte_(MemC_Size_(inte_32,Length));//a calculation buffer
+	timc_sw *SW=TimC.SW.Create_(2);//a stopwatch
+	timc_rg *RG=TimC.RG.Create_(1);//a random generator
+	integer MainFlag=0;//an error flag
 
 	if(Array&&SW&&RG)
 	{
-		timc_sf SWState[2];
+		timc_sf SWState[2];//stopwatch states
 
-		PenC_Stream_Format_T08_(0,Stream,"Time Measurement for Random Generation and Sorting\r\n%uz integers(32-bit) up to %d : %d tries\r\n",Length,RAND_MAX,Trials);
+		PenC_Stream_Format_T08_(0,Stream,"Time Measurement for Random Generation and Sorting\r\n%zu integers(32-bit) up to %d : %d tries\r\n",Length,RAND_MAX,Trials);
 
 		PenC_Stream_Format_T08_(0,Stream,"\r\nNaive Approach : rand() and qsort().\r\n");
 		{
@@ -51,8 +51,8 @@ integer main(general)
 			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
 			}
 			else
 			{
@@ -86,8 +86,8 @@ integer main(general)
 			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
 			}
 			else
 			{
@@ -126,8 +126,10 @@ static general _Naive_Rand_(inte_32 *_R_ Ptr,ADDRESS Length)
 {
 	for(INTE_32 _PL_ End=Ptr+Length;Ptr<End;Ptr++)
 		*Ptr=rand();
+
+	return;
 }
-static integer _Naive_Comp_(INTE_32 _PL_ A,INTE_32 _PL_ B)
+static integer _Naive_Comp_(INTE_32 _PL_ _R_ A,INTE_32 _PL_ _R_ B)
 {
 	return (((*A)>(*B))-((*A)<(*B)));
 }
