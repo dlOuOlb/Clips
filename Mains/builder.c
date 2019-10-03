@@ -26,7 +26,7 @@ integer main(general)
 						{
 							penc_sc *TempContainer=NULL;
 
-							PenC_SL_Borrow_Format_T08_(StringLender,TempContainer,"../Release/P%d D%d %s.obj",IdxP,IdxD,NameList[IdxN]);
+							PenC_SL_Borrow_Format_T08_(StringLender,TempContainer,"../Release/P%zu D%zu %s.obj",IdxP,IdxD,NameList[IdxN]);
 							BinaryPath[IdxD]=TempContainer->String;
 						}
 						{
