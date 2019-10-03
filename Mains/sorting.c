@@ -1,4 +1,4 @@
-﻿#include <stdbool.h>
+#include <stdbool.h>
 #include <penclip.h>
 #include <linclip.h>
 #include <timclip.h>
@@ -6,6 +6,7 @@
 _MemC_Default_;
 static general _Naive_Rand_(inte_32 *_R_,ADDRESS);
 static integer _Naive_Comp_(INTE_32 _PL_,INTE_32 _PL_);
+static real_64 _Time_Cast_(REAL_32 Time);
 
 integer main(general)
 {
@@ -22,7 +23,7 @@ integer main(general)
 	{
 		timc_sf SWState[2];
 
-		PenC_Stream_Format_T08_(0,Stream,"Time Measurement for Random Generation and Sorting\r\n%d integers(32-bit) up to %d : %d tries\r\n",Length,RAND_MAX,Trials);
+		PenC_Stream_Format_T08_(0,Stream,"Time Measurement for Random Generation and Sorting\r\n%uz integers(32-bit) up to %d : %d tries\r\n",Length,RAND_MAX,Trials);
 
 		PenC_Stream_Format_T08_(0,Stream,"\r\nNaive Approach : rand() and qsort().\r\n");
 		{
@@ -50,8 +51,8 @@ integer main(general)
 			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for random generation\r\n",1000.0F*TimC.SW.Read.Mean_(SW,0));
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",1000.0F*TimC.SW.Read.Mean_(SW,1));
+				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
+				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
 			}
 			else
 			{
@@ -60,7 +61,7 @@ integer main(general)
 			}
 		}
 
-		PenC_Stream_Format_T08_(0,Stream,"\r\nUnfair Approach : MWC64X and radix-sort.\r\n");
+		PenC_Stream_Format_T08_(0,Stream,"\r\nUnfair Approach : MWC64X, radix-sort, and additional memory.\r\n");
 		{
 			PenC_Stream_Format_T08_(0,Stream,"Warming up...\r\n");
 			{
@@ -85,8 +86,8 @@ integer main(general)
 			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for random generation\r\n",1000.0F*TimC.SW.Read.Mean_(SW,0));
-				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",1000.0F*TimC.SW.Read.Mean_(SW,1));
+				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
+				PenC_Stream_Format_T08_(0,Stream,"average %f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
 			}
 			else
 			{
@@ -129,4 +130,8 @@ static general _Naive_Rand_(inte_32 *_R_ Ptr,ADDRESS Length)
 static integer _Naive_Comp_(INTE_32 _PL_ A,INTE_32 _PL_ B)
 {
 	return (((*A)>(*B))-((*A)<(*B)));
+}
+static real_64 _Time_Cast_(REAL_32 Time)
+{
+	return 1000.0*((real_64)Time);
 }
