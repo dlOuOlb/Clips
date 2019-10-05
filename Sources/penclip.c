@@ -15,7 +15,7 @@ static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(addre
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.07.12";
+static BYTE_08 IdiomVersion[16]="Date:2019.09.30";
 static TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
 static TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
