@@ -2,7 +2,7 @@
 /*	BoxClip provides some simple data structures.					*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.09.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.10	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -463,7 +463,7 @@ struct _boxcase
 		//＊The target list's capacity should not be less than the source list's count.
 		//＊Original items in the target list will be just over-written.
 		//＊Return value is 1 for success, 0 for failure.
-		logical(_PL_ Filter_)(boxc_li _PL_ _R_ TargetList,BOXC_LI _PL_ _R_ SourceList,logical(_PL_ ItemFilter_)(general _PL_ _R_ SourceItem));
+		logical(_PL_ Filter_)(boxc_li _PL_ _R_ TargetList,BOXC_LI _PL_ _R_ SourceList,logical(_PL_ ItemFilter_)(general _PL_ _R_ SourceItem,general _PL_ _R_ Option),general _PL_ _R_ Option);
 
 #define BoxC_Li_Foreach_(List,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((List)->Item),_PL_(_End##Each)=(general*)(((List)->Item)+((List)->Count));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
 	}

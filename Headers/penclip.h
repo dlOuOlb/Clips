@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.09.30	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.10	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
@@ -364,6 +364,37 @@ struct _pencase
 		Writer;
 	}
 	Buffer;
+
+	//PenClip : Object Functions
+	//＊Mode 0 : Binary
+	//　Mode 1 : Text
+	const struct
+	{
+		//PenClip : Object Save Functions
+		const struct
+		{
+			//PenClip : 8-bit Object Save
+			//＊Return value is that of (Save_) function for success, or 0 for failure.
+			logical(_PL_ T08_)(TEXT_08 _PL_ FileName,logical(_PL_ Save_)(FILE _PL_ File,GENERAL _PL_ _R_ Object),GENERAL _PL_ _R_ Object,LOGICAL SaveMode);
+			//PenClip : 16-bit Object Save
+			//＊Return value is that of (Save_) function for success, or 0 for failure.
+			logical(_PL_ T16_)(TEXT_16 _PL_ FileName,logical(_PL_ Save_)(FILE _PL_ File,GENERAL _PL_ _R_ Object),GENERAL _PL_ _R_ Object,LOGICAL SaveMode);
+		}
+		Save;
+
+		//PenClip : Object Load Functions
+		const struct
+		{
+			//PenClip : 8-bit Object Load
+			//＊Return value is that of (Load_) function for success, or NULL for failure.
+			general*(_PL_ T08_)(TEXT_08 _PL_ FileName,general*(_PL_ Load_)(FILE _PL_ File,general _PL_ _R_ Option),general _PL_ _R_ Option,LOGICAL LoadMode);
+			//PenClip : 16-bit Object Load
+			//＊Return value is that of (Load_) function for success, or NULL for failure.
+			general*(_PL_ T16_)(TEXT_16 _PL_ FileName,general*(_PL_ Load_)(FILE _PL_ File,general _PL_ _R_ Option),general _PL_ _R_ Option,LOGICAL LoadMode);
+		}
+		Load;
+	}
+	Object;
 
 	//PenClip : String Containter Functions
 	const struct
