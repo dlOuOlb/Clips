@@ -15,7 +15,7 @@ static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(addre
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.09.30";
+static BYTE_08 IdiomVersion[16]="Date:2019.10.10";
 static TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
 static TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
@@ -237,6 +237,75 @@ _PENC_ address PenC_Stream_Buffer_T08_(LOGICAL Mode,FILE _PL_ Stream,text_08 _PL
 _PENC_ address PenC_Stream_Buffer_T16_(LOGICAL Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity)
 {
 	return ((Mode)?((Stream)?((address)fgetws(Buffer,(integer)(Capacity),Stream)):((address)_getws_s(Buffer,Capacity))):((Stream)?((address)fputws(Buffer,Stream)):((address)_putws(Buffer))));
+}
+
+_PENC_ logical PenC_Object_Save_T08_(TEXT_08 _PL_ Name,logical(_PL_ Save_)(FILE _PL_,GENERAL _PL_ _R_),GENERAL _PL_ _R_ Object,LOGICAL Mode)
+{
+	if(Save_)
+	{
+		TEXT_08 _PL_ Format=(Mode)?(PenC.Option.Write.Text.T08):(PenC.Option.Write.Binary.T08);
+		integer Error=EOF;
+		logical Flag=0;
+
+		PenC_File_Using_(File,Name,Format,Error)
+			Flag=Save_(File,Object);
+
+		return Flag;
+	}
+	else;
+
+	return 0;
+}
+_PENC_ logical PenC_Object_Save_T16_(TEXT_16 _PL_ Name,logical(_PL_ Save_)(FILE _PL_,GENERAL _PL_ _R_),GENERAL _PL_ _R_ Object,LOGICAL Mode)
+{
+	if(Save_)
+	{
+		TEXT_16 _PL_ Format=(Mode)?(PenC.Option.Write.Text.T16):(PenC.Option.Write.Binary.T16);
+		integer Error=EOF;
+		logical Flag=0;
+
+		PenC_File_Using_(File,Name,Format,Error)
+			Flag=Save_(File,Object);
+
+		return Flag;
+	}
+	else;
+
+	return 0;
+}
+_PENC_ general *PenC_Object_Load_T08_(TEXT_08 _PL_ Name,general*(_PL_ Load_)(FILE _PL_,general _PL_ _R_),general _PL_ _R_ Option,LOGICAL Mode)
+{
+	if(Load_)
+	{
+		TEXT_08 _PL_ Format=(Mode)?(PenC.Option.Read.Text.T08):(PenC.Option.Read.Binary.T08);
+		integer Error=EOF;
+		general *Object=NULL;
+
+		PenC_File_Using_(File,Name,Format,Error)
+			Object=Load_(File,Option);
+
+		return Object;
+	}
+	else;
+
+	return NULL;
+}
+_PENC_ general *PenC_Object_Load_T16_(TEXT_16 _PL_ Name,general*(_PL_ Load_)(FILE _PL_,general _PL_ _R_),general _PL_ _R_ Option,LOGICAL Mode)
+{
+	if(Load_)
+	{
+		TEXT_16 _PL_ Format=(Mode)?(PenC.Option.Read.Text.T16):(PenC.Option.Read.Binary.T16);
+		integer Error=EOF;
+		general *Object=NULL;
+
+		PenC_File_Using_(File,Name,Format,Error)
+			Object=Load_(File,Option);
+
+		return Object;
+	}
+	else;
+
+	return NULL;
 }
 #endif
 
@@ -901,6 +970,19 @@ PENCASE PenC=
 		{
 			.T08_=_PenC_Writer_1D_T08_,
 			.T16_=_PenC_Writer_1D_T16_
+		}
+	},
+	.Object=
+	{
+		.Save=
+		{
+			.T08_=PenC_Object_Save_T08_,
+			.T16_=PenC_Object_Save_T16_
+		},
+		.Load=
+		{
+			.T08_=PenC_Object_Load_T08_,
+			.T16_=PenC_Object_Load_T16_
 		}
 	},
 	.SC=

@@ -2,7 +2,7 @@
 #include "boxclip.h"
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.09.26";
+static BYTE_08 IdiomVersion[16]="Date:2019.10.10";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -2290,7 +2290,7 @@ _BOXC_ logical BoxC_Li_Copy_(boxc_li _PL_ _R_ TList,BOXC_LI _PL_ _R_ SList,ADDRE
 
 	return 0;
 }
-_BOXC_ logical BoxC_Li_Filter_(boxc_li _PL_ _R_ Target,BOXC_LI _PL_ _R_ Source,logical(_PL_ Filter_)(general _PL_ _R_))
+_BOXC_ logical BoxC_Li_Filter_(boxc_li _PL_ _R_ Target,BOXC_LI _PL_ _R_ Source,logical(_PL_ Filter_)(general _PL_ _R_,general _PL_ _R_),general _PL_ _R_ Option)
 {
 	if(Target&&Source&&Filter_)
 		if(Target==Source);
@@ -2300,7 +2300,7 @@ _BOXC_ logical BoxC_Li_Filter_(boxc_li _PL_ _R_ Target,BOXC_LI _PL_ _R_ Source,l
 			general **_R_ PtrT=(general**)(Target->Item);
 
 			for(general _PL_ *_R_ PtrS=Source->Item,_PL_ _PL_ End=PtrS+(Source->Count);PtrS<End;PtrS++)
-				if(Filter_(*PtrS))
+				if(Filter_(*PtrS,Option))
 					*(PtrT++)=*PtrS;
 				else;
 
