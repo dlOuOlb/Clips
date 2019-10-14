@@ -1,4 +1,4 @@
-#include <stdbool.h>
+﻿#include <stdbool.h>
 #include <penclip.h>
 #include <linclip.h>
 #include <timclip.h>
@@ -51,8 +51,8 @@ integer main(general)
 			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
-				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
-				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean.R32_(SW,0)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean.R32_(SW,1)));
 			}
 			else
 			{
@@ -86,8 +86,8 @@ integer main(general)
 			if((SWState[0]|SWState[1])==TimCStateStopped)
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
-				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,0)));
-				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean_(SW,1)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean.R32_(SW,0)));
+				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for sorting\r\n",_Time_Cast_(TimC.SW.Read.Mean.R32_(SW,1)));
 			}
 			else
 			{
