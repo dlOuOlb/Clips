@@ -2,7 +2,7 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.09.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.14	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
@@ -21,6 +21,13 @@ enum _timc_sf
 	TimCStateRunning=+1		//TimClip : Running State
 };
 MemC_Type_Declare_(enum,timc_sf,TIMC_SF);	//TimClip : Timer State Flag Enumeration
+
+//TimClip : Time Tag Structure
+struct _timc_tt
+{
+	data_32 Sign:1,Overflow:1,Days:3,Hours:5,Minutes:6,Seconds:6,Milliseconds:10;
+};
+MemC_Type_Declare_(struct,timc_tt,TIMC_TT);	//TimClip : Time Tag Structure
 
 //TimClip : Stopwatch Structure
 struct _timc_sw
@@ -49,8 +56,8 @@ struct _timcase
 	//TimClip : Timer Clock's Resolution and Frequency
 	const struct
 	{
-		REAL_32 Resolution;	//TimClip : clocks per second
-		REAL_32 Frequency;	//TimClip : seconds per clock
+		REAL_32 Frequency;	//TimClip : clocks per second
+		REAL_32 Resolution;	//TimClip : seconds per clock
 	}
 	Clock;
 
@@ -61,8 +68,6 @@ struct _timcase
 		timc_sw*(_PL_ Create_)(ADDRESS TimersNumber);
 		//TimClip : Stopwatch Memory Deallocation
 		general(_PL_ Delete_)(timc_sw *_PL_ _R_ Stopwatch);
-		//TimClip : Temporarily allocate and deallocate a stopwatch.
-#define TimC_SW_Temp_(Temp,Nums,FAIL) for(timc_sw _PL_(Temp)=TimC.SW.Create_(Nums),*(_##Temp)=FULL;_##Temp;TimC.SW.Delete_((timc_sw**)&(Temp)),(_##Temp)=NULL)if(!(Temp)){FAIL}else
 		//TimClip : Stopwatch Memory Occupation
 		address(_PL_ Size_)(TIMC_SW _PL_ _R_ Stopwatch);
 
@@ -95,10 +100,25 @@ struct _timcase
 			//TimClip : Read the selected timer's running count.
 			integer(_PL_ Count_)(TIMC_SW _PL_ _R_ Stopwatch,ADDRESS TimerSelect);
 
-			//TimClip : Read the selected timer's total running time.
-			real_32(_PL_ Sum_)(TIMC_SW _PL_ _R_ Stopwatch,ADDRESS TimerSelect);
-			//TimClip : Read the selected timer's average running time.
-			real_32(_PL_ Mean_)(TIMC_SW _PL_ _R_ Stopwatch,ADDRESS TimerSelect);
+			//TimClip : Total Running Time
+			const struct
+			{
+				//TimClip : Read the selected timer's total running time as 32-bit real.
+				real_32(_PL_ R32_)(TIMC_SW _PL_ _R_ Stopwatch,ADDRESS TimerSelect);
+				//TimClip : Read the selected timer's total running time as time tag.
+				timc_tt(_PL_ Tag_)(TIMC_SW _PL_ _R_ Stopwatch,ADDRESS TimerSelect);
+			}
+			Sum;
+
+			//TimClip : Average Running Time
+			const struct
+			{
+				//TimClip : Read the selected timer's average running time as 32-bit real.
+				real_32(_PL_ R32_)(TIMC_SW _PL_ _R_ Stopwatch,ADDRESS TimerSelect);
+				//TimClip : Read the selected timer's average running time as time tag.
+				timc_tt(_PL_ Tag_)(TIMC_SW _PL_ _R_ Stopwatch,ADDRESS TimerSelect);
+			}
+			Mean;
 		}
 		Read;
 	}

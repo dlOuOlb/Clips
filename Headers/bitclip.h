@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.09.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.14	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -312,8 +312,8 @@ MemC_Type_Declare_(struct,bitc_bp,BITC_BP);	//BitClip : Bit Pointer Structure
 //BitClip : Library Case Structure
 struct _bitcase
 {
-	//BitClip : Library Version
-	BYTE_08 _PL_ Version;
+	BYTE_08 _PL_ Version;	//BitClip : Library Version
+	ADDRESS MaxDims;		//BitClip : Maximum Dimension for "BitC.Reform_"
 
 	//BitClip : Type Descriptor Set
 	const struct

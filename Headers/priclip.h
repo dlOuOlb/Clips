@@ -1,8 +1,8 @@
-/*------------------------------------------------------------------*/
+ï»¿/*------------------------------------------------------------------*/
 /*	PriClip provides some small prime number tables.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.10	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.14	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PRICLIP
@@ -72,7 +72,8 @@ struct _pricase
 		Delete;
 
 		//PriClip : Prime Table Creation
-		//£ªTable -> Prime = { 2, 3, 5, 7, ... }
+		//ï¼ŠTable -> Prime = { 2, 3, 5, 7, ... },
+		//ã€€namely (Count) primes in ascending order.
 		const struct
 		{
 			//PriClip : 8-bit Prime Table Memory Allocation - Deallocate with "PriC.Delete.D08_"
@@ -87,7 +88,7 @@ struct _pricase
 		Create;
 
 		//PriClip : Prime Table Saving
-		//£ªReturn value is 1 for success, 0 for failure.
+		//ï¼ŠReturn value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PriClip : 8-bit Prime Table File Writing
@@ -102,8 +103,8 @@ struct _pricase
 		Save;
 
 		//PriClip : Prime Table Loading
-		//£ªThe second parameter will be just ignored.
-		//£ªNote that the returned table could be wrong if the file is not correct.
+		//ï¼ŠThe second parameter will be just ignored.
+		//ï¼ŠNote that the returned table could be wrong if the file is not correct.
 		const struct
 		{
 			//PriClip : 8-bit Prime Table File Reading - Deallocate with "PriC.Delete.D08_"
@@ -118,7 +119,7 @@ struct _pricase
 		Load;
 
 		//PriClip : Prime Index Search
-		//£ªReturn value is the index of the prime in the table, or ~0.
+		//ï¼ŠReturn value is the index of the prime in the table, or ~0.
 		const struct
 		{
 			//PriClip : Find the index of the 8-bit prime.
@@ -132,37 +133,27 @@ struct _pricase
 		}
 		Search;
 
-		//PriClip : Prime Factor
+		//PriClip : Prime Factorization
+		//ï¼ŠFactor[0] : The Number of Factors (N)
+		//ã€€Factor[1~N] : Factors in Ascending Order
+		//ï¼ŠReturn value is 1 for success, 0 for failure.
 		const struct
 		{
-			//PriClip : Smallest Prime Factor
-			//£ªReturn value is the smallest prime factor found in the table, or the number itself.
-			const struct
-			{
-				//PriClip : Get the smallest prime factor of the 8-bit number.
-				data_08(_PL_ D08_)(PRIC_08 _PL_ _R_ Table,DATA_08 Number);
-				//PriClip : Get the smallest prime factor of the 16-bit number.
-				data_16(_PL_ D16_)(PRIC_16 _PL_ _R_ Table,DATA_16 Number);
-				//PriClip : Get the smallest prime factor of the 32-bit number.
-				data_32(_PL_ D32_)(PRIC_32 _PL_ _R_ Table,DATA_32 Number);
-				//PriClip : Get the smallest prime factor of the 64-bit number.
-				data_64(_PL_ D64_)(PRIC_64 _PL_ _R_ Table,DATA_64 Number);
-			}
-			First;
+			//PriClip : 8-bit Prime Factorization
+			//ï¼ŠRequired (Factor) size is 8Ã—1 bytes.
+			logical(_PL_ D08_)(data_08 Factor[8],PRIC_08 _PL_ _R_ Table,DATA_08 Natural);
 
-			//PriClip : Prime Factor Counting
-			const struct
-			{
-				//PriClip : Count the prime factors of the 8-bit number.
-				address(_PL_ D08_)(PRIC_08 _PL_ _R_ Table,DATA_08 Number,LOGICAL Multiplicity);
-				//PriClip : Count the prime factors of the 16-bit number.
-				address(_PL_ D16_)(PRIC_16 _PL_ _R_ Table,DATA_16 Number,LOGICAL Multiplicity);
-				//PriClip : Count the prime factors of the 32-bit number.
-				address(_PL_ D32_)(PRIC_32 _PL_ _R_ Table,DATA_32 Number,LOGICAL Multiplicity);
-				//PriClip : Count the prime factors of the 64-bit number.
-				address(_PL_ D64_)(PRIC_64 _PL_ _R_ Table,DATA_64 Number,LOGICAL Multiplicity);
-			}
-			Count;
+			//PriClip : 16-bit Prime Factorization
+			//ï¼ŠRequired (Factor) size is 16Ã—2 bytes.
+			logical(_PL_ D16_)(data_16 Factor[16],PRIC_16 _PL_ _R_ Table,DATA_16 Natural);
+
+			//PriClip : 32-bit Prime Factorization
+			//ï¼ŠRequired (Factor) size is 32Ã—4 bytes.
+			logical(_PL_ D32_)(data_32 Factor[32],PRIC_32 _PL_ _R_ Table,DATA_32 Natural);
+
+			//PriClip : 64-bit Prime Factorization
+			//ï¼ŠRequired (Factor) size is 64Ã—8 bytes.
+			logical(_PL_ D64_)(data_64 Factor[64],PRIC_64 _PL_ _R_ Table,DATA_64 Natural);
 		}
 		Factor;
 	}
