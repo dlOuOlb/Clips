@@ -153,21 +153,25 @@ _PRIC_ logical PriC_Func_(PriC_Factor_,DXX)(data_xx _PL_ _R_ Factor,PRIC_XX _PL_
 		*Factor=0;
 
 		if(Table)
-			if(Value)
-				for(DATA_XX *_R_ Ptr=(Table->Prime),_PL_ End=Ptr+(address)(Table->Count);Ptr<End;)
-					if(Value%(*Ptr))
-						if((*Ptr)<(Value/(*Ptr)))
-							Ptr++;
-						else
-						{
-							if(Value>1)
-								Factor[++(*Factor)]=Value;
-							else;
+			if(Table->Count)
+				if(Value)
+					for(DATA_XX *_R_ Ptr=(Table->Prime),_PL_ End=Ptr+(address)(Table->Count);1;)
+						if(Value%(*Ptr))
+							if((*Ptr)<(Value/(*Ptr)))
+								if((++Ptr)<End);
+								else
+									break;
+							else
+							{
+								if(Value>1)
+									Factor[++(*Factor)]=Value;
+								else;
 
-							return 1;
-						}
-					else
-						Value/=Factor[++(*Factor)]=*Ptr;
+								return 1;
+							}
+						else
+							Value/=Factor[++(*Factor)]=*Ptr;
+				else;
 			else;
 		else;
 
