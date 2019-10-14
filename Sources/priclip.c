@@ -1,4 +1,5 @@
-﻿#include "priclip.h"
+﻿#include <assert.h>
+#include "priclip.h"
 
 #if(Fold_(Definition:PriClip Macros))
 #define _PRIC_ static
