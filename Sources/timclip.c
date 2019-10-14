@@ -1,7 +1,14 @@
-﻿#include <limits.h>
+﻿#include <assert.h>
+#include <limits.h>
 #include <math.h>
 #include <time.h>
 #include "timclip.h"
+
+#if(Fold_(Static Assertions))
+static_assert((sizeof(clock_t)*(CHAR_BIT))>10,"CLOCK_MAX < 1000");
+static_assert((1<<((sizeof(clock_t)*(CHAR_BIT))-11))>(CLOCKS_PER_SEC),"CLOCK_MAX < CLOCKS_PER_MSEC");
+static_assert(sizeof(timc_tt)==sizeof(data_32),"sizeof(timc_tt) != sizeof(data_32)");
+#endif
 
 #if(Fold_(Definition:Internals))
 #define _TIMC_ static
@@ -12,7 +19,7 @@ MemC_Type_Declare_(struct,timc_te,TIMC_TE);
 struct _timc_vc { general *Thing;address Nums; };
 MemC_Type_Declare_(struct,timc_vc,TIMC_VC);
 
-_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.09.26";
+_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.10.14";
 #endif
 
 #if(Fold_(Definition:Advanced Type Functions))
@@ -162,7 +169,20 @@ _TIMC_ integer TimC_SW_Read_Count_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 		return -1;
 }
 
-_TIMC_ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
+static clock_t _TimC_SW_Read_Stop_(TIMC_TE _PL_ _R_ Timer)
+{
+	return (Timer->Sum);
+}
+static clock_t _TimC_SW_Read_Run_(TIMC_TE _PL_ _R_ Timer)
+{
+	return (clock()-(Timer->Mark)+(Timer->Sum));
+}
+
+static real_32 _TimC_SW_Cast_R32_(const clock_t Time)
+{
+	return ((TimC.Clock.Resolution)*(real_32)(Time));
+}
+_TIMC_ real_32 TimC_SW_Read_Sum_R32_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 {
 	if(_TimC_Check_((TIMC_VC*)SW,Select))
 	{
@@ -171,9 +191,9 @@ _TIMC_ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 		switch(Timer->State)
 		{
 		case TimCStateStopped:
-			return (TimC.Clock.Frequency*(real_32)(Timer->Sum));
+			return _TimC_SW_Cast_R32_(_TimC_SW_Read_Stop_(Timer));
 		case TimCStateRunning:
-			return (TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum)));
+			return _TimC_SW_Cast_R32_(_TimC_SW_Read_Run_(Timer));
 		default:;
 		}
 	}
@@ -181,7 +201,7 @@ _TIMC_ real_32 TimC_SW_Read_Sum_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 
 	return -1.0F;
 }
-_TIMC_ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
+_TIMC_ real_32 TimC_SW_Read_Mean_R32_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 {
 	if(_TimC_Check_((TIMC_VC*)SW,Select))
 	{
@@ -190,15 +210,85 @@ _TIMC_ real_32 TimC_SW_Read_Mean_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 		switch(Timer->State)
 		{
 		case TimCStateStopped:
-			return ((Timer->Count)?((TimC.Clock.Frequency*(real_32)(Timer->Sum))/((real_32)(Timer->Count))):(0.0F));
+			return ((Timer->Count)?(_TimC_SW_Cast_R32_(_TimC_SW_Read_Stop_(Timer))/((real_32)(Timer->Count))):(0.0F));
 		case TimCStateRunning:
-			return ((TimC.Clock.Frequency*(real_32)(clock()-(Timer->Mark)+(Timer->Sum)))/((real_32)(Timer->Count)));
+			return (_TimC_SW_Cast_R32_(_TimC_SW_Read_Run_(Timer))/((real_32)(Timer->Count)));
 		default:;
 		}
 	}
 	else;
 
 	return -1.0F;
+}
+
+static timc_tt _TimC_SW_Cast_Tag_(clock_t Time)
+{
+	const clock_t Days=7,Hours=24,Minutes=60,Seconds=60,Milliseconds=1000,Clocks=CLOCKS_PER_SEC;
+	timc_tt Tag;
+
+	Tag.Sign=(Time<0)?((Time=-Time),(1)):((Time=+Time),(0));
+	
+	Tag.Milliseconds=(data_32)((Milliseconds*(Time%Clocks))/Clocks);
+	Time/=Clocks;
+
+	Tag.Seconds=(data_32)(Time%Seconds);
+	Time/=Seconds;
+
+	Tag.Minutes=(data_32)(Time%Minutes);
+	Time/=Minutes;
+
+	Tag.Hours=(data_32)(Time%Hours);
+	Time/=Hours;
+
+	Tag.Days=(data_32)(Time%Days);
+	Time/=Days;
+
+	Tag.Overflow=!!Time;
+
+	return Tag;
+}
+_TIMC_ timc_tt TimC_SW_Read_Sum_Tag_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
+{
+	DATA_32 Fail=0xFFFFFFFF;
+
+	if(_TimC_Check_((TIMC_VC*)SW,Select))
+	{
+		TIMC_TE _PL_ _R_ Timer=(timc_te*)(SW->Timer)+Select;
+
+		switch(Timer->State)
+		{
+		case TimCStateStopped:
+			return _TimC_SW_Cast_Tag_(_TimC_SW_Read_Stop_(Timer));
+		case TimCStateRunning:
+			return _TimC_SW_Cast_Tag_(_TimC_SW_Read_Run_(Timer));
+		default:;
+		}
+	}
+	else;
+
+	return Acs_(TIMC_TT,Fail);
+}
+_TIMC_ timc_tt TimC_SW_Read_Mean_Tag_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
+{
+	DATA_32 Fail=0xFFFFFFFF;
+
+	if(_TimC_Check_((TIMC_VC*)SW,Select))
+	{
+		TIMC_TE _PL_ _R_ Timer=(timc_te*)(SW->Timer)+Select;
+		DATA_32 Zero=0x00000000;
+
+		switch(Timer->State)
+		{
+		case TimCStateStopped:
+			return ((Timer->Count)?(_TimC_SW_Cast_Tag_(_TimC_SW_Read_Stop_(Timer)/(Timer->Count))):(Acs_(TIMC_TT,Zero)));
+		case TimCStateRunning:
+			return (_TimC_SW_Cast_Tag_(_TimC_SW_Read_Run_(Timer)/(Timer->Count)));
+		default:;
+		}
+	}
+	else;
+
+	return Acs_(TIMC_TT,Fail);
 }
 #endif
 
@@ -597,8 +687,8 @@ TIMCASE TimC=
 	.Version=IdiomVersion,
 	.Clock=
 	{
-		.Resolution=(real_32)(CLOCKS_PER_SEC),
-		.Frequency=1.0F/((real_32)(CLOCKS_PER_SEC))
+		.Frequency=(real_32)(CLOCKS_PER_SEC),
+		.Resolution=1.0F/((real_32)(CLOCKS_PER_SEC))
 	},
 	.SW=
 	{
@@ -616,8 +706,16 @@ TIMCASE TimC=
 		{
 			.State_=TimC_SW_Read_State_,
 			.Count_=TimC_SW_Read_Count_,
-			.Sum_=TimC_SW_Read_Sum_,
-			.Mean_=TimC_SW_Read_Mean_
+			.Sum=
+			{
+				.R32_=TimC_SW_Read_Sum_R32_,
+				.Tag_=TimC_SW_Read_Sum_Tag_
+			},
+			.Mean=
+			{
+				.R32_=TimC_SW_Read_Mean_R32_,
+				.Tag_=TimC_SW_Read_Mean_Tag_
+			}
 		}
 	},
 	.RG=

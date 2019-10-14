@@ -1,4 +1,4 @@
-#ifdef _INC_PRICLIP
+﻿#ifdef _INC_PRICLIP
 #ifdef _SRC_PRICRUX
 
 static_assert(sizeof(data_xx)==sizeof(pric_xx),"sizeof(" PriC_Meta_(data_xx) ") != sizeof(" PriC_Meta_(pric_xx) ")");
@@ -8,14 +8,7 @@ static logical PriC_Func_(_PriC_Seed_,DXX)(pric_xx _PL_ _R_ Table)
 	DATA_XX Count=Table->Count;
 	data_xx _PL_ _R_ Prime=(data_xx*)(Table->Prime);
 
-	Prime[0]=2;
-	if(Count>1)
-	{
-		Prime[1]=3;
-		return (Count>2);
-	}
-	else
-		return 0;
+	return (((Prime[0]=2),(Count>1))?((Prime[1]=3),(Count>2)):(0));
 }
 static general PriC_Func_(_PriC_Fill_,DXX)(pric_xx _PL_ _R_ Table)
 {
@@ -30,14 +23,10 @@ static general PriC_Func_(_PriC_Fill_,DXX)(pric_xx _PL_ _R_ Table)
 					if(Num%Mod);
 					else
 						break;
+				else if((Prime[Cnt++]=Num),(Cnt<Count))
+					break;
 				else
-				{
-					Prime[Cnt++]=Num;
-					if(Cnt<Count)
-						break;
-					else
-						return;
-				}
+					return;
 }
 _PRIC_ pric_xx *PriC_Func_(PriC_Create_,DXX)(DATA_XX Count)
 {
@@ -157,70 +146,32 @@ _PRIC_ data_xx PriC_Func_(PriC_Search_,DXX)(PRIC_XX _PL_ _R_ Table,DATA_XX Value
 	return (~Fail);
 }
 
-_PRIC_ data_xx PriC_Func_(PriC_Factor_First_,DXX)(PRIC_XX _PL_ _R_ Table,DATA_XX Value)
+_PRIC_ logical PriC_Func_(PriC_Factor_,DXX)(data_xx _PL_ _R_ Factor,PRIC_XX _PL_ _R_ Table,data_xx Value)
 {
-	if(Table)
-		if(Value>1)
-		{
-			DATA_XX _PL_ End=(Table->Prime)+(address)(Table->Count);
-			DATA_XX *_R_ Ptr=(Table->Prime);
-
-			while(Ptr<End)
-				if(Value%(*Ptr))
-					if((*Ptr)<(Value/(*Ptr)))
-						Ptr++;
-					else
-						break;
-				else
-					return (*Ptr);
-		}
-		else;
-	else;
-
-	return Value;
-}
-_PRIC_ address PriC_Func_(PriC_Factor_Count_,DXX)(PRIC_XX _PL_ _R_ Table,data_xx Value,LOGICAL Mode)
-{
-	if(Table)
+	if(Factor)
 	{
-		DATA_XX _PL_ End=(Table->Prime)+(address)(Table->Count);
-		DATA_XX *_R_ Ptr=(Table->Prime);
-		address Count=0;
+		*Factor=0;
 
-		if(Mode)
-			for(;(Value>1)&&(Ptr<End);Ptr++)
-				if(Value%(*Ptr))
-					if((*Ptr)<(Value/(*Ptr)));
-					else
-					{
-						Count++;
-						break;
-					}
-				else
-					do
-					{
-						Count++;
-						Value/=*Ptr;
-					}
-					while(!(Value%(*Ptr)));
-		else
-			for(;(Value>1)&&(Ptr<End);Ptr++)
-				if(Value%(*Ptr))
-					if((*Ptr)<(Value/(*Ptr)));
-					else
-					{
-						Count++;
-						break;
-					}
-				else
-				{
-					Count++;
-					do
-						Value/=*Ptr;
-					while(!(Value%(*Ptr)));
-				}
+		if(Table)
+			if(Value)
+				for(DATA_XX *_R_ Ptr=(Table->Prime),_PL_ End=Ptr+(address)(Table->Count);Ptr<End;)
+					if(Value%(*Ptr))
+						if((*Ptr)<(Value/(*Ptr)))
+							Ptr++;
+						else
+						{
+							if(Value>1)
+								Factor[++(*Factor)]=Value;
+							else;
 
-		return Count;
+							return 1;
+						}
+					else
+						Value/=Factor[++(*Factor)]=*Ptr;
+			else;
+		else;
+
+		Factor[++(*Factor)]=Value;
 	}
 	else;
 

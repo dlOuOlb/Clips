@@ -1,9 +1,14 @@
-﻿#include "bitclip.h"
+﻿#include <assert.h>
+#include <limits.h>
+#include "bitclip.h"
 
 #if(Fold_(Static Assertions))
+static_assert((CHAR_BIT)==(8),"1 byte must be 8 bits.");
 static_assert((-1)==(((inte_08)(-1))>>1),"The bit-shift-right operation of a signed integer must preserve the sign.");
 static_assert((-1)!=(((data_08)(-1))>>1),"The bit-shift-right operation of an unsigned integer must not preserve the sign.");
 static_assert((~((address)(0)))==((address)((inte_08)(~0))),"Casting from a signed integer to an address value must preserve the sign.");
+static_assert(sizeof(sintptr)==sizeof(address),"The signed address type size must be equal to the address type size.");
+static_assert(sizeof(uintptr)==sizeof(address),"The unsigned address type size must be equal to the address type size.");
 #endif
 
 #if(Fold_(Definition:Internal Macros))
@@ -14,7 +19,7 @@ static_assert((~((address)(0)))==((address)((inte_08)(~0))),"Casting from a sign
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.09.26";
+static BYTE_08 IdiomVersion[16]="Date:2019.10.14";
 
 static ADDRESS ConstantSafe[8]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127};
 static ADDRESS ConstantRest[8]={(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
@@ -499,6 +504,8 @@ static general _BitC_Reform_Short_(ADDRESS _PL_ Shape,ADDRESS _PL_ Map,address _
 		}
 		else
 			break;
+
+	return;
 }
 static general _BitC_Reform_Merge_(address _PL_ Shape,address _PL_ Map,address _PL_ Dims)
 {
@@ -539,6 +546,8 @@ static general _BitC_Reform_Merge_(address _PL_ Shape,address _PL_ Map,address _
 		}
 		else;
 	}
+
+	return;
 }
 static address _BitC_Reform_Total_(ADDRESS *_R_ Shape,ADDRESS Dims)
 {
@@ -579,7 +588,7 @@ static general _BitC_Reform_Order_(BITCLIP Source,BITCLIP Target,ADDRESS _PL_ Sh
 			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
 				Target.V.D08[IdxJ]=Source.C.D08[IdxS];
 		}
-		break;
+		return;
 	case 2:case 6:
 		for(IdxT=0;IdxT<Total;IdxT++)
 		{
@@ -597,7 +606,7 @@ static general _BitC_Reform_Order_(BITCLIP Source,BITCLIP Target,ADDRESS _PL_ Sh
 			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
 				Target.V.D16[IdxJ]=Source.C.D16[IdxS];
 		}
-		break;
+		return;
 	case 4:
 		for(IdxT=0;IdxT<Total;IdxT++)
 		{
@@ -615,7 +624,7 @@ static general _BitC_Reform_Order_(BITCLIP Source,BITCLIP Target,ADDRESS _PL_ Sh
 			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
 				Target.V.D32[IdxJ]=Source.C.D32[IdxS];
 		}
-		break;
+		return;
 	case 0:
 		for(IdxT=0;IdxT<Total;IdxT++)
 		{
@@ -633,6 +642,7 @@ static general _BitC_Reform_Order_(BITCLIP Source,BITCLIP Target,ADDRESS _PL_ Sh
 			for(Prod=IdxS+Loop,IdxJ=IdxT*Loop;IdxS<Prod;IdxS++,IdxJ++)
 				Target.V.D64[IdxJ]=Source.C.D64[IdxS];
 		}
+		return;
 	}
 }
 _BITC_ logical _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,address Dimensions,address Bytes)
@@ -641,48 +651,44 @@ _BITC_ logical _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,ADDRESS _PL
 	{
 		_BitC_Reform_Short_(ShapeS,AxisStoT,&Dimensions,&Bytes);
 		if(Dimensions>1)
-			if(Dimensions<_BitC_Dims_)
-				if(_BitC_Reform_Valid_(AxisStoT,Dimensions))
-				{
-					ADDRESS Total=_BitC_Reform_Total_(ShapeS,Dimensions);
-
-					if(Total)
-					{
-						address ShapeSNew[_BitC_Dims_];
-						address MapTNew[_BitC_Dims_];
-
-						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions));
-						else
-							return 0;
-
-						if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions));
-						else
-							return 0;
-
-						_BitC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
-						_BitC_Reform_Order_(Acs_(bitclip,ArrayS),Acs_(bitclip,ArrayT),ShapeSNew,MapTNew,Total,Dimensions,Bytes);
-					}
-					else;
-				}
-				else
-					return 0;
-			else
-				return 0;
-		else
-			if(AxisStoT[0])
-				return 0;
-			else
+			if(Dimensions>_BitC_Dims_);
+			else if(_BitC_Reform_Valid_(AxisStoT,Dimensions))
 			{
-				ADDRESS Copy=ShapeS[0]*Bytes;
+				ADDRESS Total=_BitC_Reform_Total_(ShapeS,Dimensions);
 
-				if(Copy)
-					return MemC_Copy_Byte_(ArrayS,ArrayT,Copy);
+				if(Total)
+				{
+					address ShapeSNew[_BitC_Dims_];
+					address MapTNew[_BitC_Dims_];
+
+					if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions));
+					else
+						return 0;
+
+					if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions));
+					else
+						return 0;
+
+					_BitC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
+					_BitC_Reform_Order_(Acs_(BITCLIP,ArrayS),Acs_(BITCLIP,ArrayT),ShapeSNew,MapTNew,Total,Dimensions,Bytes);
+				}
 				else;
-			}
-	}
-	else;
 
-	return 1;
+				return 1;
+			}
+			else;
+		else if(AxisStoT[0]);
+		else
+		{
+			ADDRESS Copy=ShapeS[0]*Bytes;
+
+			return ((Copy)?(MemC_Copy_Byte_(ArrayS,ArrayT,Copy)):(1));
+		}
+
+		return 0;
+	}
+	else
+		return 1;
 }
 #endif
 
@@ -1785,7 +1791,6 @@ _BITC_ general BitC_CL_Reform_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 #if(Fold_(Undefinition:Internal Macros))
 #include "bitcros.c"
-#undef _BitC_Dims_
 #undef _BITC_
 #endif
 
@@ -1793,6 +1798,7 @@ _BITC_ general BitC_CL_Reform_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 BITCASE BitC=
 {
 	.Version=IdiomVersion,
+	.MaxDims=_BitC_Dims_,
 	.Type=
 	{
 		.D08=TableType+BitCTypeData_08,
