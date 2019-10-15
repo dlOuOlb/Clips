@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.15	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -1312,10 +1312,26 @@ struct _bitcase
 		const struct
 		{
 			//BitClip : Bit Pointer Assign
-			bitc_bp(_PL_ Assign_)(general _PL_ BaseAddress,SINTPTR BitOffset);
+			const struct
+			{
+				//BitClip : Assign with signed offset.
+				bitc_bp(_PL_ S_)(general _PL_ BaseAddress,SINTPTR BitOffset);
+				//BitClip : Assign with unsigned offset.
+				bitc_bp(_PL_ U_)(general _PL_ BaseAddress,UINTPTR BitOffset);
+			}
+			Assign;
+
 			//BitClip : Bit Pointer Move
 			//＊Return value is the moved pointer.
-			bitc_bp(_PL_ Jumper_)(BITC_BP BitPointer,SINTPTR Move);
+			const struct
+			{
+				//BitClip : Move with signed offset.
+				bitc_bp(_PL_ S_)(BITC_BP BitPointer,SINTPTR Move);
+				//BitClip : Move with unsigned offset.
+				bitc_bp(_PL_ U_)(BITC_BP BitPointer,UINTPTR Move);
+			}
+			Jumper;
+
 			//BitClip : Bit Pointer Read
 			//＊Return value is 0 or 1.
 			logical(_PL_ Reader_)(BITC_BP BitPointer);
