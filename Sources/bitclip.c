@@ -4,11 +4,13 @@
 
 #if(Fold_(Static Assertions))
 static_assert((CHAR_BIT)==(8),"1 byte must be 8 bits.");
-static_assert((-1)==(((inte_08)(-1))>>1),"The bit-shift-right operation of a signed integer must preserve the sign.");
-static_assert((-1)!=(((data_08)(-1))>>1),"The bit-shift-right operation of an unsigned integer must not preserve the sign.");
+static_assert(((inte_08)(-1))==(((inte_08)(-1))>>1),"The bit-shift-right operation of a signed integer must preserve the sign.");
+static_assert(((data_08)(-1))!=(((data_08)(-1))>>1),"The bit-shift-right operation of an unsigned integer must not preserve the sign.");
 static_assert((~((address)(0)))==((address)((inte_08)(~0))),"Casting from a signed integer to an address value must preserve the sign.");
 static_assert(sizeof(sintptr)==sizeof(address),"The signed address type size must be equal to the address type size.");
 static_assert(sizeof(uintptr)==sizeof(address),"The unsigned address type size must be equal to the address type size.");
+static_assert(((sintptr)(-1))==(((sintptr)(-1))>>1),"The bit-shift-right operation of a signed address must preserve the sign.");
+static_assert(((uintptr)(-1))!=(((uintptr)(-1))>>1),"The bit-shift-right operation of an unsigned address must not preserve the sign.");
 #endif
 
 #if(Fold_(Definition:Internal Macros))
@@ -19,7 +21,7 @@ static_assert(sizeof(uintptr)==sizeof(address),"The unsigned address type size m
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.10.14";
+static BYTE_08 IdiomVersion[16]="Date:2019.10.15";
 
 static ADDRESS ConstantSafe[8]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127};
 static ADDRESS ConstantRest[8]={(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
@@ -693,7 +695,7 @@ _BITC_ logical _BitC_Reform_(GENERAL _PL_ ArrayS,general _PL_ ArrayT,ADDRESS _PL
 #endif
 
 #if(Fold_(Definition:Bit Pointer Functions))
-_BITC_ bitc_bp BitC_BP_Assign_(general _PL_ Base,SINTPTR Offset)
+_BITC_ bitc_bp BitC_BP_Assign_S_(general _PL_ Base,SINTPTR Offset)
 {
 	bitc_bp BP;
 
@@ -703,11 +705,29 @@ _BITC_ bitc_bp BitC_BP_Assign_(general _PL_ Base,SINTPTR Offset)
 
 	return BP;
 }
-_BITC_ bitc_bp BitC_BP_Jumper_(bitc_bp BP,SINTPTR Move)
+_BITC_ bitc_bp BitC_BP_Assign_U_(general _PL_ Base,UINTPTR Offset)
 {
-	BP.Offset+=Move;
-	BP.Base+=BP.Offset>>3;
-	BP.Offset&=7;
+	bitc_bp BP;
+
+	BP.Base=Base;
+	BP.Base+=Offset>>3;
+	BP.Offset=Offset&7;
+
+	return BP;
+}
+_BITC_ bitc_bp BitC_BP_Jumper_S_(bitc_bp BP,sintptr Move)
+{
+	Move+=BP.Offset;
+	BP.Base+=Move>>3;
+	BP.Offset=Move&7;
+
+	return BP;
+}
+_BITC_ bitc_bp BitC_BP_Jumper_U_(bitc_bp BP,uintptr Move)
+{
+	Move+=BP.Offset;
+	BP.Base+=Move>>3;
+	BP.Offset=Move&7;
 
 	return BP;
 }
@@ -2214,8 +2234,16 @@ BITCASE BitC=
 	},
 	.BP=
 	{
-		.Assign_=BitC_BP_Assign_,
-		.Jumper_=BitC_BP_Jumper_,
+		.Assign=
+		{
+			.S_=BitC_BP_Assign_S_,
+			.U_=BitC_BP_Assign_U_
+		},
+		.Jumper=
+		{
+			.S_=MemC_Func_Casting_(bitc_bp,BitC_BP_Jumper_S_,BITC_BP,SINTPTR),
+			.U_=MemC_Func_Casting_(bitc_bp,BitC_BP_Jumper_U_,BITC_BP,UINTPTR)
+		},
 		.Reader_=BitC_BP_Reader_,
 		.Writer_=BitC_BP_Writer_
 	}
