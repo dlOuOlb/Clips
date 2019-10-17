@@ -3,119 +3,127 @@
 
 static_assert(sizeof(data_xx)==sizeof(pric_xx),"sizeof(" PriC_Meta_(data_xx) ") != sizeof(" PriC_Meta_(pric_xx) ")");
 
-static logical PriC_Func_(_PriC_Seed_,DXX)(pric_xx _PL_ _R_ Table)
+static logical PriC_Func_(_PriC_Record_,DXX)(FILE _PL_ File,data_08 _PL_ Mask,ADDRESS Bits)
 {
-	DATA_XX Count=Table->Count;
-	data_xx _PL_ _R_ Prime=(data_xx*)(Table->Prime);
+	data_xx Nums=(data_xx)_PriC_Nums_(Mask,Bits);
 
-	return (((Prime[0]=2),(Count>1))?((Prime[1]=3),(Count>2)):(0));
-}
-static general PriC_Func_(_PriC_Fill_,DXX)(pric_xx _PL_ _R_ Table)
-{
-	ADDRESS Count=(address)(Table->Count);
-	data_xx _PL_ _R_ Prime=(data_xx*)(Table->Prime);
-	data_xx Num=5;
+	if(PenC_File_Writer_(File,&Nums,1)==1)
+	{
+		data_xx Cast=2;
 
-	for(address Cnt=2,Max=1,Idx;1;Max++,Num+=2)
-		for(DATA_XX Bnd=Prime[Max],Squ=Bnd*Bnd;Num!=Squ;Num+=2)
-			for(data_xx Mod=Prime[Idx=1];1;Mod=Prime[++Idx])
-				if(Mod<Bnd)
-					if(Num%Mod);
+		Nums--;
+		if(PenC_File_Writer_(File,&Cast,1)==1)
+			for(bitc_bp Ptr=BitC.BP.Assign.U_(Mask,1);1;Ptr=BitC.BP.Jumper.U_(Ptr,1))
+				if(BitC.BP.Reader_(Ptr))
+				{
+					address Temp=(Ptr.Base)-Mask;
+
+					Temp<<=3;
+					Temp|=Ptr.Offset;
+					Temp<<=1;
+					Temp|=1;
+
+					Cast=(data_xx)Temp;
+					if(PenC_File_Writer_(File,&Cast,1)==1)
+						if(--Nums);
+						else
+							return 1;
 					else
 						break;
-				else if((Prime[Cnt++]=Num),(Cnt<Count))
-					break;
-				else
-					return;
+				}
+				else;
+		else;
+	}
+	else;
+
+	return 0;
 }
-_PRIC_ pric_xx *PriC_Func_(PriC_Create_,DXX)(DATA_XX Count)
+_PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,ADDRESS Bits)
 {
-	if(Count>ConstLimit.DXX);
-	else if(Count>PriC.Count.DXX);
+	fpos_t Back;
+
+	if(PenC.File.Pose.Get_(File,&Back));
 	else
 	{
-		pric_xx *Table;
-
-		if(Count)
+		if(Bits>(sizeof(address)<<3));
+		else if(Bits>(sizeof(data_xx)<<3));
+		else if(Bits>8)
 		{
-			MemC_Temp_(ADDRESS,Temp=MemC.Size.Mul_((address)Count,sizeof(data_xx)))
-				Table=(Temp)?(MemC.Alloc.Byte_(MemC.Size.Add_(sizeof(pric_xx),Temp))):(NULL);
+			ADDRESS Bytes=((address)(1))<<(Bits-4);
+			data_08 *Mask=MemC_Alloc_ND_(data_08,1,Bytes);
 
-			if(Table)
+			if(Mask)
 			{
-				Acs_(data_xx,Table->Count)=Count;
-				if(PriC_Func_(_PriC_Seed_,DXX)(Table))
-					PriC_Func_(_PriC_Fill_,DXX)(Table);
+				LOGICAL Flag=(_PriC_Mass_(Mask,Bits),PriC_Func_(_PriC_Record_,DXX)(File,Mask,Bits));
+
+				MemC_Deloc_(Mask);
+
+				if(Flag)
+					return 1;
 				else;
 			}
 			else;
 		}
 		else
 		{
-			Table=MemC_Alloc_Unit_(pric_xx);
-			if(Table)
-				MemC_Clear_Unit_(Table);
+			data_08 Mask[16];
+
+			_PriC_Mass_(Mask,Bits);
+			if(PriC_Func_(_PriC_Record_,DXX)(File,Mask,Bits))
+				return 1;
 			else;
 		}
-		
-		return Table;
+
+		PenC.File.Pose.Set_(File,Back);
 	}
-
-	return NULL;
-}
-
-_PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,DATA_XX _PL_ _R_ Table)
-{
-	if(Table)
-	{
-		fpos_t Back;
-
-		if(fgetpos(File,&Back));
-		else
-		{
-			ADDRESS Length=(address)((*Table)+1);
-
-			if(PenC_File_Writer_(File,Table,Length)==Length)
-				return 1;
-			else
-				fsetpos(File,&Back);
-		}
-	}
-	else;
 
 	return 0;
 }
-_PRIC_ data_xx *PriC_Func_(PriC_Load_,DXX)(FILE _PL_ File,general _PL_ _R_ Nope)
+_PRIC_ data_xx *PriC_Func_(PriC_Load_,DXX)(FILE _PL_ File,DATA_XX _PL_ _R_ Nums)
 {
-	Mute_(Nope);
 	fpos_t Back;
 
-	if(fgetpos(File,&Back));
+	if(PenC.File.Pose.Get_(File,&Back));
 	else
 	{
-		data_xx Count;
+		data_xx Temp;
 
-		if(PenC_File_Reader_(File,&Count,1)==1)
+		if(PenC_File_Reader_(File,&Temp,1)==1)
 		{
-			ADDRESS Cast=(address)Count;
-			data_xx *Table=MemC_Alloc_ND_(data_xx,1,Cast+1);
+			data_xx Count;
 
-			if(Table)
-			{
-				*Table=Count;
-				if(Count)
-					if(PenC_File_Reader_(File,Table+1,Cast)==Cast)
-						return Table;
-					else
-						MemC_Deloc_(Table);
+			if(Nums)
+				if(Temp<(*Nums))
+					goto FAIL;
 				else
-					return Table;
+					Count=*Nums;
+			else
+				Count=Temp;
+
+			MemC_Temp_(ADDRESS,Cast=(address)Count)
+			{
+				data_xx *Table=MemC_Alloc_ND_(data_xx,1,Cast+1);
+
+				if(Table)
+				{
+					*Table=Count;
+					if(Count)
+						if(PenC_File_Reader_(File,Table+1,Cast)==Cast);
+						else
+							goto KILL;
+					else;
+
+					if(PenC_File_Jumper_(File,(address)(Temp-Count),data_xx))
+KILL:					MemC_Deloc_(Table);
+					else
+						return Table;
+				}
+				else;
 			}
-			else;
 		}
 		else;
-
-		fsetpos(File,&Back);
+FAIL:
+		PenC.File.Pose.Set_(File,Back);
 	}
 
 	return NULL;

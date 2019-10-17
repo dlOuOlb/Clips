@@ -7,6 +7,7 @@
 static_assert((sizeof(text_08)==1),"sizeof(text_08) != 1");
 static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
 static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
+static_assert(+(LONG_MIN)<-(LONG_MAX),"|LONG_MIN| < |LONG_MAX|");
 #endif
 
 #if(Fold_(Definition:PenClip Macros))
@@ -15,7 +16,7 @@ static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(addre
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.10.10";
+static BYTE_08 IdiomVersion[16]="Date:2019.10.17";
 static TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
 static TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
@@ -152,18 +153,87 @@ _PENC_ address _PenC_File_Reader_(FILE _PL_ File,general _PL_ Buffer,ADDRESS Ele
 	return fread_s(Buffer,Elements*TypeSize,TypeSize,Elements,File);
 }
 
-_PENC_ integer _PenC_File_Jumper_(FILE _PL_ File,long Size,ADDRESS TypeSize)
+_PENC_ integer _PenC_File_Jumper_(FILE _PL_ File,ADDRESS Nums,ADDRESS Size)
 {
-	Size*=(long)TypeSize;
+	fpos_t Back;
+	integer Flag=fgetpos(File,&Back);
 
-	return fseek(File,Size,SEEK_CUR);
+	if(Flag);
+	else if(Nums&&Size)
+	{
+		address Rest=MemC.Size.Mul_(Nums,Size);
+
+		if(Rest)
+			for(ADDRESS Limit=(address)(((SIZE_MAX)<(LONG_MAX))?(SIZE_MAX):(LONG_MAX));1;)
+				if(Rest>Limit)
+				{
+					const long Cast=(long)Limit;
+
+					Flag=fseek(File,+Cast,SEEK_CUR);
+					if(Flag)
+						break;
+					else
+						Rest-=Limit;
+				}
+				else
+				{
+					const long Cast=(long)Rest;
+
+					Flag=fseek(File,+Cast,SEEK_CUR);
+					if(Flag)
+						break;
+					else
+						return Flag;
+				}
+		else
+			Flag=EOF;
+
+		fsetpos(File,&Back);
+	}
+	else;
+
+	return Flag;
 }
-_PENC_ integer _PenC_File_Backer_(FILE _PL_ File,long Size,ADDRESS TypeSize)
+_PENC_ integer _PenC_File_Backer_(FILE _PL_ File,ADDRESS Nums,ADDRESS Size)
 {
-	Size*=(long)TypeSize;
-	Size=-Size;
+	fpos_t Back;
+	integer Flag=fgetpos(File,&Back);
 
-	return fseek(File,Size,SEEK_CUR);
+	if(Flag);
+	else if(Nums&&Size)
+	{
+		address Rest=MemC.Size.Mul_(Nums,Size);
+
+		if(Rest)
+			for(ADDRESS Limit=(address)(((SIZE_MAX)<(LONG_MAX))?(SIZE_MAX):(LONG_MAX));1;)
+				if(Rest>Limit)
+				{
+					const long Cast=(long)Limit;
+
+					Flag=fseek(File,-Cast,SEEK_CUR);
+					if(Flag)
+						break;
+					else
+						Rest-=Limit;
+				}
+				else
+				{
+					const long Cast=(long)Rest;
+
+					Flag=fseek(File,-Cast,SEEK_CUR);
+					if(Flag)
+						break;
+					else
+						return Flag;
+				}
+		else
+			Flag=EOF;
+
+		fsetpos(File,&Back);
+	}
+	else;
+
+	return Flag;
 }
 
 _PENC_ general _PenC_File_Rewind_(FILE _PL_ File)
@@ -182,6 +252,15 @@ _PENC_ integer _PenC_File_Washer_(FILE _PL_ File)
 _PENC_ integer _PenC_File_Finish_(FILE _PL_ File)
 {
 	return feof(File);
+}
+
+_PENC_ integer _PenC_File_Pose_Get_(FILE _PL_ File,fpos_t _PL_ Pose)
+{
+	return fgetpos(File,Pose);
+}
+_PENC_ integer _PenC_File_Pose_Set_(FILE _PL_ File,const fpos_t Pose)
+{
+	return fsetpos(File,&Pose);
 }
 
 _PENC_ integer _PenC_File_Remove_T08_(TEXT_08 _PL_ FileName)
@@ -919,12 +998,17 @@ PENCASE PenC=
 		.Closer_=PenC_File_Closer_,
 		.Writer_=_PenC_File_Writer_,
 		.Reader_=_PenC_File_Reader_,
-		.Jumper_=MemC_Func_Casting_(integer,_PenC_File_Jumper_,FILE _PL_,const long,ADDRESS),
-		.Backer_=MemC_Func_Casting_(integer,_PenC_File_Backer_,FILE _PL_,const long,ADDRESS),
+		.Jumper_=_PenC_File_Jumper_,
+		.Backer_=_PenC_File_Backer_,
 		.Rewind_=_PenC_File_Rewind_,
 		.Teller_=_PenC_File_Teller_,
 		.Washer_=_PenC_File_Washer_,
 		.Finish_=_PenC_File_Finish_,
+		.Pose=
+		{
+			.Get_=_PenC_File_Pose_Get_,
+			.Set_=_PenC_File_Pose_Set_
+		},
 		.Remove=
 		{
 			.T08_=_PenC_File_Remove_T08_,
