@@ -2,7 +2,7 @@
 /*	PriClip provides some small prime number tables.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.17	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PRICLIP
@@ -71,50 +71,40 @@ struct _pricase
 		}
 		Delete;
 
-		//PriClip : Prime Table Creation
-		//＊Table -> Prime = { 2, 3, 5, 7, ... },
-		//　namely (Count) primes in ascending order.
-		const struct
-		{
-			//PriClip : 8-bit Prime Table Memory Allocation - Deallocate with "PriC.Delete.D08_"
-			pric_08*(_PL_ D08_)(DATA_08 Count);
-			//PriClip : 16-bit Prime Table Memory Allocation - Deallocate with "PriC.Delete.D16_"
-			pric_16*(_PL_ D16_)(DATA_16 Count);
-			//PriClip : 32-bit Prime Table Memory Allocation - Deallocate with "PriC.Delete.D32_"
-			pric_32*(_PL_ D32_)(DATA_32 Count);
-			//PriClip : 64-bit Prime Table Memory Allocation - Deallocate with "PriC.Delete.D64_"
-			pric_64*(_PL_ D64_)(DATA_64 Count);
-		}
-		Create;
-
-		//PriClip : Prime Table Saving
+		//PriClip : Prime Table Creation and Saving
 		//＊Return value is 1 for success, 0 for failure.
 		const struct
 		{
 			//PriClip : 8-bit Prime Table File Writing
-			logical(_PL_ D08_)(FILE _PL_ File,PRIC_08 _PL_ _R_ Table);
+			//＊(Bits) should not be greater than 8.
+			logical(_PL_ D08_)(FILE _PL_ File,ADDRESS Bits);
 			//PriClip : 16-bit Prime Table File Writing
-			logical(_PL_ D16_)(FILE _PL_ File,PRIC_16 _PL_ _R_ Table);
+			//＊(Bits) should not be greater than 16.
+			logical(_PL_ D16_)(FILE _PL_ File,ADDRESS Bits);
 			//PriClip : 32-bit Prime Table File Writing
-			logical(_PL_ D32_)(FILE _PL_ File,PRIC_32 _PL_ _R_ Table);
+			//＊(Bits) should not be greater than 32.
+			logical(_PL_ D32_)(FILE _PL_ File,ADDRESS Bits);
 			//PriClip : 64-bit Prime Table File Writing
-			logical(_PL_ D64_)(FILE _PL_ File,PRIC_64 _PL_ _R_ Table);
+			//＊(Bits) should not be greater than 64.
+			logical(_PL_ D64_)(FILE _PL_ File,ADDRESS Bits);
 		}
 		Save;
 
-		//PriClip : Prime Table Loading
-		//＊The second parameter will be just ignored.
+		//PriClip : Prime Table Loading - See also "PriC.Delete"
+		//＊Table -> Prime = { 2, 3, 5, 7, ... },
+		//　namely (Count) primes in ascending order.
+		//＊If (Count) is NULL, then all primes saved will be loaded.
 		//＊Note that the returned table could be wrong if the file is not correct.
 		const struct
 		{
 			//PriClip : 8-bit Prime Table File Reading - Deallocate with "PriC.Delete.D08_"
-			pric_08*(_PL_ D08_)(FILE _PL_ File,general _PL_ _R_);
+			pric_08*(_PL_ D08_)(FILE _PL_ File,DATA_08 _PL_ _R_ Count);
 			//PriClip : 16-bit Prime Table File Reading - Deallocate with "PriC.Delete.D16_"
-			pric_16*(_PL_ D16_)(FILE _PL_ File,general _PL_ _R_);
+			pric_16*(_PL_ D16_)(FILE _PL_ File,DATA_16 _PL_ _R_ Count);
 			//PriClip : 32-bit Prime Table File Reading - Deallocate with "PriC.Delete.D32_"
-			pric_32*(_PL_ D32_)(FILE _PL_ File,general _PL_ _R_);
+			pric_32*(_PL_ D32_)(FILE _PL_ File,DATA_32 _PL_ _R_ Count);
 			//PriClip : 64-bit Prime Table File Reading - Deallocate with "PriC.Delete.D64_"
-			pric_64*(_PL_ D64_)(FILE _PL_ File,general _PL_ _R_);
+			pric_64*(_PL_ D64_)(FILE _PL_ File,DATA_64 _PL_ _R_ Count);
 		}
 		Load;
 

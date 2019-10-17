@@ -2,7 +2,7 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.10	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.17	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
@@ -226,11 +226,11 @@ struct _pencase
 #define PenC_File_Reader_(FilePointer,Buffer,Elements) PenC.File.Reader_(FilePointer,Buffer,Elements,sizeof(*(Buffer)))
 		//PenClip : Step Forward from Current Location
 		//＊Return value is 0 for success, or an error code for failure.
-		integer(_PL_ Jumper_)(FILE _PL_ FilePointer,const long Elements,ADDRESS TypeSize);
+		integer(_PL_ Jumper_)(FILE _PL_ FilePointer,ADDRESS Elements,ADDRESS TypeSize);
 #define PenC_File_Jumper_(FilePointer,Elements,type) PenC.File.Jumper_(FilePointer,Elements,sizeof(type))
 		//PenClip : Step Backward from Current Location
 		//＊Return value is 0 for success, or an error code for failure.
-		integer(_PL_ Backer_)(FILE _PL_ FilePointer,const long Elements,ADDRESS TypeSize);
+		integer(_PL_ Backer_)(FILE _PL_ FilePointer,ADDRESS Elements,ADDRESS TypeSize);
 #define PenC_File_Backer_(FilePointer,Elements,type) PenC.File.Backer_(FilePointer,Elements,sizeof(type))
 		//PenClip : Pointer Restart
 		general(_PL_ Rewind_)(FILE _PL_ FilePointer);
@@ -242,6 +242,16 @@ struct _pencase
 		//PenClip : End of File
 		//＊Return value is 0 if the end has not been reached.
 		integer(_PL_ Finish_)(FILE _PL_ FilePointer);
+		//PenClip : File Pointer Position
+		//＊Return value is 0 for success, or an error code for failure.
+		const struct
+		{
+			//PenClip : Get it.
+			integer(_PL_ Get_)(FILE _PL_ FilePointer,fpos_t _PL_ Position);
+			//PenClip : Set it.
+			integer(_PL_ Set_)(FILE _PL_ FilePointer,const fpos_t Position);
+		}
+		Pose;
 		//PenClip : File Remove Functions
 		//＊Return value is 0 for success, or an error code for failure.
 		const struct
