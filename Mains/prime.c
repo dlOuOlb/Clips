@@ -5,7 +5,7 @@
 _MemC_Default_
 
 static pric_32 *_Table_Load_(TEXT_08 _PL_ _R_ FileName);
-static pric_32 *_Table_Save_(TEXT_08 _PL_ _R_ FileName);
+static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName);
 static logical _Table_Find_(PRIC_32 _PL_ _R_ Table);
 
 integer main(general)
@@ -25,13 +25,17 @@ integer main(general)
 		{
 		case 'Y':
 		case 'y':
-			Table=_Table_Save_(FileName);
+			if(_Table_Save_(FileName))
+				Table=_Table_Load_(FileName);
+			else
+				break;
 			if(Table)
 ACTIVE:			while(_Table_Find_(Table));
-			else;
-		default:
-			PenC_Stream_Format_T08_(0,NULL,"Good bye!\r\n");
+			else
+				break;
+		default:;
 		}
+		PenC_Stream_Format_T08_(0,NULL,"Good bye!\r\n");
 	}
 
 	PriC.PT.Delete.D32_(&Table);
@@ -45,32 +49,28 @@ static pric_32 *_Table_Load_(TEXT_08 _PL_ _R_ FileName)
 
 	return PenC.Object.Load.T08_(FileName,PriC.PT.Load.D32_,NULL,0);
 }
-static pric_32 *_Table_Save_(TEXT_08 _PL_ _R_ FileName)
+static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName)
 {
 	timc_sw *Watch=TimC.SW.Create_(1);
 	timc_sf State;
-	pric_32 *Table=NULL;
+	logical Flag=0;
 
 	if(Watch)
 	{
-		PenC_Stream_Format_T08_(0,NULL,"Try to create the prime table.\r\n");
-		TimC_SW_Tick_Tock_(Watch,0,State)
-			Table=PriC.PT.Create.D32_(PriC.Count.D32);
+		MEMCLIP Bits={.V=32};
 
-		if(Table)
+		PenC_Stream_Format_T08_(0,NULL,"Try to record the prime table.\r\n");
+		TimC_SW_Tick_Tock_(Watch,0,State)
+			Flag=PenC.Object.Save.T08_(FileName,MemC_Func_Casting_(logical,PriC.PT.Save.D32_,FILE _PL_,GENERAL _PL_ _R_),Bits.P,0);
+
+		if(Flag)
 		{
 			TIMC_TT Time=TimC.SW.Read.Sum.Tag_(Watch,0);
 
 			if(Time.Overflow)
 				PenC_Stream_Format_T08_(0,NULL,"Failed to measure the time consumed.\r\n");
 			else
-				PenC_Stream_Format_T08_(0,NULL,"Generated %u primes.\r\nConsumed %01d %02d:%02d:%02d.%03d\r\n",Table->Count,Time.Days,Time.Hours,Time.Minutes,Time.Seconds,Time.Milliseconds);
-
-			PenC_Stream_Format_T08_(0,NULL,"Try to save the prime table.\r\n");
-			if(PenC.Object.Save.T08_(FileName,PriC.PT.Save.D32_,Table,0))
-				PenC_Stream_Format_T08_(0,NULL,"Thank you for waiting.\r\n");
-			else
-				PenC_Stream_Format_T08_(0,NULL,"Sorry but failed to save it. Maybe a file issue.\r\n");
+				PenC_Stream_Format_T08_(0,NULL,"Consumed %01d %02d:%02d:%02d.%03d\r\n",Time.Days,Time.Hours,Time.Minutes,Time.Seconds,Time.Milliseconds);
 		}
 		else
 			goto MEMORY;
@@ -80,7 +80,7 @@ MEMORY:	PenC_Stream_Format_T08_(0,NULL,"Sorry but failed to create it. Maybe a m
 
 	TimC.SW.Delete_(&Watch);
 
-	return Table;
+	return Flag;
 }
 static logical _Table_Find_(PRIC_32 _PL_ _R_ Table)
 {
