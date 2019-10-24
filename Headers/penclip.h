@@ -2,16 +2,17 @@
 /*	PenClip is a simple stream I/O library.							*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.17	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PENCLIP
 #define _INC_PENCLIP
 
 #if(1)
+#include <memclip.h>
+
 #include <stdio.h>
 #include <wchar.h>
-#include <memclip.h>
 #endif
 
 #if(Fold_(Definition:Primal Types))
@@ -409,12 +410,8 @@ struct _pencase
 	//PenClip : String Containter Functions
 	const struct
 	{
-		//PenClip : String Container Static Definition
-#define PenC_SC_Define_(IString) {.Capacity=sizeof(IString),.String.X=(IString)}
-
-		//PenClip : String Container Local Variable Assignment without Heap Allocation
-		penc_sc(_PL_ Assign_)(GENERAL _PL_ String,ADDRESS Capacity);
-#define PenC_SC_Assign_(Buffer) PenC.SC.Assign_(Buffer,sizeof(Buffer))
+		//PenClip : Automatic String Container
+#define PenC_SC_Auto_(Auto,CapacityBytes) MemC_Unit_(penc_sc,Auto,.Capacity=(CapacityBytes),.String.X=(byte_08[CapacityBytes]){0})
 
 		//PenClip : String Container Memory Allocation - Deallocate with "PenC.SC.Delete_"
 		penc_sc*(_PL_ Create_)(ADDRESS CapacityBytes);
@@ -507,6 +504,9 @@ struct _pencase
 	//PenClip : String Container Lender Functions
 	const struct
 	{
+		//PenClip : Automatic String Lender
+#define PenC_SL_Auto_(Auto,ChunksNumber) MemC_Unit_(penc_sl,Auto,.Node=&(penc_sl[ChunksNumber]){[0].Nodes=MemC_Size_(penc_sl,(ChunksNumber)-1)},.Chunks=(ChunksNumber),.Nodes=1,.Capable=MemC_Size_(penc_sl,(ChunksNumber)-1))
+
 		//PenClip : SC Lender Memory Allocation - Deallocate with "PenC.SL.Delete_"
 		//＊1 chunk is equal to 4×sizeof(size_t) bytes.
 		//＊Each SC node's head occupies 1 chunk.
@@ -521,7 +521,7 @@ struct _pencase
 		logical(_PL_ Reset_)(penc_sl _PL_ SCLender);
 
 		//PenClip : Borrow an SC from the SC Lender - Return with "PenC.SL.Return_"
-		penc_sc*(_PL_ Borrow_)(PENC_SL _PL_ SCLender,ADDRESS DemandBytes);
+		penc_sc*(_PL_ Borrow_)(penc_sl _PL_ SCLender,ADDRESS DemandBytes);
 		//PenClip : Borrow Functions
 		const struct
 		{
@@ -533,25 +533,25 @@ struct _pencase
 			const struct
 			{
 				//PenClip : Borrow an SC from the SC Lender Copying another SC with 8-bit String - Return with "PenC.SL.Return_"
-				penc_sc*(_PL_ T08_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCSource);
+				penc_sc*(_PL_ T08_)(penc_sl _PL_ SCLender,PENC_SC _PL_ SCSource);
 				//PenClip : Borrow an SC from the SC Lender Copying another SC with 8-bit String - Return with "PenC.SL.Return_"
-				penc_sc*(_PL_ T16_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCSource);
+				penc_sc*(_PL_ T16_)(penc_sl _PL_ SCLender,PENC_SC _PL_ SCSource);
 			}
 			Copier;
 			//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs
 			const struct
 			{
 				//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs - Return with "PenC.SL.Return_"
-				penc_sc*(_PL_ T08_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCFormer,PENC_SC _PL_ SCLatter);
+				penc_sc*(_PL_ T08_)(penc_sl _PL_ SCLender,PENC_SC _PL_ SCFormer,PENC_SC _PL_ SCLatter);
 				//PenClip : Borrow an SC from the SC Lender Concatenating two other SCs - Return with "PenC.SL.Return_"
-				penc_sc*(_PL_ T16_)(PENC_SL _PL_ SCLender,PENC_SC _PL_ SCFormer,PENC_SC _PL_ SCLatter);
+				penc_sc*(_PL_ T16_)(penc_sl _PL_ SCLender,PENC_SC _PL_ SCFormer,PENC_SC _PL_ SCLatter);
 			}
 			Concat;
 		}
 		Borrow;
 		//PenClip : Return the SC to the SC Lender
 		//＊Return value is 1 for success, or 0 for failure.
-		logical(_PL_ Return_)(PENC_SL _PL_ SCLender,PENC_SC *_PL_ StringContainer);
+		logical(_PL_ Return_)(penc_sl _PL_ SCLender,penc_sc *_PL_ StringContainer);
 	}
 	SL;
 };

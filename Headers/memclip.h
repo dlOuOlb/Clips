@@ -2,7 +2,7 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.09.26	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -25,11 +25,11 @@
 
 #if(Fold_(Definition:Primal Macros))
 #ifndef NULL
-#define NULL ((void*)(0))
+#define NULL ((general*)(0))
 #endif
 
 #ifndef FULL
-#define FULL ((void*)(~((size_t)(0))))
+#define FULL ((general*)(~((address)(0))))
 #endif
 
 #ifdef _PL_
@@ -81,15 +81,15 @@
 #endif
 
 #if(Fold_(Definition:Advanced Macros))
-#define MemC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;
-#define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;
+#define MemC_Type_Rename_(oldname,newname,NEWNAME) typedef oldname newname;typedef const oldname NEWNAME
+#define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE
 
 #define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)
-#define MemC_Func_Declare_(Return,func_,FUNC_,...) typedef Return(*func_)(__VA_ARGS__);typedef Return(_PL_ FUNC_)(__VA_ARGS__);
+#define MemC_Func_Declare_(Return,func_,FUNC_,...) typedef Return(*func_)(__VA_ARGS__);typedef Return(_PL_ FUNC_)(__VA_ARGS__)
 
-#define MemC_Assert_(Bool) ((GENERAL*[Bool]){FULL})
+#define MemC_Assert_(Bool) ((general)((GENERAL*[Bool]){NULL}))
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))
-#define MemC_Unit_(type,Unit,...) type(_##Unit)##__VA_ARGS__,_PL_(Unit)=&(_##Unit)
+#define MemC_Unit_(type,Unit,...) type _PL_(Unit)=&(type){__VA_ARGS__}
 #define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)
 #endif
 
@@ -195,7 +195,7 @@ general *_MemC_Malloc_(ADDRESS Size);
 //MemClip : Memory Deallocator Declaration - Pair with "_MemC_Malloc_"
 general _MemC_Free_(general _PL_ Memory);
 //MemClip : Default Memory Allocator and Deallocator Definition - Put it once somewhere unless you have a custom one.
-#define _MemC_Default_ general *_MemC_Malloc_(ADDRESS Size) { return malloc(Size); } general _MemC_Free_(general _PL_ Memory) { free(Memory); }
+#define _MemC_Default_ general *_MemC_Malloc_(ADDRESS Size) { return malloc(Size); } general _MemC_Free_(general _PL_ Memory) { free(Memory);return; }
 #endif
 
 #if(Fold_(Library Casing))
@@ -370,7 +370,7 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Automatic Memory Slot
-#define MemC_MS_Auto_(SlotName,SlotsNumber) address(_##SlotName)[(SlotsNumber)+4];memc_ms _PL_(SlotName)=((((GENERAL**)(_##SlotName))[0]=(_##SlotName)),(((GENERAL**)(_##SlotName))[1]=MemC.Type.Add),((_##SlotName)[2]=(SlotsNumber)),(((GENERAL**)(_##SlotName))[3]=(_##SlotName)+4),(memc_ms*)(_##SlotName));
+#define MemC_MS_Auto_(Auto,SlotsNumber) MemC_Unit_(memc_ms,Auto,.ID=NULL,.Type=MemC.Type.Add,.Nums=(SlotsNumber),.Cell=(memclip[SlotsNumber]){0})
 
 		//MemClip : Memory Slot Memory Allocation - Deallocate with "MemC.MS.Delete_"
 		//＊Nums = SlotsNumber
@@ -444,7 +444,7 @@ struct _memcase
 		//　The memory lender's head occupies 2 chunks.
 		//　Each memory slice's head occupies 1 chunk.
 		//＊Be aware that it is not thread-safe.
-#define MemC_ML_Define_(LenderName,ChunksNumber) static address(_##LenderName)[(ChunksNumber)<<2]={(address)(_##LenderName),(address)(_##LenderName),(address)(_##LenderName),MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_(LenderName)=(memc_ml*)(_##LenderName);
+#define MemC_ML_Static_(LenderName,ChunksNumber) static address(_##LenderName)[(ChunksNumber)<<2]={(address)(_##LenderName),(address)(_##LenderName),(address)(_##LenderName),MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_(LenderName)=(memc_ml*)(_##LenderName)
 
 		//MemClip : Memory Lender Memory Allocation - Deallocate with "MemC.ML.Delete_"
 		//＊1 chunk is equal to 4×sizeof(size_t) bytes.

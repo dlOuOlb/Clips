@@ -2,7 +2,7 @@
 /*	BoxClip provides some simple data structures.					*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.10	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -61,7 +61,6 @@ struct _boxc_ks
 	ADDRESS Capacity;	//BoxClip : Maximum Number of Keys
 };
 MemC_Type_Declare_(struct,boxc_ks,BOXC_KS);	//BoxClip : Key Set Structure
-static_assert((sizeof(boxc_ks)%sizeof(address))==0,"Type Size Misalign");
 
 //BoxClip : Flag Set Structure
 struct _boxc_fs
@@ -113,6 +112,10 @@ struct _boxcase
 	//BoxClip : Stack Set Functions
 	const struct
 	{
+		//BoxClip : Automatic Stack Set
+#define BoxC_SS_Auto_(Auto,StacksNumber,MaximumCapacity) boxc_ss _PL_(Auto)=BoxC.SS.Auto_(&(boxc_ss){.Stack=1+((address[1+(StacksNumber)+((MaximumCapacity)<<1)]){0}),.Count=1+((address[1+(StacksNumber)]){MaximumCapacity}),.Number=(StacksNumber),.Capacity=(MaximumCapacity)})
+		boxc_ss*(_PL_ Auto_)(boxc_ss _PL_ _R_);
+
 		//BoxClip : Stack Set Memory Allocation - Deallocate with "BoxC.SS.Delete_"
 		boxc_ss*(_PL_ Create_)(ADDRESS StacksNumber,ADDRESS MaximumCapacity);
 		//BoxClip : Stack Set Memory Deallocation
@@ -161,6 +164,10 @@ struct _boxcase
 	//BoxClip : Queue Set Functions
 	const struct
 	{
+		//BoxClip : Automatic Queue Set
+#define BoxC_QS_Auto_(Auto,QueuesNumber,MaximumCapacity) boxc_qs _PL_(Auto)=BoxC.QS.Auto_(&(boxc_qs){.Queue=2+((address[(1+(QueuesNumber)+(MaximumCapacity))<<1]){0}),.Count=1+((address[1+(QueuesNumber)]){MaximumCapacity}),.Number=(QueuesNumber),.Capacity=(MaximumCapacity)})
+		boxc_qs*(_PL_ Auto_)(boxc_qs _PL_ _R_);
+
 		//BoxClip : Queue Set Memory Allocation - Deallocate with "BoxC.QS.Delete_"
 		boxc_qs*(_PL_ Create_)(ADDRESS QueuesNumber,ADDRESS MaximumCapacity);
 		//BoxClip : Queue Set Memory Deallocation
@@ -209,6 +216,10 @@ struct _boxcase
 	//BoxClip : Ring Set Functions
 	const struct
 	{
+		//BoxClip : Automatic Ring Set
+#define BoxC_RS_Auto_(Auto,RingsNumber,MaximumCapacity) boxc_rs _PL_(Auto)=BoxC.RS.Auto_(&(boxc_rs){.Ring=2+((address[(1+(RingsNumber)+(MaximumCapacity))<<1]){0}),.Count=1+((address[1+(RingsNumber)]){MaximumCapacity}),.Number=(RingsNumber),.Capacity=(MaximumCapacity)})
+		boxc_rs*(_PL_ Auto_)(boxc_rs _PL_ _R_);
+
 		//BoxClip : Ring Set Memory Allocation - Deallocate with "BoxC.RS.Delete_"
 		boxc_rs*(_PL_ Create_)(ADDRESS RingsNumber,ADDRESS MaximumCapacity);
 		//BoxClip : Ring Set Memory Deallocation
@@ -264,6 +275,10 @@ struct _boxcase
 	//BoxClip : Key Set Functions
 	const struct
 	{
+		//BoxClip : Automatic Key Set
+#define BoxC_KS_Auto_(Auto,Comparator_,MaximumCapacity) boxc_ks _PL_(Auto)=BoxC.KS.Auto_(&(boxc_ks){.Key=(address[2+(6*(MaximumCapacity))]){0},.Comp_=(Comparator_),.Number=0,.Capacity=(MaximumCapacity)})
+		boxc_ks*(_PL_ Auto_)(boxc_ks _PL_ _R_);
+
 		//BoxClip : Key Set Memory Allocation - Deallocate with "BoxC.KS.Delete_"
 		boxc_ks*(_PL_ Create_)(integer(_PL_ Compare_)(GENERAL _PL_ KeyA,GENERAL _PL_ KeyB),ADDRESS Capacity);
 		//BoxClip : Key Set Memory Deallocation
@@ -324,6 +339,9 @@ struct _boxcase
 	//BoxClip : Flag Set Functions
 	const struct
 	{
+		//BoxClip : Automatic Flag Set
+#define BoxC_FS_Auto_(Auto,FlagsNumber) MemC_Unit_(boxc_fs,Auto,.Flag=(byte_08[((FlagsNumber)+7)>>3]){0},.Number=(FlagsNumber))
+
 		//BoxClip : Flag Set Memory Allocation - Deallocate with "BoxC.FS.Delete_"
 		boxc_fs*(_PL_ Create_)(ADDRESS FlagsNumber);
 		//BoxClip : Flag Set Memory Deallocation
@@ -404,7 +422,7 @@ struct _boxcase
 	const struct
 	{
 		//BoxClip : Automatic List
-#define BoxC_Li_Auto_(List,Capacity) address(_##List)[(Capacity)+2]={[0]=(Capacity),[1]=0};boxc_li _PL_(List)=(boxc_li*)(_##List);
+#define BoxC_Li_Auto_(Auto,Capacity) boxc_li _PL_(Auto)=(boxc_li*)((address[(Capacity)+2]){[0]=(Capacity),[1]=0})
 
 		//BoxClip : List Creation - Delete with "BoxC.Li.Delete_"
 		boxc_li*(_PL_ Create_)(ADDRESS Capacity);

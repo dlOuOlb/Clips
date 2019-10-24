@@ -2,7 +2,7 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.14	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
@@ -10,9 +10,18 @@
 
 #if(1)
 #include <bitclip.h>
+
+#include <time.h>
 #endif
 
 #if(Fold_(Definition:Types))
+//TimClip : Time Tag Structure
+struct _timc_tt
+{
+	data_32 Sign:1,Overflow:1,Days:3,Hours:5,Minutes:6,Seconds:6,Milliseconds:10;
+};
+MemC_Type_Declare_(struct,timc_tt,TIMC_TT);	//TimClip : Time Tag Structure
+
 //TimClip : Timer State Flag Enumeration
 enum _timc_sf
 {
@@ -22,17 +31,20 @@ enum _timc_sf
 };
 MemC_Type_Declare_(enum,timc_sf,TIMC_SF);	//TimClip : Timer State Flag Enumeration
 
-//TimClip : Time Tag Structure
-struct _timc_tt
+//TimClip : Timer Element Structure
+struct _timc_te
 {
-	data_32 Sign:1,Overflow:1,Days:3,Hours:5,Minutes:6,Seconds:6,Milliseconds:10;
+	clock_t Sum;	//TimClip : Clock Sum
+	clock_t Mark;	//TimClip : Start Marker
+	timc_sf State;	//TimClip : Timer State
+	integer Count;	//TimClip : Run Count
 };
-MemC_Type_Declare_(struct,timc_tt,TIMC_TT);	//TimClip : Time Tag Structure
+MemC_Type_Declare_(struct,timc_te,TIMC_TE);	//TimClip : Timer Element Structure
 
 //TimClip : Stopwatch Structure
 struct _timc_sw
 {
-	GENERAL _PL_ Timer;	//TimClip : Internal Timer Set
+	timc_te _PL_ Timer;	//TimClip : Internal Timer Set
 	ADDRESS Nums;		//TimClip : Number of Timers
 };
 MemC_Type_Declare_(struct,timc_sw,TIMC_SW);	//TimClip : Stopwatch Structure
@@ -64,6 +76,9 @@ struct _timcase
 	//TimClip : Stopwatch Functions
 	const struct
 	{
+		//TimClip : Automatic Stopwatch
+#define TimC_SW_Auto_(Auto,TimersNumber) MemC_Unit_(timc_sw,Auto,.Timer=(timc_te[TimersNumber]){0},.Nums=(TimersNumber))
+
 		//TimClip : Stopwatch Memory Allocation - Deallocate with "TimC.SW.Delete_"
 		timc_sw*(_PL_ Create_)(ADDRESS TimersNumber);
 		//TimClip : Stopwatch Memory Deallocation
@@ -127,6 +142,10 @@ struct _timcase
 	//TimClip : Random Generator Functions
 	const struct
 	{
+		//TimClip : Automatic Random Generator
+#define TimC_RG_Auto_(Auto,StatesNumber) timc_rg _PL_(Auto)=TimC.RG.Auto_(&(timc_rg){.State=(data_64[StatesNumber]){0},.Nums=(StatesNumber)})
+		timc_rg*(_PL_ Auto_)(timc_rg _PL_ _R_);
+
 		//TimClip : Random Generator Memory Allocation - Deallocate with "TimC.RG.Delete_"
 		//＊RandomGenerator -> State[idx]＝time(NULL)＋idx;
 		timc_rg*(_PL_ Create_)(ADDRESS StatesNumber);

@@ -2,7 +2,7 @@
 /*	PriClip provides some small prime number tables.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.17	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PRICLIP
@@ -51,26 +51,9 @@ MemC_Type_Declare_(struct,pric_64,PRIC_64);	//PriClip : 64-bit Prime Table Struc
 //PriClip : Library Case Structure
 struct _pricase
 {
-	//PriClip : Library Version
-	BYTE_08 _PL_ Version;
-
 	//PriClip : Prime Table Functions
 	const struct
 	{
-		//PriClip : Prime Table Deletion
-		const union
-		{
-			//PriClip : 8-bit Prime Table Memory Deallocation
-			general(_PL_ D08_)(pric_08 *_PL_ _R_ Table);
-			//PriClip : 16-bit Prime Table Memory Deallocation
-			general(_PL_ D16_)(pric_16 *_PL_ _R_ Table);
-			//PriClip : 32-bit Prime Table Memory Deallocation
-			general(_PL_ D32_)(pric_32 *_PL_ _R_ Table);
-			//PriClip : 64-bit Prime Table Memory Deallocation
-			general(_PL_ D64_)(pric_64 *_PL_ _R_ Table);
-		}
-		Delete;
-
 		//PriClip : Prime Table Creation and Saving
 		//＊Return value is 1 for success, 0 for failure.
 		const struct
@@ -146,8 +129,25 @@ struct _pricase
 			logical(_PL_ D64_)(data_64 Factor[64],PRIC_64 _PL_ _R_ Table,DATA_64 Natural);
 		}
 		Factor;
+
+		//PriClip : Prime Table Deletion
+		const union
+		{
+			//PriClip : 8-bit Prime Table Memory Deallocation
+			general(_PL_ D08_)(pric_08 *_PL_ _R_ Table);
+			//PriClip : 16-bit Prime Table Memory Deallocation
+			general(_PL_ D16_)(pric_16 *_PL_ _R_ Table);
+			//PriClip : 32-bit Prime Table Memory Deallocation
+			general(_PL_ D32_)(pric_32 *_PL_ _R_ Table);
+			//PriClip : 64-bit Prime Table Memory Deallocation
+			general(_PL_ D64_)(pric_64 *_PL_ _R_ Table);
+		}
+		Delete;
 	}
 	PT;
+
+	//PriClip : Library Version
+	BYTE_08 _PL_ Version;
 
 	//PriClip : Theoretical Maximum Count of Primes
 	const struct

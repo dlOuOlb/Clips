@@ -2,7 +2,7 @@
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.07.12	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 /*	OpenCL Support													*/
 /*	http://www.khronos.org/opencl/									*/
@@ -163,11 +163,9 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 #else
 
 #if(1)
-#include <CL/opencl.h>
 #include <penclip.h>
-#ifdef _
-#error The macro "_" is already defined.
-#endif
+
+#include <CL/opencl.h>
 #endif
 
 #if(Fold_(Definition:Primal Types))
@@ -628,12 +626,11 @@ struct _oclcase
 			oclc_mp(_PL_ D3_)(ADDRESS Z,ADDRESS Y,ADDRESS X);
 			//OCLClip : Set 4D Length
 			oclc_mp(_PL_ D4_)(ADDRESS N,ADDRESS Z,ADDRESS Y,ADDRESS X);
-#define OCLC_MP_Length_(Pin,...) __dl{oclc_mp(_)={1,1,1,1};__VA_ARGS__;*(Pin)=(_);}lb__
 
 			//OCLClip : Validity Check
 			//＊Return value is 1 for any excess, otherwise 0.
 			//　i.e. for any Start+Amount>Shape or Amount==0
-			_Bool(_PL_ Invalid_)(OCLC_MP _PL_ Start,OCLC_MP _PL_ Amount,OCLC_MP _PL_ Shape);
+			logical(_PL_ Invalid_)(OCLC_MP _PL_ Start,OCLC_MP _PL_ Amount,OCLC_MP _PL_ Shape);
 		}
 		Length;
 
@@ -648,12 +645,11 @@ struct _oclcase
 			oclc_mp(_PL_ D3_)(ADDRESS Z,ADDRESS Y,ADDRESS X);
 			//OCLClip : Set 4D Offset
 			oclc_mp(_PL_ D4_)(ADDRESS N,ADDRESS Z,ADDRESS Y,ADDRESS X);
-#define OCLC_MP_Offset_(Pin,...) __dl{oclc_mp(_)={0,0,0,0};__VA_ARGS__;*(Pin)=(_);}lb__
 
 			//OCLClip : Validity Check
 			//＊Return value is 1 for any excess, otherwise 0.
 			//　i.e. for any Start>Shape
-			_Bool(_PL_ Invalid_)(OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape);
+			logical(_PL_ Invalid_)(OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape);
 		}
 		Offset;
 
@@ -665,15 +661,6 @@ struct _oclcase
 		OCLC_MP _PL_ Zero;
 	}
 	MP;
-
-	//OCLClip : Memory Holder Functions
-	const struct
-	{
-		//OCLClip : Memory Holder Pin Assign
-		oclc_mh(_PL_ Assign_)(general _PL_ Memory,OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape,MEMC_DT _PL_ Type);
-#define OCLC_MH_Assign_(Holder,Memory,Type,...) __dl{struct{OCLC_MP*Start;OCLC_MP*Shape;}(_)={NULL,NULL};__VA_ARGS__;*(Holder)=OCLC.MH.Assign_(Memory,_.Start,_.Shape,Type);}lb__
-	}
-	MH;
 };
 MemC_Type_Declare_(struct,oclcase,OCLCASE);
 #define OCLC_Info_(Kind,Whose,It,Flag,Error) OCLC.Kind.Info.What_(Whose,Flag,It,sizeof(*(It)),Error)

@@ -2,22 +2,18 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.08.05	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_LINCLIP
 #define _INC_LINCLIP
 
-#ifdef __OPENCL_VERSION__
-#include <bitclip.h>
-#else
-
 #if(1)
-#ifdef _CL
-#include <CL/opencl.h>
-#endif
 #include <bitclip.h>
 #endif
+
+#ifdef __OPENCL_VERSION__
+#else
 
 #if(Fold_(Library Casing))
 //LinClip : Library Case Structure

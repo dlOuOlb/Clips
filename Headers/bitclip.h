@@ -2,7 +2,7 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.15	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -148,15 +148,13 @@ OCLC_Type_Declare_(union,bitc_pp,BITC_PP);
 #else
 
 #if(1)
-#include <stdint.h>
-#ifdef _CL
-#include <CL/opencl.h>
-#endif
-#ifdef __OPENCL_H
+#if defined(_CL)||defined(__OPENCL_H)
 #include <oclclip.h>
 #else
 #include <memclip.h>
 #endif
+
+#include <stdint.h>
 #endif
 
 #if(Fold_(Definition:Primal Types))
