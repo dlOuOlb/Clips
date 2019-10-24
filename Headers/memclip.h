@@ -13,6 +13,8 @@
 #define __STDC_WANT_LIB_EXT1__ (1)
 #endif
 
+#include <msvclip.h>
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -41,9 +43,6 @@
 #ifdef _R_
 #error The macro "_R_" is already defined.
 #else
-#ifdef _MSC_BUILD
-#define restrict __restrict	//:(
-#endif
 #define _R_ restrict
 #endif
 
