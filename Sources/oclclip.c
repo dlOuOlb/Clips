@@ -1,5 +1,6 @@
-﻿#include <assert.h>
-#include "oclclip.h"
+﻿#include "oclclip.h"
+
+#include <assert.h>
 
 #if(Fold_(Static Assertions))
 static_assert(OCLCPinAxes==4,"The pin must be 4D.");
@@ -23,7 +24,7 @@ static_assert(sizeof(cl_mem)==sizeof(general*),"sizeof(cl_mem) != sizeof(size_t)
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="2019.07.12";
+static BYTE_08 IdiomVersion[16]="2019.10.24";
 static OCLC_MP ConstantZero={.N=0,.Z=0,.Y=0,.X=0};
 #endif
 
@@ -679,20 +680,6 @@ _OCLC_ address OCLC_MP_Total_(OCLC_MP _PL_ Pin)
 }
 #endif
 
-#if(Fold_(Part:Memory Holder))
-_OCLC_ oclc_mh _OCLC_MH_Assign_(general _PL_ Memory,OCLC_MP _PL_ Start,OCLC_MP _PL_ Shape,MEMC_DT _PL_ Type)
-{
-	oclc_mh Holder;
-
-	Holder.Memory=Memory;
-	Holder.Start=Start;
-	Holder.Shape=Shape;
-	Holder.Type=Type;
-
-	return Holder;
-}
-#endif
-
 #if(Fold_(Part:Platform ID))
 _OCLC_ address OCLC_PI_Info_Size_(const cl_platform_id Platform,const cl_platform_info Flag,cl_int _PL_ Error)
 {
@@ -1178,8 +1165,7 @@ OCLCASE OCLC=
 			.D3_=OCLC_MP_Offset_3D_,
 			.D4_=OCLC_MP_Offset_4D_
 		}
-	},
-	.MH.Assign_=_OCLC_MH_Assign_
+	}
 };
 OCLCASE *OCLC_(general) { return &OCLC; }
 #endif

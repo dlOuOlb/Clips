@@ -1,24 +1,27 @@
-﻿#include <assert.h>
+﻿#include "memclip.h"
+
+#include <assert.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdint.h>
-#include "memclip.h"
 
 #if(Fold_(Static Assertions))
 static_assert(__STDC_WANT_LIB_EXT1__,"__STDC_WANT_LIB_EXT1__ == 0");
-static_assert(((size_t)(NULL))==((size_t)(0)),"NULL != 0");
-static_assert(((size_t)(FULL))==(~((size_t)(0))),"FULL != ~0");
-static_assert((sizeof(char)==1),"sizeof(char) != 1");
-static_assert((sizeof(void*)==sizeof(size_t)),"sizeof(void*) != sizeof(size_t)");
+static_assert(((address)(NULL))==((address)(0)),"NULL != 0");
+static_assert(((address)(FULL))==(~((address)(0))),"FULL != ~0");
+static_assert((CHAR_BIT==8),"CHAR_BIT != 8");
+static_assert((sizeof(byte_08)==1),"sizeof(byte_08) != 1");
+static_assert((sizeof(general*)==sizeof(address)),"sizeof(general*) != sizeof(address)");
 #endif
 
 #if(Fold_(Definition:MemClip Macros))
 #define _MEMC_ static
-#define _MemC_Dims_ ((address)8)
+#define _MemC_Dims_ ((address)(8))
 #endif
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.09.26";
+_MEMC_ BYTE_08 IdiomVersion[16]="Date:2019.10.24";
 static ADDRESS ConstantZero[_MemC_Dims_]={0};
 #endif
 
@@ -218,11 +221,11 @@ static address _MemC_Safe_2_(address Num)
 	Num|=(Num>>1);
 	Num|=(Num>>2);
 	Num|=(Num>>4);
-#if(SIZE_MAX>0xFF)
+#if(SIZE_MAX>UINT8_MAX)
 	Num|=(Num>>8);
-#if(SIZE_MAX>0xFFFF)
+#if(SIZE_MAX>UINT16_MAX)
 	Num|=(Num>>16);
-#if(SIZE_MAX>0xFFFFFFFF)
+#if(SIZE_MAX>UINT32_MAX)
 	Num|=(Num>>32);
 #endif
 #endif
@@ -1534,7 +1537,7 @@ static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
 
 	return Return;
 }
-static inline general *_MemC_MN_Give_(memc_mn _PL_ Node,ADDRESS Demand)
+static general *_MemC_MN_Give_(memc_mn _PL_ Node,ADDRESS Demand)
 {
 	ADDRESS Margin=Node->Size;
 	byte_08 _PL_ Return=memset(Node+1,0x6F,Margin);
@@ -1545,7 +1548,7 @@ static inline general *_MemC_MN_Give_(memc_mn _PL_ Node,ADDRESS Demand)
 
 	return Return;
 }
-static inline general _MemC_MN_Take_(memc_mn _PL_ Node)
+static general _MemC_MN_Take_(memc_mn _PL_ Node)
 {
 	memset(Node+1,0x58,Node->Size);
 }

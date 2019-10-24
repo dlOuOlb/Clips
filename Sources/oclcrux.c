@@ -54,7 +54,7 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Build_,TXX)(oclc_pm _PL_ PM,const cl_context C
 												*Error=CL_INVALID_HOST_PTR;
 											else
 											{
-												Acs_(cl_program,PM->Program.ID)=clCreateProgramWithSource(Context,(cl_uint)SrcNums,SrcList,SrcLngs,Error);
+												Acs_(cl_program,PM->Program.ID)=clCreateProgramWithSource(Context,(cl_uint)SrcNums,(const char**)SrcList,SrcLngs,Error);
 												if(*Error==CL_SUCCESS)
 												{
 													*Error=clBuildProgram(PM->Program.ID,DeviceNums,DeviceList,Option,NULL,NULL);
@@ -153,7 +153,7 @@ INVALID_VALUE:
 									*Error=clGetContextInfo(Context,CL_CONTEXT_DEVICES,MemC_Size_(cl_device_id,Devices),DeviceList,NULL);
 									if(*Error==CL_SUCCESS)
 									{
-										Acs_(cl_program,PM->Program.ID)=clCreateProgramWithBinary(Context,Devices,DeviceList,SizeList,(unsigned char**)BinaryList,NULL,Error);
+										Acs_(cl_program,PM->Program.ID)=clCreateProgramWithBinary(Context,Devices,DeviceList,SizeList,(const unsigned char**)BinaryList,NULL,Error);
 										if(*Error==CL_SUCCESS)
 										{
 											*Error=clBuildProgram(PM->Program.ID,Devices,DeviceList,Option,NULL,NULL);
@@ -305,5 +305,5 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ N
 #endif
 
 #else
-static void _OCLC_Void_(void) {}
+static void _OCLC_Void_(void) { (void)(_OCLC_Void_);return; }
 #endif

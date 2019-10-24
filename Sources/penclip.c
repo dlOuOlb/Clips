@@ -1,24 +1,30 @@
-﻿#define __STDC_WANT_LIB_EXT1__ (1)
+﻿#include "penclip.h"
+
 #include <assert.h>
-#include <uchar.h>
-#include "penclip.h"
+#include <limits.h>
+#include <stdint.h>
 
 #if(Fold_(Static Assertions))
+MemC_Type_Declare_(struct,penc_sn,PENC_SN);
+struct _penc_sn { penc_sn *Link[2];penc_sc Data; };
+
 static_assert((sizeof(text_08)==1),"sizeof(text_08) != 1");
 static_assert((sizeof(text_16)==2),"sizeof(text_16) != 2");
 static_assert((sizeof(integer)<=sizeof(address)),"sizeof(integer) > sizeof(address)");
 static_assert(+(LONG_MIN)<-(LONG_MAX),"|LONG_MIN| < |LONG_MAX|");
+static_assert((sizeof(penc_sn)==sizeof(penc_sl)),"sizeof(penc_sn) != sizeof(penc_sl)");
+static_assert((sizeof(penc_sn)==(sizeof(address)<<2)),"sizeof(penc_sn) != 4*sizeof(address)");
 #endif
 
 #if(Fold_(Definition:PenClip Macros))
 #define _PENC_ static
-#define _PENC_SC_MAX_ ((address)(((address)1)<<(sizeof(address)<<2)))
+#define _PENC_SC_MAX_ ((address)(((address)(1))<<(sizeof(address)<<2)))
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.10.17";
-static TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
-static TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
+_PENC_ BYTE_08 IdiomVersion[16]="Date:2019.10.24";
+_PENC_ TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
+_PENC_ TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};
 static TEXT_16 IdiomOpen16[16]={L'r',L'b',L'\0',L'\0',L'w',L'b',L'\0',L'\0',L'r',L't',L'\0',L'\0',L'w',L't',L'\0',L'\0'};
 #endif
@@ -115,19 +121,31 @@ _PENC_ logical _PenC_Writer_1D_T16_(GENERAL _PL_ Line,TEXT_16 _PL_ Name,ADDRESS 
 
 _PENC_ FILE *PenC_File_Opener_T08_(TEXT_08 _PL_ Name,TEXT_08 _PL_ Mode)
 {
-	FILE *File=NULL;
+	FILE *File;
 	
-	fopen_s(&File,Name,Mode);
-	
-	return File;
+	return ((fopen_s(&File,Name,Mode))?(NULL):(File));
 }
 _PENC_ FILE *PenC_File_Opener_T16_(TEXT_16 _PL_ Name,TEXT_16 _PL_ Mode)
 {
-	FILE *File=NULL;
+#if defined(_MSC_BUILD)||defined(__POCC__)
+	FILE *File;
 
-	_wfopen_s(&File,Name,Mode);
+	return ((_wfopen_s(&File,Name,Mode))?(NULL):(File));
+#else
+	text_08 NameCast[FILENAME_MAX];
 
-	return File;
+	if(PenC.String.Caster.T16_T08_(Name,NameCast,FILENAME_MAX,FILENAME_MAX))
+	{
+		text_08 ModeCast[4];
+
+		if(PenC.String.Caster.T16_T08_(Mode,ModeCast,4,4))
+			return PenC_File_Opener_T08_(NameCast,ModeCast);
+		else;
+	}
+	else;
+
+	return NULL;
+#endif
 }
 _PENC_ integer PenC_File_Closer_(FILE *_PL_ File)
 {
@@ -150,7 +168,7 @@ _PENC_ address _PenC_File_Writer_(FILE _PL_ File,GENERAL _PL_ Buffer,ADDRESS Ele
 }
 _PENC_ address _PenC_File_Reader_(FILE _PL_ File,general _PL_ Buffer,ADDRESS Elements,ADDRESS TypeSize)
 {
-	return fread_s(Buffer,Elements*TypeSize,TypeSize,Elements,File);
+	return fread(Buffer,TypeSize,Elements,File);
 }
 
 _PENC_ integer _PenC_File_Jumper_(FILE _PL_ File,ADDRESS Nums,ADDRESS Size)
@@ -311,11 +329,11 @@ _PENC_ address PenC_File_Length_T16_(TEXT_16 _PL_ Name)
 
 _PENC_ address PenC_Stream_Buffer_T08_(LOGICAL Mode,FILE _PL_ Stream,text_08 _PL_ Buffer,ADDRESS Capacity)
 {
-	return ((Mode)?((Stream)?((address)fgets(Buffer,(integer)(Capacity),Stream)):((address)gets_s(Buffer,(rsize_t)(Capacity)))):((Stream)?((address)fputs(Buffer,Stream)):((address)puts(Buffer))));
+	return ((Mode)?((address)fgets(Buffer,(Capacity<INT_MAX)?((INTEGER)(Capacity)):(INT_MAX),(Stream)?(Stream):(stdin))):((address)fputs(Buffer,(Stream)?(Stream):(stdout))));
 }
 _PENC_ address PenC_Stream_Buffer_T16_(LOGICAL Mode,FILE _PL_ Stream,text_16 _PL_ Buffer,ADDRESS Capacity)
 {
-	return ((Mode)?((Stream)?((address)fgetws(Buffer,(integer)(Capacity),Stream)):((address)_getws_s(Buffer,Capacity))):((Stream)?((address)fputws(Buffer,Stream)):((address)_putws(Buffer))));
+	return ((Mode)?((address)fgetws(Buffer,(Capacity<INT_MAX)?((INTEGER)(Capacity)):(INT_MAX),(Stream)?(Stream):(stdin))):((address)fputws(Buffer,(Stream)?(Stream):(stdout))));
 }
 
 _PENC_ logical PenC_Object_Save_T08_(TEXT_08 _PL_ Name,logical(_PL_ Save_)(FILE _PL_,GENERAL _PL_ _R_),GENERAL _PL_ _R_ Object,LOGICAL Mode)
@@ -409,19 +427,49 @@ _PENC_ text_16 *PenC_Finder_T16_(text_16 _PL_ Buffer,TEXT_16 Value,ADDRESS Count
 #endif
 
 #if(Fold_(Definition:String Functions))
-_PENC_ logical PenC_String_Caster_T08_T16_(TEXT_08 *StringS,text_16 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
+_PENC_ logical PenC_String_Caster_T08_T16_(TEXT_08 _PL_ StringS,text_16 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
 {
-	mbstate_t State={0};
-	size_t Length;
+	address Lng;
 
-	return (mbsrtowcs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State)==0);
+	{
+		TEXT_08 *PinS=StringS;
+		mbstate_t State={0};
+
+		if(mbsrtowcs_s(&Lng,NULL,0,&PinS,0,&State))
+			return 0;
+		else if(Lng<CapacityS)
+			Lng++;
+		else
+			return 0;
+	}
+	{
+		TEXT_08 *PinS=StringS;
+		mbstate_t State={0};
+
+		return (mbsrtowcs_s(&Lng,StringT,CapacityT,&PinS,Lng,&State)==0);
+	}
 }
-_PENC_ logical PenC_String_Caster_T16_T08_(TEXT_16 *StringS,text_08 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
+_PENC_ logical PenC_String_Caster_T16_T08_(TEXT_16 _PL_ StringS,text_08 _PL_ StringT,ADDRESS CapacityS,ADDRESS CapacityT)
 {
-	mbstate_t State={0};
-	size_t Length;
+	address Lng;
 
-	return (wcsrtombs_s(&Length,StringT,CapacityT,&StringS,CapacityS,&State)==0);
+	{
+		TEXT_16 *PinS=StringS;
+		mbstate_t State={0};
+
+		if(wcsrtombs_s(&Lng,NULL,0,&PinS,0,&State))
+			return 0;
+		else if(Lng<CapacityS)
+			Lng++;
+		else
+			return 0;
+	}
+	{
+		TEXT_16 *PinS=StringS;
+		mbstate_t State={0};
+
+		return (wcsrtombs_s(&Lng,StringT,CapacityT,&PinS,Lng,&State)==0);
+	}
 }
 
 _PENC_ address PenC_String_Length_T08_(TEXT_08 _PL_ String,ADDRESS Capacity)
@@ -474,15 +522,6 @@ _PENC_ integer PenC_String_Compar_T16_(TEXT_16 _PL_ A,TEXT_16 _PL_ B)
 _PENC_ general PenC_Delete_(general *_PL_ Object) { MemC_Deloc_(*Object); }
 
 #if(Fold_(Part:PenC_SC))
-_PENC_ penc_sc _PenC_SC_Assign_(GENERAL _PL_ String,ADDRESS Capacity)
-{
-	penc_sc SC;
-
-	Acs_(address,SC.Capacity)=Capacity;
-	Acs_(GENERAL*,SC.String.X)=String;
-
-	return SC;
-}
 static general _PenC_SC_Bound_(PENC_SC _PL_ SC)
 {
 	address Temp=SC->Capacity;
@@ -600,10 +639,6 @@ _PENC_ address PenC_SC_Stream_T16_(LOGICAL Mode,PENC_SC _PL_ SC,FILE _PL_ Stream
 #endif
 
 #if(Fold_(Part:PenC_SL))
-MemC_Type_Declare_(struct,penc_sn,PENC_SN);
-struct _penc_sn { penc_sn *Link[2];penc_sc Data; };
-static_assert((sizeof(penc_sn)==sizeof(penc_sl)),"sizeof(penc_sn) != sizeof(penc_sl)");
-
 _PENC_ penc_sl *PenC_SL_Create_(ADDRESS Chunks)
 {
 	penc_sl _PL_ SL=MemC.Alloc.Byte_(MemC.Size.Mul_(Chunks+1,sizeof(penc_sn)));
@@ -675,7 +710,7 @@ static penc_sn *_PenC_SN_Search_Space_(penc_sn *_R_ Ptr,ADDRESS Demand)
 {
 	penc_sn *Mark=NULL;
 
-	for(address Temp=(address)FULL;Ptr;Ptr=Ptr->Link[1])
+	for(address Temp=SIZE_MAX;Ptr;Ptr=Ptr->Link[1])
 		if(Ptr->Data.String.X);
 		else if(Demand>Ptr->Data.Capacity);
 		else if(Temp>Ptr->Data.Capacity)
@@ -701,10 +736,11 @@ static address _PenC_SN_Search_Size_(penc_sn *_R_ Ptr)
 }
 static penc_sn *_PenC_SN_Search_Node_(penc_sn *_R_ Ptr,PENC_SC _PL_ SC)
 {
-	for(;Ptr;Ptr=Ptr->Link[1])
+	while(Ptr)
 		if(&(Ptr->Data)==SC)
 			break;
-		else;
+		else
+			Ptr=Ptr->Link[1];
 
 	return Ptr;
 }
@@ -786,7 +822,7 @@ static address _PenC_SN_Return_(penc_sn *_PL_ Node)
 
 	return Return;
 }
-_PENC_ penc_sc *PenC_SL_Borrow_(PENC_SL _PL_ SL,ADDRESS Demand)
+_PENC_ penc_sc *PenC_SL_Borrow_(penc_sl _PL_ SL,ADDRESS Demand)
 {
 	if(SL)
 		if(Demand<_PENC_SC_MAX_)
@@ -819,7 +855,7 @@ _PENC_ penc_sc *PenC_SL_Borrow_(PENC_SL _PL_ SL,ADDRESS Demand)
 
 	return NULL;
 }
-_PENC_ logical PenC_SL_Return_(PENC_SL _PL_ SL,PENC_SC *_PL_ SC)
+_PENC_ logical PenC_SL_Return_(penc_sl _PL_ SL,penc_sc *_PL_ SC)
 {
 	if(SL)
 		if(*SC)
@@ -845,31 +881,31 @@ _PENC_ logical PenC_SL_Return_(PENC_SL _PL_ SL,PENC_SC *_PL_ SC)
 	return 0;
 }
 
-_PENC_ penc_sc *PenC_SL_Borrow_Copier_T08_(PENC_SL _PL_ SL,PENC_SC _PL_ Source)
+_PENC_ penc_sc *PenC_SL_Borrow_Copier_T08_(penc_sl _PL_ SL,PENC_SC _PL_ Source)
 {
 	penc_sc *Target=PenC_SL_Borrow_(SL,PenC_SC_Length_T08_(Source)+1);
 
 	if(Target)
 		if(PenC_SC_Copier_T08_(Source,Target));
 		else
-			PenC_SL_Return_(SL,(PENC_SC**)&Target);
+			PenC_SL_Return_(SL,&Target);
 	else;
 
 	return Target;
 }
-_PENC_ penc_sc *PenC_SL_Borrow_Copier_T16_(PENC_SL _PL_ SL,PENC_SC _PL_ Source)
+_PENC_ penc_sc *PenC_SL_Borrow_Copier_T16_(penc_sl _PL_ SL,PENC_SC _PL_ Source)
 {
 	penc_sc *Target=PenC_SL_Borrow_(SL,(PenC_SC_Length_T16_(Source)+1)<<1);
 
 	if(Target)
 		if(PenC_SC_Copier_T16_(Source,Target));
 		else
-			PenC_SL_Return_(SL,(PENC_SC**)&Target);
+			PenC_SL_Return_(SL,&Target);
 	else;
 
 	return Target;
 }
-_PENC_ penc_sc *PenC_SL_Borrow_Concat_T08_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,PENC_SC _PL_ Latter)
+_PENC_ penc_sc *PenC_SL_Borrow_Concat_T08_(penc_sl _PL_ SL,PENC_SC _PL_ Former,PENC_SC _PL_ Latter)
 {
 	penc_sc *Concat=PenC_SL_Borrow_(SL,PenC_SC_Length_T08_(Former)+PenC_SC_Length_T08_(Latter)+1);
 
@@ -877,14 +913,14 @@ _PENC_ penc_sc *PenC_SL_Borrow_Concat_T08_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,P
 		if(PenC_SC_Copier_T08_(Concat,Former))
 			if(PenC_SC_Concat_T08_(Concat,Latter));
 			else
-				PenC_SL_Return_(SL,(PENC_SC**)&Concat);
+				PenC_SL_Return_(SL,&Concat);
 		else
-			PenC_SL_Return_(SL,(PENC_SC**)&Concat);
+			PenC_SL_Return_(SL,&Concat);
 	else;
 
 	return Concat;
 }
-_PENC_ penc_sc *PenC_SL_Borrow_Concat_T16_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,PENC_SC _PL_ Latter)
+_PENC_ penc_sc *PenC_SL_Borrow_Concat_T16_(penc_sl _PL_ SL,PENC_SC _PL_ Former,PENC_SC _PL_ Latter)
 {
 	penc_sc *Concat=PenC_SL_Borrow_(SL,(PenC_SC_Length_T16_(Former)+PenC_SC_Length_T16_(Latter)+1)<<1);
 
@@ -892,9 +928,9 @@ _PENC_ penc_sc *PenC_SL_Borrow_Concat_T16_(PENC_SL _PL_ SL,PENC_SC _PL_ Former,P
 		if(PenC_SC_Copier_T16_(Concat,Former))
 			if(PenC_SC_Concat_T16_(Concat,Latter));
 			else
-				PenC_SL_Return_(SL,(PENC_SC**)&Concat);
+				PenC_SL_Return_(SL,&Concat);
 		else
-			PenC_SL_Return_(SL,(PENC_SC**)&Concat);
+			PenC_SL_Return_(SL,&Concat);
 	else;
 
 	return Concat;
@@ -1071,7 +1107,6 @@ PENCASE PenC=
 	},
 	.SC=
 	{
-		.Assign_=_PenC_SC_Assign_,
 		.Create_=PenC_SC_Create_,
 		.Delete_=MemC_Func_Casting_(general,PenC_Delete_,penc_sc*_PL_),
 		.Init_=PenC_SC_Init_,

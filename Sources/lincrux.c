@@ -36,6 +36,8 @@ _LINC_ general LinC_Oper_(LinC_Op_,0,TXX)(type_xx *_R_ Line,TYPE_XX Start,TYPE_X
 			Line[1]=LinC_Op_(Line[0],Step);
 	}
 	else;
+
+	return;
 }
 #endif
 #endif
@@ -47,6 +49,8 @@ _K_ LinC_Oper_(LinC_Op_,1,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 	_P_ OCLCLIP Select=Work_From_(Amount);
 
 	CData[Work_Into_(Select,CStart,CShape)]=LinC_Op_(AData[Work_Into_(Select,AStart,AShape)],Value);
+
+	return;
 }
 #else
 _LINC_ general LinC_Oper_(LinC_Op_,1,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX Value,ADDRESS Length)
@@ -66,6 +70,8 @@ _LINC_ general LinC_Oper_(LinC_Op_,1,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX 
 	}
 	for(End+=(Length&BitC.Const.Mask.Rest[3]);LineA<End;LineA++,LineC++)
 		LineC[0]=LinC_Op_(LineA[0],Value);
+
+	return;
 }
 #endif
 #endif
@@ -77,6 +83,8 @@ _K_ LinC_Oper_(LinC_Op_,2,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G_
 	_P_ OCLCLIP Select=Work_From_(Amount);
 
 	CData[Work_Into_(Select,CStart,CShape)]=LinC_Op_(AData[Work_Into_(Select,AStart,AShape)],BData[Work_Into_(Select,BStart,BShape)]);
+
+	return;
 }
 #else
 _LINC_ general LinC_Oper_(LinC_Op_,2,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX *LineB,ADDRESS Length)
@@ -96,6 +104,8 @@ _LINC_ general LinC_Oper_(LinC_Op_,2,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX 
 	}
 	for(End+=(Length&BitC.Const.Mask.Rest[3]);LineA<End;LineA++,LineB++,LineC++)
 		LineC[0]=LinC_Op_(LineA[0],LineB[0]);
+
+	return;
 }
 #endif
 #endif
@@ -131,6 +141,8 @@ _K_ LinC_Func_(LinC_Sum_1_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P
 	if(LStart);
 	else
 		CData[Work_Into_(LSelect,CStart,CShape)]=Value;
+
+	return;
 }
 _K_ LinC_Func_(LinC_Dot_2_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G_ TYPE_XX _PL_ BData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP BStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,_P_ OCLCLIP BShape,_P_ OCLC_PA Axis,_L_ type_xx _PL_ LData)
 {
@@ -165,6 +177,8 @@ _K_ LinC_Func_(LinC_Dot_2_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G
 	if(LStart);
 	else
 		CData[Work_Into_(LSelect,CStart,CShape)]=Value;
+
+	return;
 }
 #else
 _LINC_ type_xx LinC_Func_(LinC_Sum_1_,TXX)(TYPE_XX *_R_ Line,ADDRESS Length)
@@ -292,6 +306,8 @@ _K_ LinC_Oper_(LinC_Op_,1,TXX)(_G_ address _PL_ IData,_G_ TYPE_XX _PL_ AData,_P_
 	if(LStart);
 	else
 		IData[Work_Into_(LSelect,IStart,IShape)]=Index;
+
+	return;
 }
 #else
 _LINC_ address LinC_Oper_(LinC_Op_,1,TXX)(TYPE_XX _PL_ Line,ADDRESS Length)
@@ -332,6 +348,8 @@ _K_ LinC_Func_(LinC_Map_1_,TXX)(_G_ type_xx _PL_ CData,_G_ ADDRESS _PL_ IData,_G
 	_P_ TYPE_XX Value=(Index<Length)?(AData[Work_Into_(Select,AStart,AShape)]):(~0);Select.S[Axis]-=Index;
 
 	CData[Work_Into_(Select,CStart,CShape)]=Value;
+
+	return;
 }
 #else
 _LINC_ general LinC_Func_(LinC_Map_1_,TXX)(type_xx *_R_ Line,ADDRESS *_R_ Index,TYPE_XX _PL_ Table,ADDRESS Length)
@@ -351,14 +369,18 @@ _LINC_ general LinC_Func_(LinC_Map_1_,TXX)(type_xx *_R_ Line,ADDRESS *_R_ Index,
 	}
 	for(End+=(Length&BitC.Const.Mask.Rest[3]);Index<End;Index++,Line++)
 		Line[0]=Table[Index[0]];
+
+	return;
 }
 
-static inline general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ _R_ A)
+static general LinC_Func_(_LinC_Swap_,TXX)(type_xx _PL_ _R_ A)
 {
 	TYPE_XX Temp=A[0];
 
 	A[0]=A[1];
 	A[1]=Temp;
+
+	return;
 }
 static type_xx *LinC_Func_(_LinC_Radix_M0_,TXX)(type_xx *_R_ ValueFirst,address *_R_ IndexFirst,TYPE_XX *_R_ ValueMess,ADDRESS *_R_ IndexMess,ADDRESS Length,TYPE_XX Scan)
 {
@@ -422,7 +444,7 @@ static type_xx *LinC_Func_(_LinC_Radix_Lite_M1_,TXX)(type_xx *_R_ ValueFirst,TYP
 
 	return ValueFirst;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Here_M0_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA)
+static general LinC_Func_(_LinC_Sort_2_Here_M0_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA)
 {
 	if(ValueA[0]<ValueA[1]);
 	else
@@ -430,8 +452,10 @@ static inline general LinC_Func_(_LinC_Sort_2_Here_M0_,TXX)(type_xx _PL_ _R_ Val
 		LinC_Func_(_LinC_Swap_,TXX)(ValueA);
 		_LinC_Swap_Address_(IndexA);
 	}
+
+	return;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Here_M1_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA)
+static general LinC_Func_(_LinC_Sort_2_Here_M1_,TXX)(type_xx _PL_ _R_ ValueA,address _PL_ _R_ IndexA)
 {
 	if(ValueA[0]<ValueA[1])
 	{
@@ -439,20 +463,26 @@ static inline general LinC_Func_(_LinC_Sort_2_Here_M1_,TXX)(type_xx _PL_ _R_ Val
 		_LinC_Swap_Address_(IndexA);
 	}
 	else;
+
+	return;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Here_Lite_M0_,TXX)(type_xx _PL_ _R_ ValueA)
+static general LinC_Func_(_LinC_Sort_2_Here_Lite_M0_,TXX)(type_xx _PL_ _R_ ValueA)
 {
 	if(ValueA[0]<ValueA[1]);
 	else
 		LinC_Func_(_LinC_Swap_,TXX)(ValueA);
+
+	return;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Here_Lite_M1_,TXX)(type_xx _PL_ _R_ ValueA)
+static general LinC_Func_(_LinC_Sort_2_Here_Lite_M1_,TXX)(type_xx _PL_ _R_ ValueA)
 {
 	if(ValueA[0]<ValueA[1])
 		LinC_Func_(_LinC_Swap_,TXX)(ValueA);
 	else;
+
+	return;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Move_M0_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB)
+static general LinC_Func_(_LinC_Sort_2_Move_M0_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB)
 {
 	if(ValueA[0]<ValueA[1])
 	{
@@ -470,8 +500,10 @@ static inline general LinC_Func_(_LinC_Sort_2_Move_M0_,TXX)(type_xx _PL_ _R_ Val
 		IndexB[0]=IndexA[1];
 		IndexB[1]=IndexA[0];
 	}
+
+	return;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Move_M1_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB)
+static general LinC_Func_(_LinC_Sort_2_Move_M1_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB,address _PL_ _R_ IndexA,address _PL_ _R_ IndexB)
 {
 	if(ValueA[0]<ValueA[1])
 	{
@@ -489,8 +521,10 @@ static inline general LinC_Func_(_LinC_Sort_2_Move_M1_,TXX)(type_xx _PL_ _R_ Val
 		IndexB[0]=IndexA[0];
 		IndexB[1]=IndexA[1];
 	}
+
+	return;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Move_Lite_M0_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB)
+static general LinC_Func_(_LinC_Sort_2_Move_Lite_M0_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB)
 {
 	if(ValueA[0]<ValueA[1])
 	{
@@ -502,8 +536,10 @@ static inline general LinC_Func_(_LinC_Sort_2_Move_Lite_M0_,TXX)(type_xx _PL_ _R
 		ValueB[0]=ValueA[1];
 		ValueB[1]=ValueA[0];
 	}
+
+	return;
 }
-static inline general LinC_Func_(_LinC_Sort_2_Move_Lite_M1_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB)
+static general LinC_Func_(_LinC_Sort_2_Move_Lite_M1_,TXX)(type_xx _PL_ _R_ ValueA,type_xx _PL_ _R_ ValueB)
 {
 	if(ValueA[0]<ValueA[1])
 	{
@@ -515,14 +551,14 @@ static inline general LinC_Func_(_LinC_Sort_2_Move_Lite_M1_,TXX)(type_xx _PL_ _R
 		ValueB[0]=ValueA[0];
 		ValueB[1]=ValueA[1];
 	}
+
+	return;
 }
 static general LinC_Func_(_LinC_Recur_M0_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,integer Bits)
 {
 	address Offset=LinC_Func_(_LinC_Radix_M0_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
-	if(Bits)
-	{
-		Bits--;
+	if(Bits--)
 		if(Bits&1)
 			switch(Offset)
 			{
@@ -583,15 +619,15 @@ JUMP_B:
 				case 0:;
 				}
 			}
-	}
+	else;
+
+	return;
 }
 static general LinC_Func_(_LinC_Recur_M1_,TXX)(type_xx *_R_ ValueSource,address *_R_ IndexSource,type_xx *_R_ ValueTarget,address *_R_ IndexTarget,ADDRESS Length,integer Bits)
 {
 	address Offset=LinC_Func_(_LinC_Radix_M1_,TXX)(ValueTarget,IndexTarget,ValueSource,IndexSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
-	if(Bits)
-	{
-		Bits--;
+	if(Bits--)
 		if(Bits&1)
 			switch(Offset)
 			{
@@ -652,15 +688,15 @@ JUMP_B:
 				case 0:;
 				}
 			}
-	}
+	else;
+
+	return;
 }
 static general LinC_Func_(_LinC_Recur_Lite_M0_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,integer Bits)
 {
 	address Offset=LinC_Func_(_LinC_Radix_Lite_M0_,TXX)(ValueTarget,ValueSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
-	if(Bits)
-	{
-		Bits--;
+	if(Bits--)
 		if(Bits&1)
 			switch(Offset)
 			{
@@ -715,15 +751,15 @@ JUMP_B:
 				case 0:;
 				}
 			}
-	}
+	else;
+
+	return;
 }
 static general LinC_Func_(_LinC_Recur_Lite_M1_,TXX)(type_xx *_R_ ValueSource,type_xx *_R_ ValueTarget,ADDRESS Length,integer Bits)
 {
 	address Offset=LinC_Func_(_LinC_Radix_Lite_M1_,TXX)(ValueTarget,ValueSource,Length,((type_xx)1)<<((type_xx)Bits))-ValueTarget;
 
-	if(Bits)
-	{
-		Bits--;
+	if(Bits--)
 		if(Bits&1)
 			switch(Offset)
 			{
@@ -778,7 +814,9 @@ JUMP_B:
 				case 0:;
 				}
 			}
-	}
+	else;
+
+	return;
 }
 #endif
 #endif
@@ -873,6 +911,6 @@ JUMP_B:
 #ifdef __OPENCL_VERSION__
 #error This template cannot be built directly.
 #else
-static void _LinC_Void_(void) { (void)(_LinC_Void_); }
+static void _LinC_Void_(void) { (void)(_LinC_Void_);return; }
 #endif
 #endif

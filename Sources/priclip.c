@@ -1,5 +1,6 @@
-﻿#include <assert.h>
-#include "priclip.h"
+﻿#include "priclip.h"
+
+#include <assert.h>
 
 #if(Fold_(Definition:PriClip Macros))
 #define _PRIC_ static
@@ -19,7 +20,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-_PRIC_ BYTE_08 IdiomVersion[16]="2019.10.17";
+_PRIC_ BYTE_08 IdiomVersion[16]="2019.10.24";
 static DATA_32 TableBreak[64]=
 {
 	0x00000001,0x00000001,0x00000002,0x00000002,0x00000003,0x00000004,0x00000006,0x00000008,

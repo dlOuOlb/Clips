@@ -7,7 +7,7 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ LinClip=&LinClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.08.05";
+static BYTE_08 IdiomVersion[16]="Date:2019.10.24";
 #endif
 
 #if(Fold_(Domain:Host))
@@ -122,12 +122,14 @@ static BYTE_08 IdiomVersion[16]="Date:2019.08.05";
 #endif
 
 #if(Fold_(Part:Mapping and Radix Sorting Functions))
-static inline general _LinC_Swap_Address_(address _PL_ _R_ A)
+static general _LinC_Swap_Address_(address _PL_ _R_ A)
 {
 	ADDRESS Temp=A[0];
 
 	A[0]=A[1];
 	A[1]=Temp;
+
+	return;
 }
 
 #define _LinC_Mapping_
@@ -153,6 +155,8 @@ _LINC_ general LinC_Order_D08_(data_08 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			((Mode)?(_LinC_Recur_Lite_M1_D08_):(_LinC_Recur_Lite_M0_D08_))(Line,ValueTemp,Length,7);
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -171,6 +175,8 @@ _LINC_ general LinC_Order_D16_(data_16 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			((Mode)?(_LinC_Recur_Lite_M1_D16_):(_LinC_Recur_Lite_M0_D16_))(Line,ValueTemp,Length,15);
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -189,6 +195,8 @@ _LINC_ general LinC_Order_D32_(data_32 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			((Mode)?(_LinC_Recur_Lite_M1_D32_):(_LinC_Recur_Lite_M0_D32_))(Line,ValueTemp,Length,31);
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -207,6 +215,8 @@ _LINC_ general LinC_Order_D64_(data_64 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			((Mode)?(_LinC_Recur_Lite_M1_D64_):(_LinC_Recur_Lite_M0_D64_))(Line,ValueTemp,Length,63);
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_I08_(inte_08 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -241,6 +251,8 @@ _LINC_ general LinC_Order_I08_(inte_08 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			else;
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_I16_(inte_16 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -275,6 +287,8 @@ _LINC_ general LinC_Order_I16_(inte_16 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			else;
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_I32_(inte_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -309,6 +323,8 @@ _LINC_ general LinC_Order_I32_(inte_32 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			else;
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_I64_(inte_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -343,6 +359,8 @@ _LINC_ general LinC_Order_I64_(inte_64 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			else;
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_R32_(real_32 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -375,6 +393,8 @@ _LINC_ general LinC_Order_R32_(real_32 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			else;
 		}
 	else;
+
+	return;
 }
 _LINC_ general LinC_Order_R64_(real_64 _PL_ _R_ Line,address _PL_ _R_ Index,general _PL_ _R_ Buffer,ADDRESS Length,LOGICAL Mode)
 {
@@ -407,6 +427,8 @@ _LINC_ general LinC_Order_R64_(real_64 _PL_ _R_ Line,address _PL_ _R_ Index,gene
 			else;
 		}
 	else;
+
+	return;
 }
 #endif
 
@@ -529,6 +551,8 @@ _LINC_ general LinC_CL_Build_T08_(const cl_context Context,BYTE_08 _PL_ BuildOpt
 			Error->E=CLOutOfHostMemory;
 	}
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Build_T16_(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
 {
@@ -558,6 +582,8 @@ _LINC_ general LinC_CL_Build_T16_(const cl_context Context,BYTE_08 _PL_ BuildOpt
 			Error->E=CLOutOfHostMemory;
 	}
 	else;
+
+	return;
 }
 
 _LINC_ oclc_pm *LinC_CL_Create_T08_(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ Stream,oclc_ef _PL_ Error)
@@ -627,7 +653,7 @@ _LINC_ oclc_pm *LinC_CL_Create_T16_(const cl_context Context,BYTE_08 _PL_ BuildO
 #endif
 
 #if(Fold_(Part:Internal Functions))
-static inline address _LinC_CL_Min_(ADDRESS A,ADDRESS B,ADDRESS C)
+static address _LinC_CL_Min_(ADDRESS A,ADDRESS B,ADDRESS C)
 {
 	return ((A<B)?((A<C)?(A):(C)):((B<C)?(B):(C)));
 }
@@ -660,7 +686,7 @@ static address _LinC_CL_Work_Nums_(const cl_device_id Device,ADDRESS Length,ADDR
 
 	return _LinC_CL_Work_Safe_(_LinC_CL_Min_(Length,(address)MaxWorkGroupSize,((address)LocalMemSize)/Unit));
 }
-static inline OCLC_MP *_LinC_CL_Pin_Default_(OCLC_MP _PL_ Pin,OCLC_MP _PL_ Default)
+static OCLC_MP *_LinC_CL_Pin_Default_(OCLC_MP _PL_ Pin,OCLC_MP _PL_ Default)
 {
 	return ((Pin)?(Pin):(Default));
 }
@@ -693,6 +719,8 @@ static general _LinC_CL_Set_1_(const cl_command_queue Queue,const cl_kernel Kern
 		OCLC.Kernel.Arg.P_(Kernel,5,BitCL.Pin_(AShp,Buffer,Bits),PinSize,Error);
 		OCLC.Kernel.Arg.P_(Kernel,6,BitCL.Pin_(BShp,Buffer,Bits),PinSize,Error);
 	}
+
+	return;
 }
 static general _LinC_CL_Set_2_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MH _PL_ CDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
@@ -732,12 +760,14 @@ static general _LinC_CL_Set_2_(const cl_command_queue Queue,const cl_kernel Kern
 		OCLC.Kernel.Arg.P_(Kernel,8,BitCL.Pin_(BShp,Buffer,Bits),PinSize,Error);
 		OCLC.Kernel.Arg.P_(Kernel,9,BitCL.Pin_(CShp,Buffer,Bits),PinSize,Error);
 	}
+
+	return;
 }
-static inline cl_int _LinC_CL_Enqueue_(const cl_command_queue Queue,const cl_kernel Kernel,ADDRESS Total)
+static cl_int _LinC_CL_Enqueue_(const cl_command_queue Queue,const cl_kernel Kernel,ADDRESS Total)
 {
 	return clEnqueueNDRangeKernel(Queue,Kernel,1,NULL,&Total,NULL,0,NULL,NULL);
 }
-static inline cl_int _LinC_CL_Enqueue_Local_(const cl_command_queue Queue,const cl_kernel Kernel,ADDRESS Local,ADDRESS Total)
+static cl_int _LinC_CL_Enqueue_Local_(const cl_command_queue Queue,const cl_kernel Kernel,ADDRESS Local,ADDRESS Total)
 {
 	return clEnqueueNDRangeKernel(Queue,Kernel,1,NULL,&Total,&Local,0,NULL,NULL);
 }
@@ -773,6 +803,8 @@ _LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
@@ -803,6 +835,8 @@ _LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 #endif
 
@@ -838,6 +872,8 @@ _LINC_ general LinC_CL_Add_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Sub_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
@@ -870,6 +906,8 @@ _LINC_ general LinC_CL_Sub_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Mul_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
@@ -902,6 +940,8 @@ _LINC_ general LinC_CL_Mul_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 #endif
 
@@ -937,6 +977,8 @@ _LINC_ general LinC_CL_Div_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
@@ -969,6 +1011,8 @@ _LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
 {
@@ -999,6 +1043,8 @@ _LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 #endif
 
@@ -1034,6 +1080,8 @@ _LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 #endif
 
@@ -1077,6 +1125,8 @@ static general _LinC_CL_Set_Enq_Sum_1_(const cl_command_queue Queue,const cl_ker
 			Error->I=_LinC_CL_Enqueue_Local_(Queue,Kernel,Work,Work*(OCLC.MP.Total_(ARegion)/Length));
 		else;
 	}
+
+	return;
 }
 _LINC_ general LinC_CL_Sum_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
@@ -1108,6 +1158,8 @@ _LINC_ general LinC_CL_Sum_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 
 static general _LinC_CL_Set_Enq_Dot_2_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
@@ -1158,6 +1210,8 @@ static general _LinC_CL_Set_Enq_Dot_2_(const cl_command_queue Queue,const cl_ker
 			Error->I=_LinC_CL_Enqueue_Local_(Queue,Kernel,Work,Work*(OCLC.MP.Total_(ARegion)/Length));
 		else;
 	}
+
+	return;
 }
 _LINC_ general LinC_CL_Dot_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
@@ -1192,6 +1246,8 @@ _LINC_ general LinC_CL_Dot_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 #endif
 
@@ -1243,6 +1299,8 @@ static general _LinC_CL_Set_Enq_M_M_1_(const cl_command_queue Queue,const cl_ker
 		else
 			Error->E=CLInvalidValue;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Max_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
@@ -1271,6 +1329,8 @@ _LINC_ general LinC_CL_Max_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Min_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
@@ -1299,33 +1359,27 @@ _LINC_ general LinC_CL_Min_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 #endif
 
 #if(Fold_(Part:Mapping Functions))
 static cl_kernel _LinC_CL_Map_1_Kernel_(OCLC_PM _PL_ PM,ADDRESS TypeSize)
 {
-	cl_kernel Kernel;
-
 	switch(TypeSize)
 	{
 	case 1:
-		Kernel=PM->Program.Kernel.List[LinCMap1D08].ID;
-		break;
+		return PM->Program.Kernel.List[LinCMap1D08].ID;
 	case 2:
-		Kernel=PM->Program.Kernel.List[LinCMap1D16].ID;
-		break;
+		return PM->Program.Kernel.List[LinCMap1D16].ID;
 	case 4:
-		Kernel=PM->Program.Kernel.List[LinCMap1D32].ID;
-		break;
+		return PM->Program.Kernel.List[LinCMap1D32].ID;
 	case 8:
-		Kernel=PM->Program.Kernel.List[LinCMap1D64].ID;
-		break;
+		return PM->Program.Kernel.List[LinCMap1D64].ID;
 	default:
-		Kernel=NULL;
+		return NULL;
 	}
-
-	return Kernel;
 }
 static general _LinC_CL_Set_Enq_Map_1_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ ARegion,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
@@ -1380,6 +1434,8 @@ static general _LinC_CL_Set_Enq_Map_1_(const cl_command_queue Queue,const cl_ker
 		else
 			Error->E=CLInvalidValue;
 	else;
+
+	return;
 }
 _LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ IDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,OCLC_PA Axis,oclc_ef _PL_ Error)
 {
@@ -1404,6 +1460,8 @@ _LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 		else
 			Error->E=CLInvalidHostPtr;
 	else;
+
+	return;
 }
 #endif
 

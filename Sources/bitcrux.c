@@ -40,11 +40,15 @@ _K_ BitC_Func_(BitC_Reform_,TXX)(_G_ TYPE_XX _PL_ SData,_G_ type_xx _PL_ TData,_
 	Select.X=Telect.S[StoTAxis.X];
 
 	TData[Work_Into_(Telect,TStart,TShape)]=SData[Work_Into_(Select,SStart,SShape)];
+
+	return;
 }
 #else
 _BITC_ general BitC_Func_(BitC_Copy_,TXX)(TYPE_XX *_R_ Source,type_xx *_R_ Target,ADDRESS Length)
 {
 	MemC_Copy_1D_(Source,Target,Length);
+
+	return;
 }
 #endif
 #endif
@@ -108,6 +112,7 @@ _BITC_ general BitC_Cast_(SOO,TXX)(SYPE_OO *_R_ DataI,type_xx *_R_ DataO,ADDRESS
 		*DataO=(type_xx)BitC_Gate_(*DataI,Min,Max);
 #endif
 #undef BitC_Gate_
+	return;
 }
 #endif
 #endif
@@ -119,6 +124,8 @@ _K_ BitC_Oper_(BitC_Op_,1,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 	_P_ OCLCLIP Select=Work_From_(Amount);
 
 	CData[Work_Into_(Select,CStart,CShape)]=BitC_Op_(AData[Work_Into_(Select,AStart,AShape)]);
+
+	return;
 }
 #else
 _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,ADDRESS Length)
@@ -146,6 +153,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,
 	for(End.C.D08+=(Length&ConstantRest[3]);PtrA.C.G<End.C.G;PtrA.C.D08++,PtrC.C.D08++)
 		PtrC.V.D08[0]=BitC_Op_(PtrA.C.D08[0]);
 #endif
+	return;
 }
 #endif
 #endif
@@ -158,6 +166,8 @@ _K_ BitC_Oper_(BitC_Op_,L,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 	_P_ OCLCLIP Select=Work_From_(Amount);
 
 	CData[Work_Into_(Select,CStart,CShape)]=AData[Work_Into_(Select,AStart,AShape)]<<Shift;
+
+	return;
 }
 #endif
 _K_ BitC_Oper_(BitC_Op_,R,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,INTEGER Shift)
@@ -165,6 +175,8 @@ _K_ BitC_Oper_(BitC_Op_,R,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 	_P_ OCLCLIP Select=Work_From_(Amount);
 
 	CData[Work_Into_(Select,CStart,CShape)]=AData[Work_Into_(Select,AStart,AShape)]>>Shift;
+
+	return;
 }
 #else
 _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx *DataC,TYPE_XX *DataA,integer Shift,ADDRESS Length)
@@ -172,37 +184,54 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx *DataC,TYPE_XX *DataA,integer 
 	TYPE_XX *End=DataA+(Length&ConstantSafe[3]);
 
 	if(Shift>0)
-	{
-		for(;DataA<End;DataA+=8,DataC+=8)
+		if((Shift=+Shift)<NXX)
 		{
-			DataC[0]=DataA[0]<<Shift;
-			DataC[1]=DataA[1]<<Shift;
-			DataC[2]=DataA[2]<<Shift;
-			DataC[3]=DataA[3]<<Shift;
-			DataC[4]=DataA[4]<<Shift;
-			DataC[5]=DataA[5]<<Shift;
-			DataC[6]=DataA[6]<<Shift;
-			DataC[7]=DataA[7]<<Shift;
+			TYPE_XX Cast=(TYPE_XX)(Shift);
+
+			for(;DataA<End;DataA+=8,DataC+=8)
+			{
+				DataC[0]=DataA[0]<<Cast;
+				DataC[1]=DataA[1]<<Cast;
+				DataC[2]=DataA[2]<<Cast;
+				DataC[3]=DataA[3]<<Cast;
+				DataC[4]=DataA[4]<<Cast;
+				DataC[5]=DataA[5]<<Cast;
+				DataC[6]=DataA[6]<<Cast;
+				DataC[7]=DataA[7]<<Cast;
+			}
+			for(End+=(Length&ConstantRest[3]);DataA<End;DataA++,DataC++)
+				DataC[0]=DataA[0]<<Cast;
 		}
-		for(End+=(Length&ConstantRest[3]);DataA<End;DataA++,DataC++)
-			DataC[0]=DataA[0]<<Shift;
-	}
-	else
-	{
-		for(Shift=-Shift;DataA<End;DataA+=8,DataC+=8)
+		else
+			memset(DataC,0x00,MemC_Size_(type_xx,Length));
+	else if(Shift<0)
+		if((Shift=-Shift)<NXX)
 		{
-			DataC[0]=DataA[0]>>Shift;
-			DataC[1]=DataA[1]>>Shift;
-			DataC[2]=DataA[2]>>Shift;
-			DataC[3]=DataA[3]>>Shift;
-			DataC[4]=DataA[4]>>Shift;
-			DataC[5]=DataA[5]>>Shift;
-			DataC[6]=DataA[6]>>Shift;
-			DataC[7]=DataA[7]>>Shift;
+			TYPE_XX Cast=(TYPE_XX)(Shift);
+
+			for(;DataA<End;DataA+=8,DataC+=8)
+			{
+				DataC[0]=DataA[0]>>Cast;
+				DataC[1]=DataA[1]>>Cast;
+				DataC[2]=DataA[2]>>Cast;
+				DataC[3]=DataA[3]>>Cast;
+				DataC[4]=DataA[4]>>Cast;
+				DataC[5]=DataA[5]>>Cast;
+				DataC[6]=DataA[6]>>Cast;
+				DataC[7]=DataA[7]>>Cast;
+			}
+			for(End+=(Length&ConstantRest[3]);DataA<End;DataA++,DataC++)
+				DataC[0]=DataA[0]>>Cast;
 		}
-		for(End+=(Length&ConstantRest[3]);DataA<End;DataA++,DataC++)
-			DataC[0]=DataA[0]>>Shift;
-	}
+		else
+#if(T()==D())
+			memset(DataC,0x00,MemC_Size_(type_xx,Length));
+#elif(T()==I())
+			memset(DataC,0xFF,MemC_Size_(type_xx,Length));
+#endif
+	else;
+
+	return;
 }
 #endif
 #endif
@@ -214,12 +243,16 @@ _K_ BitC_Oper_(BitC_Op_,1,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 	_P_ OCLCLIP Select=Work_From_(Amount);
 
 	CData[Work_Into_(Select,CStart,CShape)]=BitC_Op_(AData[Work_Into_(Select,AStart,AShape)],Mask);
+
+	return;
 }
 _K_ BitC_Oper_(BitC_Op_,2,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G_ TYPE_XX _PL_ BData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP BStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,_P_ OCLCLIP BShape)
 {
 	_P_ OCLCLIP Select=Work_From_(Amount);
 
 	CData[Work_Into_(Select,CStart,CShape)]=BitC_Op_(AData[Work_Into_(Select,AStart,AShape)],BData[Work_Into_(Select,BStart,BShape)]);
+
+	return;
 }
 #else
 _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,TYPE_XX Mask,ADDRESS Length)
@@ -244,6 +277,8 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,
 		PtrC.V.D64[0]=BitC_Op_(PtrA.C.D64[0],Wide);
 	for(End.C.TXX+=(Length&(+56/NXX));PtrA.C.G<End.C.G;PtrA.C.TXX++,PtrC.C.TXX++)
 		PtrC.V.TXX[0]=BitC_Op_(PtrA.C.TXX[0],Mask);
+
+	return;
 }
 _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,TYPE_XX _PL_ DataB,ADDRESS Length)
 {
@@ -271,6 +306,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,
 	for(End.C.D08+=(Length&ConstantRest[3]);PtrA.C.G<End.C.G;PtrA.C.D08++,PtrB.C.D08++,PtrC.C.D08++)
 		PtrC.V.D08[0]=BitC_Op_(PtrA.C.D08[0],PtrB.C.D08[0]);
 #endif
+	return;
 }
 #endif
 #endif
@@ -281,10 +317,9 @@ _BITC_ general BitC_Func_(BitC_Expand_,TXX)(DATA_08 *_R_ DataI,type_xx *_R_ Data
 {
 	ADDRESS Safe=Length&ConstantSafe[3];
 	ADDRESS Rest=Length&ConstantRest[3];
-	INTEGER Masker=NXX-1;
+	BitC_Type_(INTE,XX) Masker=NXX-1;
 	TYPE_XX *End=DataO+Safe;
-	BitC_Type_(inte,XX) TempA;
-	BitC_Type_(inte,XX) TempB;
+	BitC_Type_(inte,XX) TempA,TempB;
 
 	for(;DataO<End;DataI++,DataO+=8)
 	{
@@ -326,7 +361,7 @@ _BITC_ general BitC_Func_(BitC_Expand_,TXX)(DATA_08 *_R_ DataI,type_xx *_R_ Data
 	{
 		End+=Rest;
 		TempA=(BitC_Type_(inte,XX))(DataI[0]);
-		for(integer Shift=Masker;DataO<End;DataO++,Shift--)
+		for(BitC_Type_(inte,XX) Shift=Masker;DataO<End;DataO++,Shift--)
 		{
 			TempB=TempA<<Shift;
 			TempB>>=Masker;
@@ -334,6 +369,8 @@ _BITC_ general BitC_Func_(BitC_Expand_,TXX)(DATA_08 *_R_ DataI,type_xx *_R_ Data
 		}
 	}
 	else;
+
+	return;
 }
 #endif
 #endif
@@ -346,6 +383,8 @@ _K_ BitC_Oper_(BitC_Op_,1,TXX)(_G_ BitC_Type_(inte,XX) _PL_ CData,_G_ TYPE_XX _P
 	_P_ BitC_Type_(INTE,XX) Temp=BitC_Op_(AData[Work_Into_(Select,AStart,AShape)],Value);
 
 	CData[Work_Into_(Select,CStart,CShape)]=-Temp;
+
+	return;
 }
 _K_ BitC_Oper_(BitC_Op_,2,TXX)(_G_ BitC_Type_(inte,XX) _PL_ CData,_G_ TYPE_XX _PL_ AData,_G_ TYPE_XX _PL_ BData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP BStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,_P_ OCLCLIP BShape)
 {
@@ -353,6 +392,8 @@ _K_ BitC_Oper_(BitC_Op_,2,TXX)(_G_ BitC_Type_(inte,XX) _PL_ CData,_G_ TYPE_XX _P
 	_P_ BitC_Type_(INTE,XX) Temp=BitC_Op_(AData[Work_Into_(Select,AStart,AShape)],BData[Work_Into_(Select,BStart,BShape)]);
 
 	CData[Work_Into_(Select,CStart,CShape)]=-Temp;
+
+	return;
 }
 #else
 _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,TYPE_XX Value,ADDRESS Length)
@@ -377,18 +418,22 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 	}
 	if(Rest)
 	{
+		DATA_08 Bound=(DATA_08)(Rest);
+
 		Mask.V.D64[0]=0;
-		for(address Index=0;Index<Rest;Index++)
+		for(data_08 Index=0;Index<Bound;Index++)
 		{
 			Mask.V.D08[Index]=(data_08)BitC_Op_(DataA[Index],Value);
 			Mask.V.D08[Index]<<=Index;
 		}
-		_BitC_RO_Loop_B_(Mask,Rest);
+		_BitC_RO_Loop_B_(Mask,Bound);
 
 		DataC[0]&=Mask.C.D08[1];
 		DataC[0]|=Mask.C.D08[0];
 	}
 	else;
+
+	return;
 }
 _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,TYPE_XX *_R_ DataB,ADDRESS Length)
 {
@@ -412,18 +457,22 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 	}
 	if(Rest)
 	{
+		DATA_08 Bound=(DATA_08)(Rest);
+
 		Mask.V.D64[0]=0;
-		for(address Index=0;Index<Rest;Index++)
+		for(data_08 Index=0;Index<Bound;Index++)
 		{
 			Mask.V.D08[Index]=(data_08)BitC_Op_(DataA[Index],DataB[Index]);
 			Mask.V.D08[Index]<<=Index;
 		}
-		_BitC_RO_Loop_B_(Mask,Rest);
+		_BitC_RO_Loop_B_(Mask,Bound);
 
 		DataC[0]&=Mask.C.D08[1];
 		DataC[0]|=Mask.C.D08[0];
 	}
 	else;
+
+	return;
 }
 #endif
 #endif
@@ -612,6 +661,6 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #ifdef __OPENCL_VERSION__
 #error This template cannot be built directly.
 #else
-static void _BitC_Void_(void) { (void)(_BitC_Void_); }
+static void _BitC_Void_(void) { (void)(_BitC_Void_);return; }
 #endif
 #endif

@@ -25,11 +25,13 @@ static logical PriC_Func_(_PriC_Record_,DXX)(FILE _PL_ File,data_08 _PL_ Mask,AD
 
 					Cast=(data_xx)Temp;
 					if(PenC_File_Writer_(File,&Cast,1)==1)
-						if(--Nums);
-						else
-							return 1;
+						Nums--;
 					else
 						break;
+
+					if(Nums);
+					else
+						return 1;
 				}
 				else;
 		else;
@@ -139,7 +141,7 @@ _PRIC_ data_xx PriC_Func_(PriC_Search_,DXX)(PRIC_XX _PL_ _R_ Table,DATA_XX Value
 
 	if(Table)
 	{
-		DATA_XX _PL_ Where=bsearch(&Value,Table->Prime,(address)(Table->Count),sizeof(data_xx),PriC_Func_(_PriC_Comp_,DXX));
+		DATA_XX _PL_ Where=bsearch(&Value,Table->Prime,(address)(Table->Count),sizeof(data_xx),MemC_Func_Casting_(integer,PriC_Func_(_PriC_Comp_,DXX),GENERAL _PL_,GENERAL _PL_));
 		
 		if(Where)
 		{

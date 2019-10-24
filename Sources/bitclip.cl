@@ -15,6 +15,8 @@ _K_ BitC_Endian_D16_(_G_ data_16 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,
 	Peek.V.D08[2]=Peek.C.D08[1];
 	Peek.V.D08[3]=Peek.C.D08[0];
 	Data[Index]=Peek.C.D16[1];
+
+	return;
 }
 _K_ BitC_Endian_D32_(_G_ data_32 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,_P_ OCLCLIP Shape)
 {
@@ -28,6 +30,8 @@ _K_ BitC_Endian_D32_(_G_ data_32 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,
 	Peek.V.D08[6]=Peek.C.D08[1];
 	Peek.V.D08[7]=Peek.C.D08[0];
 	Data[Index]=Peek.C.D32[1];
+
+	return;
 }
 _K_ BitC_Endian_D64_(_G_ data_32 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,_P_ OCLCLIP Shape)
 {
@@ -45,6 +49,8 @@ _K_ BitC_Endian_D64_(_G_ data_32 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,
 	Peek.V.D08[14]=Peek.C.D08[1];
 	Peek.V.D08[15]=Peek.C.D08[0];
 	Data[Index]=Peek.C.D64[1];
+
+	return;
 }
 #endif
 

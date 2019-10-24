@@ -63,6 +63,6 @@
 #ifdef __OPENCL_VERSION__
 #error This template cannot be built directly.
 #else
-static void _BitC_Void_(void) { (void)(_BitC_Void_); }
+static void _BitC_Void_(void) { (void)(_BitC_Void_);return; }
 #endif
 #endif
