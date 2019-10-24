@@ -51,34 +51,26 @@ static pric_32 *_Table_Load_(TEXT_08 _PL_ _R_ FileName)
 }
 static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName)
 {
-	timc_sw *Watch=TimC.SW.Create_(1);
+	TimC_SW_Auto_(Watch,1);
+	MEMCLIP Bits={.V=32};
 	timc_sf State;
 	logical Flag=0;
 
-	if(Watch)
+	PenC_Stream_Format_T08_(0,NULL,"Try to record the prime table.\r\n");
+	TimC_SW_Tick_Tock_(Watch,0,State)
+		Flag=PenC.Object.Save.T08_(FileName,MemC_Func_Casting_(logical,PriC.PT.Save.D32_,FILE _PL_,GENERAL _PL_ _R_),Bits.P,0);
+
+	if(Flag)
 	{
-		MEMCLIP Bits={.V=32};
+		TIMC_TT Time=TimC.SW.Read.Sum.Tag_(Watch,0);
 
-		PenC_Stream_Format_T08_(0,NULL,"Try to record the prime table.\r\n");
-		TimC_SW_Tick_Tock_(Watch,0,State)
-			Flag=PenC.Object.Save.T08_(FileName,MemC_Func_Casting_(logical,PriC.PT.Save.D32_,FILE _PL_,GENERAL _PL_ _R_),Bits.P,0);
-
-		if(Flag)
-		{
-			TIMC_TT Time=TimC.SW.Read.Sum.Tag_(Watch,0);
-
-			if(Time.Overflow)
-				PenC_Stream_Format_T08_(0,NULL,"Failed to measure the time consumed.\r\n");
-			else
-				PenC_Stream_Format_T08_(0,NULL,"Consumed %01d %02d:%02d:%02d.%03d\r\n",Time.Days,Time.Hours,Time.Minutes,Time.Seconds,Time.Milliseconds);
-		}
+		if(Time.Overflow)
+			PenC_Stream_Format_T08_(0,NULL,"Failed to measure the time consumed.\r\n");
 		else
-			goto MEMORY;
+			PenC_Stream_Format_T08_(0,NULL,"Consumed %01d %02d:%02d:%02d.%03d\r\n",Time.Days,Time.Hours,Time.Minutes,Time.Seconds,Time.Milliseconds);
 	}
 	else
-MEMORY:	PenC_Stream_Format_T08_(0,NULL,"Sorry but failed to create it. Maybe a memory issue.\r\n");
-
-	TimC.SW.Delete_(&Watch);
+		PenC_Stream_Format_T08_(0,NULL,"Sorry but failed to create it. Maybe a memory issue.\r\n");
 
 	return Flag;
 }

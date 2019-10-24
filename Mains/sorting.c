@@ -10,16 +10,16 @@ static real_64 _Time_Cast_(REAL_32);
 
 integer main(general)
 {
+	TimC_SW_Auto_(SW,2);//a stopwatch
+	TimC_RG_Auto_(RG,1);//a random generator
 	FILE _PL_ Stream=NULL;//the stream to print outputs
 	ADDRESS Length=1<<20;//the number of random integers
 	INTEGER Trials=256;//the number of trials
 	inte_32 *Array=MemC_Alloc_ND_(inte_32,1,Length);//an array for random integers
 	general *Buffer=MemC.Alloc.Byte_(MemC_Size_(inte_32,Length));//a calculation buffer
-	timc_sw *SW=TimC.SW.Create_(2);//a stopwatch
-	timc_rg *RG=TimC.RG.Create_(1);//a random generator
 	integer MainFlag=0;//an error flag
 
-	if(Array&&SW&&RG)
+	if(Array)
 	{
 		timc_sf SWState[2];//stopwatch states
 
@@ -99,8 +99,6 @@ integer main(general)
 	else
 		MainFlag=-1;
 KILL:
-	TimC.RG.Delete_(&RG);
-	TimC.SW.Delete_(&SW);
 	MemC_Deloc_(Buffer);
 	MemC_Deloc_(Array);
 
