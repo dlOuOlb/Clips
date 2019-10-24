@@ -86,7 +86,7 @@
 #define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)
 #define MemC_Func_Declare_(Return,func_,FUNC_,...) typedef Return(*func_)(__VA_ARGS__);typedef Return(_PL_ FUNC_)(__VA_ARGS__)
 
-#define MemC_Assert_(Bool) ((general)((GENERAL*[Bool]){NULL}))
+#define MemC_Assert_(Cond) ((general)((GENERAL*[(Cond)?(+1):(-1)]){NULL}))
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))
 #define MemC_Unit_(type,Unit,...) type _PL_(Unit)=&(type){__VA_ARGS__}
 #define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)
