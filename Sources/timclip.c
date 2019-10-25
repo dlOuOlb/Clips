@@ -310,12 +310,6 @@ static general _TimC_RG_Setup_(data_64 *_R_ Ptr,ADDRESS Nums)
 
 	return;
 }
-static timc_rg *_TimC_RG_Auto_(timc_rg _PL_ _R_ RG)
-{
-	_TimC_RG_Setup_(RG->State,RG->Nums);
-
-	return RG;
-}
 _TIMC_ timc_rg *TimC_RG_Create_(ADDRESS States)
 {
 	timc_rg *_R_ RG=NULL;
@@ -734,7 +728,6 @@ TIMCASE TimC=
 	},
 	.RG=
 	{
-		.Auto_=_TimC_RG_Auto_,
 		.Create_=TimC_RG_Create_,
 		.Delete_=MemC_Func_Casting_(general,TimC_Delete_,timc_rg *_PL_ _R_),
 		.Size_=TimC_RG_Size_,
