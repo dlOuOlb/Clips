@@ -45,7 +45,7 @@ cd build
 #define I_USE_STATIC_CHUNKS 1024
 
 #if(I_USE_STATIC_CHUNKS)
-MemC_ML_Define_(MyMemoryLender,I_USE_STATIC_CHUNKS);
+MemC_ML_Static_(MyMemoryLender,I_USE_STATIC_CHUNKS);
 static general *_MemC_Alloc_(ADDRESS Size) { return MemC.ML.Borrow_(MyMemoryLender,Size); }
 static general _MemC_Free_(general _PL_ Memory) { MemC.ML.Return_(Memory);return; }
 #else
@@ -60,6 +60,7 @@ _MemC_Default_
 #include <linclip.h>
 #include <timclip.h>
 
+_MemC_Default_
 integer main(general)
 {
     TimC_RG_Auto_(RandGen,1);
