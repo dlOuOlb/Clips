@@ -63,7 +63,7 @@ _MemC_Default_
 _MemC_Default_
 integer main(general)
 {
-    TimC_RG_Auto_(RandGen,1);
+    TimC_RG_Auto_(RandGen,1,(data_64)time(NULL));
     real_32 Array[1024];
     ADDRESS Length=sizeof(Array)/sizeof(*Array);
     REAL_32 Averager=1.0F/((real_32)(Length));
