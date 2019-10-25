@@ -143,8 +143,7 @@ struct _timcase
 	const struct
 	{
 		//TimClip : Automatic Random Generator
-#define TimC_RG_Auto_(Auto,StatesNumber) timc_rg _PL_(Auto)=TimC.RG.Auto_(&(timc_rg){.State=(data_64[StatesNumber]){0},.Nums=(StatesNumber)})
-		timc_rg*(_PL_ Auto_)(timc_rg _PL_ _R_);
+#define TimC_RG_Auto_(Auto,StatesNumber,...) timc_rg _PL_(Auto)=&(timc_rg){.State=(data_64[StatesNumber]){__VA_ARGS__},.Nums=(StatesNumber)}
 
 		//TimClip : Random Generator Memory Allocation - Deallocate with "TimC.RG.Delete_"
 		//＊RandomGenerator -> State[idx]＝time(NULL)＋idx;
