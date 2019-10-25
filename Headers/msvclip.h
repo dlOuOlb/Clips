@@ -33,6 +33,10 @@ But a non-constant aggregate initializer for an automatic storage is a C99 featu
 /* C4221 : nonstandard extension used : 'identifier' : cannot be initialized using address of automatic variable
 But isn't it just another form of a non-constant aggregate initializer? */
 
+#pragma warning(disable:4619)
+/* C4619 : #pragma warning : there is no warning number 'number'
+Of course there are some warnings not supported by each version! */
+
 #pragma warning(disable:4668)
 /* C4668 : 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
 This warning should have been enabled, but MSVC's libraries does not handle the undefined '__cplusplus' macro properly! */
