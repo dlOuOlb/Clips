@@ -11,7 +11,7 @@ static real_64 _Time_Cast_(REAL_32);
 integer main(general)
 {
 	TimC_SW_Auto_(SW,2);//a stopwatch
-	TimC_RG_Auto_(RG,1);//a random generator
+	TimC_RG_Auto_(RG,1,(data_64)time(NULL));//a random generator
 	FILE _PL_ Stream=NULL;//the stream to print outputs
 	ADDRESS Length=1<<20;//the number of random integers
 	INTEGER Trials=256;//the number of trials
