@@ -1,6 +1,6 @@
-﻿#include <penclip.h>
-#include <priclip.h>
+﻿#include <priclip.h>
 #include <timclip.h>
+#include <stdbool.h>
 
 _MemC_Default_
 
@@ -10,8 +10,8 @@ static logical _Table_Find_(PRIC_32 _PL_ _R_ Table);
 
 integer main(general)
 {
-	TEXT_08 FileName[24]="prime table 32-bit.dat";
-	pric_32 *Table=_Table_Load_(FileName);
+	TEXT_08 FileName[24]="prime table 32-bit.dat";//file path of the prime table to be stored
+	pric_32 *Table=_Table_Load_(FileName);//32-bit prime table
 
 	if(Table)
 		goto ACTIVE;
@@ -47,22 +47,22 @@ static pric_32 *_Table_Load_(TEXT_08 _PL_ _R_ FileName)
 {
 	PenC_Stream_Format_T08_(0,NULL,"Try to load the prime table.\r\n");
 
-	return PenC.Object.Load.T08_(FileName,PriC.PT.Load.D32_,NULL,0);
+	return PenC.Object.Load.T08_(FileName,PriC.PT.Load.D32_,NULL,false);
 }
 static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName)
 {
-	TimC_SW_Auto_(Watch,1);
-	MEMCLIP Bits={.V=32};
-	timc_sf State;
-	logical Flag=0;
+	TimC_SW_Auto_(SW,1);//stopwatch
+	MEMCLIP Bits={.V=32};//all 32-bit prime numbers
+	timc_sf State;//timer state
+	logical Flag=false;//file save flag
 
 	PenC_Stream_Format_T08_(0,NULL,"Try to record the prime table.\r\n");
-	TimC_SW_Tick_Tock_(Watch,0,State)
-		Flag=PenC.Object.Save.T08_(FileName,MemC_Func_Casting_(logical,PriC.PT.Save.D32_,FILE _PL_,GENERAL _PL_ _R_),Bits.P,0);
+	TimC_SW_Tick_Tock_(SW,0,State)
+		Flag=PenC.Object.Save.T08_(FileName,MemC_Func_Casting_(logical,PriC.PT.Save.D32_,FILE _PL_,GENERAL _PL_ _R_),Bits.P,false);
 
 	if(Flag)
 	{
-		TIMC_TT Time=TimC.SW.Read.Sum.Tag_(Watch,0);
+		TIMC_TT Time=TimC.SW.Read.Sum.Tag_(SW,0);//time tag
 
 		if(Time.Overflow)
 			PenC_Stream_Format_T08_(0,NULL,"Failed to measure the time consumed.\r\n");
@@ -76,12 +76,12 @@ static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName)
 }
 static logical _Table_Find_(PRIC_32 _PL_ _R_ Table)
 {
-	data_32 Number;
+	data_32 Number;//number to be factorized
 
 	PenC_Stream_Format_T08_(0,NULL,"Give me a natural number : ");
 	if(PenC_Stream_Format_T08_(1,NULL,"%u",&Number)>0)
 	{
-		data_32 Factor[32];
+		data_32 Factor[32];//factorized sequence
 
 		if(PriC.PT.Factor.D32_(Factor,Table,Number))
 		{
@@ -90,11 +90,11 @@ static logical _Table_Find_(PRIC_32 _PL_ _R_ Table)
 				PenC_Stream_Format_T08_(0,NULL,"%u ",Factor[Index]);
 			PenC_Stream_Format_T08_(0,NULL,"\r\n");
 
-			return 1;
+			return true;
 		}
 		else;
 	}
 	else;
 
-	return 0;
+	return false;
 }

@@ -1,7 +1,7 @@
-﻿#include <stdbool.h>
-#include <penclip.h>
+﻿#include <penclip.h>
 #include <linclip.h>
 #include <timclip.h>
+#include <stdbool.h>
 
 _MemC_Default_;
 static general _Naive_Rand_(inte_32 *_R_,ADDRESS);
@@ -21,15 +21,12 @@ integer main(general)
 
 	if(Array)
 	{
-		timc_sf SWState[2];//stopwatch states
-
 		PenC_Stream_Format_T08_(0,Stream,"Time Measurement for Random Generation and Sorting\r\n%zu integers(32-bit) up to %d : %d tries\r\n",Length,RAND_MAX,Trials);
 
 		PenC_Stream_Format_T08_(0,Stream,"\r\nNaive Approach : rand() and qsort().\r\n");
 		{
 			PenC_Stream_Format_T08_(0,Stream,"Warming up...\r\n");
 			{
-				MemC_Clear_1D_(SWState,2);
 				TimC.SW.All.Reset_(SW);
 				_Naive_Rand_(Array,Length);
 
@@ -39,16 +36,21 @@ integer main(general)
 			}
 			for(integer Try=0;Try<Trials;Try++)
 			{
+				timc_sf State;//stopwatch state
+
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d",Try,Trials);
 
-				TimC_SW_Tick_Tock_(SW,0,SWState[0])
+				TimC_SW_Tick_Tock_(SW,0,State)
 					_Naive_Rand_(Array,Length);
 
-				TimC_SW_Tick_Tock_(SW,1,SWState[1])
+				if(State==TimCStateStopped);else break;
+
+				TimC_SW_Tick_Tock_(SW,1,State)
 					qsort(Array,Length,sizeof(*Array),_Naive_Comp_);
 
+				if(State==TimCStateStopped);else break;
 			}
-			if((SWState[0]|SWState[1])==TimCStateStopped)
+			if((TimC.SW.Read.State_(SW,0)==TimCStateStopped)&&(TimC.SW.Read.State_(SW,1)==TimCStateStopped))
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
 				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean.R32_(SW,0)));
@@ -65,7 +67,6 @@ integer main(general)
 		{
 			PenC_Stream_Format_T08_(0,Stream,"Warming up...\r\n");
 			{
-				MemC_Clear_1D_(SWState,2);
 				TimC.SW.All.Reset_(SW);
 				TimC.RG.Uni.I32_(RG,0,Array,Length,0,RAND_MAX);
 
@@ -75,15 +76,21 @@ integer main(general)
 			}
 			for(integer Try=0;Try<Trials;Try++)
 			{
+				timc_sf State;//stopwatch state
+
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d",Try,Trials);
 
-				TimC_SW_Tick_Tock_(SW,0,SWState[0])
+				TimC_SW_Tick_Tock_(SW,0,State)
 					TimC.RG.Uni.I32_(RG,0,Array,Length,0,RAND_MAX);
 
-				TimC_SW_Tick_Tock_(SW,1,SWState[1])
+				if(State==TimCStateStopped);else break;
+
+				TimC_SW_Tick_Tock_(SW,1,State)
 					LinC.Order.I32_(Array,NULL,Buffer,Length,false);
+
+				if(State==TimCStateStopped);else break;
 			}
-			if((SWState[0]|SWState[1])==TimCStateStopped)
+			if((TimC.SW.Read.State_(SW,0)==TimCStateStopped)&&(TimC.SW.Read.State_(SW,1)==TimCStateStopped))
 			{
 				PenC_Stream_Format_T08_(0,Stream,"\rRepetition %4d/%4d\r\n",Trials,Trials);
 				PenC_Stream_Format_T08_(0,Stream,"average %.3f ms per try for random generation\r\n",_Time_Cast_(TimC.SW.Read.Mean.R32_(SW,0)));
