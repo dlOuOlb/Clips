@@ -423,7 +423,7 @@ struct _memcase
 #define MemC_MS_Foreach_(MemorySlot,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((MemorySlot)->Slot.P),_PL_(_End##Each)=(general*)(((MemorySlot)->Slot.P)+((MemorySlot)->Nums));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
 
 		//MemClip : Typed Memory Slot
-#define MemC_MS_Generic_(type,suffix,SUFFIX) MemC_Void_Size_(type);union _memc_ms_##suffix{memc_ms*Core;struct{GENERAL _PL_ ID;MEMC_DT _PL_ Type;ADDRESS Nums;type _PL_ Item;}*Wrap;};MemC_Type_Declare_(union,memc_ms_##suffix,MEMC_MS_##SUFFIX)
+#define MemC_MS_Generic_(type,suffix,SUFFIX) MemC_Void_Size_(type);union _memc_ms_##suffix{memc_ms*Core;struct{GENERAL _PL_ ID;MEMC_DT _PL_ Type;ADDRESS Nums;type _PL_ Item;}_PL_ Wrap;};MemC_Type_Declare_(union,memc_ms_##suffix,MEMC_MS_##SUFFIX)
 	}
 	MS;
 
