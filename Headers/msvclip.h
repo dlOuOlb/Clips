@@ -2,13 +2,20 @@
 /*	MSVClip is a workaround to avoid wicked MSVC issues.			*/
 /*											16.3.6					*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MSVCLIP
 #define _INC_MSVCLIP
 
 #ifdef _MSC_BUILD
+
+#define _MSVC_Meta_(X) #X
+#define MSVC_Meta_(X) _MSVC_Meta_(X)
+#pragma message("MSVC " MSVC_Meta_(_MSC_FULL_VER))
+#pragma message("Build on " __TIMESTAMP__)
+#undef MSVC_Meta_
+#undef _MSVC_Meta_
 
 #define restrict __restrict
 /* 'restrict' is a standard C keyword... since C99! */

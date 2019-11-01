@@ -2,7 +2,7 @@
 /*	PriClip provides some small prime number tables.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PRICLIP

@@ -2,7 +2,13 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.10.24	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*------------------------------------------------------------------*/
+/*	Note:															*/
+/*	Unmanaged objects from these Clip libraries are allocated and	*/
+/*	deallocated by the "_MemC_Malloc_" and "_MemC_Free_" function	*/
+/*	pair, and someone must define them. Their default definitions	*/
+/*	are defined in the "_MemC_Default_" macro, and... that's all.	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_MEMCLIP
@@ -15,6 +21,7 @@
 
 #include <msvclip.h>
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -58,6 +65,13 @@
 #define Mute_(Argument) ((general)(Argument))
 #endif
 
+#if defined(_Meta_)||defined(Meta_)
+#error The macro "_Meta_" or "Meta_" is already defined.
+#else
+#define _Meta_(X) #X
+#define Meta_(X) _Meta_(X)
+#endif
+
 #if defined(_Conc_)||defined(Conc_)
 #error The macro "_Conc_" or "Conc_" is already defined.
 #else
@@ -83,13 +97,16 @@
 #define MemC_Type_Rename_(oldname,newname,NEWNAME) typedef oldname newname;typedef const oldname NEWNAME
 #define MemC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE
 
-#define MemC_Func_Casting_(Return,Func_,...) (Return(*)(__VA_ARGS__))(Func_)
+#define MemC_Func_Casting_(Return,Func_,...) ((Return(*)(__VA_ARGS__))(Func_))
 #define MemC_Func_Declare_(Return,func_,FUNC_,...) typedef Return(*func_)(__VA_ARGS__);typedef Return(_PL_ FUNC_)(__VA_ARGS__)
 
 #define MemC_Assert_(Cond) ((general)((GENERAL*[(Cond)?(+1):(-1)]){NULL}))
 #define MemC_Size_(type,Elements) ((Elements)*sizeof(type))
 #define MemC_Unit_(type,Unit,...) type _PL_(Unit)=&(type){__VA_ARGS__}
 #define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)
+
+#define MemC_Void_Size_(type) static_assert(sizeof(type)==sizeof(address),"sizeof(" Meta_(type) ") != sizeof(address)")
+#define MemC_Void_Cast_(type) __dl{MemC_Void_Size_(type);assert(MemC_Func_Casting_(type,MemC.Just_,type const)(Acs_(type,MemC.Version))==Acs_(type,MemC.Version));}lb__
 #endif
 
 #if(Fold_(Definition:Primal Types))
@@ -190,10 +207,10 @@ struct _memc_ml
 
 #if(Fold_(Declaration:Memory Allocator and Deallocator))
 //MemClip : Memory Allocator Declaration - Pair with "_MemC_Free_"
-general *_MemC_Malloc_(ADDRESS Size);
+extern general *_MemC_Malloc_(ADDRESS Size);
 //MemClip : Memory Deallocator Declaration - Pair with "_MemC_Malloc_"
-general _MemC_Free_(general _PL_ Memory);
-//MemClip : Default Memory Allocator and Deallocator Definition - Put it once somewhere unless you have a custom one.
+extern general _MemC_Free_(general _PL_ Memory);
+//MemClip : Default Memory Allocator and Deallocator Definitions - Put it once somewhere unless you have a custom one.
 #define _MemC_Default_ general *_MemC_Malloc_(ADDRESS Size) { return malloc(Size); } general _MemC_Free_(general _PL_ Memory) { free(Memory);return; }
 #endif
 
@@ -206,6 +223,8 @@ struct _memcase
 
 	//MemClip : Do nothing.
 	general(_PL_ Void_)(general);
+	//BoxClip : Just return the input.
+	GENERAL*(_PL_ Just_)(GENERAL _PL_);
 
 	//MemClip : Type Descriptors
 	const struct
@@ -400,14 +419,11 @@ struct _memcase
 		//＊Return value is 0 for failure, 1 for success.
 		logical(_PL_ Dims_)(MEMC_MS _PL_ ShapeInfo,ADDRESS Dims,...);
 
-		//MemClip : Just kidding!
-		//＊Return value is 0 for failure, 1 for success.
-		logical(_PL_ Joke_)(MEMC_MS _PL_ MemorySlot);
-		//MemClip : Oops!
-		//＊Return value is 0 for failure, 1 for success.
-		logical(_PL_ Oops_)(MEMC_MS _PL_ MemorySlot);
-
+		//MemClip : Iterate for each item.
 #define MemC_MS_Foreach_(MemorySlot,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((MemorySlot)->Slot.P),_PL_(_End##Each)=(general*)(((MemorySlot)->Slot.P)+((MemorySlot)->Nums));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
+
+		//MemClip : Typed Memory Slot
+#define MemC_MS_Generic_(type,suffix,SUFFIX) MemC_Void_Size_(type);union _memc_ms_##suffix{memc_ms*Core;struct{GENERAL _PL_ ID;MEMC_DT _PL_ Type;ADDRESS Nums;type _PL_ Item;}*Wrap;};MemC_Type_Declare_(union,memc_ms_##suffix,MEMC_MS_##SUFFIX)
 	}
 	MS;
 
