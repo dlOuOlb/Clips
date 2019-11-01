@@ -19,9 +19,9 @@ _LINC_ general LinC_Oper_(LinC_Op_,0,TXX)(type_xx *_R_ Line,TYPE_XX Start,TYPE_X
 	if(Length)
 	{
 		ADDRESS Last=Length-1;
-		TYPE_XX *End=Line+(Last&BitC.Const.Mask.Safe[3]);
+		TYPE_XX *End=Line;
 
-		for(Line[0]=Start;Line<End;Line+=8)
+		for(End+=(Last&BitC.Const.Mask.Safe[3]),Line[0]=Start;Line<End;Line+=8)
 		{
 			Line[1]=LinC_Op_(Line[0],Step);
 			Line[2]=LinC_Op_(Line[1],Step);
@@ -55,9 +55,9 @@ _K_ LinC_Oper_(LinC_Op_,1,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 #else
 _LINC_ general LinC_Oper_(LinC_Op_,1,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX Value,ADDRESS Length)
 {
-	TYPE_XX *End=LineA+(Length&BitC.Const.Mask.Safe[3]);
+	TYPE_XX *End=LineA;
 
-	for(;LineA<End;LineA+=8,LineC+=8)
+	for(End+=(Length&BitC.Const.Mask.Safe[3]);LineA<End;LineA+=8,LineC+=8)
 	{
 		LineC[0]=LinC_Op_(LineA[0],Value);
 		LineC[1]=LinC_Op_(LineA[1],Value);
@@ -89,9 +89,9 @@ _K_ LinC_Oper_(LinC_Op_,2,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G_
 #else
 _LINC_ general LinC_Oper_(LinC_Op_,2,TXX)(type_xx *LineC,TYPE_XX *LineA,TYPE_XX *LineB,ADDRESS Length)
 {
-	TYPE_XX *End=LineA+(Length&BitC.Const.Mask.Safe[3]);
+	TYPE_XX *End=LineA;
 
-	for(;LineA<End;LineA+=8,LineB+=8,LineC+=8)
+	for(End+=(Length&BitC.Const.Mask.Safe[3]);LineA<End;LineA+=8,LineB+=8,LineC+=8)
 	{
 		LineC[0]=LinC_Op_(LineA[0],LineB[0]);
 		LineC[1]=LinC_Op_(LineA[1],LineB[1]);
@@ -117,9 +117,8 @@ _K_ LinC_Func_(LinC_Sum_1_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P
 	_P_ ADDRESS LSize=Work_Size_L_(0);
 	_P_ ADDRESS LStart=Work_Here_L_(0);
 	_P_ oclclip LSelect=LinC_From_(Amount,Axis);
-	_P_ type_xx Value;
+	_P_ type_xx Value=0;
 
-	Acs_(P,LinC_Type_(data,XX),Value)=0;
 	{
 		_P_ address AJump=LSize;
 
@@ -149,9 +148,8 @@ _K_ LinC_Func_(LinC_Dot_2_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G
 	_P_ ADDRESS LSize=Work_Size_L_(0);
 	_P_ ADDRESS LStart=Work_Here_L_(0);
 	_P_ oclclip LSelect=LinC_From_(Amount,Axis);
-	_P_ type_xx Value;
+	_P_ type_xx Value=0;
 
-	Acs_(P,LinC_Type_(data,XX),Value)=0;
 	{
 		_P_ address AJump=LSize;
 		_P_ address BJump=LSize;
@@ -184,7 +182,7 @@ _K_ LinC_Func_(LinC_Dot_2_,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G
 _LINC_ type_xx LinC_Func_(LinC_Sum_1_,TXX)(TYPE_XX *_R_ Line,ADDRESS Length)
 {
 	TYPE_XX *End=Line;
-	type_xx Temp[8];MemC_Clear_1D_(Temp,8);
+	type_xx Temp[8]={0};
 
 	for(End+=(Length&BitC.Const.Mask.Safe[3]);Line<End;Line+=8)
 	{
@@ -216,7 +214,7 @@ _LINC_ type_xx LinC_Func_(LinC_Sum_1_,TXX)(TYPE_XX *_R_ Line,ADDRESS Length)
 _LINC_ type_xx LinC_Func_(LinC_Dot_2_,TXX)(TYPE_XX *LineA,TYPE_XX *LineB,ADDRESS Length)
 {
 	TYPE_XX *End=LineA;
-	type_xx Temp[8];MemC_Clear_1D_(Temp,8);
+	type_xx Temp[8]={0};
 
 	for(End+=(Length&BitC.Const.Mask.Safe[3]);LineA<End;LineA+=8,LineB+=8)
 	{
@@ -354,9 +352,9 @@ _K_ LinC_Func_(LinC_Map_1_,TXX)(_G_ type_xx _PL_ CData,_G_ ADDRESS _PL_ IData,_G
 #else
 _LINC_ general LinC_Func_(LinC_Map_1_,TXX)(type_xx *_R_ Line,ADDRESS *_R_ Index,TYPE_XX _PL_ Table,ADDRESS Length)
 {
-	ADDRESS *End=Index+(Length&BitC.Const.Mask.Safe[3]);
+	ADDRESS *End=Index;
 
-	for(;Index<End;Index+=8,Line+=8)
+	for(End+=(Length&BitC.Const.Mask.Safe[3]);Index<End;Index+=8,Line+=8)
 	{
 		Line[0]=Table[Index[0]];
 		Line[1]=Table[Index[1]];

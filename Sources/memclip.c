@@ -1,6 +1,5 @@
 ﻿#include "memclip.h"
 
-#include <assert.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -21,20 +20,26 @@ static_assert((sizeof(general*)==sizeof(address)),"sizeof(general*) != sizeof(ad
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-_MEMC_ BYTE_08 IdiomVersion[16]="Date:2019.10.24";
+_MEMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.01";
 static ADDRESS ConstantZero[_MemC_Dims_]={0};
 #endif
 
 #if(Fold_(Definition:Type Descriptors))
 #define _MemC_DT_Parse_(Enum,Size) {.Scope=&MemClip,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
 
-static BYTE_08 IdiomType[MemCTypes][8]={"none_00","byte_08","integer","address"};
+static BYTE_08 IdiomType[MemCTypes][8]=
+{
+	[MemCTypeNone_00]="none_00",
+	[MemCTypeByte_08]="byte_08",
+	[MemCTypeInteger]="integer",
+	[MemCTypeAddress]="address"
+};
 static MEMC_DT TableType[MemCTypes]=
 {
-	_MemC_DT_Parse_(MemCTypeNone_00,0),
-	_MemC_DT_Parse_(MemCTypeByte_08,sizeof(byte_08)),
-	_MemC_DT_Parse_(MemCTypeInteger,sizeof(integer)),
-	_MemC_DT_Parse_(MemCTypeAddress,sizeof(address))
+	[MemCTypeNone_00]=_MemC_DT_Parse_(MemCTypeNone_00,0),
+	[MemCTypeByte_08]=_MemC_DT_Parse_(MemCTypeByte_08,sizeof(byte_08)),
+	[MemCTypeInteger]=_MemC_DT_Parse_(MemCTypeInteger,sizeof(integer)),
+	[MemCTypeAddress]=_MemC_DT_Parse_(MemCTypeAddress,sizeof(address))
 };
 
 _MEMC_ memc_te MemC_DT_Enum_(MEMC_DT _PL_ Desc)
@@ -96,6 +101,7 @@ _MEMC_ general MemC_Deloc_Set_(general **Memory,ADDRESS Sets)
 			MemC_Deloc_(*Memory);
 	}
 }
+_MEMC_ GENERAL *MemC_Just_(GENERAL _PL_ X) { return X; }
 #endif
 
 #if(Fold_(Part:ND Array Memory Allocation))
@@ -881,120 +887,6 @@ _MEMC_ logical MemC_MS_Dims_(MEMC_MS _PL_ MS,ADDRESS Dims,...)
 			return 1;
 		}
 		else;
-	else;
-
-	return 0;
-}
-
-_MEMC_ logical MemC_MS_Joke_(MEMC_MS _PL_ MS)
-{
-	if(MS)
-		if(MS->Nums)
-		{
-			address Table[8]={1,2,3,4,5,6,7,8};
-			address Temp[2];
-			general **Pointer=MS->Slot.P;
-			address Count=MS->Nums;
-
-			for(Count--,Temp[0]=(address)Pointer/sizeof(address);Count>7;Count--,Pointer=(*Pointer))
-			{
-				{
-					Temp[1]=Temp[0]>>1;
-					Temp[0]*=3;
-					Temp[0]++;
-					Temp[0]=Temp[Temp[0]&1];
-
-					Temp[1]=Temp[0]&7;
-					*Pointer=MS->Slot.P+Table[Temp[1]];
-				}
-				switch(Temp[1])
-				{
-				case 0:
-					Table[0]=Table[1];
-				case 1:
-					Table[1]=Table[2];
-				case 2:
-					Table[2]=Table[3];
-				case 3:
-					Table[3]=Table[4];
-				case 4:
-					Table[4]=Table[5];
-				case 5:
-					Table[5]=Table[6];
-				case 6:
-					Table[6]=Table[7];
-				default:
-					Table[7]++;
-				}
-			}
-			
-			for(address *Mover=Table+(Count-7);Count;Count--,Pointer=(*Pointer))
-			{
-				{
-					Temp[1]=Temp[0]>>1;
-					Temp[0]*=3;
-					Temp[0]++;
-					Temp[0]=Temp[Temp[0]&1];
-
-					Temp[1]=Temp[0]%Count;
-					*Pointer=MS->Slot.P+Table[Temp[1]];
-
-					Temp[1]+=7;
-					Temp[1]-=Count;
-				}
-				switch(Temp[1])
-				{
-				case 0:
-					Mover[0]=Mover[1];
-				case 1:
-					Mover[1]=Mover[2];
-				case 2:
-					Mover[2]=Mover[3];
-				case 3:
-					Mover[3]=Mover[4];
-				case 4:
-					Mover[4]=Mover[5];
-				case 5:
-					Mover[5]=Mover[6];
-				default:
-					Mover--;
-				}
-			}
-			
-			*Pointer=MS->Slot.P;
-		}
-		else;
-	else
-		return 0;
-
-	return 1;
-}
-_MEMC_ logical MemC_MS_Oops_(MEMC_MS _PL_ MS)
-{
-	if(MS)
-		if(MS->Nums)
-		{
-			GENERAL _PL_ Start=MS->Slot.P;
-			GENERAL _PL_ End=MS->Slot.P+MS->Nums;
-			GENERAL _PL_ *Pointer=(GENERAL**)(MS->Slot.P);
-
-			for(address Count=MS->Nums;Count;Count--)
-				if((*Pointer)<Start)
-					break;
-				else
-					if((*Pointer)<End)
-						if((*Pointer)==Start)
-							if(Count)
-								break;
-							else
-								return 1;
-						else
-							Pointer=(*Pointer);
-					else
-						break;
-		}
-		else
-			return 1;
 	else;
 
 	return 0;
@@ -1906,6 +1798,7 @@ MEMCASE MemC=
 	.Version=IdiomVersion,
 	.MaxDims=_MemC_Dims_,
 	.Void_=MemC_Void_,
+	.Just_=MemC_Just_,
 	.Type=
 	{
 		.N00=TableType+MemCTypeNone_00,
@@ -1955,9 +1848,7 @@ MEMCASE MemC=
 		.Change_=MemC_MS_Change_,
 		.Init_=MemC_MS_Init_,
 		.Null_=MemC_MS_Null_,
-		.Dims_=MemC_MS_Dims_,
-		.Joke_=MemC_MS_Joke_,
-		.Oops_=MemC_MS_Oops_
+		.Dims_=MemC_MS_Dims_
 	},
 	.MC=
 	{

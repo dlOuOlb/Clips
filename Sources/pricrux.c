@@ -1,44 +1,42 @@
 ﻿#ifdef _INC_PRICLIP
 #ifdef _SRC_PRICRUX
 
-static_assert(sizeof(data_xx)==sizeof(pric_xx),"sizeof(" PriC_Meta_(data_xx) ") != sizeof(" PriC_Meta_(pric_xx) ")");
+static_assert(sizeof(data_xx)==sizeof(pric_xx),"sizeof(" Meta_(data_xx) ") != sizeof(" Meta_(pric_xx) ")");
 
 static logical PriC_Func_(_PriC_Record_,DXX)(FILE _PL_ File,data_08 _PL_ Mask,ADDRESS Bits)
 {
-	data_xx Nums=(data_xx)_PriC_Nums_(Mask,Bits);
-
-	if(PenC_File_Writer_(File,&Nums,1)==1)
+	DATA_XX Nums=(data_xx)_PriC_Nums_(Mask,Bits);
+	
+	if(Nums)
 	{
-		data_xx Cast=2;
+		logical Flag=0;
 
-		Nums--;
-		if(PenC_File_Writer_(File,&Cast,1)==1)
-			for(bitc_bp Ptr=BitC.BP.Assign.U_(Mask,1);1;Ptr=BitC.BP.Jumper.U_(Ptr,1))
-				if(BitC.BP.Reader_(Ptr))
+		MemC_Temp_ND_(data_xx,Space,;,1,Nums)
+		{
+			data_xx _PL_ _R_ Table=Space;
+
+			Table[0]=2;
+			MemC_Temp_(bitc_bp,Ptr=BitC.BP.Assign.U_(Mask,1))
+				for(data_xx Num=1,Value=3;Num<Nums;Value+=2,Ptr=BitC.BP.Jumper.U_(Ptr,1))
 				{
-					address Temp=(Ptr.Base)-Mask;
-
-					Temp<<=3;
-					Temp|=Ptr.Offset;
-					Temp<<=1;
-					Temp|=1;
-
-					Cast=(data_xx)Temp;
-					if(PenC_File_Writer_(File,&Cast,1)==1)
-						Nums--;
-					else
-						break;
-
-					if(Nums);
-					else
-						return 1;
+					Table[Num]=Value;
+					Num+=BitC.BP.Reader_(Ptr);
 				}
-				else;
-		else;
-	}
-	else;
 
-	return 0;
+			if(PenC_File_Writer_(File,&Nums,1)==1)
+			{
+				ADDRESS Cast=(address)Nums;
+
+				Flag=(PenC_File_Writer_(File,Table,Cast)==Cast);
+			}
+			else
+				Flag=0;
+		}
+
+		return Flag;
+	}
+	else
+		return (PenC_File_Writer_(File,&Nums,1)==1);
 }
 _PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,ADDRESS Bits)
 {
@@ -52,18 +50,17 @@ _PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,ADDRESS Bits)
 		else if(Bits>8)
 		{
 			ADDRESS Bytes=((address)(1))<<(Bits-4);
-			data_08 *Mask=MemC_Alloc_ND_(data_08,1,Bytes);
+			logical Flag=0;
 
-			if(Mask)
+			MemC_Temp_ND_(data_08,Space,;,1,Bytes)
 			{
-				LOGICAL Flag=(_PriC_Mass_(Mask,Bits),PriC_Func_(_PriC_Record_,DXX)(File,Mask,Bits));
+				data_08 _PL_ Mask=Space;
 
-				MemC_Deloc_(Mask);
-
-				if(Flag)
-					return 1;
-				else;
+				_PriC_Mass_(Mask,Bits);
+				Flag=PriC_Func_(_PriC_Record_,DXX)(File,Mask,Bits);
 			}
+			if(Flag)
+				return 1;
 			else;
 		}
 		else

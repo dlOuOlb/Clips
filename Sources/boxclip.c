@@ -1,10 +1,9 @@
 ﻿#include "boxclip.h"
 
-#include <assert.h>
 #include <stdarg.h>
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.10.24";
+static BYTE_08 IdiomVersion[16]="Date:2019.11.01";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -2413,8 +2412,8 @@ BOXCASE BoxC=
 		.Check_=MemC_Func_Casting_(logical,BoxC_SS_Check_,BOXC_SS _PL_ _R_,ADDRESS),
 		.Push_=MemC_Func_Casting_(logical,BoxC_SS_Push_,BOXC_SS _PL_ _R_,ADDRESS,general _PL_),
 		.Pop_=MemC_Func_Casting_(general*,BoxC_SS_Pop_,BOXC_SS _PL_ _R_,ADDRESS),
-		.Spread_=MemC_Func_Casting_(logical,BoxC_SS_Spread_,boxc_li _PL_ _R_,BOXC_SS _PL_ _R_,ADDRESS),
-		.Peek_=MemC_Func_Casting_(general*,BoxC_SS_Peek_,BOXC_SS _PL_ _R_,ADDRESS,ADDRESS)
+		.Peek_=MemC_Func_Casting_(general*,BoxC_SS_Peek_,BOXC_SS _PL_ _R_,ADDRESS,ADDRESS),
+		.Spread_=MemC_Func_Casting_(logical,BoxC_SS_Spread_,boxc_li _PL_ _R_,BOXC_SS _PL_ _R_,ADDRESS)
 	},
 	.QS=
 	{
@@ -2431,8 +2430,8 @@ BOXCASE BoxC=
 		.Check_=MemC_Func_Casting_(logical,BoxC_QS_Check_,BOXC_QS _PL_ _R_,ADDRESS),
 		.Enque_=MemC_Func_Casting_(logical,BoxC_QS_Enque_,BOXC_QS _PL_ _R_,ADDRESS,general _PL_),
 		.Deque_=MemC_Func_Casting_(general*,BoxC_QS_Deque_,BOXC_QS _PL_ _R_,ADDRESS),
-		.Spread_=MemC_Func_Casting_(logical,BoxC_QS_Spread_,boxc_li _PL_ _R_,BOXC_QS _PL_ _R_,ADDRESS),
-		.Peek_=MemC_Func_Casting_(general*,BoxC_QS_Peek_,BOXC_QS _PL_ _R_,ADDRESS,ADDRESS)
+		.Peek_=MemC_Func_Casting_(general*,BoxC_QS_Peek_,BOXC_QS _PL_ _R_,ADDRESS,ADDRESS),
+		.Spread_=MemC_Func_Casting_(logical,BoxC_QS_Spread_,boxc_li _PL_ _R_,BOXC_QS _PL_ _R_,ADDRESS)
 	},
 	.RS=
 	{
@@ -2447,9 +2446,9 @@ BOXCASE BoxC=
 		},
 		.Reset_=MemC_Func_Casting_(logical,BoxC_RS_Reset_,BOXC_RS _PL_ _R_,ADDRESS),
 		.Check_=MemC_Func_Casting_(logical,BoxC_RS_Check_,BOXC_RS _PL_ _R_,ADDRESS),
+		.Rotate_=MemC_Func_Casting_(logical,BoxC_RS_Rotate_,BOXC_RS _PL_ _R_,ADDRESS,SINTPTR),
 		.Insert_=MemC_Func_Casting_(logical,BoxC_RS_Insert_,BOXC_RS _PL_ _R_,ADDRESS,general _PL_,LOGICAL),
 		.Desert_=MemC_Func_Casting_(logical,BoxC_RS_Desert_,BOXC_RS _PL_ _R_,ADDRESS,LOGICAL),
-		.Rotate_=MemC_Func_Casting_(logical,BoxC_RS_Rotate_,BOXC_RS _PL_ _R_,ADDRESS,SINTPTR),
 		.Read_=MemC_Func_Casting_(general*,BoxC_RS_Read_,BOXC_RS _PL_ _R_,ADDRESS,LOGICAL),
 		.Spread_=MemC_Func_Casting_(logical,BoxC_RS_Spread_,boxc_li _PL_ _R_,BOXC_RS _PL_ _R_,ADDRESS,SINTPTR,LOGICAL)
 	},
@@ -2528,8 +2527,11 @@ BOXCASE BoxC=
 			.Insert_=BoxC_Li_Lot_Insert_,
 			.Desert_=BoxC_Li_Lot_Desert_
 		},
-		.Copy_=BoxC_Li_Copy_,
-		.Filter_=BoxC_Li_Filter_
+		.Do=
+		{
+			.Copy_=BoxC_Li_Copy_,
+			.Filter_=BoxC_Li_Filter_
+		}
 	}
 };
 BOXCASE *BoxC_(general) { return &BoxC; }

@@ -1,6 +1,5 @@
 ﻿#include "bitclip.h"
 
-#include <assert.h>
 #include <limits.h>
 
 #if(Fold_(Static Assertions))
@@ -21,13 +20,11 @@ static_assert(((uintptr)(-1))!=(((uintptr)(-1))>>1),"The bit-shift-right operati
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.10.24";
+_BITC_ BYTE_08 IdiomVersion[16]="Date:2019.11.01";
 
-static ADDRESS ConstantSafe[8]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127};
-static ADDRESS ConstantRest[8]={(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
-
-static INTE_64 Constant64[8]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38,0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
-static INTE_32 Constant32[8]={0x40490FDB,0x3EA2F983,0x402DF854,0x3EBC5AB2,0x7F800000,0xFF800000,0x7FFFFFFF,0xFFFFFFFF};
+_BITC_ ADDRESS ConstantMask[16]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127,(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
+_BITC_ INTE_64 Constant64[8]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38,0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
+_BITC_ INTE_32 Constant32[8]={0x40490FDB,0x3EA2F983,0x402DF854,0x3EBC5AB2,0x7F800000,0xFF800000,0x7FFFFFFF,0xFFFFFFFF};
 
 static DATA_64 TableShrink64[8]={0x0000000000000001,0x0000000000000002,0x0000000000000004,0x0000000000000008,0x0000000000000010,0x0000000000000020,0x0000000000000040,0x0000000000000080};
 static DATA_32 TableShrink32[8]={0x00000001,0x00000002,0x00000004,0x00000008,0x00000010,0x00000020,0x00000040,0x00000080};
@@ -95,7 +92,7 @@ _BITC_ general BitC_Endian_D08_(data_08 _PL_ Data,ADDRESS Length)
 }
 _BITC_ general BitC_Endian_D16_(data_16 _PL_ Data,ADDRESS Length)
 {
-	DATA_08 *End=(data_08*)(Data+(Length&ConstantSafe[2]));
+	DATA_08 *End=(data_08*)(Data+(Length&BitC.Const.Mask.Safe[2]));
 	data_08 *_R_ Ptr=(data_08*)Data;
 	data_08 Temp;
 
@@ -117,7 +114,7 @@ _BITC_ general BitC_Endian_D16_(data_16 _PL_ Data,ADDRESS Length)
 		Ptr[6]=Ptr[7];
 		Ptr[7]=Temp;
 	}
-	for(End+=((Length&ConstantRest[2])<<1);Ptr<End;Ptr+=2)
+	for(End+=((Length&BitC.Const.Mask.Rest[2])<<1);Ptr<End;Ptr+=2)
 	{
 		Temp=Ptr[0];
 		Ptr[0]=Ptr[1];
@@ -128,7 +125,7 @@ _BITC_ general BitC_Endian_D16_(data_16 _PL_ Data,ADDRESS Length)
 }
 _BITC_ general BitC_Endian_D32_(data_32 _PL_ Data,ADDRESS Length)
 {
-	DATA_08 *End=(data_08*)(Data+(Length&ConstantSafe[1]));
+	DATA_08 *End=(data_08*)(Data+(Length&BitC.Const.Mask.Safe[1]));
 	data_08 *_R_ Ptr=(data_08*)Data;
 	data_08 Temp;
 
@@ -150,7 +147,7 @@ _BITC_ general BitC_Endian_D32_(data_32 _PL_ Data,ADDRESS Length)
 		Ptr[5]=Ptr[6];
 		Ptr[6]=Temp;
 	}
-	for(End+=((Length&ConstantRest[1])<<2);Ptr<End;Ptr+=4)
+	for(End+=((Length&BitC.Const.Mask.Rest[1])<<2);Ptr<End;Ptr+=4)
 	{
 		Temp=Ptr[0];
 		Ptr[0]=Ptr[3];
@@ -279,7 +276,7 @@ static data_64 _BitC_Wide_Mask_D64_(DATA_64 Mask)
 #endif
 
 #if(Fold_(Definition:Relational Operation Functions))
-static data_08 _BitC_RO_Loop_A_(bitclip M)
+static data_08 _BitC_RO_Loop_A_(BITCLIP M)
 {
 	M.V.D32[1]<<=4;
 	M.V.D32[0]|=M.C.D32[1];
@@ -292,7 +289,7 @@ static data_08 _BitC_RO_Loop_A_(bitclip M)
 
 	return M.C.D08[0];
 }
-static general _BitC_RO_Loop_B_(bitclip M,DATA_08 R)
+static general _BitC_RO_Loop_B_(BITCLIP M,DATA_08 R)
 {
 	M.V.D32[0]|=M.C.D32[1];
 	M.V.D16[0]|=M.C.D16[1];
@@ -316,10 +313,9 @@ static general _BitC_RO_Loop_B_(bitclip M,DATA_08 R)
 _BITC_ general BitC_Shrink_D08_(DATA_08 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Length)
 {
 	DATA_64 _PL_ Peek=(data_64*)TableShrink08;
-	ADDRESS Safe=Length&ConstantSafe[3];
-	ADDRESS Rest=Length&ConstantRest[3];
-	data_64 Buffer;
-	bitclip Mask;Mask.C.D64=&Buffer;
+	ADDRESS Safe=Length&BitC.Const.Mask.Safe[3];
+	ADDRESS Rest=Length&BitC.Const.Mask.Rest[3];
+	BITCLIP Mask={.V.D64=&(data_64) { 0 }};
 
 	for(DATA_08 _PL_ End=DataI+Safe;DataI<End;DataI+=8,DataO++)
 	{
@@ -348,10 +344,9 @@ _BITC_ general BitC_Shrink_D08_(DATA_08 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Le
 _BITC_ general BitC_Shrink_D16_(DATA_16 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Length)
 {
 	DATA_64 _PL_ Peek=(data_64*)TableShrink16;
-	ADDRESS Safe=Length&ConstantSafe[3];
-	ADDRESS Rest=Length&ConstantRest[3];
-	data_64 Buffer[2];
-	bitclip Mask;Mask.C.D64=Buffer;
+	ADDRESS Safe=Length&BitC.Const.Mask.Safe[3];
+	ADDRESS Rest=Length&BitC.Const.Mask.Rest[3];
+	BITCLIP Mask={.V.D64=(data_64[2]) { 0 }};
 
 	for(DATA_16 _PL_ End=DataI+Safe;DataI<End;DataI+=8,DataO++)
 	{
@@ -383,10 +378,9 @@ _BITC_ general BitC_Shrink_D16_(DATA_16 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Le
 _BITC_ general BitC_Shrink_D32_(DATA_32 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Length)
 {
 	DATA_64 _PL_ Peek=(data_64*)TableShrink32;
-	ADDRESS Safe=Length&ConstantSafe[3];
-	ADDRESS Rest=Length&ConstantRest[3];
-	data_64 Buffer[4];
-	bitclip Mask;Mask.C.D64=Buffer;
+	ADDRESS Safe=Length&BitC.Const.Mask.Safe[3];
+	ADDRESS Rest=Length&BitC.Const.Mask.Rest[3];
+	BITCLIP Mask={.V.D64=(data_64[4]) { 0 }};
 
 	for(DATA_32 _PL_ End=DataI+Safe;DataI<End;DataI+=8,DataO++)
 	{
@@ -423,10 +417,9 @@ _BITC_ general BitC_Shrink_D32_(DATA_32 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Le
 }
 _BITC_ general BitC_Shrink_D64_(DATA_64 *_R_ DataI,data_08 *_R_ DataO,ADDRESS Length)
 {
-	ADDRESS Safe=Length&ConstantSafe[3];
-	ADDRESS Rest=Length&ConstantRest[3];
-	data_64 Buffer[8];
-	bitclip Mask;Mask.C.D64=Buffer;
+	ADDRESS Safe=Length&BitC.Const.Mask.Safe[3];
+	ADDRESS Rest=Length&BitC.Const.Mask.Rest[3];
+	BITCLIP Mask={.V.D64=(data_64[8]) { 0 }};
 
 	for(DATA_64 _PL_ End=DataI+Safe;DataI<End;DataI+=8,DataO++)
 	{
@@ -590,7 +583,7 @@ static address _BitC_Reform_Total_(ADDRESS *_R_ Shape,ADDRESS Dims)
 }
 static general _BitC_Reform_Order_(BITCLIP Source,BITCLIP Target,ADDRESS _PL_ Shape,ADDRESS _PL_ Map,ADDRESS Total,ADDRESS Dims,ADDRESS Bytes)
 {
-	ADDRESS Switch=Bytes&ConstantRest[3];
+	ADDRESS Switch=Bytes&BitC.Const.Mask.Rest[3];
 	ADDRESS Loop=Bytes>>TableReform[Switch];
 	ADDRESS Last=Dims-1;
 	address Jump[_BitC_Dims_];
@@ -1931,14 +1924,14 @@ BITCASE BitC=
 		},
 		.Mask=
 		{
-			.Safe=ConstantSafe,
-			.Rest=ConstantRest
+			.Safe=ConstantMask+0,
+			.Rest=ConstantMask+8
 		}
 	},
 	.Reform_=_BitC_Reform_,
 	.Endian=
 	{
-		.Endianness=(data_08*)(ConstantRest+1),
+		.Endianness=(data_08*)(ConstantMask+9),
 		.D08_=BitC_Endian_D08_,
 		.D16_=BitC_Endian_D16_,
 		.D32_=BitC_Endian_D32_,

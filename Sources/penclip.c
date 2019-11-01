@@ -1,6 +1,5 @@
 ﻿#include "penclip.h"
 
-#include <assert.h>
 #include <limits.h>
 #include <stdint.h>
 
@@ -22,7 +21,7 @@ static_assert((sizeof(penc_sn)==(sizeof(address)<<2)),"sizeof(penc_sn) != 4*size
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-_PENC_ BYTE_08 IdiomVersion[16]="Date:2019.10.24";
+_PENC_ BYTE_08 IdiomVersion[16]="Date:2019.11.01";
 _PENC_ TEXT_08 IdiomHello08[16]="Hello, world!\r\n";
 _PENC_ TEXT_16 IdiomHello16[16]=L"Hello, world!\r\n";
 static TEXT_08 IdiomOpen08[16]={'r','b','\0','\0','w','b','\0','\0','r','t','\0','\0','w','t','\0','\0'};

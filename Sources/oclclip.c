@@ -1,7 +1,5 @@
 ﻿#include "oclclip.h"
 
-#include <assert.h>
-
 #if(Fold_(Static Assertions))
 static_assert(OCLCPinAxes==4,"The pin must be 4D.");
 static_assert(CLSuccess==0,"CLSuccess != 0");
@@ -24,7 +22,7 @@ static_assert(sizeof(cl_mem)==sizeof(general*),"sizeof(cl_mem) != sizeof(size_t)
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="2019.10.24";
+static BYTE_08 IdiomVersion[16]="2019.11.01";
 static OCLC_MP ConstantZero={.N=0,.Z=0,.Y=0,.X=0};
 #endif
 

@@ -1,6 +1,5 @@
 ﻿#include "timclip.h"
 
-#include <assert.h>
 #include <limits.h>
 #include <math.h>
 
@@ -10,9 +9,15 @@ static_assert(sizeof(timc_tt)==sizeof(data_32),"sizeof(timc_tt) != sizeof(data_3
 #endif
 
 #if(Fold_(Definition:Internals))
+#if defined(__STDC__)&&defined(__STDC_VERSION__)
+#if((__STDC__)&&((__STDC_VERSION__)>=(201710L)))
+#define _TimC_Generic_
+#endif
+#endif
+
 #define _TIMC_ static
 
-_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.10.24";
+_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.01";
 #endif
 
 #if(Fold_(Definition:Advanced Type Functions))
@@ -229,17 +234,29 @@ static timc_tt _TimC_SW_Cast_Tag_(clock_t Time)
 
 	{
 		const clock_t Zero=0;
+#ifdef _TimC_Generic_
+		BITCLIP Peek={.C.G=&Time},Mask={.C.G=&(inte_64) { 0 }};
 
-		if(Time<Zero)
-		{
-			Time=Zero-Time;
-			Tag.Sign=1;
-		}
-		else
-		{
-			Time=Zero+Time;
-			Tag.Sign=0;
-		}
+		_Generic
+		(
+			Time,
+			data_08:(Tag.Sign=0),
+			data_16:(Tag.Sign=0),
+			data_32:(Tag.Sign=0),
+			data_64:(Tag.Sign=0),
+			inte_08:((Mask.V.I08[0]=Peek.C.I08[0]>>7),(Peek.V.I08[0]+=Mask.C.I08[0]),(Peek.V.I08[0]^=Mask.C.I08[0]),(Tag.Sign=(data_32)(Mask.C.I08[0]))),
+			inte_16:((Mask.V.I16[0]=Peek.C.I16[0]>>15),(Peek.V.I16[0]+=Mask.C.I16[0]),(Peek.V.I16[0]^=Mask.C.I16[0]),(Tag.Sign=(data_32)(Mask.C.I16[0]))),
+			inte_32:((Mask.V.I32[0]=Peek.C.I32[0]>>31),(Peek.V.I32[0]+=Mask.C.I32[0]),(Peek.V.I32[0]^=Mask.C.I32[0]),(Tag.Sign=(data_32)(Mask.C.I32[0]))),
+			inte_64:((Mask.V.I64[0]=Peek.C.I64[0]>>63),(Peek.V.I64[0]+=Mask.C.I64[0]),(Peek.V.I64[0]^=Mask.C.I64[0]),(Tag.Sign=(data_32)(Mask.C.I64[0]))),
+			real_32:(Tag.Sign=(data_32)(Peek.C.D32[0]>>31),Peek.V.D32[0]&=0x7FFFFFFF),
+			real_64:(Tag.Sign=(data_32)(Peek.C.D64[0]>>63),Peek.V.D64[0]&=0x7FFFFFFFFFFFFFFF),
+			default:
+#endif
+				((Time<Zero)?((Time=Zero-Time),(Tag.Sign=1)):((Time=Zero+Time),(Tag.Sign=0)))
+#ifdef _TimC_Generic_
+		)
+#endif
+			;
 	}
 	{
 		DATA_32 Days=7,Hours=24,Minutes=60,Seconds=60,Milliseconds=1000,Clocks=(DATA_32)(CLOCKS_PER_SEC);
@@ -303,9 +320,7 @@ _TIMC_ timc_tt TimC_SW_Read_Mean_Tag_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 #if(Fold_(Part:TimC_RG))
 static general _TimC_RG_Setup_(data_64 *_R_ Ptr,ADDRESS Nums)
 {
-	data_64 Temp=(data_64)time(NULL);
-	
-	for(DATA_64 _PL_ End=Ptr+Nums;Ptr<End;Ptr++,Temp++)
+	for(data_64 Temp=(data_64)time(NULL),_PL_ End=Ptr+Nums;Ptr<End;Ptr++,Temp++)
 		*Ptr=Temp;
 
 	return;
@@ -347,7 +362,7 @@ _TIMC_ logical TimC_RG_Reset_(TIMC_RG _PL_ _R_ RG)
 	return ((RG)?(_TimC_RG_Setup_(RG->State,RG->Nums),1):(0));
 }
 
-static data_32 _TimC_RG_Rand_(bitclip State)
+static data_32 _TimC_RG_Rand_(BITCLIP State)
 {
 	DATA_64 Temp=(State.C.D64[0])>>32;
 
@@ -362,9 +377,9 @@ _TIMC_ logical TimC_RG_Byte_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,general _PL_ _R_
 	if(_TimC_Check_((TIMC_VC*)RG,Select))
 	{
 		ADDRESS Batch=Length>>2;
+		BITCLIP State={.V.D64=RG->State+Select};
 		DATA_32 *End=Array;
 		data_32 *_R_ Ptr=Array;
-		bitclip State;State.C.G=RG->State+Select;
 
 		for(End+=(Batch&(BitC.Const.Mask.Safe[3]));Ptr<End;Ptr+=8)
 		{
@@ -460,8 +475,7 @@ _TIMC_ logical TimC_RG_Uni_R32_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,real_32 _PL_ 
 	{
 		DATA_32 Ref=0x2F800000;
 		REAL_32 Scale=Acs_(real_32,Ref)*(Max-Min);
-		bitclip End;End.C.G=Array;
-		bitclip Ptr;Ptr.C.G=Array;
+		bitclip Ptr={.V.R32=Array},End=Ptr;
 
 		for(End.C.R32+=(Length&(BitC.Const.Mask.Safe[3]));Ptr.C.R32<End.C.R32;Ptr.C.R32+=8)
 		{
@@ -495,8 +509,7 @@ _TIMC_ logical TimC_RG_Uni_R64_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,real_64 _PL_ 
 	{
 		DATA_64 Ref=0x3BF0000000000000;
 		REAL_64 Scale=Acs_(real_64,Ref)*(Max-Min);
-		bitclip End;End.C.G=Array;
-		bitclip Ptr;Ptr.C.G=Array;
+		bitclip Ptr={.V.R64=Array},End=Ptr;
 
 		for(End.C.R64+=(Length&(BitC.Const.Mask.Safe[3]));Ptr.C.R64<End.C.R64;Ptr.C.R64+=8)
 		{
@@ -522,25 +535,21 @@ _TIMC_ logical TimC_RG_Gau_R32_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,real_32 _PL_ 
 {
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_32,Length)))
 	{
-		DATA_32 Ref=0x2F800000;
-		REAL_32 ScaleU=Acs_(real_32,Ref);
-		REAL_32 ScaleV=+2.0F*(BitC.Const.Pi.R32[0])*ScaleU;
-		REAL_32 ScaleW=-2.0F*Deviation*Deviation;
-		data_32 Space[2];
-		bitclip End;End.C.G=Array;
-		bitclip Ptr;Ptr.C.G=Array;
-		bitclip Temp;Temp.C.G=Space;
+		const union { DATA_32 Ref;REAL_32 U; }Range={.Ref=0x2F800000};
+		const struct { REAL_32 V,W; }Scale={.V=(+2.0F)*(BitC.Const.Pi.R32[0])*(Range.U),.W=(-2.0F)*(Deviation*Deviation)};
+		BITCLIP Temp={.V.D32=(data_32[2]) { 0 }};
+		bitclip Ptr={.V.R32=Array},End=Ptr;
 
 		for(End.C.R32+=(Length&(BitC.Const.Mask.Safe[1]));Ptr.C.R32<End.C.R32;Ptr.C.R32+=2)
 		{
 			Temp.V.D32[0]=0x00000001|Ptr.C.D32[0];
 			Temp.V.D32[1]=0xFFFFFFFE&Ptr.C.D32[1];
 
-			Temp.V.R32[0]=ScaleU*((real_32)(Temp.C.D32[0]));
-			Temp.V.R32[1]=ScaleV*((real_32)(Temp.C.D32[1]));
+			Temp.V.R32[0]=Range.U*((real_32)(Temp.C.D32[0]));
+			Temp.V.R32[1]=Scale.V*((real_32)(Temp.C.D32[1]));
 
 			Temp.V.R32[0]=logf(Temp.C.R32[0]);
-			Temp.V.R32[0]*=ScaleW;
+			Temp.V.R32[0]*=Scale.W;
 			Temp.V.R32[0]=sqrtf(Temp.C.R32[0]);
 
 			Ptr.V.R32[0]=Temp.C.R32[0]*cosf(Temp.C.R32[1]);
@@ -551,16 +560,16 @@ _TIMC_ logical TimC_RG_Gau_R32_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,real_32 _PL_ 
 		}
 		if(Length&(BitC.Const.Mask.Rest[1]))
 		{
-			bitclip State;State.C.G=RG->State+Select;
+			BITCLIP State={.V.G=RG->State+Select};
 
 			Temp.V.D32[0]=0x00000001|Ptr.C.D32[0];
 			Temp.V.D32[1]=0xFFFFFFFE&_TimC_RG_Rand_(State);
 
-			Temp.V.R32[0]=ScaleU*((real_32)(Temp.C.D32[0]));
-			Temp.V.R32[1]=ScaleV*((real_32)(Temp.C.D32[1]));
+			Temp.V.R32[0]=Range.U*((real_32)(Temp.C.D32[0]));
+			Temp.V.R32[1]=Scale.V*((real_32)(Temp.C.D32[1]));
 
 			Temp.V.R32[0]=logf(Temp.C.R32[0]);
-			Temp.V.R32[0]*=ScaleW;
+			Temp.V.R32[0]*=Scale.W;
 			Temp.V.R32[0]=sqrtf(Temp.C.R32[0]);
 
 			Ptr.V.R32[0]=Temp.C.R32[0]*cosf(Temp.C.R32[1]);
@@ -578,25 +587,21 @@ _TIMC_ logical TimC_RG_Gau_R64_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,real_64 _PL_ 
 {
 	if(TimC_RG_Byte_(RG,Select,Array,MemC_Size_(real_64,Length)))
 	{
-		DATA_64 Ref=0x3BF0000000000000;
-		REAL_64 ScaleU=Acs_(real_64,Ref);
-		REAL_64 ScaleV=+2.0*(BitC.Const.Pi.R64[0])*ScaleU;
-		REAL_64 ScaleW=-2.0*Deviation*Deviation;
-		data_64 Space[2];
-		bitclip End;End.C.G=Array;
-		bitclip Ptr;Ptr.C.G=Array;
-		bitclip Temp;Temp.C.G=Space;
+		const union { DATA_64 Ref;REAL_64 U; }Range={.Ref=0x3BF0000000000000};
+		const struct { REAL_64 V,W; }Scale={.V=(+2.0)*(BitC.Const.Pi.R64[0])*(Range.U),.W=(-2.0)*(Deviation*Deviation)};
+		BITCLIP Temp={.V.D64=(data_64[2]) { 0 }};
+		bitclip Ptr={.V.R64=Array},End=Ptr;
 
 		for(End.C.R64+=(Length&(BitC.Const.Mask.Safe[1]));Ptr.C.R64<End.C.R64;Ptr.C.R64+=2)
 		{
 			Temp.V.D64[0]=0x0000000000000001|Ptr.C.D64[0];
 			Temp.V.D64[1]=0xFFFFFFFFFFFFFFFE&Ptr.C.D64[1];
 
-			Temp.V.R64[0]=ScaleU*((real_64)(Temp.C.D64[0]));
-			Temp.V.R64[1]=ScaleV*((real_64)(Temp.C.D64[1]));
+			Temp.V.R64[0]=Range.U*((real_64)(Temp.C.D64[0]));
+			Temp.V.R64[1]=Scale.V*((real_64)(Temp.C.D64[1]));
 
 			Temp.V.R64[0]=log(Temp.C.R64[0]);
-			Temp.V.R64[0]*=ScaleW;
+			Temp.V.R64[0]*=Scale.W;
 			Temp.V.R64[0]=sqrt(Temp.C.R64[0]);
 
 			Ptr.V.R64[0]=Temp.C.R64[0]*cos(Temp.C.R64[1]);
@@ -607,16 +612,16 @@ _TIMC_ logical TimC_RG_Gau_R64_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,real_64 _PL_ 
 		}
 		if(Length&(BitC.Const.Mask.Rest[1]))
 		{
-			bitclip State;State.C.G=RG->State+Select;
+			BITCLIP State={.V.G=RG->State+Select};
 
 			Temp.V.D64[0]=0x0000000000000001|Ptr.C.D64[0];
 			Temp.V.D64[1]=0xFFFFFFFFFFFFFFFE&_TimC_RG_Rand_(State);
 
-			Temp.V.R64[0]=ScaleU*((real_64)(Temp.C.D64[0]));
-			Temp.V.R64[1]=ScaleV*((real_64)(Temp.C.D64[1]));
+			Temp.V.R64[0]=Range.U*((real_64)(Temp.C.D64[0]));
+			Temp.V.R64[1]=Scale.V*((real_64)(Temp.C.D64[1]));
 
 			Temp.V.R64[0]=log(Temp.C.R64[0]);
-			Temp.V.R64[0]*=ScaleW;
+			Temp.V.R64[0]*=Scale.W;
 			Temp.V.R64[0]=sqrt(Temp.C.R64[0]);
 
 			Ptr.V.R64[0]=Temp.C.R64[0]*cos(Temp.C.R64[1]);
@@ -651,16 +656,14 @@ _TIMC_ logical TimC_RG_Perm_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,address _PL_ _R_
 {
 	if(_TimC_Check_((TIMC_VC*)RG,Select))
 		if(Length)
-		{
-			data_64 Mul=(data_64)Length;
-
-			if(Length>((address)Mul))
+			if(Length>UINT64_MAX)
 				return 0;
 			else
 			{
+				BITCLIP State={.V.D64=RG->State+Select};
 				ADDRESS *End=Array;
 				address *_R_ Ptr=Array;
-				bitclip State;State.C.G=RG->State+Select;
+				data_64 Mul=(data_64)Length;
 
 				MemC.Sort.Index_(Array,Length,0);
 
@@ -676,7 +679,6 @@ _TIMC_ logical TimC_RG_Perm_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,address _PL_ _R_
 
 				return 1;
 			}
-		}
 		else
 			return 1;
 	else
@@ -687,6 +689,7 @@ _TIMC_ logical TimC_RG_Perm_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,address _PL_ _R_
 
 #if(Fold_(Undefinition:Internals))
 #undef _TIMC_
+#undef _TimC_Generic_
 #endif
 
 #if(Fold_(Library Casing))
