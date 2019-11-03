@@ -8,6 +8,8 @@
 static_assert(__STDC_WANT_LIB_EXT1__,"__STDC_WANT_LIB_EXT1__ == 0");
 static_assert(((address)(NULL))==((address)(0)),"NULL != 0");
 static_assert(((address)(FULL))==(~((address)(0))),"FULL != ~0");
+static_assert(((address)(FULL))==(SIZE_MAX),"FULL != SIZE_MAX");
+static_assert(((address)((general*)(SIZE_MAX)))==(SIZE_MAX),"SIZE_MAX != SIZE_MAX");
 static_assert((CHAR_BIT==8),"CHAR_BIT != 8");
 static_assert((sizeof(byte_08)==1),"sizeof(byte_08) != 1");
 static_assert((sizeof(general*)==sizeof(address)),"sizeof(general*) != sizeof(address)");
@@ -1287,7 +1289,7 @@ static memc_mn *_MemC_MN_Search_Space_(memc_mn *_R_ Ptr,ADDRESS Demand)
 {
 	memc_mn *Here=NULL;
 
-	for(address Size=(address)FULL;Ptr;Ptr=Ptr->Next)
+	for(address Size=SIZE_MAX;Ptr;Ptr=Ptr->Next)
 		if(Ptr->Home);
 		else if(Demand>Ptr->Size);
 		else if(Size>Ptr->Size)
@@ -1392,7 +1394,7 @@ static address _MemC_MN_Return_(memc_mn *_PL_ Node)
 static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
 {
 	memc_ml *Here=ML;
-	address Size=(address)FULL;
+	address Size=SIZE_MAX;
 	memc_l2 Return={NULL,NULL};
 
 	do
@@ -1645,7 +1647,7 @@ static logical _MemC_ML_Able_Check_(ADDRESS *_R_ PtrU,address _PL_ Able,ADDRESS 
 		{
 			address *Mark=NULL;
 
-			for(address Size=(address)FULL,*PtrA=Able;PtrA<EndA;PtrA++)
+			for(address Size=SIZE_MAX,*PtrA=Able;PtrA<EndA;PtrA++)
 				if((*PtrU)>(*PtrA));
 				else if(Size>(*PtrA))
 				{
