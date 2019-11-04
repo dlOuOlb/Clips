@@ -2,7 +2,11 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
+/*------------------------------------------------------------------*/
+/*	Note:															*/
+/*	Run "BitC_Data_Cast_();" in debug mode to check if the casted	*/
+/*	function pointers work correctly between natural and integer.	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
@@ -251,58 +255,103 @@ MemC_Type_Declare_(struct,bitc_bp,BITC_BP);	//BitClip : Bit Pointer Structure
 #endif
 
 #if(Fold_(Definition:Macros))
+#if(Fold_(Part:Debugging Assertions))
+#define BitC_Data_Cast_() assert((BitC.Just.I08_(INT8_MAX)==(INT8_MAX))&&(BitC.Just.I16_(INT16_MAX)==(INT16_MAX))&&(BitC.Just.I32_(INT32_MAX)==(INT32_MAX))&&(BitC.Just.I64_(INT64_MAX)==(INT64_MAX)))
+
+#define _BitC_Range_I08_(X) assert((INT8_C(-0x40)<(X))&&((X)<INT8_C(+0x40)))
+#define _BitC_Range_I16_(X) assert((INT16_C(-0x4000)<(X))&&((X)<INT16_C(+0x4000)))
+#define _BitC_Range_I32_(X) assert((INT32_C(-0x40000000)<(X))&&((X)<INT32_C(+0x40000000)))
+#define _BitC_Range_I64_(X) assert((INT64_C(-0x4000000000000000)<(X))&&((X)<INT64_C(+0x4000000000000000)))
+#endif
+
 #if(Fold_(Part:BitC_Max_T##_))
-#define BitC_Max_I08_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_08,Output)>>7);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 8-bit Integer - Only valid for Data Range under 0x40
-#define BitC_Max_I16_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_16,Output)>>15);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 16-bit Integer - Only valid for Data Range under 0x4000
-#define BitC_Max_I32_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 32-bit Integer - Only valid for Data Range under 0x40000000
-#define BitC_Max_I64_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}				//BitClip : Maximum of 64-bit Integer - Only valid for Data Range under 0x4000000000000000
-#define BitC_Max_R32_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}	//BitClip : Maximum of 32-bit Real
-#define BitC_Max_R64_(Output,InputA,InputB) {(Output)=(InputB)-(InputA);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}	//BitClip : Maximum of 64-bit Real
+//BitClip : Maximum of 8-bit Integer - This could be invalid for data range over 0x40.
+#define BitC_Max_I08_(Output,InputA,InputB) __dl{_BitC_Range_I08_(InputA);_BitC_Range_I08_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_08,Output)>>7);(Output)=(InputB)-(Output);}lb__
+//BitClip : Maximum of 16-bit Integer - This could be invalid for data range over 0x4000.
+#define BitC_Max_I16_(Output,InputA,InputB) __dl{_BitC_Range_I16_(InputA);_BitC_Range_I16_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_16,Output)>>15);(Output)=(InputB)-(Output);}lb__
+//BitClip : Maximum of 32-bit Integer - This could be invalid for data range over 0x40000000.
+#define BitC_Max_I32_(Output,InputA,InputB) __dl{_BitC_Range_I32_(InputA);_BitC_Range_I32_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}lb__
+//BitClip : Maximum of 64-bit Integer - This could be invalid for data range over 0x4000000000000000.
+#define BitC_Max_I64_(Output,InputA,InputB) __dl{_BitC_Range_I64_(InputA);_BitC_Range_I64_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}lb__
+//BitClip : Maximum of 32-bit Real - This could be imprecise.
+#define BitC_Max_R32_(Output,InputA,InputB) __dl{(Output)=(InputB)-(InputA);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}lb__
+//BitClip : Maximum of 64-bit Real - This could be imprecise.
+#define BitC_Max_R64_(Output,InputA,InputB) __dl{(Output)=(InputB)-(InputA);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Min_T##_))
-#define BitC_Min_I08_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_08,Output)>>7);(Output)+=(InputB);}				//BitClip : Minimum of 8-bit Integer - Only valid for Data Range under 0x40
-#define BitC_Min_I16_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_16,Output)>>15);(Output)+=(InputB);}				//BitClip : Minimum of 16-bit Integer - Only valid for Data Range under 0x4000
-#define BitC_Min_I32_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}				//BitClip : Minimum of 32-bit Integer - Only valid for Data Range under 0x40000000
-#define BitC_Min_I64_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}				//BitClip : Minimum of 64-bit Integer - Only valid for Data Range under 0x4000000000000000
-#define BitC_Min_R32_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}	//BitClip : Minimum of 32-bit Real
-#define BitC_Min_R64_(Output,InputA,InputB) {(Output)=(InputA)-(InputB);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}	//BitClip : Minimum of 64-bit Real
+//BitClip : Minimum of 8-bit Integer - This could be invalid for data range over 0x40.
+#define BitC_Min_I08_(Output,InputA,InputB) __dl{_BitC_Range_I08_(InputA);_BitC_Range_I08_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_08,Output)>>7);(Output)+=(InputB);}lb__
+//BitClip : Minimum of 16-bit Integer - This could be invalid for data range over 0x4000.
+#define BitC_Min_I16_(Output,InputA,InputB) __dl{_BitC_Range_I16_(InputA);_BitC_Range_I16_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_16,Output)>>15);(Output)+=(InputB);}lb__
+//BitClip : Minimum of 32-bit Integer - This could be invalid for data range over 0x40000000.
+#define BitC_Min_I32_(Output,InputA,InputB) __dl{_BitC_Range_I32_(InputA);_BitC_Range_I32_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}lb__
+//BitClip : Minimum of 64-bit Integer - This could be invalid for data range over 0x4000000000000000.
+#define BitC_Min_I64_(Output,InputA,InputB) __dl{_BitC_Range_I64_(InputA);_BitC_Range_I64_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}lb__
+//BitClip : Minimum of 32-bit Real - This could be imprecise.
+#define BitC_Min_R32_(Output,InputA,InputB) __dl{(Output)=(InputA)-(InputB);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}lb__
+//BitClip : Minimum of 64-bit Real - This could be imprecise.
+#define BitC_Min_R64_(Output,InputA,InputB) __dl{(Output)=(InputA)-(InputB);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Abs_P_T##_))
-#define BitC_Abs_P_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 8-bit Integer
-#define BitC_Abs_P_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 16-bit Integer
-#define BitC_Abs_P_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 32-bit Integer
-#define BitC_Abs_P_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)^=((Input)+(Output));}	//BitClip : Positive Absolute of 64-bit Integer
-#define BitC_Abs_P_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)&0x7FFFFFFF;}			//BitClip : Positive Absolute of 32-bit Real
-#define BitC_Abs_P_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)&0x7FFFFFFFFFFFFFFF;}	//BitClip : Positive Absolute of 64-bit Real
+//BitClip : Positive Absolute of 8-bit Integer
+#define BitC_Abs_P_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)^=((Input)+(Output));}lb__
+//BitClip : Positive Absolute of 16-bit Integer
+#define BitC_Abs_P_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)^=((Input)+(Output));}lb__
+//BitClip : Positive Absolute of 32-bit Integer
+#define BitC_Abs_P_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)^=((Input)+(Output));}lb__
+//BitClip : Positive Absolute of 64-bit Integer
+#define BitC_Abs_P_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)^=((Input)+(Output));}lb__
+//BitClip : Positive Absolute of 32-bit Real
+#define BitC_Abs_P_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)&0x7FFFFFFF;}lb__
+//BitClip : Positive Absolute of 64-bit Real
+#define BitC_Abs_P_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)&0x7FFFFFFFFFFFFFFF;}lb__
 #endif
 
 #if(Fold_(Part:BitC_Abs_N_T##_))
-#define BitC_Abs_N_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 8-bit Integer
-#define BitC_Abs_N_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 16-bit Integer
-#define BitC_Abs_N_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 32-bit Integer
-#define BitC_Abs_N_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)^=((Input)+(Output));}	//BitClip : Negative Absolute of 64-bit Integer
-#define BitC_Abs_N_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)|0x80000000;}								//BitClip : Negative Absolute of 32-bit Real
-#define BitC_Abs_N_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)|0x8000000000000000;}						//BitClip : Negative Absolute of 64-bit Real
+//BitClip : Negative Absolute of 8-bit Integer
+#define BitC_Abs_N_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+//BitClip : Negative Absolute of 16-bit Integer
+#define BitC_Abs_N_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+//BitClip : Negative Absolute of 32-bit Integer
+#define BitC_Abs_N_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+//BitClip : Negative Absolute of 64-bit Integer
+#define BitC_Abs_N_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+//BitClip : Negative Absolute of 32-bit Real
+#define BitC_Abs_N_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)|0x80000000;}lb__
+//BitClip : Negative Absolute of 64-bit Real
+#define BitC_Abs_N_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)|0x8000000000000000;}lb__
 #endif
 
 #if(Fold_(Part:BitC_Lim_P_T##_))
-#define BitC_Lim_P_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 8-bit Integer
-#define BitC_Lim_P_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 16-bit Integer
-#define BitC_Lim_P_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 32-bit Integer
-#define BitC_Lim_P_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)&=(Input);}																//BitClip : Positive Clipping of 64-bit Integer
-#define BitC_Lim_P_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)=~Acs_(inte_32,Output);Acs_(inte_32,Output)&=Acs_(inte_32,Input);}	//BitClip : Positive Clipping of 32-bit Real
-#define BitC_Lim_P_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)=~Acs_(inte_64,Output);Acs_(inte_64,Output)&=Acs_(inte_64,Input);}	//BitClip : Positive Clipping of 64-bit Real
+//BitClip : Positive Clipping of 8-bit Integer
+#define BitC_Lim_P_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)&=(Input);}lb__
+//BitClip : Positive Clipping of 16-bit Integer
+#define BitC_Lim_P_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)&=(Input);}lb__
+//BitClip : Positive Clipping of 32-bit Integer
+#define BitC_Lim_P_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)&=(Input);}lb__
+//BitClip : Positive Clipping of 64-bit Integer
+#define BitC_Lim_P_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)&=(Input);}lb__
+//BitClip : Positive Clipping of 32-bit Real
+#define BitC_Lim_P_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)=~Acs_(inte_32,Output);Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
+//BitClip : Positive Clipping of 64-bit Real
+#define BitC_Lim_P_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)=~Acs_(inte_64,Output);Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Lim_N_T##_))
-#define BitC_Lim_N_I08_(Output,Input) {(Output)=Acs_(inte_08,Input)>>7;(Output)&=(Input);}										//BitClip : Negative Clipping of 8-bit Integer
-#define BitC_Lim_N_I16_(Output,Input) {(Output)=Acs_(inte_16,Input)>>15;(Output)&=(Input);}										//BitClip : Negative Clipping of 16-bit Integer
-#define BitC_Lim_N_I32_(Output,Input) {(Output)=Acs_(inte_32,Input)>>31;(Output)&=(Input);}										//BitClip : Negative Clipping of 32-bit Integer
-#define BitC_Lim_N_I64_(Output,Input) {(Output)=Acs_(inte_64,Input)>>63;(Output)&=(Input);}										//BitClip : Negative Clipping of 64-bit Integer
-#define BitC_Lim_N_R32_(Output,Input) {Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)&=Acs_(inte_32,Input);}	//BitClip : Negative Clipping of 32-bit Real
-#define BitC_Lim_N_R64_(Output,Input) {Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)&=Acs_(inte_64,Input);}	//BitClip : Negative Clipping of 64-bit Real
+//BitClip : Negative Clipping of 8-bit Integer
+#define BitC_Lim_N_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)&=(Input);}lb__
+//BitClip : Negative Clipping of 16-bit Integer
+#define BitC_Lim_N_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)&=(Input);}lb__
+//BitClip : Negative Clipping of 32-bit Integer
+#define BitC_Lim_N_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)&=(Input);}lb__
+//BitClip : Negative Clipping of 64-bit Integer
+#define BitC_Lim_N_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)&=(Input);}lb__
+//BitClip : Negative Clipping of 32-bit Real
+#define BitC_Lim_N_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
+//BitClip : Negative Clipping of 64-bit Real
+#define BitC_Lim_N_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
 #endif
 #endif
 
@@ -310,9 +359,9 @@ MemC_Type_Declare_(struct,bitc_bp,BITC_BP);	//BitClip : Bit Pointer Structure
 //BitClip : Library Case Structure
 struct _bitcase
 {
-	BYTE_08 _PL_ Version;	//BitClip : Library Version
-	ADDRESS MaxDims;		//BitClip : Maximum Dimension for "BitC.Reform_"
-
+	BYTE_08 _PL_ Version;		//BitClip : Library Version
+	DATA_08 _PL_ Endianness;	//BitClip : Pointed value is 0x00 for big-endian, 0x01 for little-endian.
+	
 	//BitClip : Type Descriptor Set
 	const struct
 	{
@@ -405,41 +454,87 @@ struct _bitcase
 	}
 	Const;
 
+	//BitClip : Reformation
 	const struct
 	{
+		ADDRESS MaxDims;	//BitClip : Maximum Dimension for "BitC.Reform_"
+
 		//BitClip : Array Reformation
 		//＊SourceShape[dim] == TargetShape[ReformingAxis[dim]] where dim＜Dimensions.
 		//＊Return value is 1 for success, 0 for failure.
 		logical(_PL_ Reform_)(GENERAL _PL_ SourceArray,general _PL_ TargetArray,ADDRESS _PL_ SourceShape,ADDRESS _PL_ ReformingAxis,ADDRESS Dimensions,ADDRESS TypeSize);
-#define BitC_Reform_(S,T,SShp,StoTAxis,Dims) ((sizeof(*(S))==sizeof(*(T)))?(BitC.Reform_(S,T,SShp,StoTAxis,Dims,sizeof(*(S)))):(BitCNull))
+#define BitC_Reform_(S,T,SShp,StoTAxis,Dims) (MemC_Assert_(sizeof(*(S))==sizeof(*(T))),BitC.Reform_(S,T,SShp,StoTAxis,Dims,sizeof(*(S))))
+	};
+
+	const struct
+	{
+		//BitClip : Just Function Set
+		const union
+		{
+			const struct
+			{
+				//BitClip : Just return the 8-bit natural.
+				data_08(_PL_ D08_)(DATA_08);
+				//BitClip : Just return the 16-bit natural.
+				data_16(_PL_ D16_)(DATA_16);
+				//BitClip : Just return the 32-bit natural.
+				data_32(_PL_ D32_)(DATA_32);
+				//BitClip : Just return the 64-bit natural.
+				data_64(_PL_ D64_)(DATA_64);
+			};
+			const struct
+			{
+				//BitClip : Just return the 8-bit integer.
+				inte_08(_PL_ I08_)(INTE_08);
+				//BitClip : Just return the 16-bit integer.
+				inte_16(_PL_ I16_)(INTE_16);
+				//BitClip : Just return the 32-bit integer.
+				inte_32(_PL_ I32_)(INTE_32);
+				//BitClip : Just return the 64-bit integer.
+				inte_64(_PL_ I64_)(INTE_64);
+			};
+		}
+		Just;
 
 		//BitClip : Endian Flipping Function Set
-		const struct
+		const union
 		{
-			//BitClip : Endianness
-			//＊Pointed value is 0x00 for big-endian, 0x01 for little-endian.
-			DATA_08 _PL_ Endianness;
+			const struct
+			{
+				//BitClip : 8-bit Natural Endian Flipping
+				general(_PL_ D08_)(data_08 _PL_ Data,ADDRESS Length);
+				//BitClip : 16-bit Natural Endian Flipping
+				general(_PL_ D16_)(data_16 _PL_ Data,ADDRESS Length);
+				//BitClip : 32-bit Natural Endian Flipping
+				general(_PL_ D32_)(data_32 _PL_ Data,ADDRESS Length);
+				//BitClip : 64-bit Natural Endian Flipping
+				general(_PL_ D64_)(data_64 _PL_ Data,ADDRESS Length);
+			};
+			const struct
+			{
+				//BitClip : 8-bit Integer Endian Flipping
+				general(_PL_ I08_)(inte_08 _PL_ Data,ADDRESS Length);
+				//BitClip : 16-bit Integer Endian Flipping
+				general(_PL_ I16_)(inte_16 _PL_ Data,ADDRESS Length);
 
-			//BitClip : 8-bit Natural Endian Flipping
-			general(_PL_ D08_)(data_08 _PL_ Data,ADDRESS Length);
-			//BitClip : 16-bit Natural Endian Flipping
-			general(_PL_ D16_)(data_16 _PL_ Data,ADDRESS Length);
-			//BitClip : 32-bit Natural Endian Flipping
-			general(_PL_ D32_)(data_32 _PL_ Data,ADDRESS Length);
-			//BitClip : 64-bit Natural Endian Flipping
-			general(_PL_ D64_)(data_64 _PL_ Data,ADDRESS Length);
-			//BitClip : 8-bit Integer Endian Flipping
-			general(_PL_ I08_)(inte_08 _PL_ Data,ADDRESS Length);
-			//BitClip : 16-bit Integer Endian Flipping
-			general(_PL_ I16_)(inte_16 _PL_ Data,ADDRESS Length);
-			//BitClip : 32-bit Integer Endian Flipping
-			general(_PL_ I32_)(inte_32 _PL_ Data,ADDRESS Length);
-			//BitClip : 64-bit Integer Endian Flipping
-			general(_PL_ I64_)(inte_64 _PL_ Data,ADDRESS Length);
-			//BitClip : 32-bit Real Endian Flipping
-			general(_PL_ R32_)(real_32 _PL_ Data,ADDRESS Length);
-			//BitClip : 64-bit Real Endian Flipping
-			general(_PL_ R64_)(real_64 _PL_ Data,ADDRESS Length);
+				const union
+				{
+					const struct
+					{
+						//BitClip : 32-bit Integer Endian Flipping
+						general(_PL_ I32_)(inte_32 _PL_ Data,ADDRESS Length);
+						//BitClip : 64-bit Integer Endian Flipping
+						general(_PL_ I64_)(inte_64 _PL_ Data,ADDRESS Length);
+					};
+					const struct
+					{
+						//BitClip : 32-bit Real Endian Flipping
+						general(_PL_ R32_)(real_32 _PL_ Data,ADDRESS Length);
+						//BitClip : 64-bit Real Endian Flipping
+						general(_PL_ R64_)(real_64 _PL_ Data,ADDRESS Length);
+					};
+				};
+			};
 		}
 		Endian;
 
@@ -450,25 +545,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 8-bit Natural to 8-bit Natural Type Casting
-				general(_PL_ D08_)(DATA_08 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(DATA_08 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 16-bit Natural Type Casting
-				general(_PL_ D16_)(DATA_08 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(DATA_08 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 32-bit Natural Type Casting
-				general(_PL_ D32_)(DATA_08 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(DATA_08 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 64-bit Natural Type Casting
-				general(_PL_ D64_)(DATA_08 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(DATA_08 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 8-bit Integer Type Casting
-				general(_PL_ I08_)(DATA_08 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(DATA_08 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 16-bit Integer Type Casting
-				general(_PL_ I16_)(DATA_08 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(DATA_08 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 32-bit Integer Type Casting
-				general(_PL_ I32_)(DATA_08 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(DATA_08 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 64-bit Integer Type Casting
-				general(_PL_ I64_)(DATA_08 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(DATA_08 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 32-bit Real Type Casting
-				general(_PL_ R32_)(DATA_08 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(DATA_08 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Natural to 64-bit Real Type Casting
-				general(_PL_ R64_)(DATA_08 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(DATA_08 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			D08;
 
@@ -476,25 +571,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 16-bit Natural to 8-bit Natural Type Casting
-				general(_PL_ D08_)(DATA_16 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(DATA_16 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 16-bit Natural Type Casting
-				general(_PL_ D16_)(DATA_16 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(DATA_16 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 32-bit Natural Type Casting
-				general(_PL_ D32_)(DATA_16 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(DATA_16 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 64-bit Natural Type Casting
-				general(_PL_ D64_)(DATA_16 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(DATA_16 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 8-bit Integer Type Casting
-				general(_PL_ I08_)(DATA_16 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(DATA_16 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 16-bit Integer Type Casting
-				general(_PL_ I16_)(DATA_16 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(DATA_16 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 32-bit Integer Type Casting
-				general(_PL_ I32_)(DATA_16 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(DATA_16 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 64-bit Integer Type Casting
-				general(_PL_ I64_)(DATA_16 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(DATA_16 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 32-bit Real Type Casting
-				general(_PL_ R32_)(DATA_16 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(DATA_16 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Natural to 64-bit Real Type Casting
-				general(_PL_ R64_)(DATA_16 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(DATA_16 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			D16;
 
@@ -502,25 +597,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 32-bit Natural to 8-bit Natural Type Casting
-				general(_PL_ D08_)(DATA_32 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(DATA_32 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 16-bit Natural Type Casting
-				general(_PL_ D16_)(DATA_32 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(DATA_32 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 32-bit Natural Type Casting
-				general(_PL_ D32_)(DATA_32 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(DATA_32 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 64-bit Natural Type Casting
-				general(_PL_ D64_)(DATA_32 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(DATA_32 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 8-bit Integer Type Casting
-				general(_PL_ I08_)(DATA_32 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(DATA_32 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 16-bit Integer Type Casting
-				general(_PL_ I16_)(DATA_32 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(DATA_32 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 32-bit Integer Type Casting
-				general(_PL_ I32_)(DATA_32 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(DATA_32 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 64-bit Integer Type Casting
-				general(_PL_ I64_)(DATA_32 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(DATA_32 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 32-bit Real Type Casting
-				general(_PL_ R32_)(DATA_32 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(DATA_32 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Natural to 64-bit Real Type Casting
-				general(_PL_ R64_)(DATA_32 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(DATA_32 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			D32;
 
@@ -528,25 +623,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 64-bit Natural to 8-bit Natural Type Casting
-				general(_PL_ D08_)(DATA_64 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(DATA_64 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 16-bit Natural Type Casting
-				general(_PL_ D16_)(DATA_64 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(DATA_64 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 32-bit Natural Type Casting
-				general(_PL_ D32_)(DATA_64 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(DATA_64 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 64-bit Natural Type Casting
-				general(_PL_ D64_)(DATA_64 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(DATA_64 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 8-bit Integer Type Casting
-				general(_PL_ I08_)(DATA_64 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(DATA_64 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 16-bit Integer Type Casting
-				general(_PL_ I16_)(DATA_64 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(DATA_64 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 32-bit Integer Type Casting
-				general(_PL_ I32_)(DATA_64 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(DATA_64 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 64-bit Integer Type Casting
-				general(_PL_ I64_)(DATA_64 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(DATA_64 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 32-bit Real Type Casting
-				general(_PL_ R32_)(DATA_64 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(DATA_64 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Natural to 64-bit Real Type Casting
-				general(_PL_ R64_)(DATA_64 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(DATA_64 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			D64;
 
@@ -554,25 +649,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 8-bit Integer to 8-bit Natural Type Casting
-				general(_PL_ D08_)(INTE_08 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(INTE_08 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 16-bit Natural Type Casting
-				general(_PL_ D16_)(INTE_08 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(INTE_08 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 32-bit Natural Type Casting
-				general(_PL_ D32_)(INTE_08 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(INTE_08 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 64-bit Natural Type Casting
-				general(_PL_ D64_)(INTE_08 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(INTE_08 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 8-bit Integer Type Casting
-				general(_PL_ I08_)(INTE_08 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(INTE_08 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 16-bit Integer Type Casting
-				general(_PL_ I16_)(INTE_08 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(INTE_08 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 32-bit Integer Type Casting
-				general(_PL_ I32_)(INTE_08 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(INTE_08 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 64-bit Integer Type Casting
-				general(_PL_ I64_)(INTE_08 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(INTE_08 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 32-bit Real Type Casting
-				general(_PL_ R32_)(INTE_08 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(INTE_08 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 8-bit Integer to 64-bit Real Type Casting
-				general(_PL_ R64_)(INTE_08 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(INTE_08 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			I08;
 
@@ -580,25 +675,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 16-bit Integer to 8-bit Natural Type Casting
-				general(_PL_ D08_)(INTE_16 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(INTE_16 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 16-bit Natural Type Casting
-				general(_PL_ D16_)(INTE_16 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(INTE_16 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 32-bit Natural Type Casting
-				general(_PL_ D32_)(INTE_16 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(INTE_16 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 64-bit Natural Type Casting
-				general(_PL_ D64_)(INTE_16 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(INTE_16 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 8-bit Integer Type Casting
-				general(_PL_ I08_)(INTE_16 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(INTE_16 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 16-bit Integer Type Casting
-				general(_PL_ I16_)(INTE_16 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(INTE_16 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 32-bit Integer Type Casting
-				general(_PL_ I32_)(INTE_16 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(INTE_16 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 64-bit Integer Type Casting
-				general(_PL_ I64_)(INTE_16 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(INTE_16 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 32-bit Real Type Casting
-				general(_PL_ R32_)(INTE_16 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(INTE_16 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 16-bit Integer to 64-bit Real Type Casting
-				general(_PL_ R64_)(INTE_16 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(INTE_16 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			I16;
 
@@ -606,25 +701,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 32-bit Integer to 8-bit Natural Type Casting
-				general(_PL_ D08_)(INTE_32 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(INTE_32 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 16-bit Natural Type Casting
-				general(_PL_ D16_)(INTE_32 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(INTE_32 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 32-bit Natural Type Casting
-				general(_PL_ D32_)(INTE_32 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(INTE_32 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 64-bit Natural Type Casting
-				general(_PL_ D64_)(INTE_32 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(INTE_32 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 8-bit Integer Type Casting
-				general(_PL_ I08_)(INTE_32 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(INTE_32 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 16-bit Integer Type Casting
-				general(_PL_ I16_)(INTE_32 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(INTE_32 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 32-bit Integer Type Casting
-				general(_PL_ I32_)(INTE_32 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(INTE_32 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 64-bit Integer Type Casting
-				general(_PL_ I64_)(INTE_32 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(INTE_32 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 32-bit Real Type Casting
-				general(_PL_ R32_)(INTE_32 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(INTE_32 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Integer to 64-bit Real Type Casting
-				general(_PL_ R64_)(INTE_32 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(INTE_32 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			I32;
 
@@ -632,25 +727,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 64-bit Integer to 8-bit Natural Type Casting
-				general(_PL_ D08_)(INTE_64 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(INTE_64 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 16-bit Natural Type Casting
-				general(_PL_ D16_)(INTE_64 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(INTE_64 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 32-bit Natural Type Casting
-				general(_PL_ D32_)(INTE_64 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(INTE_64 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 64-bit Natural Type Casting
-				general(_PL_ D64_)(INTE_64 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(INTE_64 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 8-bit Integer Type Casting
-				general(_PL_ I08_)(INTE_64 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(INTE_64 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 16-bit Integer Type Casting
-				general(_PL_ I16_)(INTE_64 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(INTE_64 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 32-bit Integer Type Casting
-				general(_PL_ I32_)(INTE_64 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(INTE_64 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 64-bit Integer Type Casting
-				general(_PL_ I64_)(INTE_64 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(INTE_64 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 32-bit Real Type Casting
-				general(_PL_ R32_)(INTE_64 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(INTE_64 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Integer to 64-bit Real Type Casting
-				general(_PL_ R64_)(INTE_64 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(INTE_64 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			I64;
 
@@ -658,25 +753,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 32-bit Real to 8-bit Natural Type Casting
-				general(_PL_ D08_)(REAL_32 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(REAL_32 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 16-bit Natural Type Casting
-				general(_PL_ D16_)(REAL_32 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(REAL_32 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 32-bit Natural Type Casting
-				general(_PL_ D32_)(REAL_32 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(REAL_32 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 64-bit Natural Type Casting
-				general(_PL_ D64_)(REAL_32 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(REAL_32 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 8-bit Integer Type Casting
-				general(_PL_ I08_)(REAL_32 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(REAL_32 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 16-bit Integer Type Casting
-				general(_PL_ I16_)(REAL_32 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(REAL_32 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 32-bit Integer Type Casting
-				general(_PL_ I32_)(REAL_32 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(REAL_32 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 64-bit Integer Type Casting
-				general(_PL_ I64_)(REAL_32 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(REAL_32 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 32-bit Real Type Casting
-				general(_PL_ R32_)(REAL_32 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(REAL_32 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 32-bit Real to 64-bit Real Type Casting
-				general(_PL_ R64_)(REAL_32 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(REAL_32 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			R32;
 
@@ -684,25 +779,25 @@ struct _bitcase
 			const struct
 			{
 				//BitClip : 64-bit Real to 8-bit Natural Type Casting
-				general(_PL_ D08_)(REAL_64 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				general(_PL_ D08_)(REAL_64 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 16-bit Natural Type Casting
-				general(_PL_ D16_)(REAL_64 *_R_ I,data_16 *_R_ O,ADDRESS N);
+				general(_PL_ D16_)(REAL_64 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 32-bit Natural Type Casting
-				general(_PL_ D32_)(REAL_64 *_R_ I,data_32 *_R_ O,ADDRESS N);
+				general(_PL_ D32_)(REAL_64 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 64-bit Natural Type Casting
-				general(_PL_ D64_)(REAL_64 *_R_ I,data_64 *_R_ O,ADDRESS N);
+				general(_PL_ D64_)(REAL_64 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 8-bit Integer Type Casting
-				general(_PL_ I08_)(REAL_64 *_R_ I,inte_08 *_R_ O,ADDRESS N);
+				general(_PL_ I08_)(REAL_64 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 16-bit Integer Type Casting
-				general(_PL_ I16_)(REAL_64 *_R_ I,inte_16 *_R_ O,ADDRESS N);
+				general(_PL_ I16_)(REAL_64 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 32-bit Integer Type Casting
-				general(_PL_ I32_)(REAL_64 *_R_ I,inte_32 *_R_ O,ADDRESS N);
+				general(_PL_ I32_)(REAL_64 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 64-bit Integer Type Casting
-				general(_PL_ I64_)(REAL_64 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				general(_PL_ I64_)(REAL_64 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 32-bit Real Type Casting
-				general(_PL_ R32_)(REAL_64 *_R_ I,real_32 *_R_ O,ADDRESS N);
+				general(_PL_ R32_)(REAL_64 _PL_ _R_ I,real_32 _PL_ _R_ O,ADDRESS N);
 				//BitClip : 64-bit Real to 64-bit Real Type Casting
-				general(_PL_ R64_)(REAL_64 *_R_ I,real_64 *_R_ O,ADDRESS N);
+				general(_PL_ R64_)(REAL_64 _PL_ _R_ I,real_64 _PL_ _R_ O,ADDRESS N);
 			}
 			R64;
 		}
@@ -712,32 +807,38 @@ struct _bitcase
 		const struct
 		{
 			//BitClip : NOT Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,ADDRESS N);
-				//BitClip : 16-bit Natural NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,ADDRESS N);
-				//BitClip : 32-bit Natural NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,ADDRESS N);
-				//BitClip : 64-bit Natural NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,ADDRESS N);
-				//BitClip : 8-bit Integer NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,ADDRESS N);
-				//BitClip : 16-bit Integer NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,ADDRESS N);
-				//BitClip : 32-bit Integer NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,ADDRESS N);
-				//BitClip : 64-bit Integer NOT Operation
-				//＊C[n]＝~A[n]
-				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,ADDRESS N);
+					//BitClip : 16-bit Natural NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,ADDRESS N);
+					//BitClip : 32-bit Natural NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,ADDRESS N);
+					//BitClip : 64-bit Natural NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,ADDRESS N);
+					//BitClip : 16-bit Integer NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,ADDRESS N);
+					//BitClip : 32-bit Integer NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,ADDRESS N);
+					//BitClip : 64-bit Integer NOT Operation
+					//＊C[n]＝~A[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,ADDRESS N);
+				};
 			}
 			N_1;
 
@@ -746,208 +847,244 @@ struct _bitcase
 			{
 				//BitClip : 8-Bit Natural Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ D08_)(data_08 *C,DATA_08 *A,INTEGER S,ADDRESS N);
+				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,INTEGER S,ADDRESS N);
 				//BitClip : 16-Bit Natural Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ D16_)(data_16 *C,DATA_16 *A,INTEGER S,ADDRESS N);
+				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,INTEGER S,ADDRESS N);
 				//BitClip : 32-Bit Natural Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ D32_)(data_32 *C,DATA_32 *A,INTEGER S,ADDRESS N);
+				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,INTEGER S,ADDRESS N);
 				//BitClip : 64-Bit Natural Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ D64_)(data_64 *C,DATA_64 *A,INTEGER S,ADDRESS N);
+				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,INTEGER S,ADDRESS N);
 				//BitClip : 8-Bit Integer Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTEGER S,ADDRESS N);
+				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTEGER S,ADDRESS N);
 				//BitClip : 16-Bit Integer Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTEGER S,ADDRESS N);
+				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTEGER S,ADDRESS N);
 				//BitClip : 32-Bit Integer Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTEGER S,ADDRESS N);
+				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTEGER S,ADDRESS N);
 				//BitClip : 64-Bit Integer Shift Operation
 				//＊C[n]＝(S>0)?(A[n]<<S):(A[n]>>(-S))
-				general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTEGER S,ADDRESS N);
+				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTEGER S,ADDRESS N);
 			}
 			S_1;
 
 			//BitClip : AND Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 M,ADDRESS N);
-				//BitClip : 16-bit Natural AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,ADDRESS N);
-				//BitClip : 32-bit Natural AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,ADDRESS N);
-				//BitClip : 64-bit Natural AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,ADDRESS N);
-				//BitClip : 8-bit Integer AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 M,ADDRESS N);
-				//BitClip : 16-bit Integer AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 M,ADDRESS N);
-				//BitClip : 32-bit Integer AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 M,ADDRESS N);
-				//BitClip : 64-bit Integer AND Operation
-				//＊C[n]＝A[n]&M
-				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 M,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 M,ADDRESS N);
+					//BitClip : 16-bit Natural AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,ADDRESS N);
+					//BitClip : 32-bit Natural AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,ADDRESS N);
+					//BitClip : 64-bit Natural AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 M,ADDRESS N);
+					//BitClip : 16-bit Integer AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 M,ADDRESS N);
+					//BitClip : 32-bit Integer AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 M,ADDRESS N);
+					//BitClip : 64-bit Integer AND Operation
+					//＊C[n]＝A[n]&M
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 M,ADDRESS N);
+				};
 			}
 			A_1;
 
 			//BitClip : AND Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
-				//BitClip : 16-bit Natural AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
-				//BitClip : 32-bit Natural AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
-				//BitClip : 64-bit Natural AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
-				//BitClip : 8-bit Integer AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
-				//BitClip : 16-bit Integer AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
-				//BitClip : 32-bit Integer AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
-				//BitClip : 64-bit Integer AND Operation
-				//＊C[n]＝A[n]&B[n]
-				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
+					//BitClip : 16-bit Natural AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
+					//BitClip : 32-bit Natural AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
+					//BitClip : 64-bit Natural AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
+					//BitClip : 16-bit Integer AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
+					//BitClip : 32-bit Integer AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
+					//BitClip : 64-bit Integer AND Operation
+					//＊C[n]＝A[n]&B[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				};
 			}
 			A_2;
 
 			//BitClip : OR Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 M,ADDRESS N);
-				//BitClip : 16-bit Natural OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,ADDRESS N);
-				//BitClip : 32-bit Natural OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,ADDRESS N);
-				//BitClip : 64-bit Natural OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,ADDRESS N);
-				//BitClip : 8-bit Integer OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 M,ADDRESS N);
-				//BitClip : 16-bit Integer OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 M,ADDRESS N);
-				//BitClip : 32-bit Integer OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 M,ADDRESS N);
-				//BitClip : 64-bit Integer OR Operation
-				//＊C[n]＝A[n]|M
-				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 M,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 M,ADDRESS N);
+					//BitClip : 16-bit Natural OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,ADDRESS N);
+					//BitClip : 32-bit Natural OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,ADDRESS N);
+					//BitClip : 64-bit Natural OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 M,ADDRESS N);
+					//BitClip : 16-bit Integer OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 M,ADDRESS N);
+					//BitClip : 32-bit Integer OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 M,ADDRESS N);
+					//BitClip : 64-bit Integer OR Operation
+					//＊C[n]＝A[n]|M
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 M,ADDRESS N);
+				};
 			}
 			O_1;
 
 			//BitClip : OR Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
-				//BitClip : 16-bit Natural OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
-				//BitClip : 32-bit Natural OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
-				//BitClip : 64-bit Natural OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
-				//BitClip : 8-bit Integer OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
-				//BitClip : 16-bit Integer OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
-				//BitClip : 32-bit Integer OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
-				//BitClip : 64-bit Integer OR Operation
-				//＊C[n]＝A[n]|B[n]
-				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
+					//BitClip : 16-bit Natural OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
+					//BitClip : 32-bit Natural OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
+					//BitClip : 64-bit Natural OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
+					//BitClip : 16-bit Integer OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
+					//BitClip : 32-bit Integer OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
+					//BitClip : 64-bit Integer OR Operation
+					//＊C[n]＝A[n]|B[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				};
 			}
 			O_2;
 
 			//BitClip : XOR Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 M,ADDRESS N);
-				//BitClip : 16-bit Natural XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,ADDRESS N);
-				//BitClip : 32-bit Natural XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,ADDRESS N);
-				//BitClip : 64-bit Natural XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,ADDRESS N);
-				//BitClip : 8-bit Integer XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 M,ADDRESS N);
-				//BitClip : 16-bit Integer XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 M,ADDRESS N);
-				//BitClip : 32-bit Integer XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 M,ADDRESS N);
-				//BitClip : 64-bit Integer XOR Operation
-				//＊C[n]＝A[n]^M
-				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 M,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 M,ADDRESS N);
+					//BitClip : 16-bit Natural XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 M,ADDRESS N);
+					//BitClip : 32-bit Natural XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 M,ADDRESS N);
+					//BitClip : 64-bit Natural XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 M,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 M,ADDRESS N);
+					//BitClip : 16-bit Integer XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 M,ADDRESS N);
+					//BitClip : 32-bit Integer XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 M,ADDRESS N);
+					//BitClip : 64-bit Integer XOR Operation
+					//＊C[n]＝A[n]^M
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 M,ADDRESS N);
+				};
 			}
 			X_1;
 
 			//BitClip : XOR Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
-				//BitClip : 16-bit Natural XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
-				//BitClip : 32-bit Natural XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
-				//BitClip : 64-bit Natural XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
-				//BitClip : 8-bit Integer XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
-				//BitClip : 16-bit Integer XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
-				//BitClip : 32-bit Integer XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
-				//BitClip : 64-bit Integer XOR Operation
-				//＊C[n]＝A[n]^B[n]
-				general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
+					//BitClip : 16-bit Natural XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
+					//BitClip : 32-bit Natural XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
+					//BitClip : 64-bit Natural XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
+					//BitClip : 16-bit Integer XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
+					//BitClip : 32-bit Integer XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
+					//BitClip : 64-bit Integer XOR Operation
+					//＊C[n]＝A[n]^B[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				};
 			}
 			X_2;
 		}
@@ -957,206 +1094,282 @@ struct _bitcase
 		const struct
 		{
 			//BitClip : Bit Expansion
-			const struct
+			const union
 			{
-				//BitClip : Bit Expansion to 8-bit Natural
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFF):(0x00)
-				general(_PL_ D08_)(DATA_08 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Expansion to 16-bit Natural
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFF):(0x0000)
-				general(_PL_ D16_)(DATA_08 *_R_ I,data_16 *_R_ O,ADDRESS N);
-				//BitClip : Bit Expansion to 32-bit Natural
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFF):(0x00000000)
-				general(_PL_ D32_)(DATA_08 *_R_ I,data_32 *_R_ O,ADDRESS N);
-				//BitClip : Bit Expansion to 64-bit Natural
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFFFFFFFFFF):(0x0000000000000000)
-				general(_PL_ D64_)(DATA_08 *_R_ I,data_64 *_R_ O,ADDRESS N);
-				//BitClip : Bit Expansion to 8-bit Integer
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFF):(0x00)
-				general(_PL_ I08_)(DATA_08 *_R_ I,inte_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Expansion to 16-bit Integer
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFF):(0x0000)
-				general(_PL_ I16_)(DATA_08 *_R_ I,inte_16 *_R_ O,ADDRESS N);
-				//BitClip : Bit Expansion to 32-bit Integer
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFF):(0x00000000)
-				general(_PL_ I32_)(DATA_08 *_R_ I,inte_32 *_R_ O,ADDRESS N);
-				//BitClip : Bit Expansion to 64-bit Integer
-				//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFFFFFFFFFF):(0x0000000000000000)
-				general(_PL_ I64_)(DATA_08 *_R_ I,inte_64 *_R_ O,ADDRESS N);
+				const struct
+				{
+					//BitClip : Bit Expansion to 8-bit Natural
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFF):(0x00)
+					general(_PL_ D08_)(DATA_08 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Expansion to 16-bit Natural
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFF):(0x0000)
+					general(_PL_ D16_)(DATA_08 _PL_ _R_ I,data_16 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Expansion to 32-bit Natural
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFF):(0x00000000)
+					general(_PL_ D32_)(DATA_08 _PL_ _R_ I,data_32 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Expansion to 64-bit Natural
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFFFFFFFFFF):(0x0000000000000000)
+					general(_PL_ D64_)(DATA_08 _PL_ _R_ I,data_64 _PL_ _R_ O,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : Bit Expansion to 8-bit Integer
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFF):(0x00)
+					general(_PL_ I08_)(DATA_08 _PL_ _R_ I,inte_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Expansion to 16-bit Integer
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFF):(0x0000)
+					general(_PL_ I16_)(DATA_08 _PL_ _R_ I,inte_16 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Expansion to 32-bit Integer
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFF):(0x00000000)
+					general(_PL_ I32_)(DATA_08 _PL_ _R_ I,inte_32 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Expansion to 64-bit Integer
+					//＊O[n]＝(I[n/8].bit[n%8])?(0xFFFFFFFFFFFFFFFF):(0x0000000000000000)
+					general(_PL_ I64_)(DATA_08 _PL_ _R_ I,inte_64 _PL_ _R_ O,ADDRESS N);
+				};
 			}
 			Expand;
 
 			//BitClip : Bit Shrink
-			const struct
+			const union
 			{
-				//BitClip : Bit Shrinkage from 8-bit Natural
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ D08_)(DATA_08 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Shrinkage from 16-bit Natural
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ D16_)(DATA_16 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Shrinkage from 32-bit Natural
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ D32_)(DATA_32 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Shrinkage from 64-bit Natural
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ D64_)(DATA_64 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Shrinkage from 8-bit Integer
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ I08_)(INTE_08 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Shrinkage from 16-bit Integer
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ I16_)(INTE_16 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Shrinkage from 32-bit Integer
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ I32_)(INTE_32 *_R_ I,data_08 *_R_ O,ADDRESS N);
-				//BitClip : Bit Shrinkage from 64-bit Integer
-				//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
-				general(_PL_ I64_)(INTE_64 *_R_ I,data_08 *_R_ O,ADDRESS N);
+				const struct
+				{
+					//BitClip : Bit Shrinkage from 8-bit Natural
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ D08_)(DATA_08 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Shrinkage from 16-bit Natural
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ D16_)(DATA_16 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Shrinkage from 32-bit Natural
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ D32_)(DATA_32 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Shrinkage from 64-bit Natural
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ D64_)(DATA_64 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : Bit Shrinkage from 8-bit Integer
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ I08_)(INTE_08 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Shrinkage from 16-bit Integer
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ I16_)(INTE_16 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Shrinkage from 32-bit Integer
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ I32_)(INTE_32 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+					//BitClip : Bit Shrinkage from 64-bit Integer
+					//＊O[n/8].bit[n%8]＝I[n].bit[n%8]
+					general(_PL_ I64_)(INTE_64 _PL_ _R_ I,data_08 _PL_ _R_ O,ADDRESS N);
+				};
 			}
 			Shrink;
 
 			//BitClip : EQ Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,ADDRESS N);
-				//BitClip : 16-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,ADDRESS N);
-				//BitClip : 32-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,ADDRESS N);
-				//BitClip : 64-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,ADDRESS N);
-				//BitClip : 8-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 V,ADDRESS N);
-				//BitClip : 16-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 V,ADDRESS N);
-				//BitClip : 32-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 V,ADDRESS N);
-				//BitClip : 64-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 V,ADDRESS N);
-				//BitClip : 32-bit Real EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 V,ADDRESS N);
-				//BitClip : 64-bit Real EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==V)
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 V,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==V)
+					general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 V,ADDRESS N);
+					//BitClip : 16-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==V)
+					general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 V,ADDRESS N);
+					//BitClip : 32-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==V)
+					general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 V,ADDRESS N);
+					//BitClip : 64-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==V)
+					general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 V,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==V)
+					general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 V,ADDRESS N);
+					//BitClip : 16-bit Integer EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==V)
+					general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 V,ADDRESS N);
+
+					const union
+					{
+						const struct
+						{
+							//BitClip : 32-bit Integer EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==V)
+							general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 V,ADDRESS N);
+							//BitClip : 64-bit Integer EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==V)
+							general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 V,ADDRESS N);
+						};
+						const struct
+						{
+							//BitClip : 32-bit Real EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==V)
+							general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 V,ADDRESS N);
+							//BitClip : 64-bit Real EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==V)
+							general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 V,ADDRESS N);
+						};
+					};
+				};
 			}
 			E_1;
 
 			//BitClip : EQ Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,ADDRESS N);
-				//BitClip : 16-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,ADDRESS N);
-				//BitClip : 32-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,ADDRESS N);
-				//BitClip : 64-bit Natural EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,ADDRESS N);
-				//BitClip : 8-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 *_R_ B,ADDRESS N);
-				//BitClip : 16-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 *_R_ B,ADDRESS N);
-				//BitClip : 32-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 *_R_ B,ADDRESS N);
-				//BitClip : 64-bit Integer EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 *_R_ B,ADDRESS N);
-				//BitClip : 32-bit Real EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 *_R_ B,ADDRESS N);
-				//BitClip : 64-bit Real EQ Operation
-				//＊C[n/8].bit[n%8]＝(A[n]==B[n])
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+					general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 16-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+					general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 32-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+					general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 64-bit Natural EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+					general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 _PL_ _R_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+					general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 16-bit Integer EQ Operation
+					//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+					general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 _PL_ _R_ B,ADDRESS N);
+
+					const union
+					{
+						const struct
+						{
+							//BitClip : 32-bit Integer EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+							general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 _PL_ _R_ B,ADDRESS N);
+							//BitClip : 64-bit Integer EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+							general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 _PL_ _R_ B,ADDRESS N);
+						};
+						const struct
+						{
+							//BitClip : 32-bit Real EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+							general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 _PL_ _R_ B,ADDRESS N);
+							//BitClip : 64-bit Real EQ Operation
+							//＊C[n/8].bit[n%8]＝(A[n]==B[n])
+							general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 _PL_ _R_ B,ADDRESS N);
+						};
+					};
+				};
 			}
 			E_2;
 
 			//BitClip : NE Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,ADDRESS N);
-				//BitClip : 16-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,ADDRESS N);
-				//BitClip : 32-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,ADDRESS N);
-				//BitClip : 64-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,ADDRESS N);
-				//BitClip : 8-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 V,ADDRESS N);
-				//BitClip : 16-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 V,ADDRESS N);
-				//BitClip : 32-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 V,ADDRESS N);
-				//BitClip : 64-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 V,ADDRESS N);
-				//BitClip : 32-bit Real NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 V,ADDRESS N);
-				//BitClip : 64-bit Real NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=V)
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 V,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=V)
+					general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 V,ADDRESS N);
+					//BitClip : 16-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=V)
+					general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 V,ADDRESS N);
+					//BitClip : 32-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=V)
+					general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 V,ADDRESS N);
+					//BitClip : 64-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=V)
+					general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 V,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=V)
+					general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 V,ADDRESS N);
+					//BitClip : 16-bit Integer NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=V)
+					general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 V,ADDRESS N);
+
+					const union
+					{
+						const struct
+						{
+							//BitClip : 32-bit Integer NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=V)
+							general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 V,ADDRESS N);
+							//BitClip : 64-bit Integer NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=V)
+							general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 V,ADDRESS N);
+						};
+						const struct
+						{
+							//BitClip : 32-bit Real NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=V)
+							general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 V,ADDRESS N);
+							//BitClip : 64-bit Real NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=V)
+							general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 V,ADDRESS N);
+						};
+					};
+				};
 			}
 			N_1;
 
 			//BitClip : NE Operation
-			const struct
+			const union
 			{
-				//BitClip : 8-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,ADDRESS N);
-				//BitClip : 16-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,ADDRESS N);
-				//BitClip : 32-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,ADDRESS N);
-				//BitClip : 64-bit Natural NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,ADDRESS N);
-				//BitClip : 8-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 *_R_ B,ADDRESS N);
-				//BitClip : 16-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 *_R_ B,ADDRESS N);
-				//BitClip : 32-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 *_R_ B,ADDRESS N);
-				//BitClip : 64-bit Integer NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 *_R_ B,ADDRESS N);
-				//BitClip : 32-bit Real NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 *_R_ B,ADDRESS N);
-				//BitClip : 64-bit Real NE Operation
-				//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,ADDRESS N);
+				const struct
+				{
+					//BitClip : 8-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+					general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 16-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+					general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 32-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+					general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 64-bit Natural NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+					general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 _PL_ _R_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//BitClip : 8-bit Integer NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+					general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 _PL_ _R_ B,ADDRESS N);
+					//BitClip : 16-bit Integer NE Operation
+					//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+					general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 _PL_ _R_ B,ADDRESS N);
+
+					const union
+					{
+						const struct
+						{
+							//BitClip : 32-bit Integer NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+							general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 _PL_ _R_ B,ADDRESS N);
+							//BitClip : 64-bit Integer NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+							general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 _PL_ _R_ B,ADDRESS N);
+						};
+						const struct
+						{
+							//BitClip : 32-bit Real NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+							general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 _PL_ _R_ B,ADDRESS N);
+							//BitClip : 64-bit Real NE Operation
+							//＊C[n/8].bit[n%8]＝(A[n]!=B[n])
+							general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 _PL_ _R_ B,ADDRESS N);
+						};
+					};
+				};
 			}
 			N_2;
 
@@ -1165,34 +1378,34 @@ struct _bitcase
 			{
 				//BitClip : 8-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,ADDRESS N);
+				general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 V,ADDRESS N);
 				//BitClip : 16-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,ADDRESS N);
+				general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 V,ADDRESS N);
 				//BitClip : 32-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,ADDRESS N);
+				general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 V,ADDRESS N);
 				//BitClip : 64-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,ADDRESS N);
+				general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 V,ADDRESS N);
 				//BitClip : 8-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 V,ADDRESS N);
+				general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 V,ADDRESS N);
 				//BitClip : 16-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 V,ADDRESS N);
+				general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 V,ADDRESS N);
 				//BitClip : 32-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 V,ADDRESS N);
+				general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 V,ADDRESS N);
 				//BitClip : 64-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 V,ADDRESS N);
+				general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 V,ADDRESS N);
 				//BitClip : 32-bit Real GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 V,ADDRESS N);
+				general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 V,ADDRESS N);
 				//BitClip : 64-bit Real GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥V)
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 V,ADDRESS N);
+				general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 V,ADDRESS N);
 			}
 			G_1;
 
@@ -1201,34 +1414,34 @@ struct _bitcase
 			{
 				//BitClip : 8-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,ADDRESS N);
+				general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 16-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,ADDRESS N);
+				general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 32-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,ADDRESS N);
+				general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 64-bit Natural GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,ADDRESS N);
+				general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 8-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 *_R_ B,ADDRESS N);
+				general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 16-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 *_R_ B,ADDRESS N);
+				general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 32-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 *_R_ B,ADDRESS N);
+				general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 64-bit Integer GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 *_R_ B,ADDRESS N);
+				general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 32-bit Real GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 *_R_ B,ADDRESS N);
+				general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 64-bit Real GE Operation
 				//＊C[n/8].bit[n%8]＝(A[n]≥B[n])
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,ADDRESS N);
+				general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 _PL_ _R_ B,ADDRESS N);
 			}
 			G_2;
 
@@ -1237,34 +1450,34 @@ struct _bitcase
 			{
 				//BitClip : 8-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 V,ADDRESS N);
+				general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 V,ADDRESS N);
 				//BitClip : 16-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 V,ADDRESS N);
+				general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 V,ADDRESS N);
 				//BitClip : 32-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 V,ADDRESS N);
+				general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 V,ADDRESS N);
 				//BitClip : 64-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 V,ADDRESS N);
+				general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 V,ADDRESS N);
 				//BitClip : 8-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 V,ADDRESS N);
+				general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 V,ADDRESS N);
 				//BitClip : 16-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 V,ADDRESS N);
+				general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 V,ADDRESS N);
 				//BitClip : 32-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 V,ADDRESS N);
+				general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 V,ADDRESS N);
 				//BitClip : 64-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 V,ADDRESS N);
+				general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 V,ADDRESS N);
 				//BitClip : 32-bit Real LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 V,ADDRESS N);
+				general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 V,ADDRESS N);
 				//BitClip : 64-bit Real LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜V)
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 V,ADDRESS N);
+				general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 V,ADDRESS N);
 			}
 			L_1;
 
@@ -1273,34 +1486,34 @@ struct _bitcase
 			{
 				//BitClip : 8-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ D08_)(data_08 *_R_ C,DATA_08 *_R_ A,DATA_08 *_R_ B,ADDRESS N);
+				general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 _PL_ _R_ A,DATA_08 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 16-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ D16_)(data_08 *_R_ C,DATA_16 *_R_ A,DATA_16 *_R_ B,ADDRESS N);
+				general(_PL_ D16_)(data_08 _PL_ _R_ C,DATA_16 _PL_ _R_ A,DATA_16 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 32-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ D32_)(data_08 *_R_ C,DATA_32 *_R_ A,DATA_32 *_R_ B,ADDRESS N);
+				general(_PL_ D32_)(data_08 _PL_ _R_ C,DATA_32 _PL_ _R_ A,DATA_32 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 64-bit Natural LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ D64_)(data_08 *_R_ C,DATA_64 *_R_ A,DATA_64 *_R_ B,ADDRESS N);
+				general(_PL_ D64_)(data_08 _PL_ _R_ C,DATA_64 _PL_ _R_ A,DATA_64 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 8-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ I08_)(data_08 *_R_ C,INTE_08 *_R_ A,INTE_08 *_R_ B,ADDRESS N);
+				general(_PL_ I08_)(data_08 _PL_ _R_ C,INTE_08 _PL_ _R_ A,INTE_08 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 16-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ I16_)(data_08 *_R_ C,INTE_16 *_R_ A,INTE_16 *_R_ B,ADDRESS N);
+				general(_PL_ I16_)(data_08 _PL_ _R_ C,INTE_16 _PL_ _R_ A,INTE_16 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 32-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ I32_)(data_08 *_R_ C,INTE_32 *_R_ A,INTE_32 *_R_ B,ADDRESS N);
+				general(_PL_ I32_)(data_08 _PL_ _R_ C,INTE_32 _PL_ _R_ A,INTE_32 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 64-bit Integer LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ I64_)(data_08 *_R_ C,INTE_64 *_R_ A,INTE_64 *_R_ B,ADDRESS N);
+				general(_PL_ I64_)(data_08 _PL_ _R_ C,INTE_64 _PL_ _R_ A,INTE_64 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 32-bit Real LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ R32_)(data_08 *_R_ C,REAL_32 *_R_ A,REAL_32 *_R_ B,ADDRESS N);
+				general(_PL_ R32_)(data_08 _PL_ _R_ C,REAL_32 _PL_ _R_ A,REAL_32 _PL_ _R_ B,ADDRESS N);
 				//BitClip : 64-bit Real LT Operation
 				//＊C[n/8].bit[n%8]＝(A[n]＜B[n])
-				general(_PL_ R64_)(data_08 *_R_ C,REAL_64 *_R_ A,REAL_64 *_R_ B,ADDRESS N);
+				general(_PL_ R64_)(data_08 _PL_ _R_ C,REAL_64 _PL_ _R_ A,REAL_64 _PL_ _R_ B,ADDRESS N);
 			}
 			L_2;
 		}

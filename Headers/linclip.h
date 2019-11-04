@@ -2,7 +2,11 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
+/*------------------------------------------------------------------*/
+/*	Note:															*/
+/*	Run "LinC_Inte_Cast_();" in debug mode to check if the casted	*/
+/*	function pointers work correctly between integer and natural.	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_LINCLIP
@@ -15,6 +19,10 @@
 #ifdef __OPENCL_VERSION__
 #else
 
+#if(Fold_(Definition:Macros))
+#define LinC_Inte_Cast_() assert((LinC.Just.D08_(UINT8_MAX)==(UINT8_MAX))&&(LinC.Just.D16_(UINT16_MAX)==(UINT16_MAX))&&(LinC.Just.D32_(UINT32_MAX)==(UINT32_MAX))&&(LinC.Just.D64_(UINT64_MAX)==(UINT64_MAX)))
+#endif
+
 #if(Fold_(Library Casing))
 //LinClip : Library Case Structure
 struct _lincase
@@ -24,255 +32,353 @@ struct _lincase
 
 	const struct
 	{
+		//LinClip : Just Functions
+		const union
+		{
+			const struct
+			{
+				//LinClip : Just return the 8-bit integer.
+				inte_08(_PL_ I08_)(INTE_08);
+				//LinClip : Just return the 16-bit integer.
+				inte_16(_PL_ I16_)(INTE_16);
+				//LinClip : Just return the 32-bit integer.
+				inte_32(_PL_ I32_)(INTE_32);
+				//LinClip : Just return the 64-bit integer.
+				inte_64(_PL_ I64_)(INTE_64);
+			};
+			const struct
+			{
+				//LinClip : Just return the 8-bit natural.
+				data_08(_PL_ D08_)(DATA_08);
+				//LinClip : Just return the 16-bit natural.
+				data_16(_PL_ D16_)(DATA_16);
+				//LinClip : Just return the 32-bit natural.
+				data_32(_PL_ D32_)(DATA_32);
+				//LinClip : Just return the 64-bit natural.
+				data_64(_PL_ D64_)(DATA_64);
+			};
+		}
+		Just;
+
 		//LinClip : Arithmetic Progression Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ I08_)(inte_08 *_R_ C,INTE_08 S,INTE_08 K,ADDRESS N);
-			//LinClip : 16-bit Integer Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ I16_)(inte_16 *_R_ C,INTE_16 S,INTE_16 K,ADDRESS N);
-			//LinClip : 32-bit Integer Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ I32_)(inte_32 *_R_ C,INTE_32 S,INTE_32 K,ADDRESS N);
-			//LinClip : 64-bit Integer Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ I64_)(inte_64 *_R_ C,INTE_64 S,INTE_64 K,ADDRESS N);
-			//LinClip : 8-bit Natural Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ D08_)(data_08 *_R_ C,DATA_08 S,DATA_08 K,ADDRESS N);
-			//LinClip : 16-bit Natural Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ D16_)(data_16 *_R_ C,DATA_16 S,DATA_16 K,ADDRESS N);
-			//LinClip : 32-bit Natural Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ D32_)(data_32 *_R_ C,DATA_32 S,DATA_32 K,ADDRESS N);
-			//LinClip : 64-bit Natural Line Arithmetic Progression
-			//＊C[n]＝S＋(n×K)
-			general(_PL_ D64_)(data_64 *_R_ C,DATA_64 S,DATA_64 K,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ I08_)(inte_08 _PL_ _R_ C,INTE_08 S,INTE_08 K,ADDRESS N);
+					//LinClip : 16-bit Integer Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ I16_)(inte_16 _PL_ _R_ C,INTE_16 S,INTE_16 K,ADDRESS N);
+					//LinClip : 32-bit Integer Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ I32_)(inte_32 _PL_ _R_ C,INTE_32 S,INTE_32 K,ADDRESS N);
+					//LinClip : 64-bit Integer Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ I64_)(inte_64 _PL_ _R_ C,INTE_64 S,INTE_64 K,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 S,DATA_08 K,ADDRESS N);
+					//LinClip : 16-bit Natural Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ D16_)(data_16 _PL_ _R_ C,DATA_16 S,DATA_16 K,ADDRESS N);
+					//LinClip : 32-bit Natural Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ D32_)(data_32 _PL_ _R_ C,DATA_32 S,DATA_32 K,ADDRESS N);
+					//LinClip : 64-bit Natural Line Arithmetic Progression
+					//＊C[n]＝S＋(n×K)
+					general(_PL_ D64_)(data_64 _PL_ _R_ C,DATA_64 S,DATA_64 K,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Arithmetic Progression
 			//＊C[n]＝S＋(n×K)
-			general(_PL_ R32_)(real_32 *_R_ C,REAL_32 S,REAL_32 K,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ _R_ C,REAL_32 S,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Arithmetic Progression
 			//＊C[n]＝S＋(n×K)
-			general(_PL_ R64_)(real_64 *_R_ C,REAL_64 S,REAL_64 K,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ _R_ C,REAL_64 S,REAL_64 K,ADDRESS N);
 		}
 		Ari_0;
 
 		//LinClip : Geometric Progression Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ I08_)(inte_08 *_R_ C,INTE_08 S,INTE_08 K,ADDRESS N);
-			//LinClip : 16-bit Integer Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ I16_)(inte_16 *_R_ C,INTE_16 S,INTE_16 K,ADDRESS N);
-			//LinClip : 32-bit Integer Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ I32_)(inte_32 *_R_ C,INTE_32 S,INTE_32 K,ADDRESS N);
-			//LinClip : 64-bit Integer Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ I64_)(inte_64 *_R_ C,INTE_64 S,INTE_64 K,ADDRESS N);
-			//LinClip : 8-bit Natural Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ D08_)(data_08 *_R_ C,DATA_08 S,DATA_08 K,ADDRESS N);
-			//LinClip : 16-bit Natural Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ D16_)(data_16 *_R_ C,DATA_16 S,DATA_16 K,ADDRESS N);
-			//LinClip : 32-bit Natural Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ D32_)(data_32 *_R_ C,DATA_32 S,DATA_32 K,ADDRESS N);
-			//LinClip : 64-bit Natural Line Geometric Progression
-			//＊C[n]＝S×Kⁿ
-			general(_PL_ D64_)(data_64 *_R_ C,DATA_64 S,DATA_64 K,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ I08_)(inte_08 _PL_ _R_ C,INTE_08 S,INTE_08 K,ADDRESS N);
+					//LinClip : 16-bit Integer Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ I16_)(inte_16 _PL_ _R_ C,INTE_16 S,INTE_16 K,ADDRESS N);
+					//LinClip : 32-bit Integer Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ I32_)(inte_32 _PL_ _R_ C,INTE_32 S,INTE_32 K,ADDRESS N);
+					//LinClip : 64-bit Integer Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ I64_)(inte_64 _PL_ _R_ C,INTE_64 S,INTE_64 K,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ D08_)(data_08 _PL_ _R_ C,DATA_08 S,DATA_08 K,ADDRESS N);
+					//LinClip : 16-bit Natural Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ D16_)(data_16 _PL_ _R_ C,DATA_16 S,DATA_16 K,ADDRESS N);
+					//LinClip : 32-bit Natural Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ D32_)(data_32 _PL_ _R_ C,DATA_32 S,DATA_32 K,ADDRESS N);
+					//LinClip : 64-bit Natural Line Geometric Progression
+					//＊C[n]＝S×Kⁿ
+					general(_PL_ D64_)(data_64 _PL_ _R_ C,DATA_64 S,DATA_64 K,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Geometric Progression
 			//＊C[n]＝S×Kⁿ
-			general(_PL_ R32_)(real_32 *_R_ C,REAL_32 S,REAL_32 K,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ _R_ C,REAL_32 S,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Geometric Progression
 			//＊C[n]＝S×Kⁿ
-			general(_PL_ R64_)(real_64 *_R_ C,REAL_64 S,REAL_64 K,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ _R_ C,REAL_64 S,REAL_64 K,ADDRESS N);
 		}
 		Geo_0;
 
 		//LinClip : Increment Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
-			//LinClip : 16-bit Integer Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
-			//LinClip : 32-bit Integer Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
-			//LinClip : 64-bit Integer Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
-			//LinClip : 8-bit Natural Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
-			//LinClip : 16-bit Natural Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
-			//LinClip : 32-bit Natural Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
-			//LinClip : 64-bit Natural Line Increment
-			//＊C[n]＝A[n]＋K
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 K,ADDRESS N);
+					//LinClip : 16-bit Integer Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 K,ADDRESS N);
+					//LinClip : 32-bit Integer Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 K,ADDRESS N);
+					//LinClip : 64-bit Integer Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 K,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 K,ADDRESS N);
+					//LinClip : 16-bit Natural Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 K,ADDRESS N);
+					//LinClip : 32-bit Natural Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 K,ADDRESS N);
+					//LinClip : 64-bit Natural Line Increment
+					//＊C[n]＝A[n]＋K
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 K,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Increment
 			//＊C[n]＝A[n]＋K
-			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 K,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ C,REAL_32 _PL_ A,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Increment
 			//＊C[n]＝A[n]＋K
-			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 K,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ C,REAL_64 _PL_ A,REAL_64 K,ADDRESS N);
 		}
 		Inc_1;
 
 		//LinClip : Amplification Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
-			//LinClip : 16-bit Integer Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
-			//LinClip : 32-bit Integer Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
-			//LinClip : 64-bit Integer Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
-			//LinClip : 8-bit Natural Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
-			//LinClip : 16-bit Natural Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
-			//LinClip : 32-bit Natural Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
-			//LinClip : 64-bit Natural Line Amplification
-			//＊C[n]＝K×A[n]
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 K,ADDRESS N);
+					//LinClip : 16-bit Integer Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 K,ADDRESS N);
+					//LinClip : 32-bit Integer Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 K,ADDRESS N);
+					//LinClip : 64-bit Integer Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 K,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 K,ADDRESS N);
+					//LinClip : 16-bit Natural Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 K,ADDRESS N);
+					//LinClip : 32-bit Natural Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 K,ADDRESS N);
+					//LinClip : 64-bit Natural Line Amplification
+					//＊C[n]＝K×A[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 K,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Amplification
 			//＊C[n]＝K×A[n]
-			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 K,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ C,REAL_32 _PL_ A,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Amplification
 			//＊C[n]＝K×A[n]
-			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 K,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ C,REAL_64 _PL_ A,REAL_64 K,ADDRESS N);
 		}
 		Amp_1;
 
 		//LinClip : Addition Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
-			//LinClip : 16-bit Integer Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
-			//LinClip : 32-bit Integer Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
-			//LinClip : 64-bit Integer Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
-			//LinClip : 8-bit Natural Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
-			//LinClip : 16-bit Natural Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
-			//LinClip : 32-bit Natural Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
-			//LinClip : 64-bit Natural Line Addition
-			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Integer Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Integer Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Integer Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Natural Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Natural Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Natural Line Addition
+					//＊C[n]＝A[n]＋B[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Addition
 			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ C,REAL_32 _PL_ A,REAL_32 _PL_ B,ADDRESS N);
 			//LinClip : 64-bit Real Line Addition
 			//＊C[n]＝A[n]＋B[n]
-			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ C,REAL_64 _PL_ A,REAL_64 _PL_ B,ADDRESS N);
 		}
 		Add_2;
 
 		//LinClip : Subtraction Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
-			//LinClip : 16-bit Integer Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
-			//LinClip : 32-bit Integer Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
-			//LinClip : 64-bit Integer Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
-			//LinClip : 8-bit Natural Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
-			//LinClip : 16-bit Natural Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
-			//LinClip : 32-bit Natural Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
-			//LinClip : 64-bit Natural Line Subtraction
-			//＊C[n]＝A[n]－B[n]
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Integer Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Integer Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Integer Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Natural Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Natural Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Natural Line Subtraction
+					//＊C[n]＝A[n]－B[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Subtraction
 			//＊C[n]＝A[n]－B[n]
-			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ C,REAL_32 _PL_ A,REAL_32 _PL_ B,ADDRESS N);
 			//LinClip : 64-bit Real Line Subtraction
 			//＊C[n]＝A[n]－B[n]
-			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ C,REAL_64 _PL_ A,REAL_64 _PL_ B,ADDRESS N);
 		}
 		Sub_2;
 
 		//LinClip : Multiplication Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
-			//LinClip : 16-bit Integer Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
-			//LinClip : 32-bit Integer Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
-			//LinClip : 64-bit Integer Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
-			//LinClip : 8-bit Natural Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
-			//LinClip : 16-bit Natural Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
-			//LinClip : 32-bit Natural Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
-			//LinClip : 64-bit Natural Line Multiplication
-			//＊C[n]＝A[n]×B[n]
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Integer Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Integer Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Integer Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Natural Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Natural Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Natural Line Multiplication
+					//＊C[n]＝A[n]×B[n]
+					general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
+				};
+			};
+			
 			//LinClip : 32-bit Real Line Multiplication
 			//＊C[n]＝A[n]×B[n]
-			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ C,REAL_32 _PL_ A,REAL_32 _PL_ B,ADDRESS N);
 			//LinClip : 64-bit Real Line Multiplication
 			//＊C[n]＝A[n]×B[n]
-			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ C,REAL_64 _PL_ A,REAL_64 _PL_ B,ADDRESS N);
 		}
 		Mul_2;
 
@@ -281,28 +387,28 @@ struct _lincase
 		{
 			//LinClip : 8-bit Integer Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
+			general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
+			general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
+			general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
+			general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
+			general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
+			general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
+			general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Division
 			//＊C[n]＝A[n]÷K
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
+			general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 K,ADDRESS N);
 		}
 		Div_1;
 
@@ -311,34 +417,34 @@ struct _lincase
 		{
 			//LinClip : 8-bit Integer Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
+			general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
+			general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
+			general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
+			general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 K,ADDRESS N);
 			//LinClip : 8-bit Natural Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
+			general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
+			general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
+			general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
+			general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 K,ADDRESS N);
 			//LinClip : 32-bit Real Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 K,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ C,REAL_32 _PL_ A,REAL_32 K,ADDRESS N);
 			//LinClip : 64-bit Real Line Inverse
 			//＊C[n]＝K÷A[n]
-			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 K,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ C,REAL_64 _PL_ A,REAL_64 K,ADDRESS N);
 		}
 		Inv_1;
 
@@ -347,34 +453,34 @@ struct _lincase
 		{
 			//LinClip : 8-bit Integer Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 *B,ADDRESS N);
+			general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
 			//LinClip : 16-bit Integer Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 *B,ADDRESS N);
+			general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
 			//LinClip : 32-bit Integer Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 *B,ADDRESS N);
+			general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
 			//LinClip : 64-bit Integer Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 *B,ADDRESS N);
+			general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
 			//LinClip : 8-bit Natural Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 *B,ADDRESS N);
+			general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
 			//LinClip : 16-bit Natural Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 *B,ADDRESS N);
+			general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
 			//LinClip : 32-bit Natural Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 *B,ADDRESS N);
+			general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
 			//LinClip : 64-bit Natural Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 *B,ADDRESS N);
+			general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
 			//LinClip : 32-bit Real Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ R32_)(real_32 *C,REAL_32 *A,REAL_32 *B,ADDRESS N);
+			general(_PL_ R32_)(real_32 _PL_ C,REAL_32 _PL_ A,REAL_32 _PL_ B,ADDRESS N);
 			//LinClip : 64-bit Real Line Division
 			//＊C[n]＝A[n]÷B[n]
-			general(_PL_ R64_)(real_64 *C,REAL_64 *A,REAL_64 *B,ADDRESS N);
+			general(_PL_ R64_)(real_64 _PL_ C,REAL_64 _PL_ A,REAL_64 _PL_ B,ADDRESS N);
 		}
 		Div_2;
 
@@ -383,100 +489,120 @@ struct _lincase
 		{
 			//LinClip : 8-bit Natural Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ D08_)(data_08 *C,DATA_08 *A,DATA_08 K,ADDRESS N);
+			general(_PL_ D08_)(data_08 _PL_ C,DATA_08 _PL_ A,DATA_08 K,ADDRESS N);
 			//LinClip : 16-bit Natural Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ D16_)(data_16 *C,DATA_16 *A,DATA_16 K,ADDRESS N);
+			general(_PL_ D16_)(data_16 _PL_ C,DATA_16 _PL_ A,DATA_16 K,ADDRESS N);
 			//LinClip : 32-bit Natural Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ D32_)(data_32 *C,DATA_32 *A,DATA_32 K,ADDRESS N);
+			general(_PL_ D32_)(data_32 _PL_ C,DATA_32 _PL_ A,DATA_32 K,ADDRESS N);
 			//LinClip : 64-bit Natural Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ D64_)(data_64 *C,DATA_64 *A,DATA_64 K,ADDRESS N);
+			general(_PL_ D64_)(data_64 _PL_ C,DATA_64 _PL_ A,DATA_64 K,ADDRESS N);
 			//LinClip : 8-bit Integer Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ I08_)(inte_08 *C,INTE_08 *A,INTE_08 K,ADDRESS N);
+			general(_PL_ I08_)(inte_08 _PL_ C,INTE_08 _PL_ A,INTE_08 K,ADDRESS N);
 			//LinClip : 16-bit Integer Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ I16_)(inte_16 *C,INTE_16 *A,INTE_16 K,ADDRESS N);
+			general(_PL_ I16_)(inte_16 _PL_ C,INTE_16 _PL_ A,INTE_16 K,ADDRESS N);
 			//LinClip : 32-bit Integer Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ I32_)(inte_32 *C,INTE_32 *A,INTE_32 K,ADDRESS N);
+			general(_PL_ I32_)(inte_32 _PL_ C,INTE_32 _PL_ A,INTE_32 K,ADDRESS N);
 			//LinClip : 64-bit Integer Line Modulo
 			//＊C[n]＝A[n]％K
-			general(_PL_ I64_)(inte_64 *C,INTE_64 *A,INTE_64 K,ADDRESS N);
+			general(_PL_ I64_)(inte_64 _PL_ C,INTE_64 _PL_ A,INTE_64 K,ADDRESS N);
 		}
 		Mod_1;
 
 		//LinClip : Summation Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Summation
-			//＊S＝∑A[n]
-			inte_08(_PL_ I08_)(INTE_08 *_R_ A,ADDRESS N);
-			//LinClip : 16-bit Integer Line Summation
-			//＊S＝∑A[n]
-			inte_16(_PL_ I16_)(INTE_16 *_R_ A,ADDRESS N);
-			//LinClip : 32-bit Integer Line Summation
-			//＊S＝∑A[n]
-			inte_32(_PL_ I32_)(INTE_32 *_R_ A,ADDRESS N);
-			//LinClip : 64-bit Integer Line Summation
-			//＊S＝∑A[n]
-			inte_64(_PL_ I64_)(INTE_64 *_R_ A,ADDRESS N);
-			//LinClip : 8-bit Natural Line Summation
-			//＊S＝∑A[n]
-			data_08(_PL_ D08_)(DATA_08 *_R_ A,ADDRESS N);
-			//LinClip : 16-bit Natural Line Summation
-			//＊S＝∑A[n]
-			data_16(_PL_ D16_)(DATA_16 *_R_ A,ADDRESS N);
-			//LinClip : 32-bit Natural Line Summation
-			//＊S＝∑A[n]
-			data_32(_PL_ D32_)(DATA_32 *_R_ A,ADDRESS N);
-			//LinClip : 64-bit Natural Line Summation
-			//＊S＝∑A[n]
-			data_64(_PL_ D64_)(DATA_64 *_R_ A,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Summation
+					//＊S＝∑A[n]
+					inte_08(_PL_ I08_)(INTE_08 _PL_ _R_ A,ADDRESS N);
+					//LinClip : 16-bit Integer Line Summation
+					//＊S＝∑A[n]
+					inte_16(_PL_ I16_)(INTE_16 _PL_ _R_ A,ADDRESS N);
+					//LinClip : 32-bit Integer Line Summation
+					//＊S＝∑A[n]
+					inte_32(_PL_ I32_)(INTE_32 _PL_ _R_ A,ADDRESS N);
+					//LinClip : 64-bit Integer Line Summation
+					//＊S＝∑A[n]
+					inte_64(_PL_ I64_)(INTE_64 _PL_ _R_ A,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Summation
+					//＊S＝∑A[n]
+					data_08(_PL_ D08_)(DATA_08 _PL_ _R_ A,ADDRESS N);
+					//LinClip : 16-bit Natural Line Summation
+					//＊S＝∑A[n]
+					data_16(_PL_ D16_)(DATA_16 _PL_ _R_ A,ADDRESS N);
+					//LinClip : 32-bit Natural Line Summation
+					//＊S＝∑A[n]
+					data_32(_PL_ D32_)(DATA_32 _PL_ _R_ A,ADDRESS N);
+					//LinClip : 64-bit Natural Line Summation
+					//＊S＝∑A[n]
+					data_64(_PL_ D64_)(DATA_64 _PL_ _R_ A,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Summation
 			//＊S＝∑A[n]
-			real_32(_PL_ R32_)(REAL_32 *_R_ A,ADDRESS N);
+			real_32(_PL_ R32_)(REAL_32 _PL_ _R_ A,ADDRESS N);
 			//LinClip : 64-bit Real Line Summation
 			//＊S＝∑A[n]
-			real_64(_PL_ R64_)(REAL_64 *_R_ A,ADDRESS N);
+			real_64(_PL_ R64_)(REAL_64 _PL_ _R_ A,ADDRESS N);
 		}
 		Sum_1;
 
 		//LinClip : Dot Product Functions
 		const struct
 		{
-			//LinClip : 8-bit Integer Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			inte_08(_PL_ I08_)(INTE_08 *A,INTE_08 *B,ADDRESS N);
-			//LinClip : 16-bit Integer Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			inte_16(_PL_ I16_)(INTE_16 *A,INTE_16 *B,ADDRESS N);
-			//LinClip : 32-bit Integer Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			inte_32(_PL_ I32_)(INTE_32 *A,INTE_32 *B,ADDRESS N);
-			//LinClip : 64-bit Integer Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			inte_64(_PL_ I64_)(INTE_64 *A,INTE_64 *B,ADDRESS N);
-			//LinClip : 8-bit Natural Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			data_08(_PL_ D08_)(DATA_08 *A,DATA_08 *B,ADDRESS N);
-			//LinClip : 16-bit Natural Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			data_16(_PL_ D16_)(DATA_16 *A,DATA_16 *B,ADDRESS N);
-			//LinClip : 32-bit Natural Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			data_32(_PL_ D32_)(DATA_32 *A,DATA_32 *B,ADDRESS N);
-			//LinClip : 64-bit Natural Line Dot Product
-			//＊S＝∑A[n]×B[n]
-			data_64(_PL_ D64_)(DATA_64 *A,DATA_64 *B,ADDRESS N);
+			const union
+			{
+				const struct
+				{
+					//LinClip : 8-bit Integer Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					inte_08(_PL_ I08_)(INTE_08 _PL_ A,INTE_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Integer Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					inte_16(_PL_ I16_)(INTE_16 _PL_ A,INTE_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Integer Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					inte_32(_PL_ I32_)(INTE_32 _PL_ A,INTE_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Integer Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					inte_64(_PL_ I64_)(INTE_64 _PL_ A,INTE_64 _PL_ B,ADDRESS N);
+				};
+				const struct
+				{
+					//LinClip : 8-bit Natural Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					data_08(_PL_ D08_)(DATA_08 _PL_ A,DATA_08 _PL_ B,ADDRESS N);
+					//LinClip : 16-bit Natural Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					data_16(_PL_ D16_)(DATA_16 _PL_ A,DATA_16 _PL_ B,ADDRESS N);
+					//LinClip : 32-bit Natural Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					data_32(_PL_ D32_)(DATA_32 _PL_ A,DATA_32 _PL_ B,ADDRESS N);
+					//LinClip : 64-bit Natural Line Dot Product
+					//＊S＝∑A[n]×B[n]
+					data_64(_PL_ D64_)(DATA_64 _PL_ A,DATA_64 _PL_ B,ADDRESS N);
+				};
+			};
+
 			//LinClip : 32-bit Real Line Dot Product
 			//＊S＝∑A[n]×B[n]
-			real_32(_PL_ R32_)(REAL_32 *A,REAL_32 *B,ADDRESS N);
+			real_32(_PL_ R32_)(REAL_32 _PL_ A,REAL_32 _PL_ B,ADDRESS N);
 			//LinClip : 64-bit Real Line Dot Product
 			//＊S＝∑A[n]×B[n]
-			real_64(_PL_ R64_)(REAL_64 *A,REAL_64 *B,ADDRESS N);
+			real_64(_PL_ R64_)(REAL_64 _PL_ A,REAL_64 _PL_ B,ADDRESS N);
 		}
 		Dot_2;
 
@@ -659,38 +785,54 @@ struct _lincase
 		Order;
 
 		//LinClip : Mapping Functions
-		const struct
+		const union
 		{
-			//LinClip : 8-Bit Integer Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ I08_)(inte_08 *_R_ C,ADDRESS *_R_ I,INTE_08 _PL_ T,ADDRESS N);
-			//LinClip : 16-Bit Integer Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ I16_)(inte_16 *_R_ C,ADDRESS *_R_ I,INTE_16 _PL_ T,ADDRESS N);
-			//LinClip : 32-Bit Integer Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ I32_)(inte_32 *_R_ C,ADDRESS *_R_ I,INTE_32 _PL_ T,ADDRESS N);
-			//LinClip : 64-Bit Integer Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ I64_)(inte_64 *_R_ C,ADDRESS *_R_ I,INTE_64 _PL_ T,ADDRESS N);
-			//LinClip : 8-Bit Natural Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ D08_)(data_08 *_R_ C,ADDRESS *_R_ I,DATA_08 _PL_ T,ADDRESS N);
-			//LinClip : 16-Bit Natural Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ D16_)(data_16 *_R_ C,ADDRESS *_R_ I,DATA_16 _PL_ T,ADDRESS N);
-			//LinClip : 32-Bit Natural Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ D32_)(data_32 *_R_ C,ADDRESS *_R_ I,DATA_32 _PL_ T,ADDRESS N);
-			//LinClip : 64-Bit Natural Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ D64_)(data_64 *_R_ C,ADDRESS *_R_ I,DATA_64 _PL_ T,ADDRESS N);
-			//LinClip : 32-Bit Real Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ R32_)(real_32 *_R_ C,ADDRESS *_R_ I,REAL_32 _PL_ T,ADDRESS N);
-			//LinClip : 64-Bit Real Line Mapping
-			//＊C[n]＝T[I[n]]
-			general(_PL_ R64_)(real_64 *_R_ C,ADDRESS *_R_ I,REAL_64 _PL_ T,ADDRESS N);
+			const struct
+			{
+				//LinClip : 8-Bit Natural Line Mapping
+				//＊C[n]＝T[I[n]]
+				general(_PL_ D08_)(data_08 _PL_ _R_ C,ADDRESS _PL_ _R_ I,DATA_08 _PL_ T,ADDRESS N);
+				//LinClip : 16-Bit Natural Line Mapping
+				//＊C[n]＝T[I[n]]
+				general(_PL_ D16_)(data_16 _PL_ _R_ C,ADDRESS _PL_ _R_ I,DATA_16 _PL_ T,ADDRESS N);
+				//LinClip : 32-Bit Natural Line Mapping
+				//＊C[n]＝T[I[n]]
+				general(_PL_ D32_)(data_32 _PL_ _R_ C,ADDRESS _PL_ _R_ I,DATA_32 _PL_ T,ADDRESS N);
+				//LinClip : 64-Bit Natural Line Mapping
+				//＊C[n]＝T[I[n]]
+				general(_PL_ D64_)(data_64 _PL_ _R_ C,ADDRESS _PL_ _R_ I,DATA_64 _PL_ T,ADDRESS N);
+			};
+			const struct
+			{
+				//LinClip : 8-Bit Integer Line Mapping
+				//＊C[n]＝T[I[n]]
+				general(_PL_ I08_)(inte_08 _PL_ _R_ C,ADDRESS _PL_ _R_ I,INTE_08 _PL_ T,ADDRESS N);
+				//LinClip : 16-Bit Integer Line Mapping
+				//＊C[n]＝T[I[n]]
+				general(_PL_ I16_)(inte_16 _PL_ _R_ C,ADDRESS _PL_ _R_ I,INTE_16 _PL_ T,ADDRESS N);
+
+				const union
+				{
+					const struct
+					{
+						//LinClip : 32-Bit Integer Line Mapping
+						//＊C[n]＝T[I[n]]
+						general(_PL_ I32_)(inte_32 _PL_ _R_ C,ADDRESS _PL_ _R_ I,INTE_32 _PL_ T,ADDRESS N);
+						//LinClip : 64-Bit Integer Line Mapping
+						//＊C[n]＝T[I[n]]
+						general(_PL_ I64_)(inte_64 _PL_ _R_ C,ADDRESS _PL_ _R_ I,INTE_64 _PL_ T,ADDRESS N);
+					};
+					const struct
+					{
+						//LinClip : 32-Bit Real Line Mapping
+						//＊C[n]＝T[I[n]]
+						general(_PL_ R32_)(real_32 _PL_ _R_ C,ADDRESS _PL_ _R_ I,REAL_32 _PL_ T,ADDRESS N);
+						//LinClip : 64-Bit Real Line Mapping
+						//＊C[n]＝T[I[n]]
+						general(_PL_ R64_)(real_64 _PL_ _R_ C,ADDRESS _PL_ _R_ I,REAL_64 _PL_ T,ADDRESS N);
+					};
+				};
+			};
 		}
 		Map_1;
 	};

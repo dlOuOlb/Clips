@@ -2,7 +2,7 @@
 /*	TimClip is a simple time record library.						*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
@@ -65,13 +65,10 @@ struct _timcase
 	//TimClip : Library Version
 	BYTE_08 _PL_ Version;
 
-	//TimClip : Timer Clock's Resolution and Frequency
-	const struct
-	{
-		REAL_32 Frequency;	//TimClip : clocks per second
-		REAL_32 Resolution;	//TimClip : seconds per clock
-	}
-	Clock;
+	//TimClip : Timer Clock's Frequency and Resolution
+	//＊[0] : clock frequency (clocks per second)
+	//　[1] : clock resolution (seconds per clock)
+	REAL_32 _PL_ Clocks;
 
 	//TimClip : Stopwatch Functions
 	const struct

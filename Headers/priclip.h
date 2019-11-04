@@ -2,7 +2,7 @@
 /*	PriClip provides some small prime number tables.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PRICLIP
@@ -114,19 +114,19 @@ struct _pricase
 		{
 			//PriClip : 8-bit Prime Factorization
 			//＊Required (Factor) size is 8×1 bytes.
-			logical(_PL_ D08_)(data_08 Factor[8],PRIC_08 _PL_ _R_ Table,DATA_08 Natural);
+			logical(_PL_ D08_)(data_08 _PL_ _R_ Factor,PRIC_08 _PL_ _R_ Table,DATA_08 Natural);
 
 			//PriClip : 16-bit Prime Factorization
 			//＊Required (Factor) size is 16×2 bytes.
-			logical(_PL_ D16_)(data_16 Factor[16],PRIC_16 _PL_ _R_ Table,DATA_16 Natural);
+			logical(_PL_ D16_)(data_16 _PL_ _R_ Factor,PRIC_16 _PL_ _R_ Table,DATA_16 Natural);
 
 			//PriClip : 32-bit Prime Factorization
 			//＊Required (Factor) size is 32×4 bytes.
-			logical(_PL_ D32_)(data_32 Factor[32],PRIC_32 _PL_ _R_ Table,DATA_32 Natural);
+			logical(_PL_ D32_)(data_32 _PL_ _R_ Factor,PRIC_32 _PL_ _R_ Table,DATA_32 Natural);
 
 			//PriClip : 64-bit Prime Factorization
 			//＊Required (Factor) size is 64×8 bytes.
-			logical(_PL_ D64_)(data_64 Factor[64],PRIC_64 _PL_ _R_ Table,DATA_64 Natural);
+			logical(_PL_ D64_)(data_64 _PL_ _R_ Factor,PRIC_64 _PL_ _R_ Table,DATA_64 Natural);
 		}
 		Factor;
 

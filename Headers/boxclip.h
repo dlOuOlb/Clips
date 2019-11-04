@@ -2,7 +2,7 @@
 /*	BoxClip provides some simple data structures.					*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BOXCLIP
@@ -160,7 +160,7 @@ struct _boxcase
 #define BoxC_SS_Foreach_(StackSet,StackSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(StackSet)?(((StackSelect)<((StackSet)->Number))?((general*)(((StackSet)->Count)+(StackSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.SS.Pop_(StackSet,StackSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Typed Stack Set Declaration
-#define BoxC_SS_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_ss_##suffix{boxc_ss*Core,_PL_ Wrap;};MemC_Type_Declare_(union,boxc_ss_##suffix,BOXC_SS_##SUFFIX);const struct{logical(_PL_ Push_)(BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect,type const Object);union{general _PL_ Any;type const Obj;}(_PL_ Pop_)(BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect),(_PL_ Peek_)(BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect,ADDRESS Depth);logical(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect);}_PL_(Caller)=(general*)&(BoxC.SS.Push_)
+#define BoxC_SS_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_ss_##suffix{boxc_ss*Core;const struct{ADDRESS Hidden,_PL_ Count,Number,Capacity;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_ss_##suffix,BOXC_SS_##SUFFIX);const struct{logical(_PL_ Push_)(BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect,type const Object);union{general _PL_ Any;type const Obj;}(_PL_ Pop_)(BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect),(_PL_ Peek_)(BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect,ADDRESS Depth);logical(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_SS_##SUFFIX StackSet,ADDRESS StackSelect);}_PL_(Caller)=(general*)&(BoxC.SS.Push_)
 	}
 	SS;
 
@@ -215,7 +215,7 @@ struct _boxcase
 #define BoxC_QS_Foreach_(QueueSet,QueueSelect,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_(_Mark##Each)=(QueueSet)?(((QueueSelect)<((QueueSet)->Number))?((general*)(((QueueSet)->Count)+(QueueSelect))):(NULL)):(NULL),*(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL);(_Temp##Each)?((Acs_(general*,Each)=BoxC.QS.Deque_(QueueSet,QueueSelect)),1):(0);(_Temp##Each)=(*(address*)(_Mark##Each))?(FULL):(NULL))
 
 		//BoxClip : Typed Queue Set Declaration
-#define BoxC_QS_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_qs_##suffix{boxc_qs*Core,_PL_ Wrap;};MemC_Type_Declare_(union,boxc_qs_##suffix,BOXC_QS_##SUFFIX);const struct{logical(_PL_ Enque_)(BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect,type const Object);union{general _PL_ Any;type const Obj;}(_PL_ Deque_)(BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect),(_PL_ Peek_)(BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect,ADDRESS Depth);logical(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect);}_PL_(Caller)=(general*)&(BoxC.QS.Enque_)
+#define BoxC_QS_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_qs_##suffix{boxc_qs*Core;const struct{ADDRESS Hidden,_PL_ Count,Number,Capacity;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_qs_##suffix,BOXC_QS_##SUFFIX);const struct{logical(_PL_ Enque_)(BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect,type const Object);union{general _PL_ Any;type const Obj;}(_PL_ Deque_)(BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect),(_PL_ Peek_)(BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect,ADDRESS Depth);logical(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_QS_##SUFFIX QueueSet,ADDRESS QueueSelect);}_PL_(Caller)=(general*)&(BoxC.QS.Enque_)
 	}
 	QS;
 
@@ -277,7 +277,7 @@ struct _boxcase
 #define BoxC_RS_Foreach_(RingSet,RingSelect,Rotation,Direction,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),_PL_ _PL_(_Mark##Each)=(RingSet)?(((RingSelect)<((RingSet)->Number))?((general*)(((address*)((RingSet)->Ring))+((RingSelect)<<1))):(NULL)):(NULL),_PL_(_Stop##Each)=*(_Mark##Each),*(_Temp##Each)=FULL;(_Temp##Each)?((Acs_(general*,Each)=BoxC.RS.Read_(RingSet,RingSelect,Direction)),1):(0);(_Temp##Each)=(BoxC.RS.Rotate_(RingSet,RingSelect,Rotation))?(((_Stop##Each)==*(_Mark##Each))?(NULL):(FULL)):(NULL))
 
 		//BoxClip : Typed Ring Set Declaration
-#define BoxC_RS_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_rs_##suffix{boxc_rs*Core,_PL_ Wrap;};MemC_Type_Declare_(union,boxc_rs_##suffix,BOXC_RS_##SUFFIX);const struct{logical(_PL_ Insert_)(BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,type const Object,LOGICAL Direction),(_PL_ Desert_)(BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,LOGICAL Direction);union{general _PL_ Any;type const Obj;}(_PL_ Read_)(BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,LOGICAL Direction);logical(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,SINTPTR Rotation,LOGICAL Mode);}_PL_(Caller)=(general*)&(BoxC.RS.Insert_)
+#define BoxC_RS_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_rs_##suffix{boxc_rs*Core;const struct{ADDRESS Hidden,_PL_ Count,Number,Capacity;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_rs_##suffix,BOXC_RS_##SUFFIX);const struct{logical(_PL_ Insert_)(BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,type const Object,LOGICAL Direction),(_PL_ Desert_)(BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,LOGICAL Direction);union{general _PL_ Any;type const Obj;}(_PL_ Read_)(BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,LOGICAL Direction);logical(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_RS_##SUFFIX RingSet,ADDRESS RingSelect,SINTPTR Rotation,LOGICAL Mode);}_PL_(Caller)=(general*)&(BoxC.RS.Insert_)
 	}
 	RS;
 
@@ -345,7 +345,7 @@ struct _boxcase
 		Index;
 
 		//BoxClip : Typed Key Set Declaration
-#define BoxC_KS_Generic_(type_key,type_value,suffix,SUFFIX,Caller) MemC_Void_Size_(type_key);MemC_Void_Size_(type_value);union _boxc_ks_##suffix{boxc_ks*Core;const struct{GENERAL _PL_ Key;integer(_PL_ Comp_)(type_key const,type_key const);ADDRESS Number,Capacity;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_ks_##suffix,BOXC_KS_##SUFFIX);const struct{const struct{logical(_PL_ Enroll_)(BOXC_KS_##SUFFIX KeySet,type_key const Key),(_PL_ Remove_)(BOXC_KS_##SUFFIX KeySet,type_key const Key),(_PL_ Verify_)(BOXC_KS_##SUFFIX KeySet,type_key const Key),(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_KS_##SUFFIX KeySet);}Key;const struct{logical(_PL_ Writer_)(BOXC_KS_##SUFFIX KeySet,type_key const Key,type_value const Value);union{general _PL_ Any;type_value const Obj;}(_PL_ Reader_)(BOXC_KS_##SUFFIX KeySet,type_key const Key);}Value;const struct{union{general _PL_ Any;type_key const Obj;}(_PL_ Search_)(BOXC_KS_##SUFFIX KeySet,ADDRESS Index);address(_PL_ Locate_)(BOXC_KS_##SUFFIX KeySet,type_key const Key);}Index;}_PL_(Caller)=(general*)&(BoxC.KS.Key.Enroll_)
+#define BoxC_KS_Generic_(type_key,type_value,suffix,SUFFIX,Caller) MemC_Void_Size_(type_key);MemC_Void_Size_(type_value);union _boxc_ks_##suffix{boxc_ks*Core;const struct{ADDRESS Hidden;integer(_PL_ Comp_)(type_key const,type_key const);ADDRESS Number,Capacity;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_ks_##suffix,BOXC_KS_##SUFFIX);const struct{const struct{logical(_PL_ Enroll_)(BOXC_KS_##SUFFIX KeySet,type_key const Key),(_PL_ Remove_)(BOXC_KS_##SUFFIX KeySet,type_key const Key),(_PL_ Verify_)(BOXC_KS_##SUFFIX KeySet,type_key const Key),(_PL_ Spread_)(BOXC_LI_##SUFFIX List,BOXC_KS_##SUFFIX KeySet);}Key;const struct{logical(_PL_ Writer_)(BOXC_KS_##SUFFIX KeySet,type_key const Key,type_value const Value);union{general _PL_ Any;type_value const Obj;}(_PL_ Reader_)(BOXC_KS_##SUFFIX KeySet,type_key const Key);}Value;const struct{union{general _PL_ Any;type_key const Obj;}(_PL_ Search_)(BOXC_KS_##SUFFIX KeySet,ADDRESS Index);address(_PL_ Locate_)(BOXC_KS_##SUFFIX KeySet,type_key const Key);}Index;}_PL_(Caller)=(general*)&(BoxC.KS.Key.Enroll_)
 	}
 	KS;
 
@@ -409,7 +409,7 @@ struct _boxcase
 		logical(_PL_ Move_)(boxc_tr _PL_ Tree,boxc_tr _PL_ NewRoot);
 
 		//BoxClip : Typed Tree Declaration
-#define BoxC_Tr_Generic_(type,suffix,SUFFIX) MemC_Void_Size_(type);union _boxc_tr_##suffix{boxc_tr*Core;struct{boxc_tr _PL_ Root,_PL_ Leaf,_PL_ Prev,_PL_ Next;ADDRESS Count,Total,Link;type Object;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_tr_##suffix,BOXC_TR_##SUFFIX)
+#define BoxC_Tr_Generic_(type,suffix,SUFFIX) MemC_Void_Size_(type);union _boxc_tr_##suffix{boxc_tr*Core;struct{boxc_tr _PL_ Root,_PL_ Leaf,_PL_ Prev,_PL_ Next;ADDRESS Count,Total,Hidden;type Object;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_tr_##suffix,BOXC_TR_##SUFFIX)
 	}
 	Tr;
 
@@ -433,7 +433,7 @@ struct _boxcase
 		address(_PL_ Find_)(BOXC_SW _PL_ _R_ Switch,GENERAL _PL_ Case,LOGICAL SearchMode);
 
 		//BoxClip : Typed Switch Declaration
-#define BoxC_Sw_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_sw_##suffix{boxc_sw*Core;struct{const struct{type const Item;ADDRESS Index;}_PL_ Case;ADDRESS Number;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_sw_##suffix,BOXC_SW_##SUFFIX);const struct{address(_PL_ Find_)(BOXC_SW_##SUFFIX Switch,type const Case,LOGICAL SearchMode);}_PL_(Caller)=(general*)&(BoxC.Sw.Find_)
+#define BoxC_Sw_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_sw_##suffix{boxc_sw*Core;const struct{const struct{type const Item;ADDRESS Index;}_PL_ Case;ADDRESS Number;}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_sw_##suffix,BOXC_SW_##SUFFIX);const struct{address(_PL_ Find_)(BOXC_SW_##SUFFIX Switch,type const Case,LOGICAL SearchMode);}_PL_(Caller)=(general*)&(BoxC.Sw.Find_)
 	}
 	Sw;
 
@@ -510,7 +510,7 @@ struct _boxcase
 #define BoxC_Li_Foreach_(List,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((List)->Item),_PL_(_End##Each)=(general*)(((List)->Item)+((List)->Count));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
 
 		//BoxClip : Typed List Declaration
-#define BoxC_Li_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_li_##suffix{boxc_li*Core;struct{ADDRESS Capacity,Count;type Item[];}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_li_##suffix,BOXC_LI_##SUFFIX);const struct{const struct{logical(_PL_ Insert_)(BOXC_LI_##SUFFIX List,type const Item),(_PL_ Desert_)(BOXC_LI_##SUFFIX List);}Tip;const struct{logical(_PL_ Insert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset,type const Item),(_PL_ Desert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset);}One;const struct{logical(_PL_ Insert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset,ADDRESS Number,...),(_PL_ Desert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset,ADDRESS Number);}Lot;const struct{logical(_PL_ Copy_)(BOXC_LI_##SUFFIX TargetList,BOXC_LI_##SUFFIX SourceList,ADDRESS TargetOffset,ADDRESS SourceOffset,ADDRESS CopyNumber),(_PL_ Filter_)(BOXC_LI_##SUFFIX TargetList,BOXC_LI_##SUFFIX SourceList,logical(_PL_ Filter_)(type const Item,general _PL_ _R_ Option),general _PL_ _R_ Option);}Do;}_PL_(Caller)=(general*)&(BoxC.Li.Tip.Insert_)
+#define BoxC_Li_Generic_(type,suffix,SUFFIX,Caller) MemC_Void_Size_(type);union _boxc_li_##suffix{boxc_li*Core;const struct{ADDRESS Capacity,Count;type Item[];}_PL_ Wrap;};MemC_Type_Declare_(union,boxc_li_##suffix,BOXC_LI_##SUFFIX);const struct{const struct{logical(_PL_ Insert_)(BOXC_LI_##SUFFIX List,type const Item),(_PL_ Desert_)(BOXC_LI_##SUFFIX List);}Tip;const struct{logical(_PL_ Insert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset,type const Item),(_PL_ Desert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset);}One;const struct{logical(_PL_ Insert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset,ADDRESS Number,...),(_PL_ Desert_)(BOXC_LI_##SUFFIX List,ADDRESS Offset,ADDRESS Number);}Lot;const struct{logical(_PL_ Copy_)(BOXC_LI_##SUFFIX TargetList,BOXC_LI_##SUFFIX SourceList,ADDRESS TargetOffset,ADDRESS SourceOffset,ADDRESS CopyNumber),(_PL_ Filter_)(BOXC_LI_##SUFFIX TargetList,BOXC_LI_##SUFFIX SourceList,logical(_PL_ Filter_)(type const Item,general _PL_ _R_ Option),general _PL_ _R_ Option);}Do;}_PL_(Caller)=(general*)&(BoxC.Li.Tip.Insert_)
 	}
 	Li;
 };
