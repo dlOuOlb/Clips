@@ -1,17 +1,46 @@
-﻿#include <priclip.h>
+#include <priclip.h>
 #include <timclip.h>
 #include <stdbool.h>
 
+#include <inttypes.h>
+
 _MemC_Default_
 
-static pric_32 *_Table_Load_(TEXT_08 _PL_ _R_ FileName);
+#if(Fold_(Type Selection))
+
+#if(SIZE_MAX==UINT8_MAX)
+#define Main_Bits_ 08
+#define Main_Form_ PRIu8
+#elif(SIZE_MAX==UINT16_MAX)
+#define Main_Bits_ 16
+#define Main_Form_ PRIu16
+#elif(SIZE_MAX==UINT32_MAX)
+#define Main_Bits_ 32
+#define Main_Form_ PRIu32
+#elif(SIZE_MAX==UINT64_MAX)
+#define Main_Bits_ 64
+#define Main_Form_ PRIu64
+#else
+#error Not supported address size.
+#endif
+
+#define Main_DXX_ Conc_(Conc_(D,Main_Bits_),_)
+MemC_Type_Rename_(Conc_(Conc_(data,_),Main_Bits_),main_nn,MAIN_NN);//natural number redefinition
+MemC_Type_Rename_(Conc_(Conc_(pric,_),Main_Bits_),main_pt,MAIN_PT);//prime table redefinition
+
+#endif
+
+//load a prime table from the disk
+static main_pt *_Table_Load_(TEXT_08 _PL_ _R_ FileName);
+//save a prime table into the disk
 static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName);
-static logical _Table_Find_(PRIC_32 _PL_ _R_ Table);
+//factorize and display a number
+static logical _Table_Find_(MAIN_PT _PL_ _R_ Table);
 
 integer main(general)
 {
-	TEXT_08 FileName[24]="prime table 32-bit.dat";//file path of the prime table to be stored
-	pric_32 *Table=_Table_Load_(FileName);//32-bit prime table
+	TEXT_08 FileName[24]="prime table "Meta_(Main_Bits_)"-bit.dat";//file path of the prime table to be stored
+	main_pt *Table=_Table_Load_(FileName);//prime table
 
 	if(Table)
 		goto ACTIVE;
@@ -20,7 +49,7 @@ integer main(general)
 		text_08 Key=-1;
 
 		PenC_Stream_Format_T08_(0,NULL,"Failed to load. Wanna create one?\r\nMay take several hours. [Y/N]: ");
-		PenC_Stream_Format_T08_(1,NULL,"%1c",&Key,sizeof(Key));
+		PenC_Stream_Format_T08_(1,NULL,"%1c",&Key,1);
 		switch(Key)
 		{
 		case 'Y':
@@ -38,27 +67,27 @@ ACTIVE:			while(_Table_Find_(Table));
 		PenC_Stream_Format_T08_(0,NULL,"Good bye!\r\n");
 	}
 
-	PriC.PT.Delete.D32_(&Table);
+	PriC.PT.Delete.Main_DXX_(&Table);
 
 	return 0;
 }
 
-static pric_32 *_Table_Load_(TEXT_08 _PL_ _R_ FileName)
+static main_pt *_Table_Load_(TEXT_08 _PL_ _R_ FileName)
 {
 	PenC_Stream_Format_T08_(0,NULL,"Try to load the prime table.\r\n");
 
-	return PenC.Object.Load.T08_(FileName,PriC.PT.Load.D32_,NULL,false);
+	return PenC.Object.Load.T08_(FileName,PriC.PT.Load.Main_DXX_,NULL,false);
 }
 static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName)
 {
 	TimC_SW_Auto_(SW,1);//stopwatch
-	MEMCLIP Bits={.V=32};//all 32-bit prime numbers
+	MEMCLIP Bits={.V=sizeof(address)<<2};//first small prime numbers
 	timc_sf State;//timer state
 	logical Flag=false;//file save flag
 
 	PenC_Stream_Format_T08_(0,NULL,"Try to record the prime table.\r\n");
 	TimC_SW_Tick_Tock_(SW,0,State)
-		Flag=PenC.Object.Save.T08_(FileName,MemC_Func_Casting_(logical,PriC.PT.Save.D32_,FILE _PL_,GENERAL _PL_ _R_),Bits.P,false);
+		Flag=PenC.Object.Save.T08_(FileName,MemC_Func_Casting_(logical,PriC.PT.Save.Main_DXX_,FILE _PL_,GENERAL _PL_ _R_),Bits.P,false);
 
 	if(Flag)
 	{
@@ -74,22 +103,22 @@ static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName)
 
 	return Flag;
 }
-static logical _Table_Find_(PRIC_32 _PL_ _R_ Table)
+static logical _Table_Find_(MAIN_PT _PL_ _R_ Table)
 {
-	data_32 Number;//number to be factorized
+	main_nn Number;//number to be factorized
 
 	PenC_Stream_Format_T08_(0,NULL,"Give me a natural number : ");
-	if(PenC_Stream_Format_T08_(1,NULL,"%u",&Number)>0)
+	if(PenC_Stream_Format_T08_(1,NULL,"%"Main_Form_,&Number)>0)
 	{
-		data_32 Factor[32];//factorized sequence
+		main_nn Factor[sizeof(address)<<3];//factorized sequence
 
-		if(PriC.PT.Factor.D32_(Factor,Table,Number))
+		if(PriC.PT.Factor.Main_DXX_(Factor,Table,Number))
 		{
 			PenC_Stream_Format_T08_(0,NULL,"Factorization :\r\n");
-			for(data_32 Index=1;Index<=(*Factor);Index++)
-				PenC_Stream_Format_T08_(0,NULL,"%u ",Factor[Index]);
+			for(main_nn Index=1;Index<=(*Factor);Index++)
+				PenC_Stream_Format_T08_(0,NULL,"%"Main_Form_" ",Factor[Index]);
 			PenC_Stream_Format_T08_(0,NULL,"\r\n");
-
+			
 			return true;
 		}
 		else;
