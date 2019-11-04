@@ -1,4 +1,4 @@
-#include <priclip.h>
+﻿#include <priclip.h>
 #include <timclip.h>
 #include <stdbool.h>
 
