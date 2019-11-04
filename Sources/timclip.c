@@ -17,7 +17,8 @@ static_assert(sizeof(timc_tt)==sizeof(data_32),"sizeof(timc_tt) != sizeof(data_3
 
 #define _TIMC_ static
 
-_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.01";
+_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.04";
+_TIMC_ REAL_32 ConstClocks[2]={[0]=(real_32)(CLOCKS_PER_SEC),[1]=1.0F/((real_32)(CLOCKS_PER_SEC))};
 #endif
 
 #if(Fold_(Definition:Advanced Type Functions))
@@ -187,7 +188,7 @@ static clock_t _TimC_SW_Read_Run_(TIMC_TE _PL_ _R_ Timer)
 
 static real_32 _TimC_SW_Cast_R32_(const clock_t Time)
 {
-	return ((TimC.Clock.Resolution)*(real_32)(Time));
+	return ((ConstClocks[1])*(real_32)(Time));
 }
 _TIMC_ real_32 TimC_SW_Read_Sum_R32_(TIMC_SW _PL_ _R_ SW,ADDRESS Select)
 {
@@ -696,11 +697,7 @@ _TIMC_ logical TimC_RG_Perm_(TIMC_RG _PL_ _R_ RG,ADDRESS Select,address _PL_ _R_
 TIMCASE TimC=
 {
 	.Version=IdiomVersion,
-	.Clock=
-	{
-		.Frequency=(real_32)(CLOCKS_PER_SEC),
-		.Resolution=1.0F/((real_32)(CLOCKS_PER_SEC))
-	},
+	.Clocks=ConstClocks,
 	.SW=
 	{
 		.Create_=TimC_SW_Create_,

@@ -20,7 +20,7 @@ static_assert(((uintptr)(-1))!=(((uintptr)(-1))>>1),"The bit-shift-right operati
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-_BITC_ BYTE_08 IdiomVersion[16]="Date:2019.11.01";
+_BITC_ BYTE_08 IdiomVersion[16]="Date:2019.11.04";
 
 _BITC_ ADDRESS ConstantMask[16]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127,(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
 _BITC_ INTE_64 Constant64[8]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38,0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
@@ -81,6 +81,13 @@ _BITC_ MEMC_DT *BitC_DT_Desc_(BITC_TE Enum)
 #endif
 
 #if(Fold_(Domain:Host))
+
+#if(Fold_(Definition:Just Functions))
+_BITC_ data_08 BitC_Just_D08_(DATA_08 X) { return X; }
+_BITC_ data_16 BitC_Just_D16_(DATA_16 X) { return X; }
+_BITC_ data_32 BitC_Just_D32_(DATA_32 X) { return X; }
+_BITC_ data_64 BitC_Just_D64_(DATA_64 X) { return X; }
+#endif
 
 #if(Fold_(Definition:Endian Functions))
 _BITC_ general BitC_Endian_D08_(data_08 _PL_ Data,ADDRESS Length)
@@ -1342,7 +1349,7 @@ _BITC_ general BitC_CL_BO_S_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 	return;
 }
-_BITC_ general BitC_CL_BO_A_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Mask,oclc_ef _PL_ Error)
+_BITC_ general BitC_CL_BO_A_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Mask,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1354,7 +1361,7 @@ _BITC_ general BitC_CL_BO_A_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Mask.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1404,7 +1411,7 @@ _BITC_ general BitC_CL_BO_A_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 	return;
 }
-_BITC_ general BitC_CL_BO_O_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Mask,oclc_ef _PL_ Error)
+_BITC_ general BitC_CL_BO_O_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Mask,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1416,7 +1423,7 @@ _BITC_ general BitC_CL_BO_O_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Mask.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1466,7 +1473,7 @@ _BITC_ general BitC_CL_BO_O_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 	return;
 }
-_BITC_ general BitC_CL_BO_X_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Mask,oclc_ef _PL_ Error)
+_BITC_ general BitC_CL_BO_X_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Mask,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1478,7 +1485,7 @@ _BITC_ general BitC_CL_BO_X_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Mask.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1543,7 +1550,7 @@ static cl_kernel _BitC_CL_RO_Kernel_(OCLC_PM _PL_ PM,BITC_KI Base,INTEGER Mask,M
 
 	return NULL;
 }
-_BITC_ general BitC_CL_RO_E_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_BITC_ general BitC_CL_RO_E_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1555,7 +1562,7 @@ _BITC_ general BitC_CL_RO_E_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1605,7 +1612,7 @@ _BITC_ general BitC_CL_RO_E_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 	return;
 }
-_BITC_ general BitC_CL_RO_N_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_BITC_ general BitC_CL_RO_N_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1617,7 +1624,7 @@ _BITC_ general BitC_CL_RO_N_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1667,7 +1674,7 @@ _BITC_ general BitC_CL_RO_N_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 	return;
 }
-_BITC_ general BitC_CL_RO_G_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_BITC_ general BitC_CL_RO_G_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1679,7 +1686,7 @@ _BITC_ general BitC_CL_RO_G_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1729,7 +1736,7 @@ _BITC_ general BitC_CL_RO_G_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 	return;
 }
-_BITC_ general BitC_CL_RO_L_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_BITC_ general BitC_CL_RO_L_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1741,7 +1748,7 @@ _BITC_ general BitC_CL_RO_L_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1882,7 +1889,9 @@ _BITC_ general BitC_CL_Reform_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 BITCASE BitC=
 {
 	.Version=IdiomVersion,
+	.Endianness=(data_08*)(ConstantMask+9),
 	.MaxDims=_BitC_Dims_,
+	.Reform_=_BitC_Reform_,
 	.Type=
 	{
 		.D08=TableType+BitCTypeData_08,
@@ -1928,20 +1937,19 @@ BITCASE BitC=
 			.Rest=ConstantMask+8
 		}
 	},
-	.Reform_=_BitC_Reform_,
+	.Just=
+	{
+		.D08_=BitC_Just_D08_,
+		.D16_=BitC_Just_D16_,
+		.D32_=BitC_Just_D32_,
+		.D64_=BitC_Just_D64_
+	},
 	.Endian=
 	{
-		.Endianness=(data_08*)(ConstantMask+9),
 		.D08_=BitC_Endian_D08_,
 		.D16_=BitC_Endian_D16_,
 		.D32_=BitC_Endian_D32_,
-		.D64_=BitC_Endian_D64_,
-		.I08_=MemC_Func_Casting_(general,BitC_Endian_D08_,inte_08 _PL_,ADDRESS),
-		.I16_=MemC_Func_Casting_(general,BitC_Endian_D16_,inte_16 _PL_,ADDRESS),
-		.I32_=MemC_Func_Casting_(general,BitC_Endian_D32_,inte_32 _PL_,ADDRESS),
-		.I64_=MemC_Func_Casting_(general,BitC_Endian_D64_,inte_64 _PL_,ADDRESS),
-		.R32_=MemC_Func_Casting_(general,BitC_Endian_D32_,real_32 _PL_,ADDRESS),
-		.R64_=MemC_Func_Casting_(general,BitC_Endian_D64_,real_64 _PL_,ADDRESS)
+		.D64_=BitC_Endian_D64_
 	},
 	.Caster=
 	{
@@ -2083,11 +2091,7 @@ BITCASE BitC=
 			.D08_=BitC_BO_N_1_D08_,
 			.D16_=BitC_BO_N_1_D16_,
 			.D32_=BitC_BO_N_1_D32_,
-			.D64_=BitC_BO_N_1_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_BO_N_1_D08_,inte_08 _PL_,INTE_08 _PL_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_BO_N_1_D16_,inte_16 _PL_,INTE_16 _PL_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_BO_N_1_D32_,inte_32 _PL_,INTE_32 _PL_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_BO_N_1_D64_,inte_64 _PL_,INTE_64 _PL_,ADDRESS)
+			.D64_=BitC_BO_N_1_D64_
 		},
 		.S_1=
 		{
@@ -2105,66 +2109,42 @@ BITCASE BitC=
 			.D08_=BitC_BO_A_1_D08_,
 			.D16_=BitC_BO_A_1_D16_,
 			.D32_=BitC_BO_A_1_D32_,
-			.D64_=BitC_BO_A_1_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_BO_A_1_D08_,inte_08 _PL_,INTE_08 _PL_,INTE_08,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_BO_A_1_D16_,inte_16 _PL_,INTE_16 _PL_,INTE_16,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_BO_A_1_D32_,inte_32 _PL_,INTE_32 _PL_,INTE_32,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_BO_A_1_D64_,inte_64 _PL_,INTE_64 _PL_,INTE_64,ADDRESS)
+			.D64_=BitC_BO_A_1_D64_
 		},
 		.A_2=
 		{
 			.D08_=BitC_BO_A_2_D08_,
 			.D16_=BitC_BO_A_2_D16_,
 			.D32_=BitC_BO_A_2_D32_,
-			.D64_=BitC_BO_A_2_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_BO_A_2_D08_,inte_08 _PL_,INTE_08 _PL_,INTE_08 _PL_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_BO_A_2_D16_,inte_16 _PL_,INTE_16 _PL_,INTE_16 _PL_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_BO_A_2_D32_,inte_32 _PL_,INTE_32 _PL_,INTE_32 _PL_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_BO_A_2_D64_,inte_64 _PL_,INTE_64 _PL_,INTE_64 _PL_,ADDRESS)
+			.D64_=BitC_BO_A_2_D64_
 		},
 		.O_1=
 		{
 			.D08_=BitC_BO_O_1_D08_,
 			.D16_=BitC_BO_O_1_D16_,
 			.D32_=BitC_BO_O_1_D32_,
-			.D64_=BitC_BO_O_1_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_BO_O_1_D08_,inte_08 _PL_,INTE_08 _PL_,INTE_08,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_BO_O_1_D16_,inte_16 _PL_,INTE_16 _PL_,INTE_16,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_BO_O_1_D32_,inte_32 _PL_,INTE_32 _PL_,INTE_32,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_BO_O_1_D64_,inte_64 _PL_,INTE_64 _PL_,INTE_64,ADDRESS)
+			.D64_=BitC_BO_O_1_D64_
 		},
 		.O_2=
 		{
 			.D08_=BitC_BO_O_2_D08_,
 			.D16_=BitC_BO_O_2_D16_,
 			.D32_=BitC_BO_O_2_D32_,
-			.D64_=BitC_BO_O_2_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_BO_O_2_D08_,inte_08 _PL_,INTE_08 _PL_,INTE_08 _PL_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_BO_O_2_D16_,inte_16 _PL_,INTE_16 _PL_,INTE_16 _PL_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_BO_O_2_D32_,inte_32 _PL_,INTE_32 _PL_,INTE_32 _PL_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_BO_O_2_D64_,inte_64 _PL_,INTE_64 _PL_,INTE_64 _PL_,ADDRESS)
+			.D64_=BitC_BO_O_2_D64_
 		},
 		.X_1=
 		{
 			.D08_=BitC_BO_X_1_D08_,
 			.D16_=BitC_BO_X_1_D16_,
 			.D32_=BitC_BO_X_1_D32_,
-			.D64_=BitC_BO_X_1_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_BO_X_1_D08_,inte_08 _PL_,INTE_08 _PL_,INTE_08,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_BO_X_1_D16_,inte_16 _PL_,INTE_16 _PL_,INTE_16,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_BO_X_1_D32_,inte_32 _PL_,INTE_32 _PL_,INTE_32,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_BO_X_1_D64_,inte_64 _PL_,INTE_64 _PL_,INTE_64,ADDRESS)
+			.D64_=BitC_BO_X_1_D64_
 		},
 		.X_2=
 		{
 			.D08_=BitC_BO_X_2_D08_,
 			.D16_=BitC_BO_X_2_D16_,
 			.D32_=BitC_BO_X_2_D32_,
-			.D64_=BitC_BO_X_2_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_BO_X_2_D08_,inte_08 _PL_,INTE_08 _PL_,INTE_08 _PL_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_BO_X_2_D16_,inte_16 _PL_,INTE_16 _PL_,INTE_16 _PL_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_BO_X_2_D32_,inte_32 _PL_,INTE_32 _PL_,INTE_32 _PL_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_BO_X_2_D64_,inte_64 _PL_,INTE_64 _PL_,INTE_64 _PL_,ADDRESS)
+			.D64_=BitC_BO_X_2_D64_
 		}
 	},
 	.RO=
@@ -2174,74 +2154,42 @@ BITCASE BitC=
 			.D08_=BitC_Expand_D08_,
 			.D16_=BitC_Expand_D16_,
 			.D32_=BitC_Expand_D32_,
-			.D64_=BitC_Expand_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_Expand_D08_,DATA_08 *_R_,inte_08 *_R_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_Expand_D16_,DATA_08 *_R_,inte_16 *_R_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_Expand_D32_,DATA_08 *_R_,inte_32 *_R_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_Expand_D64_,DATA_08 *_R_,inte_64 *_R_,ADDRESS)
+			.D64_=BitC_Expand_D64_
 		},
 		.Shrink=
 		{
 			.D08_=BitC_Shrink_D08_,
 			.D16_=BitC_Shrink_D16_,
 			.D32_=BitC_Shrink_D32_,
-			.D64_=BitC_Shrink_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_Shrink_D08_,INTE_08 *_R_,data_08 *_R_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_Shrink_D16_,INTE_16 *_R_,data_08 *_R_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_Shrink_D32_,INTE_32 *_R_,data_08 *_R_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_Shrink_D64_,INTE_64 *_R_,data_08 *_R_,ADDRESS)
+			.D64_=BitC_Shrink_D64_
 		},
 		.E_1=
 		{
 			.D08_=BitC_RO_E_1_D08_,
 			.D16_=BitC_RO_E_1_D16_,
 			.D32_=BitC_RO_E_1_D32_,
-			.D64_=BitC_RO_E_1_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_RO_E_1_D08_,data_08 *_R_,INTE_08 *_R_,INTE_08,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_RO_E_1_D16_,data_08 *_R_,INTE_16 *_R_,INTE_16,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_RO_E_1_D32_,data_08 *_R_,INTE_32 *_R_,INTE_32,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_RO_E_1_D64_,data_08 *_R_,INTE_64 *_R_,INTE_64,ADDRESS),
-			.R32_=MemC_Func_Casting_(general,BitC_RO_E_1_D32_,data_08 *_R_,REAL_32 *_R_,REAL_32,ADDRESS),
-			.R64_=MemC_Func_Casting_(general,BitC_RO_E_1_D64_,data_08 *_R_,REAL_64 *_R_,REAL_64,ADDRESS)
+			.D64_=BitC_RO_E_1_D64_
 		},
 		.E_2=
 		{
 			.D08_=BitC_RO_E_2_D08_,
 			.D16_=BitC_RO_E_2_D16_,
 			.D32_=BitC_RO_E_2_D32_,
-			.D64_=BitC_RO_E_2_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_RO_E_2_D08_,data_08 *_R_,INTE_08 *_R_,INTE_08 *_R_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_RO_E_2_D16_,data_08 *_R_,INTE_16 *_R_,INTE_16 *_R_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_RO_E_2_D32_,data_08 *_R_,INTE_32 *_R_,INTE_32 *_R_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_RO_E_2_D64_,data_08 *_R_,INTE_64 *_R_,INTE_64 *_R_,ADDRESS),
-			.R32_=MemC_Func_Casting_(general,BitC_RO_E_2_D32_,data_08 *_R_,REAL_32 *_R_,REAL_32 *_R_,ADDRESS),
-			.R64_=MemC_Func_Casting_(general,BitC_RO_E_2_D64_,data_08 *_R_,REAL_64 *_R_,REAL_64 *_R_,ADDRESS)
+			.D64_=BitC_RO_E_2_D64_
 		},
 		.N_1=
 		{
 			.D08_=BitC_RO_N_1_D08_,
 			.D16_=BitC_RO_N_1_D16_,
 			.D32_=BitC_RO_N_1_D32_,
-			.D64_=BitC_RO_N_1_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_RO_N_1_D08_,data_08 *_R_,INTE_08 *_R_,INTE_08,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_RO_N_1_D16_,data_08 *_R_,INTE_16 *_R_,INTE_16,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_RO_N_1_D32_,data_08 *_R_,INTE_32 *_R_,INTE_32,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_RO_N_1_D64_,data_08 *_R_,INTE_64 *_R_,INTE_64,ADDRESS),
-			.R32_=MemC_Func_Casting_(general,BitC_RO_N_1_D32_,data_08 *_R_,REAL_32 *_R_,REAL_32,ADDRESS),
-			.R64_=MemC_Func_Casting_(general,BitC_RO_N_1_D64_,data_08 *_R_,REAL_64 *_R_,REAL_64,ADDRESS)
+			.D64_=BitC_RO_N_1_D64_
 		},
 		.N_2=
 		{
 			.D08_=BitC_RO_N_2_D08_,
 			.D16_=BitC_RO_N_2_D16_,
 			.D32_=BitC_RO_N_2_D32_,
-			.D64_=BitC_RO_N_2_D64_,
-			.I08_=MemC_Func_Casting_(general,BitC_RO_N_2_D08_,data_08 *_R_,INTE_08 *_R_,INTE_08 *_R_,ADDRESS),
-			.I16_=MemC_Func_Casting_(general,BitC_RO_N_2_D16_,data_08 *_R_,INTE_16 *_R_,INTE_16 *_R_,ADDRESS),
-			.I32_=MemC_Func_Casting_(general,BitC_RO_N_2_D32_,data_08 *_R_,INTE_32 *_R_,INTE_32 *_R_,ADDRESS),
-			.I64_=MemC_Func_Casting_(general,BitC_RO_N_2_D64_,data_08 *_R_,INTE_64 *_R_,INTE_64 *_R_,ADDRESS),
-			.R32_=MemC_Func_Casting_(general,BitC_RO_N_2_D32_,data_08 *_R_,REAL_32 *_R_,REAL_32 *_R_,ADDRESS),
-			.R64_=MemC_Func_Casting_(general,BitC_RO_N_2_D64_,data_08 *_R_,REAL_64 *_R_,REAL_64 *_R_,ADDRESS)
+			.D64_=BitC_RO_N_2_D64_
 		},
 		.G_1=
 		{
@@ -2305,8 +2253,8 @@ BITCASE BitC=
 		},
 		.Jumper=
 		{
-			.S_=MemC_Func_Casting_(bitc_bp,BitC_BP_Jumper_S_,BITC_BP,SINTPTR),
-			.U_=MemC_Func_Casting_(bitc_bp,BitC_BP_Jumper_U_,BITC_BP,UINTPTR)
+			.S_=BitC_BP_Jumper_S_,
+			.U_=BitC_BP_Jumper_U_
 		},
 		.Reader_=BitC_BP_Reader_,
 		.Writer_=BitC_BP_Writer_
@@ -2334,22 +2282,22 @@ BITC_CL BitCL=
 	{
 		.N_1_=BitC_CL_BO_N_1_,
 		.S_1_=BitC_CL_BO_S_1_,
-		.A_1_=MemC_Func_Casting_(general,BitC_CL_BO_A_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.A_1_=BitC_CL_BO_A_1_,
 		.A_2_=BitC_CL_BO_A_2_,
-		.O_1_=MemC_Func_Casting_(general,BitC_CL_BO_O_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.O_1_=BitC_CL_BO_O_1_,
 		.O_2_=BitC_CL_BO_O_2_,
-		.X_1_=MemC_Func_Casting_(general,BitC_CL_BO_X_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.X_1_=BitC_CL_BO_X_1_,
 		.X_2_=BitC_CL_BO_X_2_
 	},
 	.RO=
 	{
-		.E_1_=MemC_Func_Casting_(general,BitC_CL_RO_E_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.E_1_=BitC_CL_RO_E_1_,
 		.E_2_=BitC_CL_RO_E_2_,
-		.N_1_=MemC_Func_Casting_(general,BitC_CL_RO_N_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.N_1_=BitC_CL_RO_N_1_,
 		.N_2_=BitC_CL_RO_N_2_,
-		.G_1_=MemC_Func_Casting_(general,BitC_CL_RO_G_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.G_1_=BitC_CL_RO_G_1_,
 		.G_2_=BitC_CL_RO_G_2_,
-		.L_1_=MemC_Func_Casting_(general,BitC_CL_RO_L_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+		.L_1_=BitC_CL_RO_L_1_,
 		.L_2_=BitC_CL_RO_L_2_
 	}
 };

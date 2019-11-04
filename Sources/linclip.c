@@ -7,10 +7,17 @@
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ LinClip=&LinClip;
-static BYTE_08 IdiomVersion[16]="Date:2019.11.01";
+static BYTE_08 IdiomVersion[16]="Date:2019.11.04";
 #endif
 
 #if(Fold_(Domain:Host))
+
+#if(Fold_(Part:Just Functions))
+_LINC_ inte_08 LinC_Just_I08_(INTE_08 X) { return X; }
+_LINC_ inte_16 LinC_Just_I16_(INTE_16 X) { return X; }
+_LINC_ inte_32 LinC_Just_I32_(INTE_32 X) { return X; }
+_LINC_ inte_64 LinC_Just_I64_(INTE_64 X) { return X; }
+#endif
 
 #if(Fold_(Part:Arithmetic and Geometric Progression Functions))
 #define _LinC_Operation_0_
@@ -774,7 +781,7 @@ static cl_int _LinC_CL_Enqueue_Local_(const cl_command_queue Queue,const cl_kern
 #endif
 
 #if(Fold_(Part:Increment and Amplification Functions))
-_LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -790,7 +797,7 @@ _LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 						const cl_kernel Kernel=PM->Program.Kernel.List[LinCInc1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -806,7 +813,7 @@ _LINC_ general LinC_CL_Inc_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 
 	return;
 }
-_LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -822,7 +829,7 @@ _LINC_ general LinC_CL_Amp_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 						const cl_kernel Kernel=PM->Program.Kernel.List[LinCAmp1I08+((Type<BitCTypeInte_08)?(Type):(Type-BitCTypeInte_08))].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -980,7 +987,7 @@ _LINC_ general LinC_CL_Div_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 
 	return;
 }
-_LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -998,7 +1005,7 @@ _LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 						const cl_kernel Kernel=PM->Program.Kernel.List[LinCDiv1D08+Type].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1014,7 +1021,7 @@ _LINC_ general LinC_CL_Div_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 
 	return;
 }
-_LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1030,7 +1037,7 @@ _LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 						const cl_kernel Kernel=PM->Program.Kernel.List[LinCInv1D08+Type].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1049,7 +1056,7 @@ _LINC_ general LinC_CL_Inv_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 #endif
 
 #if(Fold_(Part:Modulo Functions))
-_LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,BITCLIP Value,oclc_ef _PL_ Error)
+_LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_MH _PL_ CDesc,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,GENERAL _PL_ Value,oclc_ef _PL_ Error)
 {
 	if(Error->E==CLSuccess)
 		if(PM)
@@ -1067,7 +1074,7 @@ _LINC_ general LinC_CL_Mod_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 						const cl_kernel Kernel=PM->Program.Kernel.List[LinCMod1D08+Type].ID;
 
 						_LinC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value.C.G,CDesc->Type->SizeType,Error);
+						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
 							Error->I=_LinC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
 						else;
@@ -1476,16 +1483,19 @@ _LINC_ general LinC_CL_Map_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC_
 LINCASE LinC=
 {
 	.Version=IdiomVersion,
+	.Just=
+	{
+		.I08_=LinC_Just_I08_,
+		.I16_=LinC_Just_I16_,
+		.I32_=LinC_Just_I32_,
+		.I64_=LinC_Just_I64_
+	},
 	.Ari_0=
 	{
 		.I08_=LinC_Ari_0_I08_,
 		.I16_=LinC_Ari_0_I16_,
 		.I32_=LinC_Ari_0_I32_,
 		.I64_=LinC_Ari_0_I64_,
-		.D08_=MemC_Func_Casting_(general,LinC_Ari_0_I08_,data_08 *_R_,DATA_08,DATA_08,ADDRESS),
-		.D16_=MemC_Func_Casting_(general,LinC_Ari_0_I16_,data_16 *_R_,DATA_16,DATA_16,ADDRESS),
-		.D32_=MemC_Func_Casting_(general,LinC_Ari_0_I32_,data_32 *_R_,DATA_32,DATA_32,ADDRESS),
-		.D64_=MemC_Func_Casting_(general,LinC_Ari_0_I64_,data_64 *_R_,DATA_64,DATA_64,ADDRESS),
 		.R32_=LinC_Ari_0_R32_,
 		.R64_=LinC_Ari_0_R64_
 	},
@@ -1495,10 +1505,6 @@ LINCASE LinC=
 		.I16_=LinC_Geo_0_I16_,
 		.I32_=LinC_Geo_0_I32_,
 		.I64_=LinC_Geo_0_I64_,
-		.D08_=MemC_Func_Casting_(general,LinC_Geo_0_I08_,data_08 *_R_,DATA_08,DATA_08,ADDRESS),
-		.D16_=MemC_Func_Casting_(general,LinC_Geo_0_I16_,data_16 *_R_,DATA_16,DATA_16,ADDRESS),
-		.D32_=MemC_Func_Casting_(general,LinC_Geo_0_I32_,data_32 *_R_,DATA_32,DATA_32,ADDRESS),
-		.D64_=MemC_Func_Casting_(general,LinC_Geo_0_I64_,data_64 *_R_,DATA_64,DATA_64,ADDRESS),
 		.R32_=LinC_Geo_0_R32_,
 		.R64_=LinC_Geo_0_R64_
 	},
@@ -1508,10 +1514,6 @@ LINCASE LinC=
 		.I16_=LinC_Inc_1_I16_,
 		.I32_=LinC_Inc_1_I32_,
 		.I64_=LinC_Inc_1_I64_,
-		.D08_=MemC_Func_Casting_(general,LinC_Inc_1_I08_,data_08*,DATA_08*,DATA_08,ADDRESS),
-		.D16_=MemC_Func_Casting_(general,LinC_Inc_1_I16_,data_16*,DATA_16*,DATA_16,ADDRESS),
-		.D32_=MemC_Func_Casting_(general,LinC_Inc_1_I32_,data_32*,DATA_32*,DATA_32,ADDRESS),
-		.D64_=MemC_Func_Casting_(general,LinC_Inc_1_I64_,data_64*,DATA_64*,DATA_64,ADDRESS),
 		.R32_=LinC_Inc_1_R32_,
 		.R64_=LinC_Inc_1_R64_
 	},
@@ -1521,10 +1523,6 @@ LINCASE LinC=
 		.I16_=LinC_Amp_1_I16_,
 		.I32_=LinC_Amp_1_I32_,
 		.I64_=LinC_Amp_1_I64_,
-		.D08_=MemC_Func_Casting_(general,LinC_Amp_1_I08_,data_08*,DATA_08*,DATA_08,ADDRESS),
-		.D16_=MemC_Func_Casting_(general,LinC_Amp_1_I16_,data_16*,DATA_16*,DATA_16,ADDRESS),
-		.D32_=MemC_Func_Casting_(general,LinC_Amp_1_I32_,data_32*,DATA_32*,DATA_32,ADDRESS),
-		.D64_=MemC_Func_Casting_(general,LinC_Amp_1_I64_,data_64*,DATA_64*,DATA_64,ADDRESS),
 		.R32_=LinC_Amp_1_R32_,
 		.R64_=LinC_Amp_1_R64_
 	},
@@ -1534,10 +1532,6 @@ LINCASE LinC=
 		.I16_=LinC_Add_2_I16_,
 		.I32_=LinC_Add_2_I32_,
 		.I64_=LinC_Add_2_I64_,
-		.D08_=MemC_Func_Casting_(general,LinC_Add_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
-		.D16_=MemC_Func_Casting_(general,LinC_Add_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
-		.D32_=MemC_Func_Casting_(general,LinC_Add_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
-		.D64_=MemC_Func_Casting_(general,LinC_Add_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
 		.R32_=LinC_Add_2_R32_,
 		.R64_=LinC_Add_2_R64_
 	},
@@ -1547,10 +1541,6 @@ LINCASE LinC=
 		.I16_=LinC_Sub_2_I16_,
 		.I32_=LinC_Sub_2_I32_,
 		.I64_=LinC_Sub_2_I64_,
-		.D08_=MemC_Func_Casting_(general,LinC_Sub_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
-		.D16_=MemC_Func_Casting_(general,LinC_Sub_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
-		.D32_=MemC_Func_Casting_(general,LinC_Sub_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
-		.D64_=MemC_Func_Casting_(general,LinC_Sub_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
 		.R32_=LinC_Sub_2_R32_,
 		.R64_=LinC_Sub_2_R64_
 	},
@@ -1560,10 +1550,6 @@ LINCASE LinC=
 		.I16_=LinC_Mul_2_I16_,
 		.I32_=LinC_Mul_2_I32_,
 		.I64_=LinC_Mul_2_I64_,
-		.D08_=MemC_Func_Casting_(general,LinC_Mul_2_I08_,data_08*,DATA_08*,DATA_08*,ADDRESS),
-		.D16_=MemC_Func_Casting_(general,LinC_Mul_2_I16_,data_16*,DATA_16*,DATA_16*,ADDRESS),
-		.D32_=MemC_Func_Casting_(general,LinC_Mul_2_I32_,data_32*,DATA_32*,DATA_32*,ADDRESS),
-		.D64_=MemC_Func_Casting_(general,LinC_Mul_2_I64_,data_64*,DATA_64*,DATA_64*,ADDRESS),
 		.R32_=LinC_Mul_2_R32_,
 		.R64_=LinC_Mul_2_R64_
 	},
@@ -1621,10 +1607,6 @@ LINCASE LinC=
 		.I16_=LinC_Sum_1_I16_,
 		.I32_=LinC_Sum_1_I32_,
 		.I64_=LinC_Sum_1_I64_,
-		.D08_=MemC_Func_Casting_(data_08,LinC_Sum_1_I08_,DATA_08 *_R_,ADDRESS),
-		.D16_=MemC_Func_Casting_(data_16,LinC_Sum_1_I16_,DATA_16 *_R_,ADDRESS),
-		.D32_=MemC_Func_Casting_(data_32,LinC_Sum_1_I32_,DATA_32 *_R_,ADDRESS),
-		.D64_=MemC_Func_Casting_(data_64,LinC_Sum_1_I64_,DATA_64 *_R_,ADDRESS),
 		.R32_=LinC_Sum_1_R32_,
 		.R64_=LinC_Sum_1_R64_
 	},
@@ -1634,10 +1616,6 @@ LINCASE LinC=
 		.I16_=LinC_Dot_2_I16_,
 		.I32_=LinC_Dot_2_I32_,
 		.I64_=LinC_Dot_2_I64_,
-		.D08_=MemC_Func_Casting_(data_08,LinC_Dot_2_I08_,DATA_08*,DATA_08*,ADDRESS),
-		.D16_=MemC_Func_Casting_(data_16,LinC_Dot_2_I16_,DATA_16*,DATA_16*,ADDRESS),
-		.D32_=MemC_Func_Casting_(data_32,LinC_Dot_2_I32_,DATA_32*,DATA_32*,ADDRESS),
-		.D64_=MemC_Func_Casting_(data_64,LinC_Dot_2_I64_,DATA_64*,DATA_64*,ADDRESS),
 		.R32_=LinC_Dot_2_R32_,
 		.R64_=LinC_Dot_2_R64_
 	},
@@ -1682,16 +1660,10 @@ LINCASE LinC=
 	},
 	.Map_1=
 	{
-		.I08_=MemC_Func_Casting_(general,LinC_Map_1_D08_,inte_08 *_R_,ADDRESS *_R_,INTE_08 _PL_,ADDRESS),
-		.I16_=MemC_Func_Casting_(general,LinC_Map_1_D16_,inte_16 *_R_,ADDRESS *_R_,INTE_16 _PL_,ADDRESS),
-		.I32_=MemC_Func_Casting_(general,LinC_Map_1_D32_,inte_32 *_R_,ADDRESS *_R_,INTE_32 _PL_,ADDRESS),
-		.I64_=MemC_Func_Casting_(general,LinC_Map_1_D64_,inte_64 *_R_,ADDRESS *_R_,INTE_64 _PL_,ADDRESS),
 		.D08_=LinC_Map_1_D08_,
 		.D16_=LinC_Map_1_D16_,
 		.D32_=LinC_Map_1_D32_,
-		.D64_=LinC_Map_1_D64_,
-		.R32_=MemC_Func_Casting_(general,LinC_Map_1_D32_,real_32 *_R_,ADDRESS *_R_,REAL_32 _PL_,ADDRESS),
-		.R64_=MemC_Func_Casting_(general,LinC_Map_1_D64_,real_64 *_R_,ADDRESS *_R_,REAL_64 _PL_,ADDRESS)
+		.D64_=LinC_Map_1_D64_
 	}
 };
 LINCASE *LinC_(general) { return &LinC; }
@@ -1708,15 +1680,15 @@ LINC_CL LinCL=
 		.T08_=LinC_CL_Create_T08_,
 		.T16_=LinC_CL_Create_T16_
 	},
-	.Inc_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-	.Amp_1_=MemC_Func_Casting_(general,LinC_CL_Inc_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Inc_1_=LinC_CL_Inc_1_,
+	.Amp_1_=LinC_CL_Amp_1_,
 	.Add_2_=LinC_CL_Add_2_,
 	.Sub_2_=LinC_CL_Sub_2_,
 	.Mul_2_=LinC_CL_Mul_2_,
-	.Div_1_=MemC_Func_Casting_(general,LinC_CL_Div_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
-	.Inv_1_=MemC_Func_Casting_(general,LinC_CL_Inv_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Div_1_=LinC_CL_Div_1_,
+	.Inv_1_=LinC_CL_Inv_1_,
 	.Div_2_=LinC_CL_Div_2_,
-	.Mod_1_=MemC_Func_Casting_(general,LinC_CL_Mod_1_,OCLC_PM _PL_,const cl_command_queue,OCLC_MH _PL_,OCLC_MH _PL_,OCLC_MP _PL_,GENERAL _PL_,oclc_ef _PL_),
+	.Mod_1_=LinC_CL_Mod_1_,
 	.Sum_1_=LinC_CL_Sum_1_,
 	.Dot_2_=LinC_CL_Dot_2_,
 	.Max_1_=LinC_CL_Max_1_,

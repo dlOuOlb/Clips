@@ -15,7 +15,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-_PRIC_ BYTE_08 IdiomVersion[16]="2019.11.01";
+_PRIC_ BYTE_08 IdiomVersion[16]="2019.11.04";
 static const struct { DATA_32 Break[64];DATA_08 Count[256]; }
 Cheat=
 {
@@ -170,10 +170,10 @@ PRICASE PriC=
 		},
 		.Factor=
 		{
-			.D08_=MemC_Func_Casting_(logical,PriC_Factor_D08_,data_08 _PL_,PRIC_08 _PL_ _R_,DATA_08),
-			.D16_=MemC_Func_Casting_(logical,PriC_Factor_D16_,data_16 _PL_,PRIC_16 _PL_ _R_,DATA_16),
-			.D32_=MemC_Func_Casting_(logical,PriC_Factor_D32_,data_32 _PL_,PRIC_32 _PL_ _R_,DATA_32),
-			.D64_=MemC_Func_Casting_(logical,PriC_Factor_D64_,data_64 _PL_,PRIC_64 _PL_ _R_,DATA_64)
+			.D08_=PriC_Factor_D08_,
+			.D16_=PriC_Factor_D16_,
+			.D32_=PriC_Factor_D32_,
+			.D64_=PriC_Factor_D64_
 		}
 	}
 };

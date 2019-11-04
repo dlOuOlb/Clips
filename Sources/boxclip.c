@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.11.01";
+static BYTE_08 IdiomVersion[16]="Date:2019.11.04";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -1154,11 +1154,9 @@ static boxc_kn *_BoxC_KN_Search_(boxc_kn *_R_ Node,ADDRESS Index)
 			return Node;
 	}
 }
-static memclip _BoxC_KN_Locate_(BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key)
+static address _BoxC_KN_Locate_(BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key)
 {
-	memclip Index={.V=0};
-
-	__dlOuOlb__
+	for(address Index=0;1;)
 	{
 		INTEGER Comp=Comp_(Key,Node->Key);
 
@@ -1166,28 +1164,22 @@ static memclip _BoxC_KN_Locate_(BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key
 			if(Node->Leaf[0])
 				Node=Node->Leaf[0];
 			else
-				goto WRONG;
+				return SIZE_MAX;
 		else if(Comp>0)
 			if(Node->Leaf[1])
 			{
 				if(Node->Leaf[0])
-					Index.V+=Node->Leaf[0]->Weight;
+					Index+=Node->Leaf[0]->Weight;
 				else;
 
-				Index.V++;
+				Index++;
 				Node=Node->Leaf[1];
 			}
 			else
-			{
-WRONG:
-				Index.P=FULL;
-				break;
-			}
+				return SIZE_MAX;
 		else
-			break;
+			return Index;
 	}
-	
-	return Index;
 }
 static general _BoxC_KN_Travel_(BOXC_KN _PL_ _R_ Node,memclip *_R_ List)
 {
@@ -1532,18 +1524,14 @@ _BOXC_ general *BoxC_KS_Search_(BOXC_KS _PL_ _R_ Head,ADDRESS Index)
 }
 _BOXC_ address BoxC_KS_Locate_(BOXC_KS _PL_ _R_ Head,GENERAL _PL_ Key)
 {
-	memclip Return;
-
 	if(Head)
 	{
 		boxc_kn _PL_ _PL_ _R_ Root=(boxc_kn**)(((boxc_l2*)(Head->Key))->L);
 
-		Return=_BoxC_KN_Locate_(Head->Comp_,Root[1],Key);
+		return _BoxC_KN_Locate_(Head->Comp_,Root[1],Key);
 	}
 	else
-		Return.P=FULL;
-
-	return Return.V;
+		return SIZE_MAX;
 }
 
 _BOXC_ logical BoxC_KS_Spread_(boxc_li _PL_ _R_ Li,BOXC_KS _PL_ _R_ KS)
@@ -2107,7 +2095,7 @@ _BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ _R_ Switch,GENERAL _PL_ Key,LOGICAL Mo
 		else;
 	else;
 
-	return (address)FULL;
+	return SIZE_MAX;
 }
 #endif
 
