@@ -7,7 +7,7 @@ integer main(general)
 	PenC_SL_Auto_(StringLender,1024);
 	MemC_Unit_(oclc_ef,Error,.E=CLSuccess);
 	FILE _PL_ Stream=NULL;
-	oclc_em *EnvMan=OCLC.EM.Create_(Error);
+	oclc_em *EnvMan=OCLCL.EM.Create_(Error);
 
 	if(EnvMan)
 	{
@@ -48,7 +48,7 @@ ESCAPE:
 			Error->E=CLOutOfHostMemory;
 			break;
 		}
-		OCLC.EM.Delete_(&EnvMan);
+		OCLCL.EM.Delete_(&EnvMan);
 	}
 	else
 		PenC_Stream_Format_T08_(0,Stream,"Environment Manager Creation Failure\r\n");
