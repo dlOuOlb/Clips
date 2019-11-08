@@ -1,10 +1,8 @@
-﻿#include <priclip.h>
-#include <timclip.h>
+﻿#include <timclip.h>
+#include <priclip.h>
+
 #include <stdbool.h>
-
 #include <inttypes.h>
-
-_MemC_Default_
 
 #if(Fold_(Type Selection))
 
@@ -36,6 +34,8 @@ static main_pt *_Table_Load_(TEXT_08 _PL_ _R_ FileName);
 static logical _Table_Save_(TEXT_08 _PL_ _R_ FileName);
 //factorize and display a number
 static logical _Table_Find_(MAIN_PT _PL_ _R_ Table);
+
+_MemC_Default_
 
 integer main(general)
 {

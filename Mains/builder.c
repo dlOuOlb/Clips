@@ -1,5 +1,6 @@
-﻿#include <CL/opencl.h>
-#include <linclip.h>
+﻿#include <linclip.h>
+
+_MemC_Default_
 
 integer main(general)
 {
@@ -54,4 +55,3 @@ ESCAPE:
 
 	return Error->I;
 }
-_MemC_Default_

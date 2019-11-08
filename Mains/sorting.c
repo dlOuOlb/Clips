@@ -1,12 +1,12 @@
-﻿#include <penclip.h>
-#include <linclip.h>
+﻿#include <linclip.h>
 #include <timclip.h>
 #include <stdbool.h>
 
-_MemC_Default_;
 static general _Naive_Rand_(inte_32 *_R_,ADDRESS);
 static integer _Naive_Comp_(INTE_32 _PL_ _R_,INTE_32 _PL_ _R_);
 static real_64 _Time_Cast_(REAL_32);
+
+_MemC_Default_
 
 integer main(general)
 {
