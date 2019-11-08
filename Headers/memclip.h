@@ -2,9 +2,27 @@
 /*	MemClip provides some simple memory handling functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.08	*/
+/*------------------------------------------------------------------*/
+/*	Dependency:														*/
+/*																	*/
+/*	MSVClip ─ MemClip												*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros:											*/
+/*																	*/
+/*	_INC_MEMCLIP	__STDC_WANT_LIB_EXT1__							*/
+/*																	*/
+/*	Fold_															*/
+/*	NULL	Acs_	Meta_	Conc_	__dlOuOlb__		_R_				*/
+/*	FULL	Mute_	_Meta_	_Conc_	__dl	lb__	_PL_			*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Types:												*/
+/*																	*/
+/*	logical	general	byte_08	integer	address	func_p_					*/
+/*	LOGICAL	GENERAL	BYTE_08	INTEGER	ADDRESS	FUNC_P_					*/
 /*------------------------------------------------------------------*/
 /*	Note:															*/
+/*																	*/
 /*	Unmanaged objects from these Clip libraries are allocated and	*/
 /*	deallocated by the "_MemC_Malloc_" and "_MemC_Free_" function	*/
 /*	pair, and someone must define them. Their default definitions	*/
@@ -15,13 +33,19 @@
 #define _INC_MEMCLIP
 
 #if(1)
-#ifndef __STDC_WANT_LIB_EXT1__
+#ifdef __STDC_WANT_LIB_EXT1__
+#if((__STDC_WANT_LIB_EXT1__+0)==(1))
+#else
+#error __STDC_WANT_LIB_EXT1__ != 1
+#endif
+#else
 #define __STDC_WANT_LIB_EXT1__ (1)
 #endif
 
 #include <msvclip.h>
 
 #include <assert.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -105,8 +129,8 @@
 #define MemC_Unit_(type,Unit,...) type _PL_(Unit)=&(type){__VA_ARGS__}
 #define MemC_Temp_(type,...) for(type __VA_ARGS__,*Conc_(_Temp,__LINE__)=FULL;Conc_(_Temp,__LINE__);Conc_(_Temp,__LINE__)=NULL)
 
-#define MemC_Void_Size_(type) static_assert(sizeof(type)==sizeof(address),"sizeof(" Meta_(type) ") != sizeof(address)")
-#define MemC_Void_Cast_(type) __dl{MemC_Void_Size_(type);assert(MemC_Func_Casting_(type,MemC.Just_,type const)(Acs_(type,MemC.Version))==Acs_(type,MemC.Version));}lb__
+#define MemC_Okay_Size_(type) static_assert(sizeof(type)==sizeof(address),"sizeof(" Meta_(type) ") != sizeof(address)")
+#define MemC_Okay_Wrap_(type) __dl{MemC_Okay_Size_(type);assert(MemC_Func_Casting_(type,MemC.Just_,type const)(Acs_(type,MemC.Version))==Acs_(type,MemC.Version));}lb__
 #endif
 
 #if(Fold_(Definition:Primal Types))
@@ -114,7 +138,7 @@ MemC_Type_Rename_(_Bool,logical,LOGICAL);				//MemClip : Bool Type
 MemC_Type_Rename_(void,general,GENERAL);				//MemClip : Void Type
 MemC_Type_Rename_(char,byte_08,BYTE_08);				//MemClip : Byte Type
 MemC_Type_Rename_(int,integer,INTEGER);					//MemClip : Integer Type
-MemC_Type_Rename_(size_t,address,ADDRESS);				//MemClip : Address Type
+MemC_Type_Rename_(uintptr_t,address,ADDRESS);			//MemClip : Address Type
 MemC_Func_Declare_(general,func_p_,FUNC_P_,general);	//MemClip : Function Pointer Type
 #endif
 
@@ -218,13 +242,21 @@ extern general _MemC_Free_(general _PL_ Memory);
 //MemClip : Library Case Structure
 struct _memcase
 {
-	BYTE_08 _PL_ Version;	//MemClip : Library Version
-	ADDRESS MaxDims;		//MemClip : Maximum Dimension
+	const struct
+	{
+		BYTE_08 _PL_ Version;	//MemClip : Library Version
+		ADDRESS MaxDims;		//MemClip : Maximum Dimension
+		MEMCLIP Null;			//MemClip : 0
+		MEMCLIP Full;			//MemClip : ~0
+	};
 
-	//MemClip : Do nothing.
-	general(_PL_ Void_)(general);
-	//BoxClip : Just return the input.
-	GENERAL*(_PL_ Just_)(GENERAL _PL_);
+	const struct
+	{
+		//MemClip : Do nothing.
+		general(_PL_ Void_)(general);
+		//BoxClip : Just return the input.
+		GENERAL*(_PL_ Just_)(GENERAL _PL_);
+	};
 
 	//MemClip : Type Descriptors
 	const struct
@@ -317,16 +349,6 @@ struct _memcase
 	}
 	Copy;
 
-	//MemClip : Data Preset Functions
-	const struct
-	{
-		//MemClip : 1D Array Data Preset
-		//＊Return value is 0 for failure, 1 for success.
-		logical(_PL_ D1_)(general _PL_ _R_ Memory,GENERAL _PL_ _R_ Tile,ADDRESS Number,ADDRESS TypeSize);
-#define MemC_Preset_1D_(Memory,Tile,Elements) (MemC_Assert_(sizeof(*(Memory))==sizeof(*(Tile))),MemC.Preset.D1_(Memory,Tile,Elements,sizeof(*(Tile))))
-	}
-	Preset;
-
 	//MemClip : Data Reformation Functions
 	const struct
 	{
@@ -341,6 +363,16 @@ struct _memcase
 #define MemC_Reform_ND_(S,T,SShp,Axis,Dims) (MemC_Assert_(sizeof(*(S))==sizeof(*(T))),MemC.Reform.DN_(S,T,SShp,Axis,Dims,sizeof(*(S))))
 	}
 	Reform;
+
+	//MemClip : Data Preset Functions
+	const struct
+	{
+		//MemClip : 1D Array Data Preset
+		//＊Return value is 0 for failure, 1 for success.
+		logical(_PL_ D1_)(general _PL_ _R_ Memory,GENERAL _PL_ _R_ Tile,ADDRESS Number,ADDRESS TypeSize);
+#define MemC_Preset_1D_(Memory,Tile,Elements) (MemC_Assert_(sizeof(*(Memory))==sizeof(*(Tile))),MemC.Preset.D1_(Memory,Tile,Elements,sizeof(*(Tile))))
+	}
+	Preset;
 
 	//MemClip : Interval Addressing Functions
 	const struct
@@ -423,7 +455,7 @@ struct _memcase
 #define MemC_MS_Foreach_(MemorySlot,type,Each) for(type const(Each)=(MemC_Assert_(sizeof(type)==sizeof(address)),(type)0),*(_Ptr##Each)=(general*)((MemorySlot)->Slot.P),_PL_(_End##Each)=(general*)(((MemorySlot)->Slot.P)+((MemorySlot)->Nums));(((address)(_Ptr##Each))<((address)(_End##Each)))?((Acs_(address,Each)=*(address*)(_Ptr##Each)),1):(0);Acs_(address*,(_Ptr##Each))++)
 
 		//MemClip : Typed Memory Slot
-#define MemC_MS_Generic_(type,suffix,SUFFIX) MemC_Void_Size_(type);union _memc_ms_##suffix{memc_ms*Core;struct{GENERAL _PL_ ID;MEMC_DT _PL_ Type;ADDRESS Nums;type _PL_ Item;}_PL_ Wrap;};MemC_Type_Declare_(union,memc_ms_##suffix,MEMC_MS_##SUFFIX)
+#define MemC_MS_Generic_(type,suffix,SUFFIX) MemC_Okay_Size_(type);union _memc_ms_##suffix{memc_ms*Core;struct{GENERAL _PL_ ID;MEMC_DT _PL_ Type;ADDRESS Nums;type _PL_ Item;}_PL_ Wrap;};MemC_Type_Declare_(union,memc_ms_##suffix,MEMC_MS_##SUFFIX)
 	}
 	MS;
 
@@ -455,14 +487,14 @@ struct _memcase
 	const struct
 	{
 		//MemClip : Memory Lender Static Definition
-		//＊1 chunk is equal to 4×sizeof(size_t) bytes.
+		//＊1 chunk is equal to 4×sizeof(address) bytes.
 		//　The memory lender's head occupies 2 chunks.
 		//　Each memory slice's head occupies 1 chunk.
 		//＊Be aware that it is not thread-safe.
 #define MemC_ML_Static_(LenderName,ChunksNumber) static address(_##LenderName)[(ChunksNumber)<<2]={(address)(_##LenderName),(address)(_##LenderName),(address)(_##LenderName),MemC_Size_(address,((ChunksNumber)-3)<<2),MemC_Size_(address,((ChunksNumber)-3)<<2),0,1,0,(address)NULL,(address)NULL,(address)NULL,MemC_Size_(address,((ChunksNumber)-3)<<2)};memc_ml _PL_(LenderName)=(memc_ml*)(_##LenderName)
 
 		//MemClip : Memory Lender Memory Allocation - Deallocate with "MemC.ML.Delete_"
-		//＊1 chunk is equal to 4×sizeof(size_t) bytes.
+		//＊1 chunk is equal to 4×sizeof(address) bytes.
 		//　The memory lender's head occupies 2 chunks.
 		//　Each memory slice's head occupies 1 chunk.
 		//＊The previous lender can be NULL, if linking is not wanted.

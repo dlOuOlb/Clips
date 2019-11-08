@@ -2,21 +2,74 @@
 /*	BitClip provides some simple bit-operation functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.08	*/
+/*------------------------------------------------------------------*/
+/*	Dependency:														*/
+/*																	*/
+/*	MSVClip ─ MemClip ─ PenClip ─ OCLClip ─ BitClip				*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros (Host):										*/
+/*																	*/
+/*	_INC_BITCLIP													*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Types (Host):										*/
+/*																	*/
+/*	uintptr	sintptr													*/
+/*	UINTPTR	SINTPTR													*/
+/*																	*/
+/*	data_08	data_16	data_32	data_64									*/
+/*	DATA_08	DATA_16	DATA_32	DATA_64									*/
+/*																	*/
+/*	inte_08	inte_16	inte_32	inte_64									*/
+/*	INTE_08	INTE_16	INTE_32	INTE_64									*/
+/*																	*/
+/*					real_32	real_64									*/
+/*					REAL_32	REAL_64									*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros (Device):									*/
+/*																	*/
+/*	_INC_BITCLIP													*/
+/*																	*/
+/*	Vect_															*/
+/*	Vect_Load_		Vect_Save_										*/
+/*	_Vect_Load_@@_	_Vect_Save_@@_									*/
+/*																	*/
+/*	@@ = 02, 03, 04, 08, 16.										*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Types (Device):									*/
+/*																	*/
+/*	uintptr		sintptr												*/
+/*	UINTPTR		SINTPTR												*/
+/*																	*/
+/*	data_08		data_16		data_32		data_64						*/
+/*	_@@_data_08	_@@_data_16	_@@_data_32	_@@_data_64					*/
+/*	DATA_08		DATA_16		DATA_32		DATA_64						*/
+/*	_@@_DATA_08	_@@_DATA_16	_@@_DATA_32	_@@_DATA_64					*/
+/*																	*/
+/*	inte_08		inte_16		inte_32		inte_64						*/
+/*	_@@_inte_08	_@@_inte_16	_@@_inte_32	_@@_inte_64					*/
+/*	INTE_08		INTE_16		INTE_32		INTE_64						*/
+/*	_@@_INTE_08	_@@_INTE_16	_@@_INTE_32	_@@_INTE_64					*/
+/*																	*/
+/*				real_16		real_32		real_64						*/
+/*				_@@_real_16	_@@_real_32	_@@_real_64					*/
+/*				REAL_16		REAL_32		REAL_64						*/
+/*				_@@_REAL_16	_@@_REAL_32	_@@_REAL_64					*/
+/*																	*/
+/*	@@ = 02, 03, 04, 08, 16.										*/
 /*------------------------------------------------------------------*/
 /*	Note:															*/
-/*	Run "BitC_Data_Cast_();" in debug mode to check if the casted	*/
+/*																	*/
+/*	Run "BitC_Okay_Wrap_();" in debug mode to check if the casted	*/
 /*	function pointers work correctly between natural and integer.	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_BITCLIP
 #define _INC_BITCLIP
 
-#ifdef __OPENCL_VERSION__
-
-#if(1)
 #include <oclclip.h>
-#endif
+
+#ifdef __OPENCL_VERSION__
 
 #if(Fold_(Definition:Extension Macros))
 #ifdef _EMPTY_
@@ -77,7 +130,7 @@
 #endif
 
 #if(Fold_(Definition:Scalar and Vector Types))
-#define _Parse_(oldtype,newtype,NEWTYPE) OCLC_Type_Rename_(oldtype,newtype,NEWTYPE);OCLC_Type_Rename_(oldtype##2,_02_##newtype,_02_##NEWTYPE);OCLC_Type_Rename_(oldtype##3,_03_##newtype,_03_##NEWTYPE);OCLC_Type_Rename_(oldtype##4,_04_##newtype,_04_##NEWTYPE);OCLC_Type_Rename_(oldtype##8,_08_##newtype,_08_##NEWTYPE);OCLC_Type_Rename_(oldtype##16,_16_##newtype,_16_##NEWTYPE);
+#define _Parse_(oldtype,newtype,NEWTYPE) OCLC_Type_Rename_(oldtype,newtype,NEWTYPE);OCLC_Type_Rename_(oldtype##2,_02_##newtype,_02_##NEWTYPE);OCLC_Type_Rename_(oldtype##3,_03_##newtype,_03_##NEWTYPE);OCLC_Type_Rename_(oldtype##4,_04_##newtype,_04_##NEWTYPE);OCLC_Type_Rename_(oldtype##8,_08_##newtype,_08_##NEWTYPE);OCLC_Type_Rename_(oldtype##16,_16_##newtype,_16_##NEWTYPE)
 
 OCLC_Type_Rename_(intptr_t,sintptr,SINTPTR);
 OCLC_Type_Rename_(uintptr_t,uintptr,UINTPTR);
@@ -108,11 +161,11 @@ _Parse_(long,real_64,REAL_64);
 #endif
 
 #if(Fold_(Definition:Pointer Unions))
-#define _Parse_Scalar_V_(scope) _##scope##_ general *G;_##scope##_ general **GG;_##scope##_ address *AA;_##scope##_ data_08 *D08;_##scope##_ data_16 *D16;_##scope##_ data_32 *D32;_##scope##_ data_64 *D64;_##scope##_ inte_08 *I08;_##scope##_ inte_16 *I16;_##scope##_ inte_32 *I32;_##scope##_ inte_64 *I64;_##scope##_ real_16 *R16;_##scope##_ real_32 *R32;_##scope##_ real_64 *R64;
-#define _Parse_Scalar_C_(scope) _##scope##_ GENERAL *G;_##scope##_ GENERAL **GG;_##scope##_ ADDRESS *AA;_##scope##_ DATA_08 *D08;_##scope##_ DATA_16 *D16;_##scope##_ DATA_32 *D32;_##scope##_ DATA_64 *D64;_##scope##_ INTE_08 *I08;_##scope##_ INTE_16 *I16;_##scope##_ INTE_32 *I32;_##scope##_ INTE_64 *I64;_##scope##_ REAL_16 *R16;_##scope##_ REAL_32 *R32;_##scope##_ REAL_64 *R64;
-#define _Parse_Vector_V_(scope,num) union{_##scope##_ _##num##_data_08 *D08;_##scope##_ _##num##_data_16 *D16;_##scope##_ _##num##_data_32 *D32;_##scope##_ _##num##_data_64 *D64;_##scope##_ _##num##_inte_08 *I08;_##scope##_ _##num##_inte_16 *I16;_##scope##_ _##num##_inte_32 *I32;_##scope##_ _##num##_inte_64 *I64;_##scope##_ _##num##_real_16 *R16;_##scope##_ _##num##_real_32 *R32;_##scope##_ _##num##_real_64 *R64;}_##num;
-#define _Parse_Vector_C_(scope,num) union{_##scope##_ _##num##_DATA_08 *D08;_##scope##_ _##num##_DATA_16 *D16;_##scope##_ _##num##_DATA_32 *D32;_##scope##_ _##num##_DATA_64 *D64;_##scope##_ _##num##_INTE_08 *I08;_##scope##_ _##num##_INTE_16 *I16;_##scope##_ _##num##_INTE_32 *I32;_##scope##_ _##num##_INTE_64 *I64;_##scope##_ _##num##_REAL_16 *R16;_##scope##_ _##num##_REAL_32 *R32;_##scope##_ _##num##_REAL_64 *R64;}_##num;
-#define _Parse_(scope,acs) union{_Parse_Scalar_##acs##_(scope);_Parse_Vector_##acs##_(scope,02);_Parse_Vector_##acs##_(scope,03);_Parse_Vector_##acs##_(scope,04);_Parse_Vector_##acs##_(scope,08);_Parse_Vector_##acs##_(scope,16);}acs;
+#define _Parse_Scalar_V_(scope) _##scope##_ general *G;_##scope##_ general **GG;_##scope##_ address *AA;_##scope##_ data_08 *D08;_##scope##_ data_16 *D16;_##scope##_ data_32 *D32;_##scope##_ data_64 *D64;_##scope##_ inte_08 *I08;_##scope##_ inte_16 *I16;_##scope##_ inte_32 *I32;_##scope##_ inte_64 *I64;_##scope##_ real_16 *R16;_##scope##_ real_32 *R32;_##scope##_ real_64 *R64
+#define _Parse_Scalar_C_(scope) _##scope##_ GENERAL *G;_##scope##_ GENERAL **GG;_##scope##_ ADDRESS *AA;_##scope##_ DATA_08 *D08;_##scope##_ DATA_16 *D16;_##scope##_ DATA_32 *D32;_##scope##_ DATA_64 *D64;_##scope##_ INTE_08 *I08;_##scope##_ INTE_16 *I16;_##scope##_ INTE_32 *I32;_##scope##_ INTE_64 *I64;_##scope##_ REAL_16 *R16;_##scope##_ REAL_32 *R32;_##scope##_ REAL_64 *R64
+#define _Parse_Vector_V_(scope,num) union{_##scope##_ _##num##_data_08 *D08;_##scope##_ _##num##_data_16 *D16;_##scope##_ _##num##_data_32 *D32;_##scope##_ _##num##_data_64 *D64;_##scope##_ _##num##_inte_08 *I08;_##scope##_ _##num##_inte_16 *I16;_##scope##_ _##num##_inte_32 *I32;_##scope##_ _##num##_inte_64 *I64;_##scope##_ _##num##_real_16 *R16;_##scope##_ _##num##_real_32 *R32;_##scope##_ _##num##_real_64 *R64;}_##num
+#define _Parse_Vector_C_(scope,num) union{_##scope##_ _##num##_DATA_08 *D08;_##scope##_ _##num##_DATA_16 *D16;_##scope##_ _##num##_DATA_32 *D32;_##scope##_ _##num##_DATA_64 *D64;_##scope##_ _##num##_INTE_08 *I08;_##scope##_ _##num##_INTE_16 *I16;_##scope##_ _##num##_INTE_32 *I32;_##scope##_ _##num##_INTE_64 *I64;_##scope##_ _##num##_REAL_16 *R16;_##scope##_ _##num##_REAL_32 *R32;_##scope##_ _##num##_REAL_64 *R64;}_##num
+#define _Parse_(scope,acs) union{_Parse_Scalar_##acs##_(scope);_Parse_Vector_##acs##_(scope,02);_Parse_Vector_##acs##_(scope,03);_Parse_Vector_##acs##_(scope,04);_Parse_Vector_##acs##_(scope,08);_Parse_Vector_##acs##_(scope,16);}acs
 
 union _bitc_cp
 {
@@ -150,16 +203,6 @@ OCLC_Type_Declare_(union,bitc_pp,BITC_PP);
 #endif
 
 #else
-
-#if(1)
-#if defined(_CL)||defined(__OPENCL_H)
-#include <oclclip.h>
-#else
-#include <memclip.h>
-#endif
-
-#include <stdint.h>
-#endif
 
 #if(Fold_(Definition:Primal Types))
 MemC_Type_Rename_(uint8_t,data_08,DATA_08);		//BitClip : 8-bit Natural
@@ -256,102 +299,98 @@ MemC_Type_Declare_(struct,bitc_bp,BITC_BP);	//BitClip : Bit Pointer Structure
 
 #if(Fold_(Definition:Macros))
 #if(Fold_(Part:Debugging Assertions))
-#define BitC_Data_Cast_() assert((BitC.Just.I08_(INT8_MAX)==(INT8_MAX))&&(BitC.Just.I16_(INT16_MAX)==(INT16_MAX))&&(BitC.Just.I32_(INT32_MAX)==(INT32_MAX))&&(BitC.Just.I64_(INT64_MAX)==(INT64_MAX)))
-
-#define _BitC_Range_I08_(X) assert((INT8_C(-0x40)<(X))&&((X)<INT8_C(+0x40)))
-#define _BitC_Range_I16_(X) assert((INT16_C(-0x4000)<(X))&&((X)<INT16_C(+0x4000)))
-#define _BitC_Range_I32_(X) assert((INT32_C(-0x40000000)<(X))&&((X)<INT32_C(+0x40000000)))
-#define _BitC_Range_I64_(X) assert((INT64_C(-0x4000000000000000)<(X))&&((X)<INT64_C(+0x4000000000000000)))
+#define BitC_Okay_Wrap_() assert((BitC.Just.I08_(INT8_MAX)==(INT8_MAX))&&(BitC.Just.I16_(INT16_MAX)==(INT16_MAX))&&(BitC.Just.I32_(INT32_MAX)==(INT32_MAX))&&(BitC.Just.I64_(INT64_MAX)==(INT64_MAX)))
+#define BitC_Inte_Over_(X) __dl{if((X)&(0));else switch(sizeof(X)){case 1:assert((INT8_C(-0x40)<Acs_(inte_08,X))&&(Acs_(inte_08,X)<INT8_C(+0x40)));break;case 2:assert((INT16_C(-0x4000)<Acs_(inte_16,X))&&(Acs_(inte_16,X)<INT16_C(+0x4000)));break;case 4:assert((INT32_C(-0x40000000)<Acs_(inte_32,X))&&(Acs_(inte_32,X)<INT32_C(+0x40000000)));break;case 8:assert((INT64_C(-0x4000000000000000)<Acs_(inte_64,X))&&(Acs_(inte_64,X)<INT64_C(+0x4000000000000000)));break;default:assert(0);}}lb__
 #endif
 
 #if(Fold_(Part:BitC_Max_T##_))
 //BitClip : Maximum of 8-bit Integer - This could be invalid for data range over 0x40.
-#define BitC_Max_I08_(Output,InputA,InputB) __dl{_BitC_Range_I08_(InputA);_BitC_Range_I08_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_08,Output)>>7);(Output)=(InputB)-(Output);}lb__
+#define BitC_Max_I08_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_08)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_08)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 8-bit!");Acs_(inte_08,Output)=Acs_(inte_08,InputB)-Acs_(inte_08,InputA);Acs_(inte_08,Output)&=(Acs_(inte_08,Output)>>7);Acs_(inte_08,Output)=Acs_(inte_08,InputB)-Acs_(inte_08,Output);}lb__
 //BitClip : Maximum of 16-bit Integer - This could be invalid for data range over 0x4000.
-#define BitC_Max_I16_(Output,InputA,InputB) __dl{_BitC_Range_I16_(InputA);_BitC_Range_I16_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_16,Output)>>15);(Output)=(InputB)-(Output);}lb__
+#define BitC_Max_I16_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_16)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_16)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 16-bit!");Acs_(inte_16,Output)=Acs_(inte_16,InputB)-Acs_(inte_16,InputA);Acs_(inte_16,Output)&=(Acs_(inte_16,Output)>>15);Acs_(inte_16,Output)=Acs_(inte_16,InputB)-Acs_(inte_16,Output);}lb__
 //BitClip : Maximum of 32-bit Integer - This could be invalid for data range over 0x40000000.
-#define BitC_Max_I32_(Output,InputA,InputB) __dl{_BitC_Range_I32_(InputA);_BitC_Range_I32_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}lb__
+#define BitC_Max_I32_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_32)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_32)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,InputB)-Acs_(inte_32,InputA);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);Acs_(inte_32,Output)=Acs_(inte_32,InputB)-Acs_(inte_32,Output);}lb__
 //BitClip : Maximum of 64-bit Integer - This could be invalid for data range over 0x4000000000000000.
-#define BitC_Max_I64_(Output,InputA,InputB) __dl{_BitC_Range_I64_(InputA);_BitC_Range_I64_(InputB);(Output)=(InputB)-(InputA);(Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}lb__
+#define BitC_Max_I64_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_64)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_64)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,InputB)-Acs_(inte_64,InputA);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);Acs_(inte_64,Output)=Acs_(inte_64,InputB)-Acs_(inte_64,Output);}lb__
 //BitClip : Maximum of 32-bit Real - This could be imprecise.
-#define BitC_Max_R32_(Output,InputA,InputB) __dl{(Output)=(InputB)-(InputA);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)=(InputB)-(Output);}lb__
+#define BitC_Max_R32_(Output,InputA,InputB) __dl{static_assert((sizeof(real_32)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(real_32)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 32-bit!");Acs_(real_32,Output)=Acs_(real_32,InputB)-Acs_(real_32,InputA);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);Acs_(real_32,Output)=Acs_(real_32,InputB)-Acs_(real_32,Output);}lb__
 //BitClip : Maximum of 64-bit Real - This could be imprecise.
-#define BitC_Max_R64_(Output,InputA,InputB) __dl{(Output)=(InputB)-(InputA);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)=(InputB)-(Output);}lb__
+#define BitC_Max_R64_(Output,InputA,InputB) __dl{static_assert((sizeof(real_64)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(real_64)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 64-bit!");Acs_(real_64,Output)=Acs_(real_64,InputB)-Acs_(real_64,InputA);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);Acs_(real_64,Output)=Acs_(real_64,InputB)-Acs_(real_64,Output);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Min_T##_))
 //BitClip : Minimum of 8-bit Integer - This could be invalid for data range over 0x40.
-#define BitC_Min_I08_(Output,InputA,InputB) __dl{_BitC_Range_I08_(InputA);_BitC_Range_I08_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_08,Output)>>7);(Output)+=(InputB);}lb__
+#define BitC_Min_I08_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_08)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_08)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 8-bit!");Acs_(inte_08,Output)=Acs_(inte_08,InputA)-Acs_(inte_08,InputB);Acs_(inte_08,Output)&=(Acs_(inte_08,Output)>>7);Acs_(inte_08,Output)+=Acs_(inte_08,InputB);}lb__
 //BitClip : Minimum of 16-bit Integer - This could be invalid for data range over 0x4000.
-#define BitC_Min_I16_(Output,InputA,InputB) __dl{_BitC_Range_I16_(InputA);_BitC_Range_I16_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_16,Output)>>15);(Output)+=(InputB);}lb__
+#define BitC_Min_I16_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_16)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_16)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 16-bit!");Acs_(inte_16,Output)=Acs_(inte_16,InputA)-Acs_(inte_16,InputB);Acs_(inte_16,Output)&=(Acs_(inte_16,Output)>>15);Acs_(inte_16,Output)+=Acs_(inte_16,InputB);}lb__
 //BitClip : Minimum of 32-bit Integer - This could be invalid for data range over 0x40000000.
-#define BitC_Min_I32_(Output,InputA,InputB) __dl{_BitC_Range_I32_(InputA);_BitC_Range_I32_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}lb__
+#define BitC_Min_I32_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_32)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_32)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,InputA)-Acs_(inte_32,InputB);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);Acs_(inte_32,Output)+=Acs_(inte_32,InputB);}lb__
 //BitClip : Minimum of 64-bit Integer - This could be invalid for data range over 0x4000000000000000.
-#define BitC_Min_I64_(Output,InputA,InputB) __dl{_BitC_Range_I64_(InputA);_BitC_Range_I64_(InputB);(Output)=(InputA)-(InputB);(Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}lb__
+#define BitC_Min_I64_(Output,InputA,InputB) __dl{static_assert((sizeof(inte_64)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(inte_64)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,InputA)-Acs_(inte_64,InputB);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);Acs_(inte_64,Output)+=Acs_(inte_64,InputB);}lb__
 //BitClip : Minimum of 32-bit Real - This could be imprecise.
-#define BitC_Min_R32_(Output,InputA,InputB) __dl{(Output)=(InputA)-(InputB);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);(Output)+=(InputB);}lb__
+#define BitC_Min_R32_(Output,InputA,InputB) __dl{static_assert((sizeof(real_32)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(real_32)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 32-bit!");Acs_(real_32,Output)=Acs_(real_32,InputA)-Acs_(real_32,InputB);Acs_(inte_32,Output)&=(Acs_(inte_32,Output)>>31);Acs_(real_32,Output)+=Acs_(real_32,InputB);}lb__
 //BitClip : Minimum of 64-bit Real - This could be imprecise.
-#define BitC_Min_R64_(Output,InputA,InputB) __dl{(Output)=(InputA)-(InputB);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);(Output)+=(InputB);}lb__
+#define BitC_Min_R64_(Output,InputA,InputB) __dl{static_assert((sizeof(real_64)&sizeof(Output)&sizeof(InputA)&sizeof(InputB))==(sizeof(real_64)|sizeof(Output)|sizeof(InputA)|sizeof(InputB)),"Not 64-bit!");Acs_(real_64,Output)=Acs_(real_64,InputA)-Acs_(real_64,InputB);Acs_(inte_64,Output)&=(Acs_(inte_64,Output)>>63);Acs_(real_64,Output)+=Acs_(real_64,InputB);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Abs_P_T##_))
 //BitClip : Positive Absolute of 8-bit Integer
-#define BitC_Abs_P_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_P_I08_(Output,Input) __dl{static_assert((sizeof(inte_08)&sizeof(Output)&sizeof(Input))==(sizeof(inte_08)|sizeof(Output)|sizeof(Input)),"Not 8-bit!");Acs_(inte_08,Output)=Acs_(inte_08,Input)>>7;Acs_(inte_08,Output)^=Acs_(inte_08,Input)+Acs_(inte_08,Output);}lb__
 //BitClip : Positive Absolute of 16-bit Integer
-#define BitC_Abs_P_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_P_I16_(Output,Input) __dl{static_assert((sizeof(inte_16)&sizeof(Output)&sizeof(Input))==(sizeof(inte_16)|sizeof(Output)|sizeof(Input)),"Not 16-bit!");Acs_(inte_16,Output)=Acs_(inte_16,Input)>>15;Acs_(inte_16,Output)^=Acs_(inte_16,Input)+Acs_(inte_16,Output);}lb__
 //BitClip : Positive Absolute of 32-bit Integer
-#define BitC_Abs_P_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_P_I32_(Output,Input) __dl{static_assert((sizeof(inte_32)&sizeof(Output)&sizeof(Input))==(sizeof(inte_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)^=Acs_(inte_32,Input)+Acs_(inte_32,Output);}lb__
 //BitClip : Positive Absolute of 64-bit Integer
-#define BitC_Abs_P_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_P_I64_(Output,Input) __dl{static_assert((sizeof(inte_64)&sizeof(Output)&sizeof(Input))==(sizeof(inte_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)^=Acs_(inte_64,Input)+Acs_(inte_64,Output);}lb__
 //BitClip : Positive Absolute of 32-bit Real
-#define BitC_Abs_P_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)&0x7FFFFFFF;}lb__
+#define BitC_Abs_P_R32_(Output,Input) __dl{static_assert((sizeof(real_32)&sizeof(Output)&sizeof(Input))==(sizeof(real_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)&INT32_C(0x7FFFFFFF);}lb__
 //BitClip : Positive Absolute of 64-bit Real
-#define BitC_Abs_P_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)&0x7FFFFFFFFFFFFFFF;}lb__
+#define BitC_Abs_P_R64_(Output,Input) __dl{static_assert((sizeof(real_64)&sizeof(Output)&sizeof(Input))==(sizeof(real_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)&INT64_C(0x7FFFFFFFFFFFFFFF);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Abs_N_T##_))
 //BitClip : Negative Absolute of 8-bit Integer
-#define BitC_Abs_N_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_N_I08_(Output,Input) __dl{static_assert((sizeof(inte_08)&sizeof(Output)&sizeof(Input))==(sizeof(inte_08)|sizeof(Output)|sizeof(Input)),"Not 8-bit!");Acs_(inte_08,Output)=Acs_(inte_08,Input)>>7;Acs_(inte_08,Output)=~Acs_(inte_08,Output);Acs_(inte_08,Output)^=Acs_(inte_08,Input)+Acs_(inte_08,Output);}lb__
 //BitClip : Negative Absolute of 16-bit Integer
-#define BitC_Abs_N_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_N_I16_(Output,Input) __dl{static_assert((sizeof(inte_16)&sizeof(Output)&sizeof(Input))==(sizeof(inte_16)|sizeof(Output)|sizeof(Input)),"Not 16-bit!");Acs_(inte_16,Output)=Acs_(inte_16,Input)>>15;Acs_(inte_16,Output)=~Acs_(inte_16,Output);Acs_(inte_16,Output)^=Acs_(inte_16,Input)+Acs_(inte_16,Output);}lb__
 //BitClip : Negative Absolute of 32-bit Integer
-#define BitC_Abs_N_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_N_I32_(Output,Input) __dl{static_assert((sizeof(inte_32)&sizeof(Output)&sizeof(Input))==(sizeof(inte_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)=~Acs_(inte_32,Output);Acs_(inte_32,Output)^=Acs_(inte_32,Input)+Acs_(inte_32,Output);}lb__
 //BitClip : Negative Absolute of 64-bit Integer
-#define BitC_Abs_N_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)^=((Input)+(Output));}lb__
+#define BitC_Abs_N_I64_(Output,Input) __dl{static_assert((sizeof(inte_64)&sizeof(Output)&sizeof(Input))==(sizeof(inte_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)=~Acs_(inte_64,Output);Acs_(inte_64,Output)^=Acs_(inte_64,Input)+Acs_(inte_64,Output);}lb__
 //BitClip : Negative Absolute of 32-bit Real
-#define BitC_Abs_N_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)|0x80000000;}lb__
+#define BitC_Abs_N_R32_(Output,Input) __dl{static_assert((sizeof(real_32)&sizeof(Output)&sizeof(Input))==(sizeof(real_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)|INT32_C(0x80000000);}lb__
 //BitClip : Negative Absolute of 64-bit Real
-#define BitC_Abs_N_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)|0x8000000000000000;}lb__
+#define BitC_Abs_N_R64_(Output,Input) __dl{static_assert((sizeof(real_64)&sizeof(Output)&sizeof(Input))==(sizeof(real_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)|INT64_C(0x8000000000000000);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Lim_P_T##_))
 //BitClip : Positive Clipping of 8-bit Integer
-#define BitC_Lim_P_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)=~(Output);(Output)&=(Input);}lb__
+#define BitC_Lim_P_I08_(Output,Input) __dl{static_assert((sizeof(inte_08)&sizeof(Output)&sizeof(Input))==(sizeof(inte_08)|sizeof(Output)|sizeof(Input)),"Not 8-bit!");Acs_(inte_08,Output)=Acs_(inte_08,Input)>>7;Acs_(inte_08,Output)=~Acs_(inte_08,Output);Acs_(inte_08,Output)&=Acs_(inte_08,Input);}lb__
 //BitClip : Positive Clipping of 16-bit Integer
-#define BitC_Lim_P_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)=~(Output);(Output)&=(Input);}lb__
+#define BitC_Lim_P_I16_(Output,Input) __dl{static_assert((sizeof(inte_16)&sizeof(Output)&sizeof(Input))==(sizeof(inte_16)|sizeof(Output)|sizeof(Input)),"Not 16-bit!");Acs_(inte_16,Output)=Acs_(inte_16,Input)>>15;Acs_(inte_16,Output)=~Acs_(inte_16,Output);Acs_(inte_16,Output)&=Acs_(inte_16,Input);}lb__
 //BitClip : Positive Clipping of 32-bit Integer
-#define BitC_Lim_P_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)=~(Output);(Output)&=(Input);}lb__
+#define BitC_Lim_P_I32_(Output,Input) __dl{static_assert((sizeof(inte_32)&sizeof(Output)&sizeof(Input))==(sizeof(inte_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)=~Acs_(inte_32,Output);Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
 //BitClip : Positive Clipping of 64-bit Integer
-#define BitC_Lim_P_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)=~(Output);(Output)&=(Input);}lb__
+#define BitC_Lim_P_I64_(Output,Input) __dl{static_assert((sizeof(inte_64)&sizeof(Output)&sizeof(Input))==(sizeof(inte_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)=~Acs_(inte_64,Output);Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
 //BitClip : Positive Clipping of 32-bit Real
-#define BitC_Lim_P_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)=~Acs_(inte_32,Output);Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
+#define BitC_Lim_P_R32_(Output,Input) __dl{static_assert((sizeof(real_32)&sizeof(Output)&sizeof(Input))==(sizeof(real_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)=~Acs_(inte_32,Output);Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
 //BitClip : Positive Clipping of 64-bit Real
-#define BitC_Lim_P_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)=~Acs_(inte_64,Output);Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
+#define BitC_Lim_P_R64_(Output,Input) __dl{static_assert((sizeof(real_64)&sizeof(Output)&sizeof(Input))==(sizeof(real_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)=~Acs_(inte_64,Output);Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
 #endif
 
 #if(Fold_(Part:BitC_Lim_N_T##_))
 //BitClip : Negative Clipping of 8-bit Integer
-#define BitC_Lim_N_I08_(Output,Input) __dl{(Output)=Acs_(inte_08,Input)>>7;(Output)&=(Input);}lb__
+#define BitC_Lim_N_I08_(Output,Input) __dl{static_assert((sizeof(inte_08)&sizeof(Output)&sizeof(Input))==(sizeof(inte_08)|sizeof(Output)|sizeof(Input)),"Not 8-bit!");Acs_(inte_08,Output)=Acs_(inte_08,Input)>>7;Acs_(inte_08,Output)&=Acs_(inte_08,Input);}lb__
 //BitClip : Negative Clipping of 16-bit Integer
-#define BitC_Lim_N_I16_(Output,Input) __dl{(Output)=Acs_(inte_16,Input)>>15;(Output)&=(Input);}lb__
+#define BitC_Lim_N_I16_(Output,Input) __dl{static_assert((sizeof(inte_16)&sizeof(Output)&sizeof(Input))==(sizeof(inte_16)|sizeof(Output)|sizeof(Input)),"Not 16-bit!");Acs_(inte_16,Output)=Acs_(inte_16,Input)>>15;Acs_(inte_16,Output)&=Acs_(inte_16,Input);}lb__
 //BitClip : Negative Clipping of 32-bit Integer
-#define BitC_Lim_N_I32_(Output,Input) __dl{(Output)=Acs_(inte_32,Input)>>31;(Output)&=(Input);}lb__
+#define BitC_Lim_N_I32_(Output,Input) __dl{static_assert((sizeof(inte_32)&sizeof(Output)&sizeof(Input))==(sizeof(inte_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
 //BitClip : Negative Clipping of 64-bit Integer
-#define BitC_Lim_N_I64_(Output,Input) __dl{(Output)=Acs_(inte_64,Input)>>63;(Output)&=(Input);}lb__
+#define BitC_Lim_N_I64_(Output,Input) __dl{static_assert((sizeof(inte_64)&sizeof(Output)&sizeof(Input))==(sizeof(inte_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
 //BitClip : Negative Clipping of 32-bit Real
-#define BitC_Lim_N_R32_(Output,Input) __dl{Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
+#define BitC_Lim_N_R32_(Output,Input) __dl{static_assert((sizeof(real_32)&sizeof(Output)&sizeof(Input))==(sizeof(real_32)|sizeof(Output)|sizeof(Input)),"Not 32-bit!");Acs_(inte_32,Output)=Acs_(inte_32,Input)>>31;Acs_(inte_32,Output)&=Acs_(inte_32,Input);}lb__
 //BitClip : Negative Clipping of 64-bit Real
-#define BitC_Lim_N_R64_(Output,Input) __dl{Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
+#define BitC_Lim_N_R64_(Output,Input) __dl{static_assert((sizeof(real_64)&sizeof(Output)&sizeof(Input))==(sizeof(real_64)|sizeof(Output)|sizeof(Input)),"Not 64-bit!");Acs_(inte_64,Output)=Acs_(inte_64,Input)>>63;Acs_(inte_64,Output)&=Acs_(inte_64,Input);}lb__
 #endif
 #endif
 
@@ -1585,11 +1624,11 @@ struct _bitc_cl
 	//BitClip : Program Creation Functions
 	const struct
 	{
-		//BitClip : Program Manager Creation with 8-bit String Path - Delete with "OCLC.PM.Delete_"
+		//BitClip : Program Manager Creation with 8-bit String Path - Delete with "OCLCL.PM.Delete_"
 		//＊The number of binary paths must be same as the number of devices associated with the context.
 		//＊(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
 		oclc_pm*(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-		//BitClip : Program Manager Creation with 16-bit String Path - Delete with "OCLC.PM.Delete_"
+		//BitClip : Program Manager Creation with 16-bit String Path - Delete with "OCLCL.PM.Delete_"
 		//＊The number of binary paths must be same as the number of devices associated with the context.
 		//＊(BinaryPath) Example : { "../../Device 1/bitclip.obj", "../../Device 2/bitclip.obj", ... }
 		oclc_pm*(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
@@ -1699,7 +1738,14 @@ MemC_Type_Declare_(struct,bitc_cl,BITC_CL);	//BitClip : OpenCL Extension Structu
 //BitClip : OpenCL Extension Object
 extern BITC_CL BitCL;
 //BitClip : Indirect access to the OpenCL extension object.
+//＊If the library is not built with OpenCL settings,
+//　then the return address will be just NULL.
 extern BITC_CL *BitCL_(general);
+#else
+//BitClip : Indirect access to the OpenCL extension object.
+//＊If the library is not built with OpenCL settings,
+//　then the return address will be just NULL.
+extern GENERAL *BitCL_(general);
 #endif
 #endif
 #endif

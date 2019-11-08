@@ -1,18 +1,24 @@
 ﻿/*------------------------------------------------------------------*/
-/*	TimClip is a simple time record library.						*/
+/*	TimClip provides simple stopwatches and random generators.		*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.08	*/
+/*------------------------------------------------------------------*/
+/*	Dependency:														*/
+/*																	*/
+/*	MSVClip ─ MemClip ─ PenClip ─ OCLClip ─ BitClip ─ TimClip	*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros:											*/
+/*																	*/
+/*	_INC_TIMCLIP													*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_TIMCLIP
 #define _INC_TIMCLIP
 
-#if(1)
 #include <bitclip.h>
 
 #include <time.h>
-#endif
 
 #if(Fold_(Definition:Types))
 //TimClip : Time Tag Structure
@@ -62,13 +68,16 @@ MemC_Type_Declare_(struct,timc_rg,TIMC_RG);	//TimClip : Random Generator Structu
 //TimClip : Library Case Structure
 struct _timcase
 {
-	//TimClip : Library Version
-	BYTE_08 _PL_ Version;
+	const struct
+	{
+		//TimClip : Library Version
+		BYTE_08 _PL_ Version;
 
-	//TimClip : Timer Clock's Frequency and Resolution
-	//＊[0] : clock frequency (clocks per second)
-	//　[1] : clock resolution (seconds per clock)
-	REAL_32 _PL_ Clocks;
+		//TimClip : Timer Clock's Frequency and Resolution
+		//＊[0] : clock frequency (clocks per second)
+		//　[1] : clock resolution (seconds per clock)
+		REAL_32 _PL_ Clocks;
+	};
 
 	//TimClip : Stopwatch Functions
 	const struct

@@ -2,9 +2,43 @@
 /*	OCLClip provides some simple OpenCL wrapping functions.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.08	*/
 /*------------------------------------------------------------------*/
-/*	OpenCL Support													*/
+/*	Dependency:														*/
+/*																	*/
+/*	MSVClip ─ MemClip ─ PenClip ─ OCLClip						*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros (Host):										*/
+/*																	*/
+/*	_INC_OCLCLIP													*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros (Device):									*/
+/*																	*/
+/*	_INC_OCLCLIP													*/
+/*																	*/
+/*	Fold_															*/
+/*	NULL	Acs_	Meta_	Conc_	__dlOuOlb__		_R_				*/
+/*	FULL	Mute_	_Meta_	_Conc_	__dl	lb__	_PL_			*/
+/*																	*/
+/*	_K_		_F_		_C_		_G_		_L_		_P_						*/
+/*																	*/
+/*	Work_Dims_														*/
+/*	Work_Wait_G_					Work_Wait_L_					*/
+/*	Work_Size_G_	Work_Nums_B_	Work_Size_L_					*/
+/*	Work_Here_G_	Work_Here_B_	Work_Here_L_					*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Types (Device):									*/
+/*																	*/
+/*	logical	general	byte_08	integer	address							*/
+/*	LOGICAL	GENERAL	BYTE_08	INTEGER	ADDRESS							*/
+/*------------------------------------------------------------------*/
+/*	Note:															*/
+/*																	*/
+/*	If you want to use the Clip libraries with OpenCL extensions,	*/
+/*	please #define _USE_OCLCLIP before including any Clip header.	*/
+/*------------------------------------------------------------------*/
+/*	About OpenCL:													*/
+/*																	*/
 /*	http://www.khronos.org/opencl/									*/
 /*	http://www.khronos.org/registry/OpenCL/							*/
 /*	http://stackoverflow.com/questions/tagged/opencl				*/
@@ -20,11 +54,24 @@
 #ifdef Fold_
 #error The macro "Fold_" is already defined.
 #else
+//#define Fold_(...) (1)
 #define Fold_(Comment) (1)
 #endif
 #endif
 
 #if(Fold_(Primal Macros))
+#ifdef NULL
+//_Static_assert(((uintptr_t)(NULL))==((uintptr_t)(0)));
+#else
+#define NULL ((void*)(0))
+#endif
+
+#ifdef FULL
+//_Static_assert(((uintptr_t)(FULL))==(~((uintptr_t)(0))));
+#else
+#define FULL ((void*)(~((uintptr_t)(0))))
+#endif
+
 #ifdef Acs_
 #error The macro "Acs_" is already defined.
 #else
@@ -37,11 +84,31 @@
 #define Mute_(Argument) ((general)(Argument))
 #endif
 
+#if defined(_Meta_)||defined(Meta_)
+#error The macro "_Meta_" or "Meta_" is already defined.
+#else
+#define _Meta_(X) #X
+#define Meta_(X) _Meta_(X)
+#endif
+
 #if defined(_Conc_)||defined(Conc_)
 #error The macro "_Conc_" or "Conc_" is already defined.
 #else
 #define _Conc_(A,B) A##B
 #define Conc_(A,B) _Conc_(A,B)
+#endif
+
+#if defined(__dl)||defined(lb__)
+#error The macro "__dl" or "lb__" is already defined.
+#else
+#define __dl do
+#define lb__ while(0)
+#endif
+
+#ifdef __dlOuOlb__
+#error The macro __dlOuOlb__ is already defined.
+#else
+#define __dlOuOlb__ while(1)
 #endif
 #endif
 
@@ -87,8 +154,8 @@
 #endif
 
 #if(Fold_(Type Macros))
-#define OCLC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE;
-#define OCLC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE;
+#define OCLC_Type_Rename_(oldtype,newtype,NEWTYPE) typedef oldtype newtype;typedef const oldtype NEWTYPE
+#define OCLC_Type_Declare_(spec,type,TYPE) typedef spec _##type type;typedef const spec _##type TYPE
 #endif
 
 #if(Fold_(Primal Types))
@@ -96,7 +163,7 @@ OCLC_Type_Rename_(bool,logical,LOGICAL);
 OCLC_Type_Rename_(void,general,GENERAL);
 OCLC_Type_Rename_(char,byte_08,BYTE_08);
 OCLC_Type_Rename_(int,integer,INTEGER);
-OCLC_Type_Rename_(size_t,address,ADDRESS);
+OCLC_Type_Rename_(uintptr_t,address,ADDRESS);
 #endif
 
 #if(Fold_(Memory Pin Structure))
@@ -162,12 +229,12 @@ _F_ address Work_Into_(_P_ OCLCLIP Where,_P_ OCLCLIP Start,_P_ OCLCLIP Shape)
 
 #else
 
-#if(1)
 #include <penclip.h>
-
+#ifdef _USE_OCLCLIP
 #include <CL/opencl.h>
 #endif
 
+#ifdef __OPENCL_H
 #if(Fold_(Definition:Primal Types))
 //OCLClip : Meta-Data Structure
 struct _oclc_md
@@ -404,8 +471,8 @@ MemC_Type_Declare_(struct,oclc_pm,OCLC_PM);	//OCLClip : Program Manager Structur
 #endif
 
 #if(Fold_(Library Casing))
-//OCLClip : Library Case Structure
-struct _oclcase
+//OCLClip : OpenCL Extension Structure
+struct _oclc_cl
 {
 	//OCLClip : Library Version
 	BYTE_08 _PL_ Version;
@@ -413,7 +480,7 @@ struct _oclcase
 	//OCLClip : Environment Manager Functions
 	const struct
 	{
-		//OCLClip : Environment Manager Creation - Delete with "OCLC.CM.Delete_"
+		//OCLClip : Environment Manager Creation - Delete with "OCLCL.CM.Delete_"
 		oclc_em*(_PL_ Create_)(oclc_ef _PL_ Error);
 		//OCLClip : Environment Manager Deletion
 		general(_PL_ Delete_)(oclc_em *_PL_);
@@ -433,7 +500,7 @@ struct _oclcase
 	//OCLClip : Program Manager Functions
 	const struct
 	{
-		//OCLClip : Program Manager Creation - Delete with "OCLC.PM.Delete_"
+		//OCLClip : Program Manager Creation - Delete with "OCLCL.PM.Delete_"
 		oclc_pm*(_PL_ Create_)(GENERAL _PL_ LibraryID,OCLC_MD _PL_ KernelList,ADDRESS KernelNums);
 		//OCLClip : Program Build Functions
 		const struct
@@ -601,9 +668,9 @@ struct _oclcase
 		//OCLClip : Memory Object Creation Functions
 		const struct
 		{
-			//OCLClip : Buffer Creation - Delete with "OCLC.MO.Delete_"
+			//OCLClip : Buffer Creation - Delete with "OCLCL.MO.Delete_"
 			cl_mem(_PL_ Buffer_)(const cl_context Context,ADDRESS Size,oclc_ef _PL_ Error);
-			//OCLClip : Sub-Buffer Creation - Delete with "OCLC.MO.Delete_"
+			//OCLClip : Sub-Buffer Creation - Delete with "OCLCL.MO.Delete_"
 			cl_mem(_PL_ Sub_)(const cl_mem RootBuffer,ADDRESS Offset,ADDRESS Size,oclc_ef _PL_ Error);
 		}
 		Create;
@@ -662,13 +729,21 @@ struct _oclcase
 	}
 	MP;
 };
-MemC_Type_Declare_(struct,oclcase,OCLCASE);
-#define OCLC_Info_(Kind,Whose,It,Flag,Error) OCLC.Kind.Info.What_(Whose,Flag,It,sizeof(*(It)),Error)
+MemC_Type_Declare_(struct,oclc_cl,OCLC_CL);
+#define OCLCL_Info_(Kind,Whose,It,Flag,Error) OCLCL.Kind.Info.What_(Whose,Flag,It,sizeof(*(It)),Error)
 
-//OCLClip : Library Case Object
-extern OCLCASE OCLC;
-//OCLClip : Indirect access to the library case object.
-extern OCLCASE *OCLC_(general);
+//OCLClip : OpenCL Extension Object
+extern OCLC_CL OCLCL;
+//OCLClip : Indirect access to the OpenCL extension object.
+//＊If the library is not built with OpenCL settings,
+//　then the return address will be just NULL.
+extern OCLC_CL *OCLCL_(general);
+#endif
+#else
+//OCLClip : Indirect access to the OpenCL extension object.
+//＊If the library is not built with OpenCL settings,
+//　then the return address will be just NULL.
+extern GENERAL *OCLCL_(general);
 #endif
 #endif
 #endif

@@ -2,25 +2,36 @@
 /*	LinClip provides some elementary arithmetic operations.			*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.08	*/
+/*------------------------------------------------------------------*/
+/*	Dependency:														*/
+/*																	*/
+/*	MSVClip ─ MemClip ─ PenClip ─ OCLClip ─ BitClip ─ LinClip	*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros (Host):										*/
+/*																	*/
+/*	_INC_LINCLIP													*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros (Device):									*/
+/*																	*/
+/*	_INC_LINCLIP													*/
 /*------------------------------------------------------------------*/
 /*	Note:															*/
-/*	Run "LinC_Inte_Cast_();" in debug mode to check if the casted	*/
+/*																	*/
+/*	Run "LinC_Okay_Wrap_();" in debug mode to check if the casted	*/
 /*	function pointers work correctly between integer and natural.	*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_LINCLIP
 #define _INC_LINCLIP
 
-#if(1)
 #include <bitclip.h>
-#endif
 
 #ifdef __OPENCL_VERSION__
 #else
 
 #if(Fold_(Definition:Macros))
-#define LinC_Inte_Cast_() assert((LinC.Just.D08_(UINT8_MAX)==(UINT8_MAX))&&(LinC.Just.D16_(UINT16_MAX)==(UINT16_MAX))&&(LinC.Just.D32_(UINT32_MAX)==(UINT32_MAX))&&(LinC.Just.D64_(UINT64_MAX)==(UINT64_MAX)))
+#define LinC_Okay_Wrap_() assert((LinC.Just.D08_(UINT8_MAX)==(UINT8_MAX))&&(LinC.Just.D16_(UINT16_MAX)==(UINT16_MAX))&&(LinC.Just.D32_(UINT32_MAX)==(UINT32_MAX))&&(LinC.Just.D64_(UINT64_MAX)==(UINT64_MAX)))
 #endif
 
 #if(Fold_(Library Casing))
@@ -869,11 +880,11 @@ struct _linc_cl
 	//LinClip : Program Creation Functions
 	const struct
 	{
-		//LinClip : Program Manager Creation with 8-bit String Path - Delete with "OCLC.PM.Delete_"
+		//LinClip : Program Manager Creation with 8-bit String Path - Delete with "OCLCL.PM.Delete_"
 		//＊The number of binary paths must be same as the number of devices associated with the context.
 		//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
 		oclc_pm*(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-		//LinClip : Program Manager Creation with 16-bit String Path - Delete with "OCLC.PM.Delete_"
+		//LinClip : Program Manager Creation with 16-bit String Path - Delete with "OCLCL.PM.Delete_"
 		//＊The number of binary paths must be same as the number of devices associated with the context.
 		//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
 		oclc_pm*(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
@@ -952,7 +963,14 @@ MemC_Type_Declare_(struct,linc_cl,LINC_CL);	//LinClip : OpenCL Extension Structu
 //LinClip : OpenCL Extension Object
 extern LINC_CL LinCL;
 //LinClip : Indirect access to the OpenCL extension object.
+//＊If the library is not built with OpenCL settings,
+//　then the return address will be just NULL.
 extern LINC_CL *LinCL_(general);
+#else
+//LinClip : Indirect access to the OpenCL extension object.
+//＊If the library is not built with OpenCL settings,
+//　then the return address will be just NULL.
+extern GENERAL *LinCL_(general);
 #endif
 #endif
 #endif

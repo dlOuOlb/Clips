@@ -2,16 +2,21 @@
 /*	PriClip provides some small prime number tables.				*/
 /*																	*/
 /*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.04	*/
+/*	http://github.com/dlOuOlb/Clips/					2019.11.08	*/
+/*------------------------------------------------------------------*/
+/*	Dependency:														*/
+/*																	*/
+/*	MSVClip ─ MemClip ─ PenClip ─ OCLClip ─ BitClip ─ PriClip	*/
+/*------------------------------------------------------------------*/
+/*	Non-Prefixed Macros:											*/
+/*																	*/
+/*	_INC_PRICLIP													*/
 /*------------------------------------------------------------------*/
 
 #ifndef _INC_PRICLIP
 #define _INC_PRICLIP
 
-#if(1)
-#include <penclip.h>
 #include <bitclip.h>
-#endif
 
 #if(Fold_(Definition:Types))
 //PriClip : 8-bit Prime Table Structure
