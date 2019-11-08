@@ -6,7 +6,7 @@
 /*------------------------------------------------------------------*/
 /*	Dependency:														*/
 /*																	*/
-/*	MSVClip ─ MemClip ─ PenClip ─ OCLClip ─ BitClip ─ LinClip	*/
+/*	MSVClip -- MemClip -- PenClip -- OCLClip -- BitClip -- LinClip	*/
 /*------------------------------------------------------------------*/
 /*	Non-Prefixed Macros (Host):										*/
 /*																	*/
