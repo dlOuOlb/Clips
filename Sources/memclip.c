@@ -2,17 +2,19 @@
 
 #include <limits.h>
 #include <stdarg.h>
-#include <stdint.h>
+#include <stddef.h>
 
 #if(Fold_(Static Assertions))
 static_assert(__STDC_WANT_LIB_EXT1__,"__STDC_WANT_LIB_EXT1__ == 0");
 static_assert(((address)(NULL))==((address)(0)),"NULL != 0");
 static_assert(((address)(FULL))==(~((address)(0))),"FULL != ~0");
-static_assert(((address)(FULL))==(SIZE_MAX),"FULL != SIZE_MAX");
-static_assert(((address)((general*)(SIZE_MAX)))==(SIZE_MAX),"SIZE_MAX != SIZE_MAX");
+static_assert(((address)(FULL))==(UINTPTR_MAX),"FULL != UINTPTR_MAX");
 static_assert((CHAR_BIT==8),"CHAR_BIT != 8");
 static_assert((sizeof(byte_08)==1),"sizeof(byte_08) != 1");
-static_assert((sizeof(general*)==sizeof(address)),"sizeof(general*) != sizeof(address)");
+static_assert((sizeof(address)==sizeof(void*)),"sizeof(address) != sizeof(void*)");
+static_assert((sizeof(address)==sizeof(size_t)),"sizeof(address) != sizeof(size_t)");
+static_assert((sizeof(address)==sizeof(ptrdiff_t)),"sizeof(address) != sizeof(ptrdiff_t)");
+static_assert((sizeof(address)==sizeof(func_p_)),"sizeof(address) != sizeof(func_p_)");
 #endif
 
 #if(Fold_(Definition:MemClip Macros))
@@ -22,7 +24,7 @@ static_assert((sizeof(general*)==sizeof(address)),"sizeof(general*) != sizeof(ad
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ MemClip=&MemClip;
-_MEMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.01";
+_MEMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.08";
 static ADDRESS ConstantZero[_MemC_Dims_]={0};
 #endif
 
@@ -229,11 +231,11 @@ static address _MemC_Safe_2_(address Num)
 	Num|=(Num>>1);
 	Num|=(Num>>2);
 	Num|=(Num>>4);
-#if(SIZE_MAX>UINT8_MAX)
+#if(UINTPTR_MAX>UINT8_MAX)
 	Num|=(Num>>8);
-#if(SIZE_MAX>UINT16_MAX)
+#if(UINTPTR_MAX>UINT16_MAX)
 	Num|=(Num>>16);
-#if(SIZE_MAX>UINT32_MAX)
+#if(UINTPTR_MAX>UINT32_MAX)
 	Num|=(Num>>32);
 #endif
 #endif
@@ -1289,7 +1291,7 @@ static memc_mn *_MemC_MN_Search_Space_(memc_mn *_R_ Ptr,ADDRESS Demand)
 {
 	memc_mn *Here=NULL;
 
-	for(address Size=SIZE_MAX;Ptr;Ptr=Ptr->Next)
+	for(address Size=(address)FULL;Ptr;Ptr=Ptr->Next)
 		if(Ptr->Home);
 		else if(Demand>Ptr->Size);
 		else if(Size>Ptr->Size)
@@ -1394,7 +1396,7 @@ static address _MemC_MN_Return_(memc_mn *_PL_ Node)
 static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
 {
 	memc_ml *Here=ML;
-	address Size=SIZE_MAX;
+	address Size=(address)FULL;
 	memc_l2 Return={NULL,NULL};
 
 	do
@@ -1647,7 +1649,7 @@ static logical _MemC_ML_Able_Check_(ADDRESS *_R_ PtrU,address _PL_ Able,ADDRESS 
 		{
 			address *Mark=NULL;
 
-			for(address Size=SIZE_MAX,*PtrA=Able;PtrA<EndA;PtrA++)
+			for(address Size=(address)FULL,*PtrA=Able;PtrA<EndA;PtrA++)
 				if((*PtrU)>(*PtrA));
 				else if(Size>(*PtrA))
 				{
@@ -1799,6 +1801,8 @@ MEMCASE MemC=
 {
 	.Version=IdiomVersion,
 	.MaxDims=_MemC_Dims_,
+	.Null.V=0,
+	.Full.V=UINTPTR_MAX,
 	.Void_=MemC_Void_,
 	.Just_=MemC_Just_,
 	.Type=
@@ -1825,12 +1829,12 @@ MEMCASE MemC=
 		.DN_=_MemC_Copy_,
 		.Step_=MemC_Func_Casting_(logical,MemC_Copy_Step_,GENERAL _PL_ _R_,general _PL_ _R_,ADDRESS,ADDRESS,ADDRESS,ADDRESS)
 	},
-	.Preset.D1_=_MemC_Init_1D_,
 	.Reform=
 	{
 		.DN_=_MemC_Reform_,
 		.Shape_=MemC_Reform_Shape_
 	},
+	.Preset.D1_=_MemC_Init_1D_,
 	.Assign.D1_=_MemC_Assign_1D_,
 	.Sort=
 	{

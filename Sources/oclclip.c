@@ -1,10 +1,12 @@
 ﻿#include "oclclip.h"
 
+#ifdef __OPENCL_H
 #if(Fold_(Static Assertions))
 static_assert(OCLCPinAxes==4,"The pin must be 4D.");
 static_assert(CLSuccess==0,"CLSuccess != 0");
 static_assert((sizeof(struct _oclc_em_device_info)%sizeof(address))==0,"Structure Misalign");
-static_assert(sizeof(cl_mem)==sizeof(general*),"sizeof(cl_mem) != sizeof(size_t)");
+static_assert(sizeof(cl_mem)==sizeof(address),"sizeof(cl_mem) != sizeof(address)");
+static_assert(sizeof(cl_int)==sizeof(oclc_ef),"sizeof(cl_int) != sizeof(oclc_ef)");
 #endif
 
 #if(Fold_(Definition:OCLClip Macros))
@@ -22,7 +24,7 @@ static_assert(sizeof(cl_mem)==sizeof(general*),"sizeof(cl_mem) != sizeof(size_t)
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="2019.11.01";
+static BYTE_08 IdiomVersion[16]="2019.11.08";
 static OCLC_MP ConstantZero={.N=0,.Z=0,.Y=0,.X=0};
 #endif
 
@@ -61,6 +63,8 @@ _OCLC_ general OCLC_EM_Delete_(oclc_em *_PL_ EM)
 		MemC_Deloc_(*EM);
 	}
 	else;
+
+	return;
 }
 _OCLC_ oclc_em *OCLC_EM_Create_(cl_int _PL_ Error)
 {
@@ -332,6 +336,8 @@ _OCLC_ general OCLC_PM_Delete_(oclc_pm *_PL_ PM)
 		MemC_Deloc_(*PM);
 	}
 	else;
+
+	return;
 }
 _OCLC_ oclc_pm *OCLC_PM_Create_(GENERAL _PL_ Origin,OCLC_MD _PL_ KernelList,ADDRESS KernelNums)
 {
@@ -390,77 +396,81 @@ ESCAPE:
 #undef _OCLC_Build_
 _OCLC_ general OCLC_PM_Build_Log_(OCLC_PM _PL_ PM,FILE _PL_ Stream,cl_int _PL_ Error)
 {
-	if(PM)
-	{
-		const cl_program Program=PM->Program.ID;
-		cl_uint DeviceNums;
-
-		*Error=clGetProgramInfo(Program,CL_PROGRAM_NUM_DEVICES,sizeof(cl_uint),&DeviceNums,NULL);
-		if(*Error==CL_SUCCESS)
+	if(*Error==CL_SUCCESS)
+		if(PM)
 		{
-			MemC_Temp_ND_(cl_device_id,DeviceTemp,*Error=CL_OUT_OF_HOST_MEMORY;,1,DeviceNums)
+			const cl_program Program=PM->Program.ID;
+			cl_uint DeviceNums;
+
+			*Error=clGetProgramInfo(Program,CL_PROGRAM_NUM_DEVICES,sizeof(cl_uint),&DeviceNums,NULL);
+			if(*Error==CL_SUCCESS)
 			{
-				cl_device_id _PL_ DeviceList=DeviceTemp;
-
-				*Error=clGetProgramInfo(Program,CL_PROGRAM_DEVICES,MemC_Size_(cl_device_id,DeviceNums),DeviceList,NULL);
-				if(*Error==CL_SUCCESS)
+				MemC_Temp_ND_(cl_device_id,DeviceTemp,*Error=CL_OUT_OF_HOST_MEMORY;,1,DeviceNums)
 				{
-					BYTE_08 IdiomNext[2]={'\n','\0'};
-					ADDRESS SizeNext=sizeof(IdiomNext);
-					address Size;
+					cl_device_id _PL_ DeviceList=DeviceTemp;
 
-					for(cl_uint Idx=0;Idx<DeviceNums;Idx++)
+					*Error=clGetProgramInfo(Program,CL_PROGRAM_DEVICES,MemC_Size_(cl_device_id,DeviceNums),DeviceList,NULL);
+					if(*Error==CL_SUCCESS)
 					{
-						if(*Error==CL_SUCCESS)
-							*Error=clGetDeviceInfo(DeviceList[Idx],CL_DEVICE_NAME,0,NULL,&Size);
-						else break;
+						BYTE_08 IdiomNext[2]={'\n','\0'};
+						ADDRESS SizeNext=sizeof(IdiomNext);
+						address Size;
 
-						if(*Error==CL_SUCCESS)
+						for(cl_uint Idx=0;Idx<DeviceNums;Idx++)
 						{
-							MemC_Temp_Byte_(NameTemp,Size,*Error=CL_OUT_OF_HOST_MEMORY;)
+							if(*Error==CL_SUCCESS)
+								*Error=clGetDeviceInfo(DeviceList[Idx],CL_DEVICE_NAME,0,NULL,&Size);
+							else break;
+
+							if(*Error==CL_SUCCESS)
 							{
-								byte_08 _PL_ Name=NameTemp;
-
-								*Error=clGetDeviceInfo(DeviceList[Idx],CL_DEVICE_NAME,Size,Name,NULL);
-								if(*Error==CL_SUCCESS)
+								MemC_Temp_Byte_(NameTemp,Size,*Error=CL_OUT_OF_HOST_MEMORY;)
 								{
-									PenC.Stream.Buffer.T08_(0,Stream,Name,Size);
-									PenC.Stream.Buffer.T08_(0,Stream,(text_08*)IdiomNext,SizeNext);
+									byte_08 _PL_ Name=NameTemp;
+
+									*Error=clGetDeviceInfo(DeviceList[Idx],CL_DEVICE_NAME,Size,Name,NULL);
+									if(*Error==CL_SUCCESS)
+									{
+										PenC.Stream.Buffer.T08_(0,Stream,Name,Size);
+										PenC.Stream.Buffer.T08_(0,Stream,(text_08*)IdiomNext,SizeNext);
+									}
+									else;
 								}
-								else;
 							}
-						}
-						else break;
+							else break;
 
-						if(*Error==CL_SUCCESS)
-							*Error=clGetProgramBuildInfo(Program,DeviceList[Idx],CL_PROGRAM_BUILD_LOG,0,NULL,&Size);
-						else break;
+							if(*Error==CL_SUCCESS)
+								*Error=clGetProgramBuildInfo(Program,DeviceList[Idx],CL_PROGRAM_BUILD_LOG,0,NULL,&Size);
+							else break;
 
-						if(*Error==CL_SUCCESS)
-						{
-							MemC_Temp_Byte_(LogTemp,Size,*Error=CL_OUT_OF_HOST_MEMORY;)
+							if(*Error==CL_SUCCESS)
 							{
-								byte_08 _PL_ Log=LogTemp;
-
-								*Error=clGetProgramBuildInfo(Program,DeviceList[Idx],CL_PROGRAM_BUILD_LOG,Size,Log,NULL);
-								if(*Error==CL_SUCCESS)
+								MemC_Temp_Byte_(LogTemp,Size,*Error=CL_OUT_OF_HOST_MEMORY;)
 								{
-									PenC.Stream.Buffer.T08_(0,Stream,Log,Size);
-									PenC.Stream.Buffer.T08_(0,Stream,(text_08*)IdiomNext,SizeNext);
+									byte_08 _PL_ Log=LogTemp;
+
+									*Error=clGetProgramBuildInfo(Program,DeviceList[Idx],CL_PROGRAM_BUILD_LOG,Size,Log,NULL);
+									if(*Error==CL_SUCCESS)
+									{
+										PenC.Stream.Buffer.T08_(0,Stream,Log,Size);
+										PenC.Stream.Buffer.T08_(0,Stream,(text_08*)IdiomNext,SizeNext);
+									}
+									else;
 								}
-								else;
 							}
+							else break;
 						}
-						else break;
 					}
+					else;
 				}
-				else;
 			}
+			else;
 		}
-		else;
-	}
-	else
-		*Error=CL_INVALID_HOST_PTR;
+		else
+			*Error=CL_INVALID_HOST_PTR;
+	else;
+
+	return;
 }
 
 _OCLC_ cl_kernel OCLC_PM_Kernel_(OCLC_PM _PL_ PM,ADDRESS KSelect)
@@ -491,6 +501,8 @@ _OCLC_ general OCLC_MO_Info_What_(const cl_mem Memory,const cl_mem_info Flag,gen
 	if(*Error==CL_SUCCESS)
 		*Error=clGetMemObjectInfo(Memory,Flag,Size,What,NULL);
 	else;
+
+	return;
 }
 
 _OCLC_ cl_mem OCLC_MO_Create_Buffer_(const cl_context Context,ADDRESS Size,cl_int _PL_ Error)
@@ -519,6 +531,8 @@ _OCLC_ general OCLC_MO_Delete_(cl_mem _PL_ Mem)
 		*Mem=NULL;
 	}
 	else;
+
+	return;
 }
 
 _OCLC_ address OCLC_MO_Size_(const cl_mem Mem,cl_int _PL_ Error)
@@ -672,10 +686,7 @@ _OCLC_ oclc_mp OCLC_MP_Offset_4D_(ADDRESS OfsN,ADDRESS OfsZ,ADDRESS OfsY,ADDRESS
 	return Pin;
 }
 
-_OCLC_ address OCLC_MP_Total_(OCLC_MP _PL_ Pin)
-{
-	return (Pin->N*Pin->Z*Pin->Y*Pin->X);
-}
+_OCLC_ address OCLC_MP_Total_(OCLC_MP _PL_ Pin) { return (Pin->N*Pin->Z*Pin->Y*Pin->X); }
 #endif
 
 #if(Fold_(Part:Platform ID))
@@ -694,6 +705,8 @@ _OCLC_ general OCLC_PI_Info_What_(const cl_platform_id Platform,const cl_platfor
 	if(*Error==CL_SUCCESS)
 		*Error=clGetPlatformInfo(Platform,Flag,Size,What,NULL);
 	else;
+
+	return;
 }
 #endif
 
@@ -713,6 +726,8 @@ _OCLC_ general OCLC_DI_Info_What_(const cl_device_id Device,const cl_device_info
 	if(*Error==CL_SUCCESS)
 		*Error=clGetDeviceInfo(Device,Flag,Size,What,NULL);
 	else;
+
+	return;
 }
 #endif
 
@@ -732,6 +747,8 @@ _OCLC_ general OCLC_CO_Info_What_(const cl_context Context,const cl_context_info
 	if(*Error==CL_SUCCESS)
 		*Error=clGetContextInfo(Context,Flag,Size,What,NULL);
 	else;
+
+	return;
 }
 #endif
 
@@ -751,9 +768,11 @@ _OCLC_ general OCLC_QO_Info_What_(const cl_command_queue Queue,const cl_command_
 	if(*Error==CL_SUCCESS)
 		*Error=clGetCommandQueueInfo(Queue,Flag,Size,What,NULL);
 	else;
+
+	return;
 }
 
-static general _OCLC_QO_Merge_(oclc_mp _PL_ SOfs,oclc_mp _PL_ TOfs,oclc_mp _PL_ Lng,oclc_mp _PL_ SShp,oclc_mp _PL_ TShp)
+static general _OCLC_QO_Merge_(oclc_mp _PL_ _R_ SOfs,oclc_mp _PL_ _R_ TOfs,oclc_mp _PL_ _R_ Lng,oclc_mp _PL_ _R_ SShp,oclc_mp _PL_ _R_ TShp)
 {
 	if(((SOfs->Z)|((Lng->Z)^(SShp->Z)))|((TOfs->Z)|((Lng->Z)^(TShp->Z))));
 	else
@@ -773,8 +792,10 @@ static general _OCLC_QO_Merge_(oclc_mp _PL_ SOfs,oclc_mp _PL_ TOfs,oclc_mp _PL_ 
 		TShp->Z*=TShp->N;
 		TShp->N=1;
 	}
+
+	return;
 }
-static general _OCLC_QO_Pin_Set_(OCLC_MP _PL_ LngPin,OCLC_MP _PL_ OfsPin,address _PL_ Step,address _PL_ Offset,ADDRESS TypeSize)
+static general _OCLC_QO_Pin_Set_(OCLC_MP _PL_ _R_ LngPin,OCLC_MP _PL_ _R_ OfsPin,address _PL_ _R_ Step,address _PL_ _R_ Offset,ADDRESS TypeSize)
 {
 	Step[0]=LngPin->X*TypeSize;
 	Step[1]=LngPin->Y*Step[0];
@@ -782,12 +803,16 @@ static general _OCLC_QO_Pin_Set_(OCLC_MP _PL_ LngPin,OCLC_MP _PL_ OfsPin,address
 	Offset[0]=OfsPin->X*TypeSize;
 	Offset[1]=OfsPin->Y;
 	Offset[2]=(OfsPin->N*LngPin->Z)+OfsPin->Z;
+
+	return;
 }
-static general _OCLC_QO_Pin_Length_(OCLC_MP _PL_ LngPin,address _PL_ Length,ADDRESS TypeSize)
+static general _OCLC_QO_Pin_Length_(OCLC_MP _PL_ _R_ LngPin,address _PL_ _R_ Length,ADDRESS TypeSize)
 {
 	Length[0]=LngPin->X*TypeSize;
 	Length[1]=LngPin->Y;
 	Length[2]=LngPin->Z;
+
+	return;
 }
 static cl_int _OCLC_QO_HtoD_(const cl_command_queue Queue,GENERAL _PL_ SrcMem,OCLC_MP _PL_ SrcOfs,OCLC_MP _PL_ SrcShp,const cl_mem TrgMem,OCLC_MP _PL_ TrgOfs,OCLC_MP _PL_ TrgShp,OCLC_MP _PL_ CpyLng,ADDRESS TypeSize)
 {
@@ -913,9 +938,11 @@ _OCLC_ general OCLC_QO_Copy_(const cl_command_queue Queue,OCLC_CF Mode,OCLC_MH _
 INVALID_VALUE:
 			*Error=CL_INVALID_VALUE;
 	else;
+
+	return;
 }
 
-static oclc_mp _OCLC_QO_Jump_(OCLC_MP _PL_ Shape,ADDRESS TypeSize)
+static oclc_mp _OCLC_QO_Jump_(OCLC_MP _PL_ _R_ Shape,ADDRESS TypeSize)
 {
 	oclc_mp Jump;
 
@@ -926,14 +953,9 @@ static oclc_mp _OCLC_QO_Jump_(OCLC_MP _PL_ Shape,ADDRESS TypeSize)
 
 	return Jump;
 }
-static oclc_mp _OCLC_QO_Skip_(OCLC_MP _PL_ Offset,OCLC_MP _PL_ Jump)
+static oclc_mp _OCLC_QO_Skip_(OCLC_MP _PL_ _R_ Offset,OCLC_MP _PL_ _R_ Jump)
 {
-	oclc_mp Skip;
-
-	Skip.N=Offset->N*Jump->N;
-	Skip.Z=Offset->Z*Jump->Z;
-	Skip.Y=Offset->Y*Jump->Y;
-	Skip.X=Offset->X*Jump->X;
+	OCLC_MP Skip={.N=Offset->N*Jump->N,.Z=Offset->Z*Jump->Z,.Y=Offset->Y*Jump->Y,.X=Offset->X*Jump->X};
 
 	return Skip;
 }
@@ -954,6 +976,8 @@ static general _OCLC_QO_Flat_(oclc_mp _PL_ Ofs,oclc_mp _PL_ Lng,oclc_mp _PL_ Shp
 			Shp->S[Here]*=Shp->S[Prev];
 			Shp->S[Prev]=1;
 		}
+
+	return;
 }
 _OCLC_ general OCLC_QO_Fill_(const cl_command_queue Queue,GENERAL _PL_ Source,OCLC_MH _PL_ Target,OCLC_MP _PL_ SetLng,cl_int _PL_ Error)
 {
@@ -966,13 +990,9 @@ _OCLC_ general OCLC_QO_Fill_(const cl_command_queue Queue,GENERAL _PL_ Source,OC
 		_OCLC_QO_Flat_(&VOfs,&VLng,&VShp);
 
 		if(_OCLC_MP_Invalid_Offset_(&VOfs,&VShp))
-			goto INVALID_VALUE;
-		else if(_OCLC_MP_Invalid_Length_(&VOfs,&VLng,&VShp))
-		{
-INVALID_VALUE:
 			*Error=CL_INVALID_VALUE;
-			return;
-		}
+		else if(_OCLC_MP_Invalid_Length_(&VOfs,&VLng,&VShp))
+			*Error=CL_INVALID_VALUE;
 		else
 		{
 			const cl_mem Memory=Target->Memory;
@@ -990,6 +1010,8 @@ INVALID_VALUE:
 		}
 	}
 	else;
+
+	return;
 }
 
 _OCLC_ general OCLC_QO_Wait_(const cl_command_queue Queue,cl_int _PL_ Error)
@@ -997,6 +1019,8 @@ _OCLC_ general OCLC_QO_Wait_(const cl_command_queue Queue,cl_int _PL_ Error)
 	if(*Error==CL_SUCCESS)
 		*Error=clFinish(Queue);
 	else;
+
+	return;
 }
 #endif
 
@@ -1016,6 +1040,8 @@ _OCLC_ general OCLC_KO_Info_What_(const cl_kernel Kernel,const cl_kernel_info Fl
 	if(*Error==CL_SUCCESS)
 		*Error=clGetKernelInfo(Kernel,Flag,Size,What,NULL);
 	else;
+
+	return;
 }
 
 _OCLC_ general OCLC_KO_G_(const cl_kernel Kernel,const cl_uint Index,const cl_mem Memory,cl_int _PL_ Error)
@@ -1023,18 +1049,24 @@ _OCLC_ general OCLC_KO_G_(const cl_kernel Kernel,const cl_uint Index,const cl_me
 	if(*Error==CL_SUCCESS)
 		*Error=clSetKernelArg(Kernel,Index,sizeof(cl_mem),&Memory);
 	else;
+
+	return;
 }
 _OCLC_ general OCLC_KO_L_(const cl_kernel Kernel,const cl_uint Index,ADDRESS Size,cl_int _PL_ Error)
 {
 	if(*Error==CL_SUCCESS)
 		*Error=clSetKernelArg(Kernel,Index,Size,NULL);
 	else;
+
+	return;
 }
 _OCLC_ general OCLC_KO_P_(const cl_kernel Kernel,const cl_uint Index,GENERAL _PL_ Value,ADDRESS ValueSize,cl_int _PL_ Error)
 {
 	if(*Error==CL_SUCCESS)
 		*Error=clSetKernelArg(Kernel,Index,ValueSize,Value);
 	else;
+
+	return;
 }
 #endif
 
@@ -1051,7 +1083,7 @@ _OCLC_ general OCLC_KO_P_(const cl_kernel Kernel,const cl_uint Index,GENERAL _PL
 #endif
 
 #if(Fold_(Library Casing))
-OCLCASE OCLC=
+OCLC_CL OCLCL=
 {
 	.Version=IdiomVersion,
 	.EM=
@@ -1165,5 +1197,8 @@ OCLCASE OCLC=
 		}
 	}
 };
-OCLCASE *OCLC_(general) { return &OCLC; }
+OCLC_CL *OCLCL_(general) { return &OCLCL; }
+#endif
+#else
+GENERAL *OCLCL_(general) { return NULL; }
 #endif

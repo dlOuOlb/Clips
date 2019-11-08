@@ -3,7 +3,7 @@
 #include <stdarg.h>
 
 #if(Fold_(Definition:Internal Constants))
-static BYTE_08 IdiomVersion[16]="Date:2019.11.04";
+static BYTE_08 IdiomVersion[16]="Date:2019.11.08";
 #endif
 
 #if(Fold_(Definition:BoxClip Structure Functions))
@@ -1164,7 +1164,7 @@ static address _BoxC_KN_Locate_(BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key
 			if(Node->Leaf[0])
 				Node=Node->Leaf[0];
 			else
-				return SIZE_MAX;
+				return MemC.Full.V;
 		else if(Comp>0)
 			if(Node->Leaf[1])
 			{
@@ -1176,7 +1176,7 @@ static address _BoxC_KN_Locate_(BOXC_C_ Comp_,boxc_kn *_R_ Node,GENERAL _PL_ Key
 				Node=Node->Leaf[1];
 			}
 			else
-				return SIZE_MAX;
+				return MemC.Full.V;
 		else
 			return Index;
 	}
@@ -1531,7 +1531,7 @@ _BOXC_ address BoxC_KS_Locate_(BOXC_KS _PL_ _R_ Head,GENERAL _PL_ Key)
 		return _BoxC_KN_Locate_(Head->Comp_,Root[1],Key);
 	}
 	else
-		return SIZE_MAX;
+		return MemC.Full.V;
 }
 
 _BOXC_ logical BoxC_KS_Spread_(boxc_li _PL_ _R_ Li,BOXC_KS _PL_ _R_ KS)
@@ -2095,7 +2095,7 @@ _BOXC_ address BoxC_Sw_Find_(BOXC_SW _PL_ _R_ Switch,GENERAL _PL_ Key,LOGICAL Mo
 		else;
 	else;
 
-	return SIZE_MAX;
+	return MemC.Full.V;
 }
 #endif
 

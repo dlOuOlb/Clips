@@ -94,6 +94,8 @@ ESCAPE:;
 		else
 			*Error=CL_INVALID_HOST_PTR;
 	else;
+
+	return;
 }
 _OCLC_ general OCLC_Func_(OCLC_PM_Load_,TXX)(oclc_pm _PL_ PM,const cl_context Context,BYTE_08 _PL_ Option,TEXT_XX _PL_ _PL_ NameList,cl_int _PL_ Error)
 {
@@ -193,6 +195,8 @@ WRONG:;
 		else
 			*Error=CL_INVALID_HOST_PTR;
 	else;
+
+	return;
 }
 _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ NameList,cl_int _PL_ Error)
 {
@@ -267,6 +271,8 @@ _OCLC_ general OCLC_Func_(OCLC_PM_Save_,TXX)(OCLC_PM _PL_ PM,TEXT_XX _PL_ _PL_ N
 		else
 			*Error=CL_INVALID_HOST_PTR;
 	else;
+
+	return;
 }
 #endif
 

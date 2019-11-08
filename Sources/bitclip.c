@@ -20,7 +20,7 @@ static_assert(((uintptr)(-1))!=(((uintptr)(-1))>>1),"The bit-shift-right operati
 
 #if(Fold_(Definition:Internal Constants))
 static GENERAL _PL_ BitClip=&BitClip;
-_BITC_ BYTE_08 IdiomVersion[16]="Date:2019.11.04";
+_BITC_ BYTE_08 IdiomVersion[16]="Date:2019.11.08";
 
 _BITC_ ADDRESS ConstantMask[16]={~(address)0,~(address)1,~(address)3,~(address)7,~(address)15,~(address)31,~(address)63,~(address)127,(address)0,(address)1,(address)3,(address)7,(address)15,(address)31,(address)63,(address)127};
 _BITC_ INTE_64 Constant64[8]={0x400921FB54442D18,0x3FD45F306DC9C883,0x4005BF0A8B145769,0x3FD78B56362CEF38,0x7FF0000000000000,0xFFF0000000000000,0x7FFFFFFFFFFFFFFF,0xFFFFFFFFFFFFFFFF};
@@ -900,25 +900,25 @@ _BITC_ general BitC_CL_Build_T08_(const cl_context Context,BYTE_08 _PL_ BuildOpt
 {
 	if(Error->E==CLSuccess)
 	{
-		oclc_pm *PM=OCLC.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
+		oclc_pm *PM=OCLCL.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
 
 		if(PM)
 		{
-			OCLC.PM.Build.Source.T08_(PM,Context,BuildOption,&SourcePath,1,Error);
+			OCLCL.PM.Build.Source.T08_(PM,Context,BuildOption,&SourcePath,1,Error);
 			if(Error->E==CLSuccess)
 			{
-				OCLC.PM.Build.Log_(PM,Stream,Error);
+				OCLCL.PM.Build.Log_(PM,Stream,Error);
 				if(Error->E==CLSuccess)
-					OCLC.PM.Build.Save.T08_(PM,BinaryPath,Error);
+					OCLCL.PM.Build.Save.T08_(PM,BinaryPath,Error);
 				else;
 			}
 			else
 			{
 				oclc_ef Local={0};
 
-				OCLC.PM.Build.Log_(PM,Stream,&Local);
+				OCLCL.PM.Build.Log_(PM,Stream,&Local);
 			}
-			OCLC.PM.Delete_(&PM);
+			OCLCL.PM.Delete_(&PM);
 		}
 		else
 			Error->E=CLOutOfHostMemory;
@@ -931,25 +931,25 @@ _BITC_ general BitC_CL_Build_T16_(const cl_context Context,BYTE_08 _PL_ BuildOpt
 {
 	if(Error->E==CLSuccess)
 	{
-		oclc_pm *PM=OCLC.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
+		oclc_pm *PM=OCLCL.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
 
 		if(PM)
 		{
-			OCLC.PM.Build.Source.T16_(PM,Context,BuildOption,&SourcePath,1,Error);
+			OCLCL.PM.Build.Source.T16_(PM,Context,BuildOption,&SourcePath,1,Error);
 			if(Error->E==CLSuccess)
 			{
-				OCLC.PM.Build.Log_(PM,Stream,Error);
+				OCLCL.PM.Build.Log_(PM,Stream,Error);
 				if(Error->E==CLSuccess)
-					OCLC.PM.Build.Save.T16_(PM,BinaryPath,Error);
+					OCLCL.PM.Build.Save.T16_(PM,BinaryPath,Error);
 				else;
 			}
 			else
 			{
 				oclc_ef Local={0};
 
-				OCLC.PM.Build.Log_(PM,Stream,&Local);
+				OCLCL.PM.Build.Log_(PM,Stream,&Local);
 			}
-			OCLC.PM.Delete_(&PM);
+			OCLCL.PM.Delete_(&PM);
 		}
 		else
 			Error->E=CLOutOfHostMemory;
@@ -965,22 +965,22 @@ _BITC_ oclc_pm *BitC_CL_Create_T08_(const cl_context Context,BYTE_08 _PL_ BuildO
 	
 	if(Error->E==CLSuccess)
 	{
-		PM=OCLC.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
+		PM=OCLCL.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
 		if(PM)
 		{
-			OCLC.PM.Build.Binary.T08_(PM,Context,BuildOption,BinaryPath,Error);
+			OCLCL.PM.Build.Binary.T08_(PM,Context,BuildOption,BinaryPath,Error);
 			if(Error->E==CLSuccess)
 			{
-				OCLC.PM.Build.Log_(PM,Stream,Error);
+				OCLCL.PM.Build.Log_(PM,Stream,Error);
 				if(Error->E!=CLSuccess)
-					OCLC.PM.Delete_(&PM);
+					OCLCL.PM.Delete_(&PM);
 				else;
 			}
 			else
 			{
 				oclc_ef Local={0};
 
-				OCLC.PM.Build.Log_(PM,Stream,&Local);
+				OCLCL.PM.Build.Log_(PM,Stream,&Local);
 			}
 		}
 		else
@@ -997,22 +997,22 @@ _BITC_ oclc_pm *BitC_CL_Create_T16_(const cl_context Context,BYTE_08 _PL_ BuildO
 
 	if(Error->E==CLSuccess)
 	{
-		PM=OCLC.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
+		PM=OCLCL.PM.Create_(BitClip,BitCKernelList,BitCKernelNums);
 		if(PM)
 		{
-			OCLC.PM.Build.Binary.T16_(PM,Context,BuildOption,BinaryPath,Error);
+			OCLCL.PM.Build.Binary.T16_(PM,Context,BuildOption,BinaryPath,Error);
 			if(Error->E==CLSuccess)
 			{
-				OCLC.PM.Build.Log_(PM,Stream,Error);
+				OCLCL.PM.Build.Log_(PM,Stream,Error);
 				if(Error->E!=CLSuccess)
-					OCLC.PM.Delete_(&PM);
+					OCLCL.PM.Delete_(&PM);
 				else;
 			}
 			else
 			{
 				oclc_ef Local={0};
 
-				OCLC.PM.Build.Log_(PM,Stream,&Local);
+				OCLCL.PM.Build.Log_(PM,Stream,&Local);
 			}
 		}
 		else
@@ -1075,19 +1075,19 @@ static OCLC_MP *_BitC_CL_Pin_Default_(OCLC_MP _PL_ Pin,OCLC_MP _PL_ Default)
 }
 static cl_uint _BitC_CL_Address_Bits_(const cl_command_queue Queue,oclc_ef _PL_ Error)
 {
-	cl_device_id Device;OCLC_Info_(Queue,Queue,&Device,CL_QUEUE_DEVICE,Error);
-	cl_uint Bits;OCLC_Info_(Device,Device,&Bits,CL_DEVICE_ADDRESS_BITS,Error);
+	cl_device_id Device;OCLCL_Info_(Queue,Queue,&Device,CL_QUEUE_DEVICE,Error);
+	cl_uint Bits;OCLCL_Info_(Device,Device,&Bits,CL_DEVICE_ADDRESS_BITS,Error);
 
 	return Bits;
 }
 static general _BitC_CL_Set_0_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ ADesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
-	OCLC_MP _PL_ AOfs=_BitC_CL_Pin_Default_(ADesc->Start,OCLC.MP.Zero);
+	OCLC_MP _PL_ AOfs=_BitC_CL_Pin_Default_(ADesc->Start,OCLCL.MP.Zero);
 	OCLC_MP _PL_ AShp=_BitC_CL_Pin_Default_(ADesc->Shape,Region);
 
-	if(OCLC.MP.Offset.Invalid_(AOfs,AShp))
+	if(OCLCL.MP.Offset.Invalid_(AOfs,AShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(AOfs,Region,AShp))
+	else if(OCLCL.MP.Length.Invalid_(AOfs,Region,AShp))
 		Error->E=CLInvalidValue;
 	else
 	{
@@ -1095,28 +1095,28 @@ static general _BitC_CL_Set_0_(const cl_command_queue Queue,const cl_kernel Kern
 		ADDRESS PinSize=Bits>>1;
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
-		OCLC.Kernel.Arg.P_(Kernel,1,_BitC_CL_Pin_Cast_(AOfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,2,_BitC_CL_Pin_Cast_(Region,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(AShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,1,_BitC_CL_Pin_Cast_(AOfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,2,_BitC_CL_Pin_Cast_(Region,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(AShp,Buffer,Bits),PinSize,Error);
 	}
 
 	return;
 }
 static general _BitC_CL_Set_1_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
-	OCLC_MP _PL_ AOfs=_BitC_CL_Pin_Default_(ADesc->Start,OCLC.MP.Zero);
-	OCLC_MP _PL_ BOfs=_BitC_CL_Pin_Default_(BDesc->Start,OCLC.MP.Zero);
+	OCLC_MP _PL_ AOfs=_BitC_CL_Pin_Default_(ADesc->Start,OCLCL.MP.Zero);
+	OCLC_MP _PL_ BOfs=_BitC_CL_Pin_Default_(BDesc->Start,OCLCL.MP.Zero);
 	OCLC_MP _PL_ AShp=_BitC_CL_Pin_Default_(ADesc->Shape,Region);
 	OCLC_MP _PL_ BShp=_BitC_CL_Pin_Default_(BDesc->Shape,Region);
 
-	if(OCLC.MP.Offset.Invalid_(AOfs,AShp))
+	if(OCLCL.MP.Offset.Invalid_(AOfs,AShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Offset.Invalid_(BOfs,BShp))
+	else if(OCLCL.MP.Offset.Invalid_(BOfs,BShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(AOfs,Region,AShp))
+	else if(OCLCL.MP.Length.Invalid_(AOfs,Region,AShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(BOfs,Region,BShp))
+	else if(OCLCL.MP.Length.Invalid_(BOfs,Region,BShp))
 		Error->E=CLInvalidValue;
 	else
 	{
@@ -1124,37 +1124,37 @@ static general _BitC_CL_Set_1_(const cl_command_queue Queue,const cl_kernel Kern
 		ADDRESS PinSize=Bits>>1;
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
-		OCLC.Kernel.Arg.G_(Kernel,1,BDesc->Memory,Error);
-		OCLC.Kernel.Arg.P_(Kernel,2,_BitC_CL_Pin_Cast_(AOfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(BOfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,4,_BitC_CL_Pin_Cast_(Region,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,5,_BitC_CL_Pin_Cast_(AShp,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,6,_BitC_CL_Pin_Cast_(BShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,1,BDesc->Memory,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,2,_BitC_CL_Pin_Cast_(AOfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(BOfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,4,_BitC_CL_Pin_Cast_(Region,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,5,_BitC_CL_Pin_Cast_(AShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,6,_BitC_CL_Pin_Cast_(BShp,Buffer,Bits),PinSize,Error);
 	}
 
 	return;
 }
 static general _BitC_CL_Set_2_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ ADesc,OCLC_MH _PL_ BDesc,OCLC_MH _PL_ CDesc,OCLC_MP _PL_ Region,oclc_ef _PL_ Error)
 {
-	OCLC_MP _PL_ AOfs=_BitC_CL_Pin_Default_(ADesc->Start,OCLC.MP.Zero);
-	OCLC_MP _PL_ BOfs=_BitC_CL_Pin_Default_(BDesc->Start,OCLC.MP.Zero);
-	OCLC_MP _PL_ COfs=_BitC_CL_Pin_Default_(CDesc->Start,OCLC.MP.Zero);
+	OCLC_MP _PL_ AOfs=_BitC_CL_Pin_Default_(ADesc->Start,OCLCL.MP.Zero);
+	OCLC_MP _PL_ BOfs=_BitC_CL_Pin_Default_(BDesc->Start,OCLCL.MP.Zero);
+	OCLC_MP _PL_ COfs=_BitC_CL_Pin_Default_(CDesc->Start,OCLCL.MP.Zero);
 	OCLC_MP _PL_ AShp=_BitC_CL_Pin_Default_(ADesc->Shape,Region);
 	OCLC_MP _PL_ BShp=_BitC_CL_Pin_Default_(BDesc->Shape,Region);
 	OCLC_MP _PL_ CShp=_BitC_CL_Pin_Default_(CDesc->Shape,Region);
 
-	if(OCLC.MP.Offset.Invalid_(AOfs,AShp))
+	if(OCLCL.MP.Offset.Invalid_(AOfs,AShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Offset.Invalid_(BOfs,BShp))
+	else if(OCLCL.MP.Offset.Invalid_(BOfs,BShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Offset.Invalid_(COfs,CShp))
+	else if(OCLCL.MP.Offset.Invalid_(COfs,CShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(AOfs,Region,AShp))
+	else if(OCLCL.MP.Length.Invalid_(AOfs,Region,AShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(BOfs,Region,BShp))
+	else if(OCLCL.MP.Length.Invalid_(BOfs,Region,BShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(COfs,Region,CShp))
+	else if(OCLCL.MP.Length.Invalid_(COfs,Region,CShp))
 		Error->E=CLInvalidValue;
 	else
 	{
@@ -1162,16 +1162,16 @@ static general _BitC_CL_Set_2_(const cl_command_queue Queue,const cl_kernel Kern
 		ADDRESS PinSize=Bits>>1;
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
-		OCLC.Kernel.Arg.G_(Kernel,1,BDesc->Memory,Error);
-		OCLC.Kernel.Arg.G_(Kernel,2,CDesc->Memory,Error);
-		OCLC.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(AOfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,4,_BitC_CL_Pin_Cast_(BOfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,5,_BitC_CL_Pin_Cast_(COfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,6,_BitC_CL_Pin_Cast_(Region,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,7,_BitC_CL_Pin_Cast_(AShp,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,8,_BitC_CL_Pin_Cast_(BShp,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,9,_BitC_CL_Pin_Cast_(CShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,0,ADesc->Memory,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,1,BDesc->Memory,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,2,CDesc->Memory,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(AOfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,4,_BitC_CL_Pin_Cast_(BOfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,5,_BitC_CL_Pin_Cast_(COfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,6,_BitC_CL_Pin_Cast_(Region,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,7,_BitC_CL_Pin_Cast_(AShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,8,_BitC_CL_Pin_Cast_(BShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,9,_BitC_CL_Pin_Cast_(CShp,Buffer,Bits),PinSize,Error);
 	}
 
 	return;
@@ -1209,7 +1209,7 @@ _BITC_ general BitC_CL_Endian_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 				{
 					_BitC_CL_Set_0_(Queue,Kernel,Desc,Region,Error);
 					if(Error->E==CLSuccess)
-						Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+						Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 					else;
 				}
 				else;
@@ -1239,7 +1239,7 @@ _BITC_ general BitC_CL_Caster_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 				else if(OIdx==BitCTypeUnknown)
 					Error->E=CLInvalidValue;
 				else if(IIdx==OIdx)
-					OCLC.Queue.Copy_(Queue,OCLCopyDtoD,IDesc,ODesc,Region,Error);
+					OCLCL.Queue.Copy_(Queue,OCLCopyDtoD,IDesc,ODesc,Region,Error);
 				else
 				{
 					BITC_TE TIdx=OIdx-BitCTypeInte_08;
@@ -1247,7 +1247,7 @@ _BITC_ general BitC_CL_Caster_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 
 					_BitC_CL_Set_1_(Queue,Kernel,IDesc,ODesc,Region,Error);
 					if(Error->E==CLSuccess)
-						Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+						Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 					else;
 				}
 			}
@@ -1291,7 +1291,7 @@ _BITC_ general BitC_CL_BO_N_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1333,9 +1333,9 @@ _BITC_ general BitC_CL_BO_S_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						}
 
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,&Shift,sizeof(integer),Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,&Shift,sizeof(integer),Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 				}
@@ -1361,9 +1361,9 @@ _BITC_ general BitC_CL_BO_A_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1393,7 +1393,7 @@ _BITC_ general BitC_CL_BO_A_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 							else;
 						}
 						else
@@ -1423,9 +1423,9 @@ _BITC_ general BitC_CL_BO_O_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1455,7 +1455,7 @@ _BITC_ general BitC_CL_BO_O_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 							else;
 						}
 						else
@@ -1485,9 +1485,9 @@ _BITC_ general BitC_CL_BO_X_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,Mask,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1517,7 +1517,7 @@ _BITC_ general BitC_CL_BO_X_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 							else;
 						}
 						else
@@ -1562,9 +1562,9 @@ _BITC_ general BitC_CL_RO_E_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1594,7 +1594,7 @@ _BITC_ general BitC_CL_RO_E_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 							else;
 						}
 						else
@@ -1624,9 +1624,9 @@ _BITC_ general BitC_CL_RO_N_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1656,7 +1656,7 @@ _BITC_ general BitC_CL_RO_N_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 							else;
 						}
 						else
@@ -1686,9 +1686,9 @@ _BITC_ general BitC_CL_RO_G_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1718,7 +1718,7 @@ _BITC_ general BitC_CL_RO_G_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 							else;
 						}
 						else
@@ -1748,9 +1748,9 @@ _BITC_ general BitC_CL_RO_L_1_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 					if(Kernel)
 					{
 						_BitC_CL_Set_1_(Queue,Kernel,CDesc,ADesc,Region,Error);
-						OCLC.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
+						OCLCL.Kernel.Arg.P_(Kernel,7,Value,CDesc->Type->SizeType,Error);
 						if(Error->E==CLSuccess)
-							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+							Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 						else;
 					}
 					else
@@ -1780,7 +1780,7 @@ _BITC_ general BitC_CL_RO_L_2_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Set_2_(Queue,Kernel,CDesc,ADesc,BDesc,Region,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(Region));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(Region));
 							else;
 						}
 						else
@@ -1813,18 +1813,18 @@ static OCLC_MP *_BitC_CL_Reform_Region_(OCLC_MP _PL_ _R_ SRegion,oclc_mp _PL_ _R
 static general _BitC_CL_Reform_Set_(const cl_command_queue Queue,const cl_kernel Kernel,OCLC_MH _PL_ SDesc,OCLC_MH _PL_ TDesc,OCLC_MP _PL_ SRegion,OCLC_MP _PL_ StoTAxis,oclc_ef _PL_ Error)
 {
 	oclc_mp TRegion;
-	OCLC_MP _PL_ SOfs=_BitC_CL_Pin_Default_(SDesc->Start,OCLC.MP.Zero);
-	OCLC_MP _PL_ TOfs=_BitC_CL_Pin_Default_(TDesc->Start,OCLC.MP.Zero);
+	OCLC_MP _PL_ SOfs=_BitC_CL_Pin_Default_(SDesc->Start,OCLCL.MP.Zero);
+	OCLC_MP _PL_ TOfs=_BitC_CL_Pin_Default_(TDesc->Start,OCLCL.MP.Zero);
 	OCLC_MP _PL_ SShp=_BitC_CL_Pin_Default_(SDesc->Shape,SRegion);
 	OCLC_MP _PL_ TShp=_BitC_CL_Pin_Default_(TDesc->Shape,_BitC_CL_Reform_Region_(SRegion,&TRegion,StoTAxis));
 
-	if(OCLC.MP.Offset.Invalid_(SOfs,SShp))
+	if(OCLCL.MP.Offset.Invalid_(SOfs,SShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Offset.Invalid_(TOfs,TShp))
+	else if(OCLCL.MP.Offset.Invalid_(TOfs,TShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(SOfs,SRegion,SShp))
+	else if(OCLCL.MP.Length.Invalid_(SOfs,SRegion,SShp))
 		Error->E=CLInvalidValue;
-	else if(OCLC.MP.Length.Invalid_(TOfs,&TRegion,TShp))
+	else if(OCLCL.MP.Length.Invalid_(TOfs,&TRegion,TShp))
 		Error->E=CLInvalidValue;
 	else
 	{
@@ -1832,14 +1832,14 @@ static general _BitC_CL_Reform_Set_(const cl_command_queue Queue,const cl_kernel
 		ADDRESS PinSize=Bits>>1;
 		data_64 Buffer[OCLCPinAxes];
 
-		OCLC.Kernel.Arg.G_(Kernel,0,SDesc->Memory,Error);
-		OCLC.Kernel.Arg.G_(Kernel,1,TDesc->Memory,Error);
-		OCLC.Kernel.Arg.P_(Kernel,2,_BitC_CL_Pin_Cast_(SOfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(TOfs,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,4,_BitC_CL_Pin_Cast_(&TRegion,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,5,_BitC_CL_Pin_Cast_(SShp,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,6,_BitC_CL_Pin_Cast_(TShp,Buffer,Bits),PinSize,Error);
-		OCLC.Kernel.Arg.P_(Kernel,7,_BitC_CL_Pin_Cast_(StoTAxis,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,0,SDesc->Memory,Error);
+		OCLCL.Kernel.Arg.G_(Kernel,1,TDesc->Memory,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,2,_BitC_CL_Pin_Cast_(SOfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,3,_BitC_CL_Pin_Cast_(TOfs,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,4,_BitC_CL_Pin_Cast_(&TRegion,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,5,_BitC_CL_Pin_Cast_(SShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,6,_BitC_CL_Pin_Cast_(TShp,Buffer,Bits),PinSize,Error);
+		OCLCL.Kernel.Arg.P_(Kernel,7,_BitC_CL_Pin_Cast_(StoTAxis,Buffer,Bits),PinSize,Error);
 	}
 
 	return;
@@ -1858,7 +1858,7 @@ _BITC_ general BitC_CL_Reform_(OCLC_PM _PL_ PM,const cl_command_queue Queue,OCLC
 						{
 							_BitC_CL_Reform_Set_(Queue,Kernel,SDesc,TDesc,SRegion,StoTAxis,Error);
 							if(Error->E==CLSuccess)
-								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLC.MP.Total_(SRegion));
+								Error->I=_BitC_CL_Enqueue_(Queue,Kernel,OCLCL.MP.Total_(SRegion));
 							else;
 						}
 						else
@@ -2302,5 +2302,7 @@ BITC_CL BitCL=
 	}
 };
 BITC_CL *BitCL_(general) { return &BitCL; }
+#else
+GENERAL *BitCL_(general) { return NULL; }
 #endif
 #endif

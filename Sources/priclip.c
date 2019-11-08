@@ -15,7 +15,7 @@
 #endif
 
 #if(Fold_(Definition:Internal Constants))
-_PRIC_ BYTE_08 IdiomVersion[16]="2019.11.04";
+_PRIC_ BYTE_08 IdiomVersion[16]="2019.11.08";
 static const struct { DATA_32 Break[64];DATA_08 Count[256]; }
 Cheat=
 {

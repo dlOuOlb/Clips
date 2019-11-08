@@ -4,7 +4,7 @@
 #include <math.h>
 
 #if(Fold_(Static Assertions))
-static_assert(((UINT32_MAX)/UINT32_C(1000))>(CLOCKS_PER_SEC),"UINT32_MAX < 1000*CLOCKS_PER_SEC");
+static_assert(((UINT32_MAX)/(UINT32_C(1000)))>(CLOCKS_PER_SEC),"UINT32_MAX < 1000*CLOCKS_PER_SEC");
 static_assert(sizeof(timc_tt)==sizeof(data_32),"sizeof(timc_tt) != sizeof(data_32)");
 #endif
 
@@ -17,7 +17,7 @@ static_assert(sizeof(timc_tt)==sizeof(data_32),"sizeof(timc_tt) != sizeof(data_3
 
 #define _TIMC_ static
 
-_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.04";
+_TIMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.08";
 _TIMC_ REAL_32 ConstClocks[2]={[0]=(real_32)(CLOCKS_PER_SEC),[1]=1.0F/((real_32)(CLOCKS_PER_SEC))};
 #endif
 
