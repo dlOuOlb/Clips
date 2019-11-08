@@ -1,5 +1,6 @@
 ﻿#include <linclip.h>
 #include <timclip.h>
+
 #include <stdbool.h>
 
 static general _Naive_Rand_(inte_32 *_R_,ADDRESS);
