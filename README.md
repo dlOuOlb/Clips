@@ -56,11 +56,11 @@ _MemC_Default_
 ### Mean/StdDev Calculation Example
 
 ```c
-#include <penclip.h>
 #include <linclip.h>
 #include <timclip.h>
 
 _MemC_Default_
+
 integer main(general)
 {
     TimC_RG_Auto_(RandGen,1,(data_64)time(NULL));
