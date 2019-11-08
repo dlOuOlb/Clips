@@ -2,9 +2,11 @@
 EXPORTS
 	MemC_
 	PenC_
-	OCLC_
+	OCLCL_
 	BitC_
+	BitCL_
 	LinC_
+	LinCL_
 	BoxC_
 	TimC_
 	PriC_
