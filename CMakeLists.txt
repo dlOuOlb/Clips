@@ -63,12 +63,10 @@ target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # OCLClip
-if(FLAG_CL)
-	set(NAME oclclip)
-	add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/oclcrux.c)
-	target_include_directories(${NAME} PUBLIC ${DIR_INC})
-	target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
-endif()
+set(NAME oclclip)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/oclcrux.c)
+target_include_directories(${NAME} PUBLIC ${DIR_INC})
+target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # BitClip
 set(NAME bitclip)
