@@ -45,42 +45,53 @@ cd build
 #define I_USE_STATIC_CHUNKS 1024
 
 #if(I_USE_STATIC_CHUNKS)
-MemC_ML_Static_(MyMemoryLender,I_USE_STATIC_CHUNKS);
-static general *_MemC_Alloc_(ADDRESS Size) { return MemC.ML.Borrow_(MyMemoryLender,Size); }
-static general _MemC_Free_(general _PL_ Memory) { MemC.ML.Return_(Memory);return; }
+extern general *uMemC_Malloc_(ADDRESS Size)
+{
+	MemC_ML_Static_(MyMemoryLender,I_USE_STATIC_CHUNKS);
+	return MemC.ML.Borrow_(MyMemoryLender,Size);
+}
+extern general uMemC_Free_(general _PL_ Memory)
+{
+	MemC.ML.Return_(Memory);
+	return;
+}
 #else
-_MemC_Default_
+MemC_Default_;
 #endif
 ```
 
 ### Mean/StdDev Calculation Example
 
 ```c
-#include <linclip.h>
+#define __STDC_WANT_LIB_EXT1__ (1)
 #include <timclip.h>
+#include <linclip.h>
 
-_MemC_Default_
+#include <math.h>
 
-integer main(general)
+MemC_Default_;
+
+extern integer main(general)
 {
-    TimC_RG_Auto_(RandGen,1,(data_64)time(NULL));
-    real_32 Array[1024];
-    ADDRESS Length=sizeof(Array)/sizeof(*Array);
-    REAL_32 Averager=1.0F/((real_32)(Length));
-    real_32 Mean,StdDev;
+	TimC_RG_Auto_(RandGen,1,(data_64)time(NULL));
+	real_32 Array[1024];
+	ADDRESS Length=sizeof(Array)/sizeof(*Array);
+	REAL_32 Averager=1.0F/((real_32)(Length));
+	real_32 Mean,StdDev;
 
-    PenC_Stream_Format_T08_(0,stdout,"Ideal Mean : ");
-    PenC_Stream_Format_T08_(1,stdin,"%f",&Mean);
-    PenC_Stream_Format_T08_(0,stdout,"Ideal Standard Deviation : ");
-    PenC_Stream_Format_T08_(1,stdin,"%f",&StdDev);
+	PenC_Stream_Format_T08_(O,stdout,"Ideal Mean : ");
+	PenC_Stream_Format_T08_(I,stdin,"%f",&Mean);
+	PenC_Stream_Format_T08_(O,stdout,"Ideal Standard Deviation : ");
+	PenC_Stream_Format_T08_(I,stdin,"%f",&StdDev);
 
-    TimC.RG.Gau.R32_(RandGen,0,Array,Length,Mean,StdDev);
-    Mean=Averager*LinC.Sum_1.R32_(Array,Length);
-    StdDev=Averager*LinC.Dot_2.R32_(Array,Array,Length)-Mean*Mean;
+	TimC.RG.Gau.R32_(RandGen,0,Array,Length,Mean,StdDev);
+	Mean=Averager*LinC.Sum_1.R32_(Array,Length);
+	StdDev=Averager*LinC.Dot_2.R32_(Array,Array,Length)-Mean*Mean;
+	StdDev=sqrtf(StdDev);
 
-    PenC_Stream_Format_T08_(0,stdout,"Actual Mean : %f \n",Mean);
-    PenC_Stream_Format_T08_(0,stdout,"Actual Standard Deviation : %f \n",StdDev);
+	PenC_Stream_Format_T08_(O,stdout,"Actual Mean : %f \n",Mean);
+	PenC_Stream_Format_T08_(O,stdout,"Actual Standard Deviation : %f \n",StdDev);
 
-    return 0;
+	return 0;
 }
 ```

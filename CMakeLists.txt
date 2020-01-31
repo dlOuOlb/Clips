@@ -16,6 +16,12 @@ if(DEFINED CL_ENV)
 		set(DIR_INC $ENV{${CL_ENV}}/${CL_INC})
 		set(DIR_OCL $ENV{${CL_ENV}}/${CL_LIB})
 
+		string(REPLACE "\\" "/" DIR_INC "${DIR_INC}")
+		string(REPLACE "\\" "/" DIR_OCL "${DIR_OCL}")
+
+		string(REPLACE "//" "/" DIR_INC "${DIR_INC}")
+		string(REPLACE "//" "/" DIR_OCL "${DIR_OCL}")
+
 		message("OpenCL Include Path:")
 		message(${DIR_INC})
 		message("OpenCL Library Path:")
@@ -33,7 +39,7 @@ unset(CL_INC CACHE)
 unset(CL_LIB CACHE)
 
 if(FLAG_CL)
-	add_definitions(-D_USE_OCLCLIP)
+	add_definitions(-DuOCLCLIP_USE_)
 endif()
 
 # Settings
@@ -64,19 +70,19 @@ target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # OCLClip
 set(NAME oclclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/oclcrux.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # BitClip
 set(NAME bitclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/bitcros.c ${DIR_SRC}/bitcrux.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # LinClip
 set(NAME linclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/lincros.c ${DIR_SRC}/lincrux.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
@@ -94,7 +100,7 @@ target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 
 # PriClip
 set(NAME priclip)
-add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c ${DIR_SRC}/pricrux.c)
+add_library(${NAME} STATIC ${DIR_SRC}/${NAME}.c)
 target_include_directories(${NAME} PUBLIC ${DIR_INC})
 target_compile_options(${NAME} PUBLIC ${OPT_COMPILE})
 

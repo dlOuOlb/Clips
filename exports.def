@@ -1,12 +1,31 @@
 ﻿LIBRARY clips.dll
 EXPORTS
 	MemC_
+	MemC DATA
+
 	PenC_
+	PenC DATA
+
+	OCLC_
+	OCLC DATA
 	OCLCL_
+	OCLCL DATA
+
 	BitC_
+	BitC DATA
 	BitCL_
+	BitCL DATA
+
 	LinC_
+	LinC DATA
 	LinCL_
+	LinCL DATA
+
 	BoxC_
+	BoxC DATA
+
 	TimC_
+	TimC DATA
+
 	PriC_
+	PriC DATA
