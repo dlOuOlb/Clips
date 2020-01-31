@@ -3,8 +3,8 @@
 /*------------------------------------------------------------------+
 |	MSVClip is a workaround to avoid wicked MSVC issues.			|
 |											16.3.6					|
-|	Written by Ranny Clover								Date		|
-|	http://github.com/dlOuOlb/Clips/					2020.01.31	|
+|	Written by Ranny Clover											|
+|	http://github.com/dlOuOlb/Clips/blob/master/Headers/msvclip.h	|
 |------------------------------------------------------------------*/
 
 #ifdef _MSC_BUILD
