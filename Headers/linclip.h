@@ -1,76 +1,50 @@
-﻿/*------------------------------------------------------------------*/
-/*	LinClip provides some elementary arithmetic operations.			*/
-/*																	*/
-/*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.08	*/
-/*------------------------------------------------------------------*/
-/*	Dependency:														*/
-/*																	*/
-/*	MSVClip -- MemClip -- PenClip -- OCLClip -- BitClip -- LinClip	*/
-/*------------------------------------------------------------------*/
-/*	Non-Prefixed Macros (Host):										*/
-/*																	*/
-/*	_INC_LINCLIP													*/
-/*------------------------------------------------------------------*/
-/*	Non-Prefixed Macros (Device):									*/
-/*																	*/
-/*	_INC_LINCLIP													*/
-/*------------------------------------------------------------------*/
-/*	Note:															*/
-/*																	*/
-/*	Run "LinC_Okay_Wrap_();" in debug mode to check if the casted	*/
-/*	function pointers work correctly between integer and natural.	*/
-/*------------------------------------------------------------------*/
-
-#ifndef _INC_LINCLIP
-#define _INC_LINCLIP
+﻿#ifndef oLINCLIP_INC_
+#define oLINCLIP_INC_ "LinC:2020.01.31"
+/*------------------------------------------------------------------+
+|	LinClip provides some elementary arithmetic operations.			|
+|																	|
+|	Written by Ranny Clover											|
+|	http://github.com/dlOuOlb/Clips/blob/master/Headers/linclip.h	|
++-------------------------------------------------------------------+
+|	Dependency:														|
+|																	|
+|	MSVClip -- MemClip -- PenClip -- OCLClip -- BitClip -- LinClip	|
++-------------------------------------------------------------------+
+|	Note:															|
+|																	|
+|	Run "LinC.Okay.Wrap_();" to check whether the casted function	|
+|	pointers work normally from inte_## types into data_## types.	|
++------------------------------------------------------------------*/
 
 #include <bitclip.h>
 
 #ifdef __OPENCL_VERSION__
 #else
 
-#if(Fold_(Definition:Macros))
-#define LinC_Okay_Wrap_() assert((LinC.Just.D08_(UINT8_MAX)==(UINT8_MAX))&&(LinC.Just.D16_(UINT16_MAX)==(UINT16_MAX))&&(LinC.Just.D32_(UINT32_MAX)==(UINT32_MAX))&&(LinC.Just.D64_(UINT64_MAX)==(UINT64_MAX)))
-#endif
-
 #if(Fold_(Library Casing))
 //LinClip : Library Case Structure
-struct _lincase
+typedef const struct
 {
-	//LinClip : Library Version
-	BYTE_08 _PL_ Version;
+	const struct
+	{
+		//LinClip : Library Version - "LinC:yyyy.mm.dd"
+		BYTE_08 _PL_ _R_ Version;
+
+		//LinClip : Okay Function Set
+		//＊Return value is 1 for success, 0 for failure.
+		const struct
+		{
+			//LinClip : Check whether the casted functions work correctly for this library.
+			logical(_PL_ Wrap_)(general);
+		}
+		Okay;
+
+		//LinClip : Preserved for Future Usage
+		ADDRESS xPreserved[2];
+	};
 
 	const struct
 	{
-		//LinClip : Just Functions
-		const union
-		{
-			const struct
-			{
-				//LinClip : Just return the 8-bit integer.
-				inte_08(_PL_ I08_)(INTE_08);
-				//LinClip : Just return the 16-bit integer.
-				inte_16(_PL_ I16_)(INTE_16);
-				//LinClip : Just return the 32-bit integer.
-				inte_32(_PL_ I32_)(INTE_32);
-				//LinClip : Just return the 64-bit integer.
-				inte_64(_PL_ I64_)(INTE_64);
-			};
-			const struct
-			{
-				//LinClip : Just return the 8-bit natural.
-				data_08(_PL_ D08_)(DATA_08);
-				//LinClip : Just return the 16-bit natural.
-				data_16(_PL_ D16_)(DATA_16);
-				//LinClip : Just return the 32-bit natural.
-				data_32(_PL_ D32_)(DATA_32);
-				//LinClip : Just return the 64-bit natural.
-				data_64(_PL_ D64_)(DATA_64);
-			};
-		}
-		Just;
-
 		//LinClip : Arithmetic Progression Functions
 		const struct
 		{
@@ -847,125 +821,121 @@ struct _lincase
 		}
 		Map_1;
 	};
-};
-MemC_Type_Declare_(struct,lincase,LINCASE);	//LinClip : Library Case Structure
+}
+LINCASE;
 
 //LinClip : Library Case Object
-extern LINCASE LinC;
-//LinClip : Indirect access to the library case object.
-extern LINCASE *LinC_(general);
+extern LINCASE LinC,*LinC_(general);
 
 #ifdef __OPENCL_H
 //LinClip : OpenCL Extension Structure
-struct _linc_cl
+typedef const struct
 {
 	//LinClip : Program Build Functions
+	//＊The number of binary paths must be same as the number of devices associated with the context.
+	//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D uBitC_R16_=0 -D uBitC_R64_=1"
 	const struct
 	{
-		//LinClip : Program Build into Binary Files with 8-bit String Path
-		//＊The number of binary paths must be same as the number of devices associated with the context.
-		//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-		//　(SourcePath) Example : "../../Kernels/linclip.cl"
+		//LinClip : Build a program as binary files with narrow string paths.
+		//＊(SourcePath) Example : "../../Kernels/linclip.cl"
 		//　(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-		general(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ SourcePath,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-		//LinClip : Program Build into Binary Files with 16-bit String Path
-		//＊The number of binary paths must be same as the number of devices associated with the context.
-		//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D _BitC_R16_=0 -D _BitC_R64_=1"
-		//　(SourcePath) Example : "../../Kernels/linclip.cl"
-		//　(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-		general(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ SourcePath,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+		general(_PL_ T08_)(const cl_context Context,TEXT_08 _PL_ _R_ BuildOption,TEXT_08 _PL_ _R_ SourcePath,TEXT_08 _PL_ _PL_ _R_ BinaryPath,FILE _PL_ _R_ LogStream,oclc_ef _PL_ _R_ Error);
+		//LinClip : Build a program as binary files with wide string paths.
+		//＊(SourcePath) Example : L"../../Kernels/linclip.cl"
+		//　(BinaryPath) Example : { L"../../Device 1/linclip.obj", L"../../Device 2/linclip.obj", ... }
+		general(_PL_ T16_)(const cl_context Context,TEXT_08 _PL_ _R_ BuildOption,TEXT_16 _PL_ _R_ SourcePath,TEXT_16 _PL_ _PL_ _R_ BinaryPath,FILE _PL_ _R_ LogStream,oclc_ef _PL_ _R_ Error);
 	}
-	Ready;
+	Build;
 
 	//LinClip : Program Creation Functions
+	//＊The number of binary paths must be same as the number of devices associated with the context.
+	//＊(BuildOption) Example : "-I ../../Headers -I ../../Sources -D uBitC_R16_=0 -D uBitC_R64_=1"
+	//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
 	const struct
 	{
-		//LinClip : Program Manager Creation with 8-bit String Path - Delete with "OCLCL.PM.Delete_"
-		//＊The number of binary paths must be same as the number of devices associated with the context.
+		//LinClip : Load a program from binary files with narrow string paths.
 		//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-		oclc_pm*(_PL_ T08_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_08 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
-		//LinClip : Program Manager Creation with 16-bit String Path - Delete with "OCLCL.PM.Delete_"
-		//＊The number of binary paths must be same as the number of devices associated with the context.
-		//＊(BinaryPath) Example : { "../../Device 1/linclip.obj", "../../Device 2/linclip.obj", ... }
-		oclc_pm*(_PL_ T16_)(const cl_context Context,BYTE_08 _PL_ BuildOption,TEXT_16 _PL_ _PL_ BinaryPath,FILE _PL_ LogStream,oclc_ef _PL_ Error);
+		oclc_pm*(_PL_ T08_)(const cl_context Context,TEXT_08 _PL_ _R_ BuildOption,TEXT_08 _PL_ _PL_ _R_ BinaryPath,FILE _PL_ _R_ LogStream,oclc_ef _PL_ _R_ Error);
+		//LinClip : Load a program from binary files with wide string paths.
+		//＊(BinaryPath) Example : { L"../../Device 1/linclip.obj", L"../../Device 2/linclip.obj", ... }
+		oclc_pm*(_PL_ T16_)(const cl_context Context,TEXT_08 _PL_ _R_ BuildOption,TEXT_16 _PL_ _PL_ _R_ BinaryPath,FILE _PL_ _R_ LogStream,oclc_ef _PL_ _R_ Error);
 	}
 	Create;
+
+	//LinClip : Preserved for Future Usage
+	ADDRESS xPreserved[2];
 
 	const struct
 	{
 		//LinClip : Increment
 		//＊C and A's types should be same and one of BitC.Type.
 		//＊Required (Value) size is the type size of those to be calculated.
-		general(_PL_ Inc_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+		general(_PL_ Inc_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Amplification
 		//＊C and A's types should be same and one of BitC.Type.
 		//＊Required (Value) size is the type size of those to be calculated.
-		general(_PL_ Amp_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+		general(_PL_ Amp_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Addition
 		//＊C, A, and B's types should be same and one of BitC.Type.
-		general(_PL_ Add_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+		general(_PL_ Add_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Subtraction
 		//＊C, A, and B's types should be same and one of BitC.Type.
-		general(_PL_ Sub_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+		general(_PL_ Sub_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Multiplication
 		//＊C, A, and B's types should be same and one of BitC.Type.
-		general(_PL_ Mul_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+		general(_PL_ Mul_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Division
 		//＊C and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
 		//＊Required (Value) size is the type size of those to be calculated.
-		general(_PL_ Div_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+		general(_PL_ Div_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Inverse
 		//＊C and A's types should be same and one of BitC.Type.
 		//＊Required (Value) size is the type size of those to be calculated.
-		general(_PL_ Inv_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+		general(_PL_ Inv_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Division
 		//＊C, A, and B's types should be same and one of BitC.Type.
-		general(_PL_ Div_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ Error);
+		general(_PL_ Div_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Modulo
 		//＊C and A's types should be same and one of BitC.Type.D## or BitC.Type.I##.
 		//＊Required (Value) size is the type size of those to be calculated.
-		general(_PL_ Mod_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ Error);
+		general(_PL_ Mod_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,GENERAL _PL_ Value,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Summation
 		//＊C and A's types should be same and one of BitC.Type.
-		general(_PL_ Sum_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+		general(_PL_ Sum_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Dot Product
 		//＊C, A, and B's types should be same and one of BitC.Type.
-		general(_PL_ Dot_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+		general(_PL_ Dot_2_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutA,OCLC_MH _PL_ AboutB,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Maximum
 		//＊I's type size×8 should be same as the device's address bits.
 		//＊A's type should be one of BitC.Type.
-		general(_PL_ Max_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+		general(_PL_ Max_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Minimum
 		//＊I's type size×8 should be same as the device's address bits.
 		//　A's type should be one of BitC.Type.
-		general(_PL_ Min_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+		general(_PL_ Min_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ _R_ Error);
 
 		//LinClip : Mapping
 		//＊I's type size×8 should be same as the device's address bits.
 		//　C and A's type sizes should be same.
-		general(_PL_ Map_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ Error);
+		general(_PL_ Map_1_)(OCLC_PM _PL_,const cl_command_queue Queue,OCLC_MH _PL_ AboutC,OCLC_MH _PL_ AboutI,OCLC_MH _PL_ AboutA,OCLC_MP _PL_ AboutN,OCLC_PA Axis,oclc_ef _PL_ _R_ Error);
 	};
-};
-MemC_Type_Declare_(struct,linc_cl,LINC_CL);	//LinClip : OpenCL Extension Structure
+}
+LINC_CL;
 
 //LinClip : OpenCL Extension Object
-extern LINC_CL LinCL;
-//LinClip : Indirect access to the OpenCL extension object.
-//＊If the library is not built with OpenCL settings,
-//　then the return address will be just NULL.
-extern LINC_CL *LinCL_(general);
+extern LINC_CL LinCL,*LinCL_(general);
 #else
 //LinClip : Indirect access to the OpenCL extension object.
 //＊If the library is not built with OpenCL settings,

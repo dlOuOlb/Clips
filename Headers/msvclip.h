@@ -1,24 +1,19 @@
-﻿/*------------------------------------------------------------------*/
-/*	MSVClip is a workaround to avoid wicked MSVC issues.			*/
-/*											16.3.6					*/
-/*	Written by Ranny Clover								Date		*/
-/*	http://github.com/dlOuOlb/Clips/					2019.11.01	*/
-/*------------------------------------------------------------------*/
-
-#ifndef _INC_MSVCLIP
-#define _INC_MSVCLIP
+﻿#ifndef oMSVCLIP_INC_
+#define oMSVCLIP_INC_ "MSVC:2020.01.31"
+/*------------------------------------------------------------------+
+|	MSVClip is a workaround to avoid wicked MSVC issues.			|
+|											16.3.6					|
+|	Written by Ranny Clover								Date		|
+|	http://github.com/dlOuOlb/Clips/					2020.01.31	|
+|------------------------------------------------------------------*/
 
 #ifdef _MSC_BUILD
 
-#define _MSVC_Meta_(X) #X
-#define MSVC_Meta_(X) _MSVC_Meta_(X)
-#pragma message("MSVC " MSVC_Meta_(_MSC_FULL_VER))
-#pragma message("Build on " __TIMESTAMP__)
-#undef MSVC_Meta_
-#undef _MSVC_Meta_
-
 #define restrict __restrict
 /* 'restrict' is a standard C keyword... since C99! */
+
+#define _Static_assert(expression,message) static_assert(expression,message)
+/* '_Static_assert' is a standard C keyword... since C11! */
 
 #pragma warning(disable:4001)
 /* C4001 : nonstandard extension 'single line comment' was used
