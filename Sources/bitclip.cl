@@ -1,10 +1,7 @@
 ﻿#include "bitclip.h"
-
-#if(Fold_(Definition:BitCrux Macros))
 #include "bitcros.c"
-#endif
 
-#if(Fold_(Definition:Endian Functions))
+#if(Fold_(Endian Functions))
 _K_ BitC_Endian_D16_(_G_ data_16 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,_P_ OCLCLIP Shape)
 {
 	_P_ ADDRESS Index=Work_Into_(Work_From_(Amount),Start,Shape);
@@ -54,46 +51,46 @@ _K_ BitC_Endian_D64_(_G_ data_32 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,
 }
 #endif
 
-#if(Fold_(Definition:Reformation Functions))
-#define _BitC_Copy_
-#define _BitC_Data_
+#if(Fold_(Reformation Functions))
+#define xBitC_Copy_
+#define xBitC_Data_
 #include "bitcrux.c"
-#undef _BitC_Data_
-#undef _BitC_Copy_
+#undef xBitC_Data_
+#undef xBitC_Copy_
 #endif
 
-#if(Fold_(Definition:Caster Functions))
-#define _BitC_Caster_
+#if(Fold_(Caster Functions))
+#define xBitC_Caster_
 #include "bitcrux.c"
-#undef _BitC_Caster_
+#undef xBitC_Caster_
 #endif
 
-#if(Fold_(Definition:Bit Operation Functions))
-#if(Fold_(Part:BitC_BO_N_1_))
-#define _BitC_BO_N_1_
+#if(Fold_(Bit Operation Functions))
+#if(Fold_(BitC_BO_N_1_))
+#define xBitC_BO_N_1_
 #define BitC_Op_ BitC_BO_N_
-#define _BitC_Data_
+#define xBitC_Data_
 #include "bitcrux.c"
-#undef _BitC_Data_
+#undef xBitC_Data_
 #undef BitC_Op_
-#undef _BitC_BO_N_1_
+#undef xBitC_BO_N_1_
 #endif
 
-#if(Fold_(Part:BitC_BO_S_1_))
-#define _BitC_BO_S_1_
+#if(Fold_(BitC_BO_S_1_))
+#define xBitC_BO_S_1_
 #define BitC_Op_ BitC_BO_S_
-#define _BitC_Data_
-#define _BitC_Inte_
+#define xBitC_Data_
+#define xBitC_Inte_
 #include "bitcrux.c"
-#undef _BitC_Inte_
-#undef _BitC_Data_
+#undef xBitC_Inte_
+#undef xBitC_Data_
 #undef BitC_Op_
-#undef _BitC_BO_S_1_
+#undef xBitC_BO_S_1_
 #endif
 
-#if(Fold_(Part:BitC_BO_A_ O_ X_))
-#define _BitC_BO_Op_
-#define _BitC_Data_
+#if(Fold_(BitC_BO_A_ O_ X_))
+#define xBitC_BO_Op_
+#define xBitC_Data_
 #define BitC_Op_ BitC_BO_A_
 #include "bitcrux.c"
 #undef BitC_Op_
@@ -103,43 +100,39 @@ _K_ BitC_Endian_D64_(_G_ data_32 _PL_ Data,_P_ OCLCLIP Start,_P_ OCLCLIP Amount,
 #define BitC_Op_ BitC_BO_X_
 #include "bitcrux.c"
 #undef BitC_Op_
-#undef _BitC_Data_
-#undef _BitC_BO_Op_
+#undef xBitC_Data_
+#undef xBitC_BO_Op_
 #endif
 #endif
 
-#if(Fold_(Definition:Relational Operation Functions))
-#if(Fold_(Part:BitC_RO_E_ N_))
-#define _BitC_RO_Op_
-#define _BitC_Data_
+#if(Fold_(Relational Operation Functions))
+#if(Fold_(BitC_RO_E_ N_))
+#define xBitC_RO_Op_
+#define xBitC_Data_
 #define BitC_Op_ BitC_RO_E_
 #include "bitcrux.c"
 #undef BitC_Op_
 #define BitC_Op_ BitC_RO_N_
 #include "bitcrux.c"
 #undef BitC_Op_
-#undef _BitC_Data_
-#undef _BitC_RO_Op_
+#undef xBitC_Data_
+#undef xBitC_RO_Op_
 #endif
 
-#if(Fold_(Part:BitC_RO_G_ L_))
-#define _BitC_RO_Op_
-#define _BitC_Data_
-#define _BitC_Inte_
-#define _BitC_Real_
+#if(Fold_(BitC_RO_G_ L_))
+#define xBitC_RO_Op_
+#define xBitC_Data_
+#define xBitC_Inte_
+#define xBitC_Real_
 #define BitC_Op_ BitC_RO_G_
 #include "bitcrux.c"
 #undef BitC_Op_
 #define BitC_Op_ BitC_RO_L_
 #include "bitcrux.c"
 #undef BitC_Op_
-#undef _BitC_Real_
-#undef _BitC_Inte_
-#undef _BitC_Data_
-#undef _BitC_RO_Op_
+#undef xBitC_Real_
+#undef xBitC_Inte_
+#undef xBitC_Data_
+#undef xBitC_RO_Op_
 #endif
-#endif
-
-#if(Fold_(Undefinition:BitCrux Macros))
-#include "bitcros.c"
 #endif

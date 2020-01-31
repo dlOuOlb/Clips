@@ -1,76 +1,76 @@
-﻿#include "memclip.h"
+﻿#define __STDC_WANT_LIB_EXT1__ (1)
+#include "memclip.h"
 
 #include <limits.h>
 #include <stdarg.h>
 #include <stddef.h>
 
 #if(Fold_(Static Assertions))
-static_assert(__STDC_WANT_LIB_EXT1__,"__STDC_WANT_LIB_EXT1__ == 0");
+static_assert((CHAR_BIT==8),"CHAR_BIT != 8");
+static_assert((sizeof(byte_08)==1),"sizeof(byte_08) != 1");
+
 static_assert(((address)(NULL))==((address)(0)),"NULL != 0");
 static_assert(((address)(FULL))==(~((address)(0))),"FULL != ~0");
 static_assert(((address)(FULL))==(UINTPTR_MAX),"FULL != UINTPTR_MAX");
-static_assert((CHAR_BIT==8),"CHAR_BIT != 8");
-static_assert((sizeof(byte_08)==1),"sizeof(byte_08) != 1");
+
 static_assert((sizeof(address)==sizeof(void*)),"sizeof(address) != sizeof(void*)");
 static_assert((sizeof(address)==sizeof(size_t)),"sizeof(address) != sizeof(size_t)");
 static_assert((sizeof(address)==sizeof(ptrdiff_t)),"sizeof(address) != sizeof(ptrdiff_t)");
-static_assert((sizeof(address)==sizeof(func_p_)),"sizeof(address) != sizeof(func_p_)");
+static_assert((sizeof(address)==sizeof(void(*)(void))),"sizeof(address) != sizeof(void(*)(void))");
 #endif
 
-#if(Fold_(Definition:MemClip Macros))
-#define _MEMC_ static
-#define _MemC_Dims_ ((address)(8))
-#endif
+#if(Fold_(Internal Constants))
+#define xMemC_Dims_ ((address)(8))
 
-#if(Fold_(Definition:Internal Constants))
-static GENERAL _PL_ MemClip=&MemClip;
-_MEMC_ BYTE_08 IdiomVersion[16]="Date:2019.11.08";
-static ADDRESS ConstantZero[_MemC_Dims_]={0};
-#endif
-
-#if(Fold_(Definition:Type Descriptors))
-#define _MemC_DT_Parse_(Enum,Size) {.Scope=&MemClip,.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(IdiomType[Enum]),.Name=IdiomType[Enum],.Link=NULL,.Meta=NULL}
-
-static BYTE_08 IdiomType[MemCTypes][8]=
+static const struct
 {
-	[MemCTypeNone_00]="none_00",
-	[MemCTypeByte_08]="byte_08",
-	[MemCTypeInteger]="integer",
-	[MemCTypeAddress]="address"
-};
-static MEMC_DT TableType[MemCTypes]=
-{
-	[MemCTypeNone_00]=_MemC_DT_Parse_(MemCTypeNone_00,0),
-	[MemCTypeByte_08]=_MemC_DT_Parse_(MemCTypeByte_08,sizeof(byte_08)),
-	[MemCTypeInteger]=_MemC_DT_Parse_(MemCTypeInteger,sizeof(integer)),
-	[MemCTypeAddress]=_MemC_DT_Parse_(MemCTypeAddress,sizeof(address))
-};
-
-_MEMC_ memc_te MemC_DT_Enum_(MEMC_DT _PL_ Desc)
-{
-	return ((Desc)?((Desc->Scope==MemClip)?((memc_te)(Desc->Index)):(MemCTypeUnknown)):(MemCTypeUnknown));
+	const struct { MEMC_DT Desc[MemCTypes];BYTE_08 Name[MemCTypes][8]; }Type;
+	ADDRESS Zero[xMemC_Dims_];
+	BYTE_08 Version[16];
+	GENERAL _PL_ Self;
 }
-_MEMC_ MEMC_DT *MemC_DT_Desc_(MEMC_TE Enum)
+Idiom=
 {
-	return ((Enum>MemCTypeUnknown)?((Enum<MemCTypes)?(TableType+Enum):(NULL)):(NULL));
-}
+	.Version=oMEMCLIP_INC_,
+	.Self=&(Idiom.Self),
+	.Zero={0},
+	.Type=
+	{
+		.Name=
+		{
+			[MemCTypeNone_00]="none_00",
+			[MemCTypeByte_08]="byte_08",
+			[MemCTypeInteger]="integer",
+			[MemCTypeAddress]="address"
+		},
+		.Desc=
+#define xMemC_DT_Parse_(Enum,Size) {.Scope=&(Idiom.Self),.Index=(Enum),.Flag=0,.SizeType=(Size),.SizeName=sizeof(Idiom.Type.Name[Enum]),.Name=Idiom.Type.Name[Enum],.Link=NULL,.Meta=NULL}
+		{
+			[MemCTypeNone_00]=xMemC_DT_Parse_(MemCTypeNone_00,0),
+			[MemCTypeByte_08]=xMemC_DT_Parse_(MemCTypeByte_08,sizeof(byte_08)),
+			[MemCTypeInteger]=xMemC_DT_Parse_(MemCTypeInteger,sizeof(integer)),
+			[MemCTypeAddress]=xMemC_DT_Parse_(MemCTypeAddress,sizeof(address))
+		}
+#undef xMemC_DT_Parse_
+	}
+};
 
-#undef _MemC_DT_Parse_
+static memc_te MemC_DT_Enum_(MEMC_DT _PL_ _R_ Desc) { return ((Desc)?((Desc->Scope==Idiom.Self)?((memc_te)(Desc->Index)):(MemCTypeUnknown)):(MemCTypeUnknown)); }
+static MEMC_DT *MemC_DT_Desc_(MEMC_TE Enum) { return ((Enum>MemCTypeUnknown)?((Enum<MemCTypes)?(Idiom.Type.Desc+Enum):(NULL)):(NULL)); }
 #endif
 
-#if(Fold_(Definition:Memory Functions))
-#if(Fold_(Part:Memory Set Handle))
-static address _MemC_Array_Prod_(ADDRESS *_R_ Ptr,ADDRESS Count)
+#if(Fold_(Memory Manipulations))
+#if(Fold_(Memory Set Handle))
+static address xMemC_Array_Prod_(ADDRESS *_R_ Ptr,ADDRESS Count)
 {
-	ADDRESS _PL_ End=Ptr+Count;
-	address Length=1;
+	register address Length=1;
 
-	for(;Ptr<End;Ptr++)
-		Length*=(*Ptr);
+	for(ADDRESS _PL_ End=Ptr+Count;Ptr<End;Ptr++)
+		Length*=*Ptr;
 
 	return Length;
 }
-static logical _MemC_Array_Non_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
+static logical xMemC_Array_Non_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
 {
 	for(ADDRESS _PL_ End=Ptr+Nums;Ptr<End;Ptr++)
 		if(*Ptr);
@@ -79,7 +79,7 @@ static logical _MemC_Array_Non_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
 
 	return 1;
 }
-static logical _MemC_Array_All_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
+static logical xMemC_Array_All_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
 {
 	for(ADDRESS _PL_ End=Ptr+Nums;Ptr<End;Ptr++)
 		if(*Ptr)
@@ -88,127 +88,119 @@ static logical _MemC_Array_All_Zero_(ADDRESS *_R_ Ptr,ADDRESS Nums)
 
 	return 1;
 }
-_MEMC_ logical MemC_Check_(ADDRESS _PL_ Memory,ADDRESS Sets)
+static logical MemC_Check_(GENERAL _PL_ _PL_ _R_ Memory,ADDRESS Sets)
 {
 	if(Memory)
-		return _MemC_Array_Non_Zero_(Memory,Sets);
+		return xMemC_Array_Non_Zero_((ADDRESS*)(Memory),Sets);
 	else
 		return 0;
 }
-_MEMC_ general MemC_Deloc_Set_(general **Memory,ADDRESS Sets)
+static general MemC_Deloc_Set_(general **_R_ Memory,ADDRESS Sets)
 {
 	if(Memory)
-	{
-		GENERAL _PL_ _PL_ End=(GENERAL**)Memory+Sets;
-
-		for(;(GENERAL**)Memory<End;Memory++)
+		for(general _PL_ _PL_ End=Memory+Sets;Memory<End;Memory++)
 			MemC_Deloc_(*Memory);
-	}
+	else;
+
+	return;
 }
-_MEMC_ GENERAL *MemC_Just_(GENERAL _PL_ X) { return X; }
 #endif
 
-#if(Fold_(Part:ND Array Memory Allocation))
-_MEMC_ address _MemC_Size_Add_(ADDRESS A,ADDRESS B)
-{
-	volatile ADDRESS Return=A+B;
-	
-	return ((Return<A)?(0):(Return));
-}
-_MEMC_ address _MemC_Size_Mul_(ADDRESS A,ADDRESS B)
-{
-	volatile ADDRESS Return=A*B;
+#if(Fold_(ND Array Memory Allocation))
+static address MemC_Size_Add_(ADDRESS A,ADDRESS B) { ADDRESS C=A+B;return ((C<A)?(0):(C)); }
+static address MemC_Size_Sub_(ADDRESS A,ADDRESS B) { return ((A<B)?(0):(A-B)); }
+static address MemC_Size_Mul_(ADDRESS A,ADDRESS B) { ADDRESS C=A*B;return (((C/B)==A)?(C):(0)); }
+static address MemC_Size_Div_(ADDRESS A,ADDRESS B) { return ((A%B)?(0):(A/B)); }
 
-	return (((Return/B)==A)?(Return):(0));
-}
-static address _MemC_Bigger_(ADDRESS Number,ADDRESS Old)
+static address xMemC_Bigger_(ADDRESS Number,ADDRESS Old)
 {
-	address New=_MemC_Size_Add_(Old,sizeof(general*));
+	address New=MemC_Size_Add_(Old,sizeof(address));
 
 	if(New)
-		New=_MemC_Size_Mul_(Number,New);
+		New=MemC_Size_Mul_(Number,New);
 	else;
 
 	return New;
 }
-static general **_MemC_Assign_(general **High,ADDRESS NumberHigh,ADDRESS SizeStep)
+static general **xMemC_Assign_(general **_R_ High,ADDRESS NumberHigh,ADDRESS SizeStep)
 {
-	general **End=High+NumberHigh;
-	byte_08 *PtrL=(byte_08*)End;
-
-	for(;High<End;High++,PtrL+=SizeStep)
-		(*High)=PtrL;
+	general *_PL_ End=High+NumberHigh;
+	
+	for(byte_08 *Low=(byte_08*)End;High<End;High++,Low+=SizeStep)
+		*High=Low;
 
 	return End;
 }
-static general *_MemC_Assign_Loop_(general **PtrM,ADDRESS _PL_ Size,ADDRESS NumberDimension,ADDRESS SizeElement)
+static general *xMemC_Assign_Loop_(general **PtrM,ADDRESS *_R_ PtrS,ADDRESS NumberDimension,ADDRESS SizeElement)
 {
-	ADDRESS _PL_ End=Size+(NumberDimension-1);
-	ADDRESS *_R_ PtrS=Size;
-	address Temp=PtrS[0];
-
-	for(PtrS++;PtrS<End;PtrS++)
+	address Temp=*PtrS;
+	
+	for(ADDRESS _PL_ End=(PtrS++)+(NumberDimension-1);PtrS<End;PtrS++)
 	{
-		PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*sizeof(address));
-		Temp*=(*PtrS);
+		PtrM=xMemC_Assign_(PtrM,Temp,MemC_Size_(address,*PtrS));
+		Temp*=*PtrS;
 	}
-	PtrM=_MemC_Assign_(PtrM,Temp,(*PtrS)*SizeElement);
 
-	return PtrM;
+	return xMemC_Assign_(PtrM,Temp,(*PtrS)*SizeElement);
 }
-_MEMC_ general *MemC_Alloc_Byte_(ADDRESS S)
+static address xMemC_Size_Pad_(register address S)
 {
 	ADDRESS T=sizeof(address);
-	ADDRESS N=_MemC_Size_Mul_((S+T-1)/T,T);
-	general _PL_ Memory=(N)?(_MemC_Malloc_(N)):(NULL);
 
-	return Memory;
+	S--;
+	S+=T;
+	S/=T;
+	S*=T;
+
+	return S;
+}
+static general *MemC_Alloc_Byte_(ADDRESS S)
+{
+	ADDRESS N=xMemC_Size_Pad_(S);
+
+	return ((N)?(uMemC_Malloc_(N)):(NULL));
 }
 
-static general *_MemC_Alloc_(ADDRESS _PL_ Size,ADDRESS NumberDimension,ADDRESS SizeElement)
+static general *xMemC_Alloc_(ADDRESS _PL_ Size,ADDRESS Dims,ADDRESS TypeSize)
 {
-	general *Memory=NULL;
-
 	if(Size)
-		if(NumberDimension)
-			if(SizeElement)
+		if(Dims*TypeSize)
+		{
+			ADDRESS Last=Dims-1;
+			address Bulk=MemC_Size_Mul_(Size[Last],TypeSize);
+
+			for(ADDRESS *_R_ PtrS=Size+Last;(--PtrS)>=Size;)
+				if(Bulk)
+					Bulk=xMemC_Bigger_(*PtrS,Bulk);
+				else
+					return NULL;
+
+			if(Bulk)
 			{
-				ADDRESS _PL_ End=Size+(NumberDimension-1);
-				ADDRESS *PtrS=End;
-				address Temporary=_MemC_Size_Mul_(*PtrS,SizeElement);
+				general _PL_ Memory=MemC_Alloc_Byte_(Bulk);
 
-				for(PtrS--;PtrS>=Size;PtrS--)
-					if(Temporary)
-						Temporary=_MemC_Bigger_(*PtrS,Temporary);
-					else
-						break;
-
-				if(Temporary)
-				{
-					Memory=MemC_Alloc_Byte_(Temporary);
-					if(Memory)
-						if(NumberDimension>1)
-							_MemC_Assign_Loop_(Memory,Size,NumberDimension,SizeElement);
-						else;
+				if(Memory)
+					if(Last)
+						xMemC_Assign_Loop_(Memory,Size,Dims,TypeSize);
 					else;
-				}
 				else;
+
+				return Memory;
 			}
 			else;
+		}
 		else;
 	else;
 
-	return Memory;
+	return NULL;
 }
-_MEMC_ general *_MemC_Alloc_ND_(ADDRESS TypeSize,ADDRESS Dims,...)
+static general *xMemC_Alloc_ND_(ADDRESS TypeSize,ADDRESS Dims,...)
 {
-	general *Return;
-
-	if(Dims>_MemC_Dims_)
-		Return=NULL;
+	if(Dims>xMemC_Dims_)
+		return NULL;
 	else
 	{
-		address Buffer[_MemC_Dims_];
+		address Buffer[xMemC_Dims_];
 		va_list Arg;
 
 		va_start(Arg,Dims);
@@ -218,15 +210,13 @@ _MEMC_ general *_MemC_Alloc_ND_(ADDRESS TypeSize,ADDRESS Dims,...)
 
 		va_end(Arg);
 
-		Return=_MemC_Alloc_(Buffer,Dims,TypeSize);
+		return xMemC_Alloc_(Buffer,Dims,TypeSize);
 	}
-
-	return Return;
 }
 #endif
 
-#if(Fold_(Part:1D Array Trivials))
-static address _MemC_Safe_2_(address Num)
+#if(Fold_(1D Array Trivials))
+static address xMemC_Safe_2_(register address Num)
 {
 	Num|=(Num>>1);
 	Num|=(Num>>2);
@@ -245,12 +235,12 @@ static address _MemC_Safe_2_(address Num)
 
 	return Num;
 }
-_MEMC_ logical _MemC_Init_1D_(general _PL_ _R_ Memory,GENERAL _PL_ _R_ Tile,ADDRESS NumberElement,ADDRESS SizeElement)
+static logical xMemC_Init_1D_(general _PL_ _R_ Memory,GENERAL _PL_ _R_ Tile,ADDRESS NumberElement,ADDRESS SizeElement)
 {
-	if(_MemC_Size_Mul_(NumberElement,SizeElement))
+	if(MemC_Size_Mul_(NumberElement,SizeElement))
 		if(MemC_Copy_Byte_(Tile,Memory,SizeElement))
 		{
-			address Safe=_MemC_Safe_2_(NumberElement);
+			address Safe=xMemC_Safe_2_(NumberElement);
 			BYTE_08 _PL_ End=((byte_08*)Memory)+(Safe*SizeElement);
 			byte_08 *_R_ Ptr=((byte_08*)Memory)+SizeElement;
 
@@ -263,23 +253,23 @@ _MEMC_ logical _MemC_Init_1D_(general _PL_ _R_ Memory,GENERAL _PL_ _R_ Tile,ADDR
 			Safe^=NumberElement;
 			Safe*=SizeElement;
 
-			return MemC_Copy_Byte_(Memory,Ptr,Safe);
+			if(Safe)
+				return MemC_Copy_Byte_(Memory,Ptr,Safe);
+			else
+				return 1;
 		}
 		else;
 	else;
 
 	return 0;
 }
-_MEMC_ logical MemC_Copy_Step_(BYTE_08 *_R_ Source,byte_08 *_R_ Target,ADDRESS Nums,ADDRESS StepS,ADDRESS StepT,ADDRESS Copy)
+static logical MemC_Copy_Step_(GENERAL _PL_ _R_ Source,general _PL_ _R_ Target,ADDRESS Nums,ADDRESS StepS,ADDRESS StepT,ADDRESS Copy)
 {
-	BYTE_08 _PL_ End=Source+(Nums*StepS);
+	BYTE_08 *_R_ PtrS=Source;
+	byte_08 *_R_ PtrT=Target;
 
-	while(Source<End)
-		if(MemC_Copy_Byte_(Source,Target,Copy))
-		{
-			Source+=StepS;
-			Target+=StepT;
-		}
+	for(BYTE_08 _PL_ End=PtrS+(Nums*StepS);PtrS<End;PtrS+=StepS,PtrT+=StepT)
+		if(MemC_Copy_Byte_(PtrS,PtrT,Copy));
 		else
 			return 0;
 
@@ -287,17 +277,19 @@ _MEMC_ logical MemC_Copy_Step_(BYTE_08 *_R_ Source,byte_08 *_R_ Target,ADDRESS N
 }
 #endif
 
-#if(Fold_(Part:ND Array Data Copy))
-static general _MemC_Jump_Offset_(address _PL_ Jump,ADDRESS _PL_ Shape,ADDRESS Dimension,ADDRESS Bytes)
+#if(Fold_(ND Array Data Copy))
+static general xMemC_Jump_Offset_(address _PL_ Jump,ADDRESS _PL_ Shape,ADDRESS Dimension,ADDRESS Bytes)
 {
-	ADDRESS *_R_ PointerS=Shape+(Dimension-2);
-	address *_R_ PointerJ=Jump+(Dimension-1);
+	ADDRESS From=Dimension-2;
+	ADDRESS *_R_ PtrS=Shape+From;
+	address *_R_ PtrJ=Jump+From;
 
-	PointerJ[0]=Bytes;
-	for(PointerJ--;PointerJ>=Jump;PointerS--,PointerJ--)
-		PointerJ[0]=PointerS[+1]*PointerJ[+1];
+	for(PtrJ[+1]=Bytes;PtrJ>=Jump;PtrS--,PtrJ--)
+		PtrJ[0]=PtrS[+1]*PtrJ[+1];
+
+	return;
 }
-static logical _MemC_Copy_2D_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,ADDRESS _PL_ JumpS,ADDRESS _PL_ JumpT,ADDRESS _PL_ OriginS,ADDRESS _PL_ OriginT,ADDRESS _PL_ Length,ADDRESS Bytes)
+static logical xMemC_Copy_2D_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,ADDRESS _PL_ JumpS,ADDRESS _PL_ JumpT,ADDRESS _PL_ OriginS,ADDRESS _PL_ OriginT,ADDRESS _PL_ Length,ADDRESS Bytes)
 {
 	ADDRESS Copy=Length[1]*Bytes;
 	BYTE_08 *End=MemoryS+((JumpS[0]*OriginS[0])+(JumpS[1]*OriginS[1]));
@@ -311,7 +303,7 @@ static logical _MemC_Copy_2D_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,ADDRESS 
 
 	return 1;
 }
-static logical _MemC_Copy_Recursive_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,ADDRESS _PL_ JumpS,ADDRESS _PL_ JumpT,ADDRESS _PL_ OriginS,ADDRESS _PL_ OriginT,ADDRESS _PL_ Length,ADDRESS Dimensions,ADDRESS Bytes)
+static logical xMemC_Copy_Recursive_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,ADDRESS _PL_ JumpS,ADDRESS _PL_ JumpT,ADDRESS _PL_ OriginS,ADDRESS _PL_ OriginT,ADDRESS _PL_ Length,ADDRESS Dimensions,ADDRESS Bytes)
 {
 	if(Dimensions>2)
 	{
@@ -326,20 +318,20 @@ static logical _MemC_Copy_Recursive_(BYTE_08 _PL_ MemoryS,byte_08 _PL_ MemoryT,A
 		byte_08 *PointerT=MemoryT+(JumpT[0]*OriginT[0]);
 
 		for(End+=(JumpS[0]*Length[0]);PointerS<End;PointerS+=JumpS[0],PointerT+=JumpT[0])
-			if(_MemC_Copy_Recursive_(PointerS,PointerT,NextJumpS,NextJumpT,NextOriginS,NextOriginT,NextLength,NextDimensions,Bytes));
+			if(xMemC_Copy_Recursive_(PointerS,PointerT,NextJumpS,NextJumpT,NextOriginS,NextOriginT,NextLength,NextDimensions,Bytes));
 			else
 				return 0;
 
 		return 1;
 	}
 	else
-		return _MemC_Copy_2D_(MemoryS,MemoryT,JumpS,JumpT,OriginS,OriginT,Length,Bytes);
+		return xMemC_Copy_2D_(MemoryS,MemoryT,JumpS,JumpT,OriginS,OriginT,Length,Bytes);
 }
-static logical _MemC_Copy_Check_Bound_(ADDRESS _PL_ Shape,ADDRESS _PL_ Offset,ADDRESS _PL_ Length,ADDRESS Dimensions)
+static logical xMemC_Copy_Check_Bound_(ADDRESS _PL_ Shape,ADDRESS _PL_ Offset,ADDRESS _PL_ Length,ADDRESS Dimensions)
 {
-	for(address Index=0;Index<Dimensions;Index++)
+	for(register address Index=0;Index<Dimensions;Index++)
 	{
-		ADDRESS Temp=Offset[Index]+Length[Index];
+		register ADDRESS Temp=Offset[Index]+Length[Index];
 
 		if(Temp<Offset[Index])
 			return 0;
@@ -350,12 +342,12 @@ static logical _MemC_Copy_Check_Bound_(ADDRESS _PL_ Shape,ADDRESS _PL_ Offset,AD
 
 	return 1;
 }
-_MEMC_ logical _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ OriginS,ADDRESS _PL_ OriginT,ADDRESS _PL_ Length,ADDRESS _PL_ ShapeS,ADDRESS _PL_ ShapeT,ADDRESS Dimensions,ADDRESS Bytes)
+static logical xMemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ OriginS,ADDRESS _PL_ OriginT,ADDRESS _PL_ Length,ADDRESS _PL_ ShapeS,ADDRESS _PL_ ShapeT,ADDRESS Dimensions,ADDRESS Bytes)
 {
-	ADDRESS _PL_ OffsetS=(OriginS)?(OriginS):(ConstantZero);
-	ADDRESS _PL_ OffsetT=(OriginT)?(OriginT):(ConstantZero);
+	ADDRESS _PL_ OffsetS=(OriginS)?(OriginS):(Idiom.Zero);
+	ADDRESS _PL_ OffsetT=(OriginT)?(OriginT):(Idiom.Zero);
 
-	if(_MemC_Copy_Check_Bound_(ShapeS,OffsetS,Length,Dimensions)&&_MemC_Copy_Check_Bound_(ShapeT,OffsetT,Length,Dimensions))
+	if(xMemC_Copy_Check_Bound_(ShapeS,OffsetS,Length,Dimensions)&&xMemC_Copy_Check_Bound_(ShapeT,OffsetT,Length,Dimensions))
 		switch(Dimensions)
 		{
 		case 0:
@@ -371,25 +363,18 @@ _MEMC_ logical _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL
 			}
 		default:
 			if(Bytes)
-				if(_MemC_Array_Non_Zero_(Length,Dimensions))
-					if(Dimensions>_MemC_Dims_)
+				if(xMemC_Array_Non_Zero_(Length,Dimensions))
+					if(Dimensions>xMemC_Dims_)
 						return 0;
 					else
 					{
-						address JumpS[_MemC_Dims_];
-						address JumpT[_MemC_Dims_];
+						address JumpS[xMemC_Dims_];
+						address JumpT[xMemC_Dims_];
 
-						if(ShapeS)
-							_MemC_Jump_Offset_(JumpS,ShapeS,Dimensions,Bytes);
-						else
-							_MemC_Jump_Offset_(JumpS,Length,Dimensions,Bytes);
+						xMemC_Jump_Offset_(JumpS,(ShapeS)?(ShapeS):(Length),Dimensions,Bytes);
+						xMemC_Jump_Offset_(JumpT,(ShapeT)?(ShapeT):(Length),Dimensions,Bytes);
 
-						if(ShapeT)
-							_MemC_Jump_Offset_(JumpT,ShapeT,Dimensions,Bytes);
-						else
-							_MemC_Jump_Offset_(JumpT,Length,Dimensions,Bytes);
-
-						return _MemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
+						return xMemC_Copy_Recursive_(MemoryS,MemoryT,JumpS,JumpT,OffsetS,OffsetT,Length,Dimensions,Bytes);
 					}
 				else
 					return 1;
@@ -401,10 +386,10 @@ _MEMC_ logical _MemC_Copy_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL
 }
 #endif
 
-#if(Fold_(Part:ND Array Data Reformation))
-static logical _MemC_Reform_Valid_(ADDRESS *_R_ Map,ADDRESS Dims)
+#if(Fold_(ND Array Data Reformation))
+static logical xMemC_Reform_Valid_(ADDRESS *_R_ Map,ADDRESS Dims)
 {
-	address Table[_MemC_Dims_]={0};
+	address Table[xMemC_Dims_]={0};
 
 	for(ADDRESS _PL_ End=Map+Dims;Map<End;Map++)
 		if((*Map)<Dims)
@@ -412,30 +397,27 @@ static logical _MemC_Reform_Valid_(ADDRESS *_R_ Map,ADDRESS Dims)
 		else
 			return 0;
 
-	return _MemC_Array_Non_Zero_(Table,Dims);
+	return xMemC_Array_Non_Zero_(Table,Dims);
 }
-static general _MemC_Reform_Short_(ADDRESS _PL_ Shape,ADDRESS _PL_ Map,address _PL_ Dims,address _PL_ Bytes)
+static general xMemC_Reform_Short_(ADDRESS _PL_ _R_ Shape,ADDRESS _PL_ _R_ Map,address _PL_ _R_ Dims,address _PL_ _R_ Bytes)
 {
-	for(address Temp=(*Dims)-1;Temp;Temp--)
+	for(register address Temp=*Dims;--Temp;)
 		if(Map[Temp]==Temp)
-		{
-			(*Bytes)*=Shape[Temp];
-			(*Dims)=Temp;
-		}
+			*Bytes*=Shape[*Dims=Temp];
 		else
 			break;
+
+	return;
 }
-static general _MemC_Reform_Merge_(address _PL_ Shape,address _PL_ Map,address _PL_ Dims)
+static general xMemC_Reform_Merge_(address _PL_ Shape,address _PL_ Map,address _PL_ _R_ Dims)
 {
-	ADDRESS *End=Map+(*Dims);
-	ADDRESS *Last=End-1;
+	ADDRESS *End=Map+(*Dims),*Last=End-1;
 
 	for(address *MapA=Map,*ShpA=Shape;MapA<Last;MapA++,ShpA++)
 	{
-		ADDRESS *MapB=MapA;
-		ADDRESS *ShpB=ShpA;
+		ADDRESS *MapB,*ShpB;
 
-		for(;MapB<Last;MapB++,ShpB++)
+		for(MapB=MapA,ShpB=ShpA;MapB<Last;MapB++,ShpB++)
 			if((MapB[0]+1)==MapB[1])
 				ShpA[0]*=ShpB[1];
 			else
@@ -444,10 +426,9 @@ static general _MemC_Reform_Merge_(address _PL_ Shape,address _PL_ Map,address _
 		if(MapA<MapB)
 		{
 			ADDRESS Pull=MapB-MapA;
-			address *MapC=Map;
-			address *ShpC=ShpA;
+			address *MapC,*ShpC;
 
-			for(;MapC<MapA;MapC++)
+			for(MapC=Map,ShpC=ShpA;MapC<MapA;MapC++)
 				if(MapC[0]>MapA[0])
 					MapC[0]-=Pull;
 				else;
@@ -464,17 +445,16 @@ static general _MemC_Reform_Merge_(address _PL_ Shape,address _PL_ Map,address _
 		}
 		else;
 	}
+
+	return;
 }
-static logical _MemC_Reform_Order_(BYTE_08 _PL_ Source,byte_08 _PL_ Target,ADDRESS _PL_ Shape,ADDRESS _PL_ Map,ADDRESS Total,ADDRESS Dims,ADDRESS Bytes)
+static logical xMemC_Reform_Order_(BYTE_08 _PL_ _R_ Source,byte_08 _PL_ _R_ Target,ADDRESS _PL_ _R_ Shape,ADDRESS _PL_ _R_ Map,ADDRESS Total,ADDRESS Dims,ADDRESS Bytes)
 {
-	address Jump[_MemC_Dims_];
 	ADDRESS Last=Dims-1;
 
-	for(address IdxT=0;IdxT<Total;IdxT++)
+	for(address Jump[xMemC_Dims_],IdxT=0;IdxT<Total;IdxT++)
 	{
-		address IdxJ;
-		address IdxS;
-		address Prod;
+		address IdxJ,IdxS,Prod;
 
 		for(IdxJ=Last,Prod=IdxT/Shape[Map[Last]],Jump[Map[Last]]=IdxT%Shape[Map[Last]];IdxJ;Prod/=Shape[Map[IdxJ]])
 		{
@@ -493,39 +473,38 @@ static logical _MemC_Reform_Order_(BYTE_08 _PL_ Source,byte_08 _PL_ Target,ADDRE
 
 	return 1;
 }
-_MEMC_ logical _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,address Dimensions,address Bytes)
+static logical xMemC_Reform_(GENERAL _PL_ _R_ MemoryS,general _PL_ _R_ MemoryT,ADDRESS _PL_ _R_ ShapeS,ADDRESS _PL_ _R_ AxisStoT,address Dimensions,address Bytes)
 {
 	if(Dimensions)
 	{
-		_MemC_Reform_Short_(ShapeS,AxisStoT,&Dimensions,&Bytes);
+		xMemC_Reform_Short_(ShapeS,AxisStoT,&Dimensions,&Bytes);
 		if(Dimensions>1)
-			if(Dimensions<_MemC_Dims_)
-				if(_MemC_Reform_Valid_(AxisStoT,Dimensions))
+			if(Dimensions>xMemC_Dims_)
+				return 0;
+			else if(xMemC_Reform_Valid_(AxisStoT,Dimensions))
+			{
+				ADDRESS Total=xMemC_Array_Prod_(ShapeS,Dimensions);
+
+				if(Total)
 				{
-					ADDRESS Total=_MemC_Array_Prod_(ShapeS,Dimensions);
+					address ShapeSNew[xMemC_Dims_];
+					address MapTNew[xMemC_Dims_];
 
-					if(Total)
-					{
-						address ShapeSNew[_MemC_Dims_];
-						address MapTNew[_MemC_Dims_];
-
-						if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions));
-						else
-							return 0;
-
-						if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions));
-						else
-							return 0;
-
-						_MemC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
-
-						return _MemC_Reform_Order_(MemoryS,MemoryT,ShapeSNew,MapTNew,Total,Dimensions,Bytes);
-					}
+					if(MemC_Copy_1D_(ShapeS,ShapeSNew,Dimensions));
 					else
-						return 1;
+						return 0;
+
+					if(MemC_Copy_1D_(AxisStoT,MapTNew,Dimensions));
+					else
+						return 0;
+
+					xMemC_Reform_Merge_(ShapeSNew,MapTNew,&Dimensions);
+
+					return xMemC_Reform_Order_(MemoryS,MemoryT,ShapeSNew,MapTNew,Total,Dimensions,Bytes);
 				}
 				else
-					return 0;
+					return 1;
+			}
 			else
 				return 0;
 		else
@@ -545,15 +524,14 @@ _MEMC_ logical _MemC_Reform_(GENERAL _PL_ MemoryS,general _PL_ MemoryT,ADDRESS _
 		return 1;
 }
 
-_MEMC_ logical MemC_Reform_Shape_(ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,address _PL_ ShapeT,ADDRESS Dimensions)
+static logical MemC_Reform_Shape_(ADDRESS _PL_ _R_ ShapeS,ADDRESS _PL_ _R_ AxisStoT,address _PL_ _R_ ShapeT,ADDRESS Dimensions)
 {
 	if(Dimensions)
-		if(Dimensions<_MemC_Dims_)
-			if(_MemC_Reform_Valid_(AxisStoT,Dimensions))
-				for(address Index=0;Index<Dimensions;Index++)
-					ShapeT[AxisStoT[Index]]=ShapeS[Index];
-			else
-				return 0;
+		if(Dimensions>xMemC_Dims_)
+			return 0;
+		else if(xMemC_Reform_Valid_(AxisStoT,Dimensions))
+			for(register address Index=0;Index<Dimensions;Index++)
+				ShapeT[AxisStoT[Index]]=ShapeS[Index];
 		else
 			return 0;
 	else;
@@ -562,17 +540,17 @@ _MEMC_ logical MemC_Reform_Shape_(ADDRESS _PL_ ShapeS,ADDRESS _PL_ AxisStoT,addr
 }
 #endif
 
-#if(Fold_(Part:Object Sorting))
-static address _MemC_Sort_Lng_2_(ADDRESS Length)
+#if(Fold_(Object Sorting))
+static address xMemC_Sort_Lng_2_(ADDRESS Length)
 {
-	address Temp=1;
+	register address Temp=1;
 
 	Temp=~Temp;
 	Temp&=Length;
 
 	return Temp;
 }
-static general _MemC_Sort_Bound_(address _PL_ Jump,GENERAL _PL_ **Bound)
+static general xMemC_Sort_Bound_(address _PL_ _R_ Jump,GENERAL _PL_ *_PL_ _R_ Bound)
 {
 	Bound[2]=Bound[1]+Jump[0];
 	if(Bound[2]>Bound[3])
@@ -581,43 +559,42 @@ static general _MemC_Sort_Bound_(address _PL_ Jump,GENERAL _PL_ **Bound)
 	Jump[1]=Bound[2]-Bound[1];
 	Jump[2]=Jump[0]+Jump[1];
 	Jump[3]=Jump[1]-1;
+
+	return;
 }
-static general _MemC_Sort_Ord_2_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL **Ptr,address *Idx,ADDRESS Length)
+static general xMemC_Sort_Ord_2_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL **_R_ Ptr,address *_R_ Idx,ADDRESS Length)
 {
 	if(Idx)
-		for(GENERAL _PL_ _PL_ End=Ptr+_MemC_Sort_Lng_2_(Length);Ptr<End;Ptr+=2,Idx+=2)
-			if(Comp_(Ptr[0],Ptr[1]))
-			{
-				{
-					GENERAL _PL_ Temp=Ptr[0];
+		for(GENERAL _PL_ _PL_ End=Ptr+xMemC_Sort_Lng_2_(Length);Ptr<End;Ptr+=2,Idx+=2)
+		{
+			ADDRESS Cast=Comp_(Ptr[0],Ptr[1]),X=Cast&1,Y=X^1;
+			union { GENERAL*P;address V; }Temp;
 
-					Ptr[0]=Ptr[1];
-					Ptr[1]=Temp;
-				}
-				{
-					ADDRESS Temp=Idx[0];
+			Temp.P=Ptr[Y];
+			Ptr[0]=Ptr[X];
+			Ptr[1]=Temp.P;
 
-					Idx[0]=Idx[1];
-					Idx[1]=(address)Temp;
-				}
-			}
-			else;
+			Temp.V=Idx[Y];
+			Idx[0]=Idx[X];
+			Idx[1]=Temp.V;
+		}
 	else
-		for(GENERAL _PL_ _PL_ End=Ptr+_MemC_Sort_Lng_2_(Length);Ptr<End;Ptr+=2)
-			if(Comp_(Ptr[0],Ptr[1]))
-			{
-				GENERAL _PL_ Temp=Ptr[0];
+		for(GENERAL _PL_ _PL_ End=Ptr+xMemC_Sort_Lng_2_(Length);Ptr<End;Ptr+=2)
+		{
+			address Cast=Comp_(Ptr[0],Ptr[1]);
+			GENERAL _PL_ Temp=Ptr[Cast&=1];
 
-				Ptr[0]=Ptr[1];
-				Ptr[1]=Temp;
-			}
-			else;
+			Ptr[1]=Ptr[Cast^=1];
+			Ptr[0]=Temp;
+		}
+
+	return;
 }
-static general _MemC_Sort_Ord_A_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),address *PtrT,GENERAL _PL_ *PtrA,GENERAL _PL_ _PL_ StartB,GENERAL _PL_ _PL_ EndB)
+static general xMemC_Sort_Ord_A_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),address *_R_ PtrT,GENERAL _PL_ *_R_ PtrA,GENERAL _PL_ _PL_ StartB,GENERAL _PL_ _PL_ EndB)
 {
 	PtrT[0]=0;
 
-	for(GENERAL _PL_ *PtrB=StartB;PtrB<EndB;PtrB++)
+	for(GENERAL _PL_ *_R_ PtrB=StartB;PtrB<EndB;PtrB++)
 		if(Comp_(PtrA[0],PtrB[0]))
 			PtrT[0]++;
 		else
@@ -638,12 +615,14 @@ static general _MemC_Sort_Ord_A_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),
 
 	for(PtrA++,PtrT++;PtrA<StartB;PtrA++,PtrT++)
 		PtrT[0]=PtrT[-1];
+
+	return;
 }
-static general _MemC_Sort_Ord_B_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),address *PtrT,GENERAL _PL_ *PtrB,GENERAL _PL_ _PL_ StartA,GENERAL _PL_ _PL_ StartB)
+static general xMemC_Sort_Ord_B_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),address *_R_ PtrT,GENERAL _PL_ *_R_ PtrB,GENERAL _PL_ _PL_ StartA,GENERAL _PL_ _PL_ StartB)
 {
 	PtrT[0]=0;
 
-	for(GENERAL _PL_ *PtrA=StartB-1;PtrA>=StartA;PtrA--)
+	for(GENERAL _PL_ *_R_ PtrA=StartB-1;PtrA>=StartA;PtrA--)
 		if(Comp_(PtrA[0],PtrB[0]))
 			PtrT[0]--;
 		else
@@ -664,8 +643,10 @@ static general _MemC_Sort_Ord_B_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),
 
 	for(PtrB--,PtrT--;PtrB>=StartB;PtrB--,PtrT--)
 		PtrT[0]=PtrT[+1];
+
+	return;
 }
-static logical _MemC_Sort_Table_(address *IdxO,address *IdxA,ADDRESS *PtrT,ADDRESS _PL_ MatchB,ADDRESS Copy,ADDRESS Step)
+static logical xMemC_Sort_Table_(address *_R_ IdxO,address *_R_ IdxA,ADDRESS *_R_ PtrT,ADDRESS _PL_ MatchB,ADDRESS Copy,ADDRESS Step)
 {
 	if(MemC_Copy_1D_(IdxO,IdxA,Copy))
 	{
@@ -679,7 +660,7 @@ static logical _MemC_Sort_Table_(address *IdxO,address *IdxA,ADDRESS *PtrT,ADDRE
 	else
 		return 0;
 }
-_MEMC_ logical MemC_Sort_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ Refer,address _PL_ Index,address _PL_ Buffer,ADDRESS Length)
+static logical MemC_Sort_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL *_PL_ _R_ Refer,address _PL_ _R_ Index,address _PL_ _R_ Buffer,ADDRESS Length)
 {
 	if(Length)
 	{
@@ -688,7 +669,7 @@ _MEMC_ logical MemC_Sort_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL
 		address _PL_ Table=Buffer;
 		address _PL_ Value=Table+Length;
 
-		_MemC_Sort_Ord_2_(Comp_,Refer,Index,Length);
+		xMemC_Sort_Ord_2_(Comp_,Refer,Index,Length);
 		if(Index)
 		{
 			address *Match;
@@ -696,15 +677,15 @@ _MEMC_ logical MemC_Sort_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL
 			for(Jump[0]=2,Bound[3]=Refer+Length;Jump[0]<Length;Jump[0]<<=1)
 				for(Bound[0]=Refer,Bound[1]=Refer+Jump[0],Match=Index;Bound[1]<Bound[3];Bound[0]=Bound[2],Bound[1]=Bound[2]+Jump[1],Match+=Jump[2])
 				{
-					_MemC_Sort_Bound_(Jump,Bound);
-					_MemC_Sort_Ord_A_(Comp_,Table,Bound[0],Bound[1],Bound[2]);
-					_MemC_Sort_Ord_B_(Comp_,Table+(Jump[2]-1),Bound[2]-1,Bound[0],Bound[1]);
+					xMemC_Sort_Bound_(Jump,Bound);
+					xMemC_Sort_Ord_A_(Comp_,Table,Bound[0],Bound[1],Bound[2]);
+					xMemC_Sort_Ord_B_(Comp_,Table+(Jump[2]-1),Bound[2]-1,Bound[0],Bound[1]);
 
-					if(_MemC_Sort_Table_((address*)(Bound[0]),Value,Table,(address*)(Bound[1]),Jump[2],Jump[3]));
+					if(xMemC_Sort_Table_((address*)(Bound[0]),Value,Table,(address*)(Bound[1]),Jump[2],Jump[3]));
 					else
 						return 0;
 
-					if(_MemC_Sort_Table_(Match,Value,Table,Match+Jump[0],Jump[2],Jump[3]));
+					if(xMemC_Sort_Table_(Match,Value,Table,Match+Jump[0],Jump[2],Jump[3]));
 					else
 						return 0;
 				}
@@ -713,11 +694,11 @@ _MEMC_ logical MemC_Sort_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL
 			for(Jump[0]=2,Bound[3]=Refer+Length;Jump[0]<Length;Jump[0]<<=1)
 				for(Bound[0]=Refer,Bound[1]=Refer+Jump[0];Bound[1]<Bound[3];Bound[0]=Bound[2],Bound[1]=Bound[2]+Jump[1])
 				{
-					_MemC_Sort_Bound_(Jump,Bound);
-					_MemC_Sort_Ord_A_(Comp_,Table,Bound[0],Bound[1],Bound[2]);
-					_MemC_Sort_Ord_B_(Comp_,Table+(Jump[2]-1),Bound[2]-1,Bound[0],Bound[1]);
+					xMemC_Sort_Bound_(Jump,Bound);
+					xMemC_Sort_Ord_A_(Comp_,Table,Bound[0],Bound[1],Bound[2]);
+					xMemC_Sort_Ord_B_(Comp_,Table+(Jump[2]-1),Bound[2]-1,Bound[0],Bound[1]);
 
-					if(_MemC_Sort_Table_((address*)(Bound[0]),Value,Table,(address*)(Bound[1]),Jump[2],Jump[3]));
+					if(xMemC_Sort_Table_((address*)(Bound[0]),Value,Table,(address*)(Bound[1]),Jump[2],Jump[3]));
 					else
 						return 0;
 				}
@@ -728,45 +709,43 @@ _MEMC_ logical MemC_Sort_(logical(_PL_ Comp_)(GENERAL _PL_,GENERAL _PL_),GENERAL
 }
 #endif
 
-#if(Fold_(Part:Others))
-_MEMC_ general MemC_Void_(general) { return; }
-_MEMC_ general MemC_Self_(address *_R_ Table,ADDRESS Length,LOGICAL Mode)
+#if(Fold_(Others))
+static general MemC_Void_(general) { return; }
+static address MemC_Just_(ADDRESS X) { return X; }
+static general MemC_Self_(address *_R_ Table,ADDRESS Length,LOGICAL Mode)
 {
 	if(Mode)
 		for(ADDRESS _PL_ End=Table+Length;Table<End;Table++)
-			(*Table)=(address)Table;
+			*Table=(address)(Table);
 	else
 		for(address Idx=0;Idx<Length;Idx++)
 			Table[Idx]=Idx;
 
 	return;
 }
-_MEMC_ address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,LOGICAL Mode)
+static address xMemC_Assign_1D_(general _PL_ _R_ Indexer,GENERAL _PL_ _R_ Indexed,ADDRESS Interval,ADDRESS Indices,ADDRESS TypeSize,LOGICAL Mode)
 {
 	if(Indices)
 	{
-		BYTE_08 _PL_ _PL_ End=(BYTE_08**)Indexer+Indices;
-		byte_08 **_R_ PointerO=Indexer;
+		BYTE_08 **_R_ PtrO=Indexer;
+		BYTE_08 _PL_ _PL_ End=PtrO+Indices;
 
-		{
-			PointerO[0]=(byte_08*)Indexed;
-			PointerO++;
-		}
+		*(PtrO++)=Indexed;
 		if(Mode)
 		{
-			ADDRESS *_R_ PointerS=(address*)Interval;
+			ADDRESS *_R_ PtrS=Acs_(ADDRESS*,Interval);
 
-			for(;(BYTE_08**)PointerO<End;PointerO++,PointerS++)
-				PointerO[0]=PointerO[-1]+(PointerS[0]*TypeSize);
+			for(;PtrO<End;PtrO++,PtrS++)
+				PtrO[0]=PtrO[-1]+(PtrS[0]*TypeSize);
 
-			return ((PointerO[-1]-(byte_08*)Indexed)+(PointerS[0]*TypeSize));
+			return ((PtrO[-1]-(BYTE_08*)(Indexed))+(PtrS[0]*TypeSize));
 		}
 		else
 		{
 			ADDRESS Step=Interval*TypeSize;
 
-			for(;(BYTE_08**)PointerO<End;PointerO++)
-				PointerO[0]=PointerO[-1]+Step;
+			for(;PtrO<End;PtrO++)
+				PtrO[0]=PtrO[-1]+Step;
 
 			return (Step*Indices);
 		}
@@ -777,46 +756,31 @@ _MEMC_ address _MemC_Assign_1D_(general _PL_ Indexer,GENERAL _PL_ Indexed,ADDRES
 #endif
 #endif
 
-#if(Fold_(Definition:MemClip Structure Functions))
-_MEMC_ general MemC_Delete_(general *_PL_ Object) { MemC_Deloc_(*Object);return; }
+#if(Fold_(Advanced Objects))
+static general MemC_Delete_(general *_PL_ _R_ Object) { MemC_Deloc_(*Object);return; }
 
-#if(Fold_(Part:MemC_MS))
-_MEMC_ memc_ms *MemC_MS_Create_(GENERAL _PL_ ID,ADDRESS Slots)
+#if(Fold_(MemC_MS))
+static memc_ms *MemC_MS_Create_(ADDRESS Nums)
 {
-	memc_ms *MS;
+	memc_ms *MS=NULL;
 
-	if(Slots)
+	if(Nums)
 	{
-		address Size=_MemC_Size_Mul_(Slots,sizeof(general*));
+		MemC_Temp_(ADDRESS,Size=MemC_Size_Mul_(Nums,sizeof(address)))
+			MS=MemC_Alloc_Byte_(MemC_Size_Add_(Size,sizeof(memc_ms)));
 
-		if(Size)
+		if(MS)
 		{
-			Size=_MemC_Size_Add_(Size,sizeof(memc_ms));
-			if(Size)
-			{
-				MS=MemC_Alloc_Byte_(Size);
-				if(MS)
-				{
-					Acs_(GENERAL*,MS->ID)=ID;
-					Acs_(MEMC_DT*,MS->Type)=MemC.Type.Add;
-					Acs_(address,MS->Nums)=Slots;
-					Acs_(address*,MS->Slot.V)=MemC_Clear_1D_((address*)(MS+1),Slots);
-				}
-				else;
-			}
-			else
-				MS=NULL;
+			Acs_(address,MS->Nums)=Nums;
+			Acs_(address*,MS->Slot.V)=MemC_Clear_1D_((address*)(MS+1),Nums);
 		}
-		else
-			MS=NULL;
+		else;
 	}
 	else
 	{
 		MS=MemC_Alloc_Unit_(memc_ms);
 		if(MS)
 		{
-			Acs_(GENERAL*,MS->ID)=ID;
-			Acs_(MEMC_DT*,MS->Type)=MemC.Type.Add;
 			Acs_(address,MS->Nums)=0;
 			Acs_(address*,MS->Slot.V)=NULL;
 		}
@@ -825,29 +789,12 @@ _MEMC_ memc_ms *MemC_MS_Create_(GENERAL _PL_ ID,ADDRESS Slots)
 
 	return MS;
 }
-
-_MEMC_ address MemC_MS_Size_(MEMC_MS _PL_ MS)
+static address MemC_MS_Size_(MEMC_MS _PL_ _R_ MS)
 {
 	return (MS)?(sizeof(memc_ms)+MemC_Size_(address,MS->Nums)):(0);
 }
-_MEMC_ logical MemC_MS_Change_(memc_ms _PL_ MS,MEMC_DT _PL_ DT)
-{
-	if(MS)
-		if(DT)
-			if(DT->SizeType==sizeof(address))
-			{
-				Acs_(MEMC_DT*,MS->Type)=DT;
 
-				return 1;
-			}
-			else;
-		else;
-	else;
-
-	return 0;
-}
-
-_MEMC_ logical MemC_MS_Init_(MEMC_MS _PL_ MS)
+static logical MemC_MS_Init_(MEMC_MS _PL_ _R_ MS)
 {
 	if(MS)
 	{
@@ -860,12 +807,12 @@ _MEMC_ logical MemC_MS_Init_(MEMC_MS _PL_ MS)
 	else
 		return 0;
 }
-_MEMC_ logical MemC_MS_Null_(MEMC_MS _PL_ MS,LOGICAL Mode)
+static logical MemC_MS_Null_(MEMC_MS _PL_ _R_ MS,LOGICAL Mode)
 {
 	if(MS)
 		if(MS->Slot.V)
 			if(MS->Slot.V[0]<MS->Nums)
-				return (((Mode)?(_MemC_Array_Non_Zero_):(_MemC_Array_All_Zero_))(MS->Slot.V+1,MS->Slot.V[0]));
+				return (((Mode)?(xMemC_Array_Non_Zero_):(xMemC_Array_All_Zero_))(MS->Slot.V+1,MS->Slot.V[0]));
 			else;
 		else;
 	else;
@@ -873,7 +820,7 @@ _MEMC_ logical MemC_MS_Null_(MEMC_MS _PL_ MS,LOGICAL Mode)
 	return 0;
 }
 
-_MEMC_ logical MemC_MS_Dims_(MEMC_MS _PL_ MS,ADDRESS Dims,...)
+static logical MemC_MS_Dims_(MEMC_MS _PL_ _R_ MS,ADDRESS Dims,...)
 {
 	if(MS)
 		if(MS->Nums>Dims)
@@ -897,30 +844,28 @@ _MEMC_ logical MemC_MS_Dims_(MEMC_MS _PL_ MS,ADDRESS Dims,...)
 }
 #endif
 
-#if(Fold_(Part:MemC_MC))
-static address _MemC_Shape_Overflow_(ADDRESS _PL_ Shape,ADDRESS Dims)
+#if(Fold_(MemC_MC))
+static address xMemC_Shape_Overflow_(ADDRESS *_R_ Ptr,ADDRESS Dims)
 {
 	address Total=1;
 
-	for(ADDRESS *_R_ Ptr=Shape,_PL_ End=Ptr+Dims;Ptr<End;Ptr++)
-		Total=_MemC_Size_Mul_(Total,*Ptr);
+	for(ADDRESS _PL_ End=Ptr+Dims;Ptr<End;Ptr++)
+		Total=MemC_Size_Mul_(Total,*Ptr);
 
 	return Total;
 }
-static address _MemC_Space_Required_(ADDRESS _PL_ Shape,ADDRESS Dims,ADDRESS SizeType)
+static address xMemC_Space_Required_(ADDRESS *_R_ Ptr,ADDRESS Dims,ADDRESS SizeType)
 {
 	if(Dims>1)
 	{
-		ADDRESS _PL_ Last=Shape+(Dims-1);
-		ADDRESS *_R_ Ptr=Shape;
 		address Size[2]={1,0};
 
-		while(Ptr<Last)
+		for(ADDRESS _PL_ Last=Ptr+(Dims-1);Ptr<Last;)
 		{
-			Size[0]=_MemC_Size_Mul_(Size[0],*Ptr);
+			Size[0]=MemC_Size_Mul_(Size[0],*Ptr);
 
 			if(Size[0])
-				Size[1]=_MemC_Size_Add_(Size[0],Size[1]);
+				Size[1]=MemC_Size_Add_(Size[0],Size[1]);
 			else
 				return 0;
 
@@ -930,65 +875,57 @@ static address _MemC_Space_Required_(ADDRESS _PL_ Shape,ADDRESS Dims,ADDRESS Siz
 				return 0;
 		}
 
-		Size[0]=_MemC_Size_Mul_(Size[0],*Ptr);
-		Size[0]=_MemC_Size_Mul_(Size[0],SizeType);
+		Size[0]=MemC_Size_Mul_(Size[0],*Ptr);
+		Size[0]=MemC_Size_Mul_(Size[0],SizeType);
 
 		if(Size[0])
-		{
-			Size[1]=_MemC_Size_Mul_(Size[1],sizeof(address));
-			if(Size[1])
-				return _MemC_Size_Add_(Size[0],Size[1]);
-			else;
-		}
-		else;
+			Size[1]=MemC_Size_Mul_(Size[1],sizeof(address));
+		else
+			return 0;
 
-		return 0;
+		if(Size[1])
+			return MemC_Size_Add_(Size[0],Size[1]);
+		else
+			return 0;
 	}
 	else
-		return _MemC_Size_Mul_(Shape[0],SizeType);
+		return MemC_Size_Mul_(*Ptr,SizeType);
 }
-_MEMC_ memc_mc *MemC_MC_Create_(GENERAL _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
+static memc_mc *MemC_MC_Create_(GENERAL _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 {
-	memc_mc *MC;
-	
 	if(DT)
 		if(MS)
 			if(MS->Slot.V)
 				if(MS->Slot.V[0]<MS->Nums)
 					if(MS->Slot.V[0])
 					{
-						ADDRESS Dimensions=MS->Slot.V[0];
-						ADDRESS _PL_ Shape=MS->Slot.V+1;
+						ADDRESS Dimensions=MS->Slot.V[0],_PL_ Shape=MS->Slot.V+1;
 						address Lng1D;
 						integer Flag=(DT->SizeType)?(0x1):(0x0);
 
-						if(_MemC_Array_Non_Zero_(Shape,Dimensions))
+						if(xMemC_Array_Non_Zero_(Shape,Dimensions))
 						{
-							Lng1D=_MemC_Shape_Overflow_(Shape,Dimensions);
-							if(Lng1D)
-								Flag|=0x6;
-							else
-								Flag|=0x2;
+							Lng1D=xMemC_Shape_Overflow_(Shape,Dimensions);
+							Flag|=(Lng1D)?(0x6):(0x2);
 						}
 						else
 							Lng1D=0;
 
 						switch(Flag)
 						{
+							memc_mc *MC;
+
 						case 0x0:
 						case 0x1:
 						case 0x6:
 							if(Dimensions>1)
 							{
-								address Size=_MemC_Size_Mul_(Dimensions,sizeof(address));
+								ADDRESS Size=MemC_Size_Mul_(Dimensions,sizeof(address));
 
 								if(Size)
-								{
-									Size=_MemC_Size_Add_(Size,sizeof(memc_mc));
-									MC=MemC_Alloc_Byte_(Size);
-								}
+									MC=MemC_Alloc_Byte_(MemC_Size_Add_(Size,sizeof(memc_mc)));
 								else
-									goto ESCAPE;
+									break;
 							}
 							else
 								MC=MemC_Alloc_Unit_(memc_mc);
@@ -1002,49 +939,40 @@ _MEMC_ memc_mc *MemC_MC_Create_(GENERAL _PL_ ID,MEMC_MS _PL_ MS,MEMC_DT _PL_ DT)
 								Acs_(address,MC->Lng1D)=Lng1D;
 								Acs_(general*,MC->AcsND)=NULL;
 								Acs_(general*,MC->Acs1D)=NULL;
+
 								if(Dimensions>1)
-								{
-									Acs_(address*,MC->LngND)=(address*)(MC+1);
-									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions));
+									if(MemC_Copy_1D_(Shape,Acs_(address*,MC->LngND)=(address*)(MC+1),Dimensions));
 									else
 										MemC_Deloc_(MC);
-								}
 								else
 									Acs_(ADDRESS*,MC->LngND)=&(MC->Lng1D);
+
+								return MC;
 							}
-							break;
+							else
+								break;
+
 						case 0x7:
 							{
 								address Size[2];
 
 								if(Dimensions>1)
 								{
-									Size[0]=_MemC_Size_Mul_(Dimensions,sizeof(address));
+									Size[0]=MemC_Size_Mul_(Dimensions,sizeof(address));
+									if(Size[0]);else break;
 
-									if(Size[0])
-										Size[0]=_MemC_Size_Add_(Size[0],sizeof(memc_mc));
-									else
-										goto ESCAPE;
-
-									if(Size[0])
-										goto INVADE;
-									else
-										goto ESCAPE;
+									Size[0]=MemC_Size_Add_(Size[0],sizeof(memc_mc));
+									if(Size[0]);else break;
 								}
 								else
-								{
 									Size[0]=sizeof(memc_mc);
-INVADE:
-									Size[1]=_MemC_Space_Required_(Shape,Dimensions,DT->SizeType);
-								}
 
-								if(Size[1])
-									Size[0]=_MemC_Size_Add_(Size[0],Size[1]);
-								else
-									goto ESCAPE;
+								Size[1]=xMemC_Space_Required_(Shape,Dimensions,DT->SizeType);
+								if(Size[1]);else break;
 
-								MC=MemC_Alloc_Byte_(Size[0]);
+								MC=MemC_Alloc_Byte_(MemC_Size_Add_(Size[0],Size[1]));
 							}
+
 							if(MC)
 							{
 								Acs_(GENERAL*,MC->ID)=ID;
@@ -1054,30 +982,29 @@ INVADE:
 								Acs_(address,MC->Lng1D)=Lng1D;
 
 								if(Dimensions>1)
-								{
-									Acs_(address*,MC->LngND)=(address*)(MC+1);
-									Acs_(general*,MC->AcsND)=(general*)(MC->LngND+Dimensions);
-									Acs_(general*,MC->Acs1D)=_MemC_Assign_Loop_((general**)(MC->AcsND),Shape,Dimensions,DT->SizeType);
-
-									if(MemC_Copy_1D_(Shape,(address*)(MC->LngND),Dimensions));
+									if(MemC_Copy_1D_(Shape,Acs_(address*,MC->LngND)=(address*)(MC+1),Dimensions))
+										Acs_(general*,MC->Acs1D)=xMemC_Assign_Loop_(Acs_(general*,MC->AcsND)=(general*)(MC->LngND+Dimensions),Shape,Dimensions,DT->SizeType);
 									else
 										MemC_Deloc_(MC);
-								}
 								else
 								{
 									Acs_(ADDRESS*,MC->LngND)=&(MC->Lng1D);
 									Acs_(general*,MC->AcsND)=(general*)(MC+1);
 									Acs_(general*,MC->Acs1D)=(general*)(MC->AcsND);
 								}
+
+								return MC;
 							}
-							break;
-						default:
-							goto ESCAPE;
+							else
+								break;
+
+						default:;
 						}
 					}
 					else
 					{
-						MC=MemC_Alloc_Unit_(memc_mc);
+						memc_mc _PL_ MC=MemC_Alloc_Unit_(memc_mc);
+
 						if(MC)
 						{
 							Acs_(GENERAL*,MC->ID)=ID;
@@ -1088,32 +1015,25 @@ INVADE:
 							Acs_(address,MC->Lng1D)=0;
 							Acs_(general*,MC->AcsND)=NULL;
 							Acs_(general*,MC->Acs1D)=NULL;
+
+							return MC;
 						}
 						else;
 					}
-				else
-					goto ESCAPE;
-			else
-				goto ESCAPE;
-		else
-			goto ESCAPE;
-	else
-ESCAPE:
-		MC=NULL;
+				else;
+			else;
+		else;
+	else;
 
-	return MC;
+	return NULL;
 }
 
-static address _MemC_Space_Occupied_(ADDRESS _PL_ Shape,ADDRESS Dims,ADDRESS SizeType)
+static address xMemC_Space_Occupied_(ADDRESS *_R_ Ptr,ADDRESS Dims,ADDRESS SizeType)
 {
-	ADDRESS *_R_ Ptr=Shape;
 	address Size[2]={1,0};
 
 	for(ADDRESS _PL_ Last=Ptr+(Dims-1);Ptr<Last;Ptr++)
-	{
-		Size[0]*=*Ptr;
-		Size[1]+=Size[0];
-	}
+		Size[1]+=(Size[0]*=*Ptr);
 	{
 		Size[0]*=*Ptr;
 		Size[0]*=SizeType;
@@ -1123,11 +1043,27 @@ static address _MemC_Space_Occupied_(ADDRESS _PL_ Shape,ADDRESS Dims,ADDRESS Siz
 
 	return Size[1];
 }
-_MEMC_ address MemC_MC_Size_(MEMC_MC _PL_ MC)
+static address MemC_MC_Size_(MEMC_MC _PL_ _R_ MC)
 {
-	return (MC)?(sizeof(memc_mc)+((MC->Dims>1)?(MemC_Size_(address,MC->Dims)):(0))+((MC->Acs1D)?(_MemC_Space_Occupied_(MC->LngND,MC->Dims,MC->Unit)):(0))):(0);
+	return ((MC)?(sizeof(memc_mc)+(((MC->LngND)==&(MC->Lng1D))?(0):(MemC_Size_(address,MC->Dims)))+((MC->Acs1D)?(xMemC_Space_Occupied_(MC->LngND,MC->Dims,MC->Unit)):(0))):(0));
 }
-_MEMC_ logical MemC_MC_Form_(MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
+static logical MemC_MC_Fill_(MEMC_MC _PL_ _R_ MC,GENERAL _PL_ _R_ Value)
+{
+	if(MC)
+	{
+		if(MC->Unit)
+			if(MC->Lng1D)
+				return xMemC_Init_1D_(MC->Acs1D,Value,MC->Lng1D,MC->Unit);
+			else;
+		else;
+
+		return 1;
+	}
+	else
+		return 0;
+}
+
+static logical MemC_MC_Form_(MEMC_MC _PL_ _R_ MC,MEMC_MS _PL_ _R_ MS)
 {
 	if(MC)
 		if(MS)
@@ -1147,7 +1083,7 @@ _MEMC_ logical MemC_MC_Form_(MEMC_MC _PL_ MC,MEMC_MS _PL_ MS)
 
 	return 0;
 }
-_MEMC_ logical MemC_MC_Change_(memc_mc _PL_ MC,MEMC_DT _PL_ DT)
+static logical MemC_MC_Change_(memc_mc _PL_ _R_ MC,MEMC_DT _PL_ DT)
 {
 	if(MC)
 		if(DT)
@@ -1165,39 +1101,37 @@ _MEMC_ logical MemC_MC_Change_(memc_mc _PL_ MC,MEMC_DT _PL_ DT)
 }
 #endif
 
-#if(Fold_(Part:MemC_ML))
-#define _MemC_ML_Malloc_(Chunks) ((_MemC_Size_Mul_(Chunks,sizeof(memc_mn)))?(malloc(MemC_Size_(memc_mn,Chunks))):(NULL))
-#define _MemC_ML_Free_(Memory) __dl{free(Memory);(Memory)=NULL;}lb__
+#if(Fold_(MemC_ML))
+#define xMemC_ML_Malloc_(Chunks) ((MemC_Size_Mul_(Chunks,sizeof(memc_mn)))?(malloc(MemC_Size_(memc_mn,Chunks))):(NULL))
+#define xMemC_ML_Free_(Memory) __dl{free(Memory);(Memory)=NULL;}lb__
 
 struct _memc_l2 { general *L[2]; };
 MemC_Type_Declare_(struct,memc_l2,MEMC_L2);
 
+struct _memc_mn { memc_ml *Home;struct _memc_mn *Prev,*Next;address Size; };
 MemC_Type_Declare_(struct,memc_mn,MEMC_MN);
-struct _memc_mn
-{
-	memc_ml *Home;
-	memc_mn *Prev;
-	memc_mn *Next;
-	address Size;
-};
 
-_MEMC_ memc_ml *MemC_ML_Create_(memc_ml _PL_ Root,ADDRESS Chunks)
+static_assert(sizeof(memc_l2)==(sizeof(address)<<1),"sizeof(memc_l2) != 2*sizeof(address)");
+static_assert(sizeof(memc_mn)==(sizeof(address)<<2),"sizeof(memc_mn) != 4*sizeof(address)");
+static_assert(sizeof(memc_ml)==(sizeof(address)<<3),"sizeof(memc_ml) != 8*sizeof(address)");
+
+static memc_ml *MemC_ML_Create_(memc_ml _PL_ Root,ADDRESS Chunks)
 {
 	memc_ml *ML;
 
 	if(Chunks>2)
 		if(Root)
-			if(Root==Root->LinkSelf)
+			if(Root==Root->Link.Self)
 			{
-				ML=_MemC_ML_Malloc_(Chunks);
+				ML=xMemC_ML_Malloc_(Chunks);
 				if(ML)
 				{
-					Acs_(memc_ml*,ML->LinkSelf)=ML;
-					Acs_(memc_ml*,ML->LinkPrev)=Root;
-					Acs_(MEMC_ML*,ML->LinkNext)=Root->LinkNext;
+					Acs_(memc_ml*,ML->Link.Self)=ML;
+					Acs_(memc_ml*,ML->Link.Prev)=Root;
+					Acs_(MEMC_ML*,ML->Link.Next)=Root->Link.Next;
 
-					Acs_(memc_ml*,Root->LinkNext->LinkPrev)=ML;
-					Acs_(memc_ml*,Root->LinkNext)=ML;
+					Acs_(memc_ml*,Root->Link.Next->Link.Prev)=ML;
+					Acs_(memc_ml*,Root->Link.Next)=ML;
 
 					goto JUMP;
 				}
@@ -1207,13 +1141,13 @@ _MEMC_ memc_ml *MemC_ML_Create_(memc_ml _PL_ Root,ADDRESS Chunks)
 				ML=NULL;
 		else
 		{
-			ML=_MemC_ML_Malloc_(Chunks);
+			ML=xMemC_ML_Malloc_(Chunks);
 			if(ML)
 			{
 				{
-					Acs_(memc_ml*,ML->LinkSelf)=ML;
-					Acs_(memc_ml*,ML->LinkPrev)=ML;
-					Acs_(memc_ml*,ML->LinkNext)=ML;
+					Acs_(memc_ml*,ML->Link.Self)=ML;
+					Acs_(memc_ml*,ML->Link.Prev)=ML;
+					Acs_(memc_ml*,ML->Link.Next)=ML;
 				}
 JUMP:
 				MemC_Temp_(memc_mn,_PL_ MN=(memc_mn*)(ML+1))
@@ -1223,11 +1157,11 @@ JUMP:
 					MN->Next=NULL;
 					MN->Size=MemC_Size_(memc_mn,Chunks-3);
 
-					Acs_(address,ML->SizeAble)=MN->Size;
-					Acs_(address,ML->SizeIdle)=MN->Size;
-					Acs_(address,ML->SizeUsed)=0;
-					Acs_(address,ML->NumsIdle)=1;
-					Acs_(address,ML->NumsUsed)=0;
+					Acs_(address,ML->Size.Able)=MN->Size;
+					Acs_(address,ML->Size.Idle)=MN->Size;
+					Acs_(address,ML->Size.Used)=0;
+					Acs_(address,ML->Nums.Idle)=1;
+					Acs_(address,ML->Nums.Used)=0;
 				}
 			}
 			else;
@@ -1237,23 +1171,23 @@ JUMP:
 
 	return ML;
 }
-_MEMC_ memc_ml *MemC_ML_Delete_(memc_ml *_PL_ ML)
+static memc_ml *MemC_ML_Delete_(memc_ml *_PL_ _R_ ML)
 {
 	memc_ml *Return;
 
 	if(*ML)
-		if((*ML)==(*ML)->LinkSelf)
+		if((*ML)==(*ML)->Link.Self)
 		{
-			if((*ML)==(*ML)->LinkPrev)
+			if((*ML)==(*ML)->Link.Prev)
 				Return=NULL;
 			else
 			{
-				Return=(*ML)->LinkPrev;
+				Return=(*ML)->Link.Prev;
 
-				Acs_(memc_ml*,(*ML)->LinkPrev->LinkNext)=(*ML)->LinkNext;
-				Acs_(memc_ml*,(*ML)->LinkNext->LinkPrev)=(*ML)->LinkPrev;
+				Acs_(memc_ml*,(*ML)->Link.Prev->Link.Next)=(*ML)->Link.Next;
+				Acs_(memc_ml*,(*ML)->Link.Next->Link.Prev)=(*ML)->Link.Prev;
 			}
-			_MemC_ML_Free_(*ML);
+			xMemC_ML_Free_(*ML);
 		}
 		else
 			Return=NULL;
@@ -1262,21 +1196,23 @@ _MEMC_ memc_ml *MemC_ML_Delete_(memc_ml *_PL_ ML)
 
 	return Return;
 }
-_MEMC_ address MemC_ML_Size_(MEMC_ML _PL_ ML)
+static address MemC_ML_Size_(MEMC_ML _PL_ _R_ ML)
 {
-	return ((ML)?(MemC_Size_(memc_ml,1)+MemC_Size_(memc_mn,ML->NumsIdle+ML->NumsUsed)+(ML->SizeIdle+ML->SizeUsed)):(0));
+	return ((ML)?(MemC_Size_(memc_ml,1)+MemC_Size_(memc_mn,ML->Nums.Idle+ML->Nums.Used)+(ML->Size.Idle+ML->Size.Used)):(0));
 }
 
-static address _MemC_MN_Margin_(volatile address Size)
+static address xMemC_MN_Margin_(register address S)
 {
-	Size--;
-	Size+=sizeof(memc_mn);
-	Size/=sizeof(memc_mn);
-	Size*=sizeof(memc_mn);
+	ADDRESS T=sizeof(memc_mn);
 
-	return Size;
+	S--;
+	S+=T;
+	S/=T;
+	S*=T;
+
+	return S;
 }
-static logical _MemC_MN_Scan_(memc_mn *_R_ Ptr)
+static logical xMemC_MN_Scan_(memc_mn *_R_ Ptr)
 {
 	__dlOuOlb__
 		if(Ptr->Next)
@@ -1287,23 +1223,20 @@ static logical _MemC_MN_Scan_(memc_mn *_R_ Ptr)
 		else
 			return 1;
 }
-static memc_mn *_MemC_MN_Search_Space_(memc_mn *_R_ Ptr,ADDRESS Demand)
+static memc_mn *xMemC_MN_Search_Space_(memc_mn *_R_ Ptr,ADDRESS Demand)
 {
 	memc_mn *Here=NULL;
 
-	for(address Size=(address)FULL;Ptr;Ptr=Ptr->Next)
+	for(address Size=UINTPTR_MAX;Ptr;Ptr=Ptr->Next)
 		if(Ptr->Home);
 		else if(Demand>Ptr->Size);
 		else if(Size>Ptr->Size)
-		{
-			Size=Ptr->Size;
-			Here=Ptr;
-		}
+			Size=(Here=Ptr)->Size;
 		else;
 
 	return Here;
 }
-static address _MemC_MN_Search_Size_(memc_mn *_R_ Ptr)
+static address xMemC_MN_Search_Size_(memc_mn *_R_ Ptr)
 {
 	address Temp;
 
@@ -1315,11 +1248,11 @@ static address _MemC_MN_Search_Size_(memc_mn *_R_ Ptr)
 
 	return Temp;
 }
-static memc_mn *_MemC_MN_Search_Node_(memc_mn *Node)
+static memc_mn *xMemC_MN_Search_Node_(memc_mn *_R_ Node)
 {
 	if(Node--)
 		if(Node->Home)
-			if(Node->Home==Node->Home->LinkSelf)
+			if(Node->Home==Node->Home->Link.Self)
 				return Node;
 			else;
 		else;
@@ -1327,7 +1260,7 @@ static memc_mn *_MemC_MN_Search_Node_(memc_mn *Node)
 
 	return NULL;
 }
-static logical _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
+static logical xMemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
 {
 	if(Demand<Node->Size)
 	{
@@ -1356,7 +1289,7 @@ static logical _MemC_MN_Borrow_(memc_mn _PL_ Node,ADDRESS Demand)
 	else
 		return 0;
 }
-static general _MemC_MN_Attach_(memc_mn _PL_ Node)
+static general xMemC_MN_Attach_(memc_mn _PL_ Node)
 {
 	Node->Size+=sizeof(memc_mn);
 	Node->Size+=Node->Next->Size;
@@ -1365,8 +1298,10 @@ static general _MemC_MN_Attach_(memc_mn _PL_ Node)
 	if(Node->Next)
 		Node->Next->Prev=Node;
 	else;
+
+	return;
 }
-static address _MemC_MN_Return_(memc_mn *_PL_ Node)
+static address xMemC_MN_Return_(memc_mn *_PL_ Node)
 {
 	address Return=0;
 
@@ -1374,8 +1309,7 @@ static address _MemC_MN_Return_(memc_mn *_PL_ Node)
 		if((*Node)->Prev->Home);
 		else
 		{
-			*Node=(*Node)->Prev;
-			_MemC_MN_Attach_(*Node);
+			xMemC_MN_Attach_(*Node=(*Node)->Prev);
 			Return++;
 		}
 	else;
@@ -1384,7 +1318,7 @@ static address _MemC_MN_Return_(memc_mn *_PL_ Node)
 		if((*Node)->Next->Home);
 		else
 		{
-			_MemC_MN_Attach_(*Node);
+			xMemC_MN_Attach_(*Node);
 			Return++;
 		}
 	else;
@@ -1393,22 +1327,22 @@ static address _MemC_MN_Return_(memc_mn *_PL_ Node)
 
 	return Return;
 }
-static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
+static memc_l2 xMemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
 {
-	memc_ml *Here=ML;
-	address Size=(address)FULL;
+	memc_ml *_R_ Here=ML;
+	address Size=UINTPTR_MAX;
 	memc_l2 Return={NULL,NULL};
 
 	do
-		if(Demand>Here->SizeAble)
-			Here=Here->LinkNext;
+		if(Demand>Here->Size.Able)
+			Here=Here->Link.Next;
 		else
 		{
 			memc_mn _PL_ Node=(memc_mn*)(Here+1);
 
-			if(_MemC_MN_Scan_(Node))
+			if(xMemC_MN_Scan_(Node))
 			{
-				memc_mn *Temp=_MemC_MN_Search_Space_(Node,Demand);
+				memc_mn _PL_ Temp=xMemC_MN_Search_Space_(Node,Demand);
 
 				if(Temp)
 					if(Size>Temp->Size)
@@ -1420,12 +1354,11 @@ static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
 					else;
 				else;
 
-				Here=Here->LinkNext;
+				Here=Here->Link.Next;
 			}
 			else
 			{
-				Return.L[0]=NULL;
-				Return.L[1]=NULL;
+				Return.L[1]=Return.L[0]=NULL;
 				break;
 			}
 		}
@@ -1433,7 +1366,7 @@ static memc_l2 _MemC_ML_Search_Home_(memc_ml _PL_ ML,ADDRESS Demand)
 
 	return Return;
 }
-static general *_MemC_MN_Give_(memc_mn _PL_ Node,ADDRESS Demand)
+static general *xMemC_MN_Give_(memc_mn _PL_ _R_ Node,ADDRESS Demand)
 {
 	ADDRESS Margin=Node->Size;
 	byte_08 _PL_ Return=memset(Node+1,0x6F,Margin);
@@ -1444,19 +1377,16 @@ static general *_MemC_MN_Give_(memc_mn _PL_ Node,ADDRESS Demand)
 
 	return Return;
 }
-static general _MemC_MN_Take_(memc_mn _PL_ Node)
-{
-	memset(Node+1,0x58,Node->Size);
-}
-_MEMC_ general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
+static general xMemC_MN_Take_(memc_mn _PL_ _R_ Node) { memset(Node+1,0x58,Node->Size);return; }
+static general *MemC_ML_Borrow_(memc_ml _PL_ _R_ ML,ADDRESS Demand)
 {
 	if(ML)
 	{
-		ADDRESS Margin=_MemC_MN_Margin_(Demand);
+		ADDRESS Margin=xMemC_MN_Margin_(Demand);
 
 		if(Margin)
 		{
-			MEMC_L2 Select=_MemC_ML_Search_Home_(ML,Margin);
+			MEMC_L2 Select=xMemC_ML_Search_Home_(ML,Margin);
 
 			if(Select.L[0])
 			{
@@ -1466,22 +1396,22 @@ _MEMC_ general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
 
 				Node->Home=Home;
 
-				if(_MemC_MN_Borrow_(Node,Margin))
-					Acs_(address,Home->SizeIdle)-=sizeof(memc_mn);
+				if(xMemC_MN_Borrow_(Node,Margin))
+					Acs_(address,Home->Size.Idle)-=sizeof(memc_mn);
 				else
-					Acs_(address,Home->NumsIdle)--;
+					Acs_(address,Home->Nums.Idle)--;
 
-				if(Size==Home->SizeAble)
-					Acs_(address,Home->SizeAble)=_MemC_MN_Search_Size_(Node);
+				if(Size==Home->Size.Able)
+					Acs_(address,Home->Size.Able)=xMemC_MN_Search_Size_(Node);
 				else;
 
 				{
-					Acs_(address,Home->NumsUsed)++;
-					Acs_(address,Home->SizeIdle)-=Margin;
-					Acs_(address,Home->SizeUsed)+=Margin;
+					Acs_(address,Home->Nums.Used)++;
+					Acs_(address,Home->Size.Idle)-=Margin;
+					Acs_(address,Home->Size.Used)+=Margin;
 				}
 
-				return _MemC_MN_Give_(Node,Demand);
+				return xMemC_MN_Give_(Node,Demand);
 			}
 			else;
 		}
@@ -1491,63 +1421,63 @@ _MEMC_ general *MemC_ML_Borrow_(memc_ml _PL_ ML,ADDRESS Demand)
 
 	return NULL;
 }
-_MEMC_ logical _MemC_ML_Return_(general _PL_ Memory)
+static logical xMemC_ML_Return_(general _PL_ Memory)
 {
-	memc_mn *Node=_MemC_MN_Search_Node_(Memory);
+	memc_mn *Node=xMemC_MN_Search_Node_(Memory);
 
 	if(Node)
 	{
-		memc_ml _PL_ Home=Node->Home;
+		memc_ml _PL_ _R_ Home=Node->Home;
 		ADDRESS Size=Node->Size;
-		ADDRESS Mode=_MemC_MN_Return_(&Node);
+		ADDRESS Mode=xMemC_MN_Return_(&Node);
 
-		Acs_(address,Home->SizeIdle)+=MemC_Size_(memc_mn,Mode);
-		Acs_(address,Home->SizeIdle)+=Size;
-		Acs_(address,Home->SizeUsed)-=Size;
+		Acs_(address,Home->Size.Idle)+=MemC_Size_(memc_mn,Mode);
+		Acs_(address,Home->Size.Idle)+=Size;
+		Acs_(address,Home->Size.Used)-=Size;
 
-		Acs_(address,Home->NumsIdle)-=Mode;
-		Acs_(address,Home->NumsIdle)++;
-		Acs_(address,Home->NumsUsed)--;
+		Acs_(address,Home->Nums.Idle)-=Mode;
+		Acs_(address,Home->Nums.Idle)++;
+		Acs_(address,Home->Nums.Used)--;
 
-		if(Home->SizeAble<Node->Size)
-			Acs_(address,Home->SizeAble)=Node->Size;
+		if(Home->Size.Able<Node->Size)
+			Acs_(address,Home->Size.Able)=Node->Size;
 		else;
 
-		_MemC_MN_Take_(Node);
+		xMemC_MN_Take_(Node);
 
 		return 1;
 	}
 	else
 		return 0;
 }
-_MEMC_ logical MemC_ML_Kill_(memc_ml _PL_ ML)
+static logical MemC_ML_Kill_(memc_ml _PL_ ML)
 {
 	if(ML)
 	{
-		memc_ml *PtrML=ML;
+		memc_ml *_R_ PtrML=ML;
 
 		do
 		{
-			if(PtrML->NumsUsed)
+			if(PtrML->Nums.Used)
 			{
-				memc_mn _PL_ PtrMN=(memc_mn*)(PtrML+1);
+				memc_mn _PL_ _R_ PtrMN=(memc_mn*)(PtrML+1);
 
 				PtrMN->Home=NULL;
 				PtrMN->Prev=NULL;
 				PtrMN->Next=NULL;
-				PtrMN->Size=MemC_Size_(memc_mn,PtrML->NumsIdle+PtrML->NumsUsed-1)+(PtrML->SizeIdle+PtrML->SizeUsed);
+				PtrMN->Size=MemC_Size_(memc_mn,PtrML->Nums.Idle+PtrML->Nums.Used-1)+(PtrML->Size.Idle+PtrML->Size.Used);
 
-				_MemC_MN_Take_(PtrMN);
+				xMemC_MN_Take_(PtrMN);
 
-				Acs_(address,PtrML->SizeAble)=PtrMN->Size;
-				Acs_(address,PtrML->SizeIdle)=PtrMN->Size;
-				Acs_(address,PtrML->SizeUsed)=0;
-				Acs_(address,PtrML->NumsIdle)=1;
-				Acs_(address,PtrML->NumsUsed)=0;
+				Acs_(address,PtrML->Size.Able)=PtrMN->Size;
+				Acs_(address,PtrML->Size.Idle)=PtrMN->Size;
+				Acs_(address,PtrML->Size.Used)=0;
+				Acs_(address,PtrML->Nums.Idle)=1;
+				Acs_(address,PtrML->Nums.Used)=0;
 			}
 			else;
 
-			PtrML=PtrML->LinkNext;
+			PtrML=PtrML->Link.Next;
 		}
 		while(PtrML!=ML);
 
@@ -1557,14 +1487,14 @@ _MEMC_ logical MemC_ML_Kill_(memc_ml _PL_ ML)
 		return 0;
 }
 
-_MEMC_ memc_ml *MemC_ML_Master_(MEMC_MN *Node)
+static memc_ml *MemC_ML_Master_(MEMC_MN *_R_ Node)
 {
 	if(Node--)
 	{
-		memc_ml _PL_ Home=Node->Home;
+		memc_ml _PL_ _R_ Home=Node->Home;
 
 		if(Home)
-			if(Home==Home->LinkSelf)
+			if(Home==Home->Link.Self)
 				return Home;
 			else;
 		else;
@@ -1573,14 +1503,14 @@ _MEMC_ memc_ml *MemC_ML_Master_(MEMC_MN *Node)
 
 	return NULL;
 }
-_MEMC_ address MemC_ML_Usable_(MEMC_MN *Node)
+static address MemC_ML_Usable_(MEMC_MN *_R_ Node)
 {
 	if(Node--)
 	{
-		MEMC_ML _PL_ Home=Node->Home;
+		MEMC_ML _PL_ _R_ Home=Node->Home;
 
 		if(Home)
-			if(Home==Home->LinkSelf)
+			if(Home==Home->Link.Self)
 				return Node->Size;
 			else;
 		else;
@@ -1590,292 +1520,119 @@ _MEMC_ address MemC_ML_Usable_(MEMC_MN *Node)
 	return 0;
 }
 
-static address _MemC_ML_Link_Count_(MEMC_ML _PL_ ML)
-{
-	MEMC_ML *_R_ Ptr=ML;
-	address Count=0;
-
-	do
-	{
-		Count++;
-		Ptr=Ptr->LinkNext;
-	}
-	while(Ptr!=ML);
-
-	return Count;
-}
-static address _MemC_ML_Used_Count_(MEMC_ML _PL_ ML)
-{
-	MEMC_ML *_R_ Ptr=ML;
-	address Count=0;
-
-	do
-	{
-		Count+=Ptr->NumsUsed;
-		Ptr=Ptr->LinkNext;
-	}
-	while(Ptr!=ML);
-
-	return Count;
-}
-static general _MemC_ML_Used_Array_(MEMC_ML _PL_ ML,address *_R_ Array)
-{
-	MEMC_ML *_R_ Ptr=ML;
-
-	do
-	{
-		*Array=Ptr->SizeUsed+MemC_Size_(memc_mn,Ptr->NumsUsed);
-		Array++;
-		Ptr=Ptr->LinkNext;
-	}
-	while(Ptr!=ML);
-}
-static general _MemC_ML_Able_Array_(MEMC_ML _PL_ ML,address *_R_ Array)
-{
-	MEMC_ML *_R_ Ptr=ML;
-
-	do
-	{
-		*Array=Ptr->SizeAble;
-		Array++;
-		Ptr=Ptr->LinkNext;
-	}
-	while(Ptr!=ML);
-}
-static logical _MemC_ML_Able_Check_(ADDRESS *_R_ PtrU,address _PL_ Able,ADDRESS _PL_ EndA)
-{
-	for(;PtrU<Able;PtrU++)
-		if(*PtrU)
-		{
-			address *Mark=NULL;
-
-			for(address Size=(address)FULL,*PtrA=Able;PtrA<EndA;PtrA++)
-				if((*PtrU)>(*PtrA));
-				else if(Size>(*PtrA))
-				{
-					Size=*PtrA;
-					Mark=PtrA;
-				}
-				else;
-
-			if(Mark)
-				(*Mark)-=(*PtrU);
-			else
-				return 0;
-		}
-		else;
-
-	return 1;
-}
-static general _MemC_ML_Head_Array_(MEMC_ML _PL_ ML,MEMC_MN **_R_ Array)
-{
-	MEMC_ML *_R_ PtrML=ML;
-
-	do
-	{
-		if(PtrML->NumsUsed)
-			for(MEMC_MN *PtrMN=(memc_mn*)(PtrML+1);PtrMN;PtrMN=PtrMN->Next)
-				if(PtrMN->Home)
-					*(Array++)=PtrMN;
-				else;
-		else;
-
-		PtrML=PtrML->LinkNext;
-	}
-	while(PtrML!=ML);
-}
-static logical _MemC_MN_Comp_Size_(MEMC_MN _PL_ A,MEMC_MN _PL_ B)
-{
-	return ((A->Size)<(B->Size));
-}
-static logical _MemC_ML_Twin_Alloc_(memc_ml _PL_ ML,MEMC_MN _PL_ *_R_ Old,MEMC_MN _PL_ _PL_ End)
-{
-	general **New;
-
-	for(New=(general**)End;Old<End;Old++,New++)
-	{
-		*New=MemC_ML_Borrow_(ML,(*Old)->Size);
-
-		if(*New)
-			if(MemC_Copy_1D_((byte_08*)((*Old)+1),(byte_08*)(*New),(*Old)->Size));
-			else
-			{
-				MemC_ML_Return_(*New);
-				break;
-			}
-		else
-			break;
-	}
-
-	if(Old==End)
-		return 1;
-	else
-	{
-		for(New--;(MEMC_MN**)New>=End;New--)
-			MemC_ML_Return_(*New);
-
-		return 0;
-	}
-}
-static general _MemC_ML_Over_Write_(MEMC_MN _PL_ *_R_ Old,MEMC_MN _PL_ _PL_ End)
-{
-	for(GENERAL _PL_ *_R_ New=(GENERAL**)End,_PL_ *Bound,**_R_ Ptr;Old<End;Old++,New++)
-	{
-		{
-			Ptr=(GENERAL**)((*Old)+1);
-			Bound=(GENERAL**)((address)Ptr+(*Old)->Size);
-		}
-		{
-			Ptr[0]=*New;
-			Ptr[1]=(general**)(Ptr[0])+1;
-			Ptr[2]=(general**)(Ptr[1])+1;
-			Ptr[3]=(general**)(Ptr[2])+1;
-		}
-		for(Ptr+=4;Ptr<Bound;Ptr+=4)
-		{
-			Ptr[0]=(general**)(Ptr[-1])+1;
-			Ptr[1]=(general**)(Ptr[0])+1;
-			Ptr[2]=(general**)(Ptr[1])+1;
-			Ptr[3]=(general**)(Ptr[2])+1;
-		}
-	}
-}
-_MEMC_ logical MemC_ML_Move_(memc_ml _PL_ Source,memc_ml _PL_ Target,memc_ms _PL_ Buffer)
-{
-	if(Source)
-		if(Target)
-		{
-			ADDRESS Sources=_MemC_ML_Link_Count_(Source);
-			ADDRESS Targets=_MemC_ML_Link_Count_(Target);
-
-			if(Buffer->Nums<(Sources+Targets));
-			else
-			{
-				ADDRESS Useds=_MemC_ML_Used_Count_(Source);
-				
-				if((Buffer->Nums)<(3*Useds));
-				else
-				{
-					address _PL_ Used=Buffer->Slot.V;
-					address _PL_ Able=Used+Sources;
-
-					_MemC_ML_Used_Array_(Source,Used);
-					_MemC_ML_Able_Array_(Target,Able);
-					if(_MemC_ML_Able_Check_(Used,Able,Able+Targets))
-					{
-						MEMC_MN *_PL_ Head=(MEMC_MN**)(Buffer->Slot.P);
-						address _PL_ Temp=(address*)(Head+Useds);
-
-						_MemC_ML_Head_Array_(Source,Head);
-						if(MemC_Sort_(MemC_Func_Casting_(logical,_MemC_MN_Comp_Size_,GENERAL _PL_,GENERAL _PL_),(GENERAL**)Head,NULL,Temp,Useds))
-							if(_MemC_ML_Twin_Alloc_(Target,Head,(MEMC_MN**)Temp))
-							{
-								_MemC_ML_Over_Write_(Head,(MEMC_MN**)Temp);
-
-								return 1;
-							}
-							else;
-						else;
-					}
-					else;
-				}
-			}
-		}
-		else;
-	else;
-
-	return 0;
-}
-
-#undef _MemC_ML_Free_
-#undef _MemC_ML_Malloc_
+#undef xMemC_ML_Free_
+#undef xMemC_ML_Malloc_
 #endif
-#endif
-
-#if(Fold_(Undefinition:MemClip Macros))
-#undef _MEMC_
 #endif
 
 #if(Fold_(Library Casing))
-MEMCASE MemC=
+static_assert(sizeof(MEMCASE)==(sizeof(ADDRESS)<<6),"sizeof(MEMCASE) != 64*sizeof(ADDRESS)");
+extern MEMCASE MemC=
 {
-	.Version=IdiomVersion,
-	.MaxDims=_MemC_Dims_,
-	.Null.V=0,
-	.Full.V=UINTPTR_MAX,
-	.Void_=MemC_Void_,
-	.Just_=MemC_Just_,
+	{
+		.Version=Idiom.Version,
+		.MaxDims=xMemC_Dims_,
+		.Null.V=0,
+		.Full.V=UINTPTR_MAX
+	},
+	{
+		.Void_=MemC_Void_,
+		.Just_=MemC_Just_
+	},
 	.Type=
 	{
-		.N00=TableType+MemCTypeNone_00,
-		.B08=TableType+MemCTypeByte_08,
-		.Int=TableType+MemCTypeInteger,
-		.Add=TableType+MemCTypeAddress,
-		.Enum_=MemC_DT_Enum_,
-		.Desc_=MemC_DT_Desc_
-	},
-	.Alloc=
-	{
-		.Byte_=MemC_Alloc_Byte_,
-		.DN_=_MemC_Alloc_ND_
-	},
-	.Set=
-	{
-		.Check_=MemC_Func_Casting_(logical,MemC_Check_,GENERAL _PL_ _PL_,ADDRESS),
-		.Deloc_=MemC_Deloc_Set_
-	},
-	.Copy=
-	{
-		.DN_=_MemC_Copy_,
-		.Step_=MemC_Func_Casting_(logical,MemC_Copy_Step_,GENERAL _PL_ _R_,general _PL_ _R_,ADDRESS,ADDRESS,ADDRESS,ADDRESS)
-	},
-	.Reform=
-	{
-		.DN_=_MemC_Reform_,
-		.Shape_=MemC_Reform_Shape_
-	},
-	.Preset.D1_=_MemC_Init_1D_,
-	.Assign.D1_=_MemC_Assign_1D_,
-	.Sort=
-	{
-		.Index_=MemC_Self_,
-		.Do_=MemC_Sort_
+		{
+			.N00=Idiom.Type.Desc+MemCTypeNone_00,
+			.B08=Idiom.Type.Desc+MemCTypeByte_08,
+			.Int=Idiom.Type.Desc+MemCTypeInteger,
+			.Add=Idiom.Type.Desc+MemCTypeAddress
+		},
+		{
+			.Enum_=MemC_DT_Enum_,
+			.Desc_=MemC_DT_Desc_
+		}
 	},
 	.Size=
 	{
-		.Add_=_MemC_Size_Add_,
-		.Mul_=_MemC_Size_Mul_
+		.Add_=MemC_Size_Add_,
+		.Sub_=MemC_Size_Sub_,
+		.Mul_=MemC_Size_Mul_,
+		.Div_=MemC_Size_Div_
+	},
+	{
+		.Alloc=
+		{
+			.Byte_=MemC_Alloc_Byte_,
+			.DN_=xMemC_Alloc_ND_
+		},
+		.Set=
+		{
+			.Check_=MemC_Check_,
+			.Deloc_=MemC_Deloc_Set_
+		}
+	},
+	{
+		.Copy=
+		{
+			.DN_=xMemC_Copy_,
+			.Step_=MemC_Copy_Step_
+		},
+		.Reform=
+		{
+			.DN_=xMemC_Reform_,
+			.Shape_=MemC_Reform_Shape_
+		},
+		.Sort=
+		{
+			.Index_=MemC_Self_,
+			.Do_=MemC_Sort_
+		},
+		.Preset.D1_=xMemC_Init_1D_,
+		.Assign.D1_=xMemC_Assign_1D_
 	},
 	.MS=
 	{
-		.Create_=MemC_MS_Create_,
-		.Delete_=MemC_Func_Casting_(general,MemC_Delete_,memc_ms*_PL_),
-		.Size_=MemC_MS_Size_,
-		.Change_=MemC_MS_Change_,
-		.Init_=MemC_MS_Init_,
-		.Null_=MemC_MS_Null_,
-		.Dims_=MemC_MS_Dims_
+		{
+			.Create_=MemC_MS_Create_,
+			.Delete_=MemC_Func_Casting_(general,MemC_Delete_,memc_ms *_PL_ _R_),
+			.Size_=MemC_MS_Size_,
+			.Init_=MemC_MS_Init_
+		},
+		{
+			.Null_=MemC_MS_Null_,
+			.Dims_=MemC_MS_Dims_
+		}
 	},
 	.MC=
 	{
-		.Create_=MemC_MC_Create_,
-		.Delete_=MemC_Func_Casting_(general,MemC_Delete_,memc_mc*_PL_),
-		.Size_=MemC_MC_Size_,
-		.Form_=MemC_MC_Form_,
-		.Change_=MemC_MC_Change_
+		{
+			.Create_=MemC_MC_Create_,
+			.Delete_=MemC_Func_Casting_(general,MemC_Delete_,memc_mc *_PL_ _R_),
+			.Size_=MemC_MC_Size_,
+			.Fill_=MemC_MC_Fill_
+		},
+		{
+			.Change_=MemC_MC_Change_,
+			.Form_=MemC_MC_Form_
+		}
 	},
 	.ML=
 	{
-		.Create_=MemC_ML_Create_,
-		.Delete_=MemC_ML_Delete_,
-		.Size_=MemC_ML_Size_,
-		.Kill_=MemC_ML_Kill_,
-		.Move_=MemC_ML_Move_,
-		.Borrow_=MemC_ML_Borrow_,
-		.Return_=_MemC_ML_Return_,
-		.Master_=MemC_Func_Casting_(memc_ml*,MemC_ML_Master_,GENERAL _PL_),
-		.Usable_=MemC_Func_Casting_(address,MemC_ML_Usable_,GENERAL _PL_)
+		{
+			.Create_=MemC_ML_Create_,
+			.Delete_=MemC_ML_Delete_,
+			.Size_=MemC_ML_Size_,
+			.Kill_=MemC_ML_Kill_
+		},
+		{
+			.Borrow_=MemC_ML_Borrow_,
+			.Return_=xMemC_ML_Return_
+		},
+		{
+			.Master_=MemC_Func_Casting_(memc_ml*,MemC_ML_Master_,GENERAL _PL_),
+			.Usable_=MemC_Func_Casting_(address,MemC_ML_Usable_,GENERAL _PL_)
+		}
 	}
 };
-MEMCASE *MemC_(general) { return &MemC; }
+extern MEMCASE *MemC_(general) { return &MemC; }
 #endif

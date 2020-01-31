@@ -1,10 +1,7 @@
 ﻿#include "linclip.h"
-
-#if(Fold_(Definition:LinCrux Macros))
 #include "lincros.c"
-#endif
 
-#if(Fold_(Definition:Internal Functions))
+#if(Fold_(Internal Functions))
 _F_ oclclip LinC_From_(_P_ oclclip Amount,_P_ OCLC_PA Axis)
 {
 	_P_ oclclip Where;
@@ -23,25 +20,25 @@ _F_ oclclip LinC_From_(_P_ oclclip Amount,_P_ OCLC_PA Axis)
 }
 #endif
 
-#if(Fold_(Definition:Increment and Amplification Functions))
-#define _LinC_Operation_1_
-#define _LinC_Inte_
-#define _LinC_Real_
+#if(Fold_(Increment and Amplification Functions))
+#define xLinC_Operation_1_
+#define xLinC_Inte_
+#define xLinC_Real_
 #define LinC_Op_ LinC_Inc_
 #include "lincrux.c"
 #undef LinC_Op_
 #define LinC_Op_ LinC_Amp_
 #include "lincrux.c"
 #undef LinC_Op_
-#undef _LinC_Real_
-#undef _LinC_Inte_
-#undef _LinC_Operation_1_
+#undef xLinC_Real_
+#undef xLinC_Inte_
+#undef xLinC_Operation_1_
 #endif
 
-#if(Fold_(Definition:Addition and Subtraction and Multiplication Functions))
-#define _LinC_Operation_2_
-#define _LinC_Inte_
-#define _LinC_Real_
+#if(Fold_(Addition and Subtraction and Multiplication Functions))
+#define xLinC_Operation_2_
+#define xLinC_Inte_
+#define xLinC_Real_
 #define LinC_Op_ LinC_Add_
 #include "lincrux.c"
 #undef LinC_Op_
@@ -51,80 +48,76 @@ _F_ oclclip LinC_From_(_P_ oclclip Amount,_P_ OCLC_PA Axis)
 #define LinC_Op_ LinC_Mul_
 #include "lincrux.c"
 #undef LinC_Op_
-#undef _LinC_Real_
-#undef _LinC_Inte_
-#undef _LinC_Operation_2_
+#undef xLinC_Real_
+#undef xLinC_Inte_
+#undef xLinC_Operation_2_
 #endif
 
-#if(Fold_(Definition:Division Functions))
-#define _LinC_Operation_2_
+#if(Fold_(Division Functions))
+#define xLinC_Operation_2_
 #define LinC_Op_ LinC_Div_
-#define _LinC_Data_
-#define _LinC_Inte_
-#define _LinC_Real_
+#define xLinC_Data_
+#define xLinC_Inte_
+#define xLinC_Real_
 #include "lincrux.c"
-#undef _LinC_Real_
-#undef _LinC_Operation_2_
-#define _LinC_Operation_1_
+#undef xLinC_Real_
+#undef xLinC_Operation_2_
+#define xLinC_Operation_1_
 #include "lincrux.c"
 #undef LinC_Op_
 #define LinC_Op_ LinC_Inv_
-#define _LinC_Real_
+#define xLinC_Real_
 #include "lincrux.c"
-#undef _LinC_Real_
-#undef _LinC_Inte_
-#undef _LinC_Data_
+#undef xLinC_Real_
+#undef xLinC_Inte_
+#undef xLinC_Data_
 #undef LinC_Op_
-#undef _LinC_Operation_1_
+#undef xLinC_Operation_1_
 #endif
 
-#if(Fold_(Definition:Modulo Functions))
-#define _LinC_Operation_1_
+#if(Fold_(Modulo Functions))
+#define xLinC_Operation_1_
 #define LinC_Op_ LinC_Mod_
-#define _LinC_Data_
-#define _LinC_Inte_
+#define xLinC_Data_
+#define xLinC_Inte_
 #include "lincrux.c"
-#undef _LinC_Inte_
-#undef _LinC_Data_
+#undef xLinC_Inte_
+#undef xLinC_Data_
 #undef LinC_Op_
-#undef _LinC_Operation_1_
+#undef xLinC_Operation_1_
 #endif
 
-#if(Fold_(Definition:Summation and Dot-Product Functions))
-#define _LinC_Summation_
-#define _LinC_Inte_
-#define _LinC_Real_
+#if(Fold_(Summation and Dot-Product Functions))
+#define xLinC_Summation_
+#define xLinC_Inte_
+#define xLinC_Real_
 #include "lincrux.c"
-#undef _LinC_Real_
-#undef _LinC_Inte_
-#undef _LinC_Summation_
+#undef xLinC_Real_
+#undef xLinC_Inte_
+#undef xLinC_Summation_
 #endif
 
-#if(Fold_(Definition:Maximum and Minimum Functions))
-#define _LinC_Min_Max_
-#define _LinC_Data_
-#define _LinC_Inte_
-#define _LinC_Real_
+#if(Fold_(Maximum and Minimum Functions))
+#define xLinC_Min_Max_
+#define xLinC_Data_
+#define xLinC_Inte_
+#define xLinC_Real_
 #define LinC_Op_ LinC_Max_
 #include "lincrux.c"
 #undef LinC_Op_
 #define LinC_Op_ LinC_Min_
 #include "lincrux.c"
 #undef LinC_Op_
-#undef _LinC_Real_
-#undef _LinC_Inte_
-#undef _LinC_Data_
-#undef _LinC_Min_Max_
+#undef xLinC_Real_
+#undef xLinC_Inte_
+#undef xLinC_Data_
+#undef xLinC_Min_Max_
 #endif
 
-#if(Fold_(Definition:Mapping Functions))
-#define _LinC_Mapping_
-#define _LinC_Data_
+#if(Fold_(Mapping Functions))
+#define xLinC_Mapping_
+#define xLinC_Data_
 #include "lincrux.c"
-#undef _LinC_Data_
-#undef _LinC_Mapping_
-#endif
-
-#if(Fold_(Undefinition:LinCrux Macros))
-#include "lincros.c"
+#undef xLinC_Data_
+#undef xLinC_Mapping_
 #endif

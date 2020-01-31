@@ -1,11 +1,11 @@
-﻿#ifdef _INC_PRICLIP
-#ifdef _SRC_PRICRUX
+﻿#ifdef oPRICLIP_INC_
+#ifdef xPRICRUX_SRC_
 
 static_assert(sizeof(data_xx)==sizeof(pric_xx),"sizeof(" Meta_(data_xx) ") != sizeof(" Meta_(pric_xx) ")");
 
-static logical PriC_Func_(_PriC_Record_,DXX)(FILE _PL_ File,data_08 _PL_ Mask,ADDRESS Bits)
+static logical PriC_Func_(xPriC_Record_,DXX)(FILE _PL_ File,data_08 _PL_ Mask,ADDRESS Bits)
 {
-	DATA_XX Nums=(data_xx)_PriC_Nums_(Mask,Bits);
+	DATA_XX Nums=(data_xx)xPriC_Nums_(Mask,Bits);
 	
 	if(Nums)
 	{
@@ -38,7 +38,7 @@ static logical PriC_Func_(_PriC_Record_,DXX)(FILE _PL_ File,data_08 _PL_ Mask,AD
 	else
 		return (PenC_File_Writer_(File,&Nums,1)==1);
 }
-_PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,ADDRESS Bits)
+static logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ _R_ File,ADDRESS Bits)
 {
 	fpos_t Back;
 
@@ -56,8 +56,8 @@ _PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,ADDRESS Bits)
 			{
 				data_08 _PL_ Mask=Space;
 
-				_PriC_Mass_(Mask,Bits);
-				Flag=PriC_Func_(_PriC_Record_,DXX)(File,Mask,Bits);
+				xPriC_Mass_(Mask,Bits);
+				Flag=PriC_Func_(xPriC_Record_,DXX)(File,Mask,Bits);
 			}
 			if(Flag)
 				return 1;
@@ -67,8 +67,8 @@ _PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,ADDRESS Bits)
 		{
 			data_08 Mask[16];
 
-			_PriC_Mass_(Mask,Bits);
-			if(PriC_Func_(_PriC_Record_,DXX)(File,Mask,Bits))
+			xPriC_Mass_(Mask,Bits);
+			if(PriC_Func_(xPriC_Record_,DXX)(File,Mask,Bits))
 				return 1;
 			else;
 		}
@@ -78,7 +78,7 @@ _PRIC_ logical PriC_Func_(PriC_Save_,DXX)(FILE _PL_ File,ADDRESS Bits)
 
 	return 0;
 }
-_PRIC_ data_xx *PriC_Func_(PriC_Load_,DXX)(FILE _PL_ File,DATA_XX _PL_ _R_ Nums)
+static data_xx *PriC_Func_(PriC_Load_,DXX)(FILE _PL_ _R_ File,DATA_XX _PL_ _R_ Nums)
 {
 	fpos_t Back;
 
@@ -99,7 +99,7 @@ _PRIC_ data_xx *PriC_Func_(PriC_Load_,DXX)(FILE _PL_ File,DATA_XX _PL_ _R_ Nums)
 			else
 				Count=Temp;
 
-			MemC_Temp_(ADDRESS,Cast=(address)Count)
+			MemC_Temp_(ADDRESS,Cast=(address)(Count))
 			{
 				data_xx *Table=MemC_Alloc_ND_(data_xx,1,Cast+1);
 
@@ -128,23 +128,20 @@ FAIL:
 	return NULL;
 }
 
-static integer PriC_Func_(_PriC_Comp_,DXX)(DATA_XX _PL_ _R_ A,DATA_XX _PL_ _R_ B)
-{
-	return (((*A)>(*B))-((*A)<(*B)));
-}
-_PRIC_ data_xx PriC_Func_(PriC_Search_,DXX)(PRIC_XX _PL_ _R_ Table,DATA_XX Value)
+static integer PriC_Func_(xPriC_Comp_,DXX)(DATA_XX _PL_ _R_ A,DATA_XX _PL_ _R_ B) { return (((*A)>(*B))-((*A)<(*B))); }
+static data_xx PriC_Func_(PriC_Search_,DXX)(PRIC_XX _PL_ _R_ Table,DATA_XX Value)
 {
 	DATA_XX Fail=0;
 
 	if(Table)
 	{
-		DATA_XX _PL_ Where=bsearch(&Value,Table->Prime,(address)(Table->Count),sizeof(data_xx),MemC_Func_Casting_(integer,PriC_Func_(_PriC_Comp_,DXX),GENERAL _PL_,GENERAL _PL_));
+		DATA_XX _PL_ Where=bsearch(&Value,Table->Prime,(address)(Table->Count),sizeof(data_xx),MemC_Func_Casting_(integer,PriC_Func_(xPriC_Comp_,DXX),GENERAL _PL_,GENERAL _PL_));
 		
 		if(Where)
 		{
 			ADDRESS Offset=Where-(Table->Prime);
 
-			return ((data_xx)Offset);
+			return ((data_xx)(Offset));
 		}
 		else;
 	}
@@ -153,33 +150,29 @@ _PRIC_ data_xx PriC_Func_(PriC_Search_,DXX)(PRIC_XX _PL_ _R_ Table,DATA_XX Value
 	return (~Fail);
 }
 
-_PRIC_ logical PriC_Func_(PriC_Factor_,DXX)(data_xx _PL_ _R_ Factor,PRIC_XX _PL_ _R_ Table,data_xx Value)
+static logical PriC_Func_(PriC_Factor_,DXX)(data_xx _PL_ _R_ Factor,PRIC_XX _PL_ _R_ Table,data_xx Value)
 {
 	if(Factor)
 	{
 		*Factor=0;
 
-		if(Table)
-			if(Table->Count)
-				if(Value)
-					for(DATA_XX *_R_ Ptr=(Table->Prime),_PL_ End=Ptr+(address)(Table->Count);1;)
-						if(Value%(*Ptr))
-							if((*Ptr)<(Value/(*Ptr)))
-								if((++Ptr)<End);
-								else
-									break;
-							else
-							{
-								if(Value>1)
-									Factor[++(*Factor)]=Value;
-								else;
-
-								return 1;
-							}
+		if((Table)&&(Table->Count)&&(Value))
+			for(DATA_XX *_R_ Ptr=(Table->Prime),_PL_ End=Ptr+(address)(Table->Count);1;)
+				if(Value%(*Ptr))
+					if((*Ptr)<(Value/(*Ptr)))
+						if((++Ptr)<End);
 						else
-							Value/=Factor[++(*Factor)]=*Ptr;
-				else;
-			else;
+							break;
+					else
+					{
+						if(Value>1)
+							Factor[++(*Factor)]=Value;
+						else;
+
+						return 1;
+					}
+				else
+					Value/=Factor[++(*Factor)]=*Ptr;
 		else;
 
 		Factor[++(*Factor)]=Value;
@@ -225,7 +218,7 @@ _PRIC_ logical PriC_Func_(PriC_Factor_,DXX)(data_xx _PL_ _R_ Factor,PRIC_XX _PL_
 #define PRIC_XX PriC_Type_(PRIC,XX)
 #endif
 
-#define _SRC_PRICRUX
+#define xPRICRUX_SRC_
 
 #define XX 08
 #include "pricrux.c"
@@ -240,7 +233,7 @@ _PRIC_ logical PriC_Func_(PriC_Factor_,DXX)(data_xx _PL_ _R_ Factor,PRIC_XX _PL_
 #include "pricrux.c"
 #undef XX
 
-#undef _SRC_PRICRUX
+#undef xPRICRUX_SRC_
 
 #undef PRIC_XX
 #undef pric_xx
@@ -251,5 +244,5 @@ _PRIC_ logical PriC_Func_(PriC_Factor_,DXX)(data_xx _PL_ _R_ Factor,PRIC_XX _PL_
 #endif
 
 #else
-static void _PriC_Void_(void) { (void)(_PriC_Void_);return; }
+#error Do not build this template directly.
 #endif

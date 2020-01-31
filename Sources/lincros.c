@@ -1,46 +1,18 @@
-﻿#ifdef _INC_LINCLIP
-#ifdef _SRC_BITCROS
+﻿#ifdef oLINCLIP_INC_
 
-#undef LinC_Min_
-#undef LinC_Max_
-#undef LinC_Mod_
-#undef LinC_Inv_
-#undef LinC_Div_
-#undef LinC_Mul_
-#undef LinC_Sub_
-#undef LinC_Add_
-#undef LinC_Amp_
-#undef LinC_Inc_
-#undef LinC_Geo_
-#undef LinC_Ari_
+#ifndef xBITCROS_SRC_
+#define xBITCROS_SRC_
 
-#undef LinC_Oper_
-#undef _LinC_Oper_
+#define LinC_TXX_(Type,Bits) Conc_(Type,Bits)
 
-#undef LinC_Func_
-#undef _LinC_Func_
+#define LinC_Type_(Type,Bits) xLinC_Type_(Type,Bits)
+#define xLinC_Type_(Type,Bits) Type##_##Bits
 
-#undef LinC_Type_
-#undef _LinC_Type_
+#define LinC_Func_(Name,Suffix) xLinC_Func_(Name,Suffix)
+#define xLinC_Func_(Name,Suffix) Name##Suffix##_
 
-#undef LinC_TXX_
-
-#undef _SRC_BITCROS
-
-#else
-
-#define _SRC_BITCROS
-
-#define LinC_TXX_(Type,Bits) _Conc_(Type,Bits)
-
-#define _LinC_Type_(Type,Bits) Type##_##Bits
-#define LinC_Type_(Type,Bits) _LinC_Type_(Type,Bits)
-
-#define _LinC_Func_(Name,Suffix) Name##Suffix##_
-#define LinC_Func_(Name,Suffix) _LinC_Func_(Name,Suffix)
-
-#define _LinC_Oper_(Oper,N,TXX) Oper##N##_##TXX##_
-#define LinC_Oper_(Oper,N,TXX) _LinC_Oper_(Oper,N,TXX)
+#define LinC_Oper_(Oper,N,TXX) xLinC_Oper_(Oper,N,TXX)
+#define xLinC_Oper_(Oper,N,TXX) Oper##N##_##TXX##_
 
 #define LinC_Ari_(U,V) ((U)+(V))
 #define LinC_Geo_(U,V) ((U)*(V))
@@ -54,13 +26,8 @@
 #define LinC_Mod_(U,V) ((U)%(V))
 #define LinC_Max_(U,V) ((U)<(V))
 #define LinC_Min_(U,V) ((U)>(V))
-
 #endif
 
 #else
-#ifdef __OPENCL_VERSION__
-#error This template cannot be built directly.
-#else
-static void _LinC_Void_(void) { (void)(_LinC_Void_);return; }
-#endif
+#error Do not build this template directly.
 #endif

@@ -1,5 +1,5 @@
-﻿#ifdef _INC_BITCLIP
-#ifdef _SRC_BITCRUX
+﻿#ifdef oBITCLIP_INC_
+#ifdef xBITCRUX_SRC_
 
 #ifdef T
 #if(T()==D())
@@ -27,7 +27,7 @@
 #endif
 #endif
 
-#ifdef _BitC_Copy_
+#ifdef xBitC_Copy_
 #ifdef __OPENCL_VERSION__
 _K_ BitC_Func_(BitC_Reform_,TXX)(_G_ TYPE_XX _PL_ SData,_G_ type_xx _PL_ TData,_P_ OCLCLIP SStart,_P_ OCLCLIP TStart,OCLCLIP TAmount,_P_ OCLCLIP SShape,_P_ OCLCLIP TShape,_P_ OCLCLIP StoTAxis)
 {
@@ -39,7 +39,7 @@ _K_ BitC_Func_(BitC_Reform_,TXX)(_G_ TYPE_XX _PL_ SData,_G_ type_xx _PL_ TData,_
 	return;
 }
 #else
-_BITC_ general BitC_Func_(BitC_Copy_,TXX)(TYPE_XX *_R_ Source,type_xx *_R_ Target,ADDRESS Length)
+static general BitC_Func_(BitC_Copy_,TXX)(TYPE_XX *_R_ Source,type_xx *_R_ Target,ADDRESS Length)
 {
 	MemC_Copy_1D_(Source,Target,Length);
 
@@ -48,48 +48,48 @@ _BITC_ general BitC_Func_(BitC_Copy_,TXX)(TYPE_XX *_R_ Source,type_xx *_R_ Targe
 #endif
 #endif
 
-#ifdef _BitC_Caster_
+#ifdef xBitC_Caster_
 #if(!(((S()==T())&&(NOO==NXX))||((S()==D())&&(T()==I())&&(NOO<NXX))))
 #ifdef __OPENCL_VERSION__
 _K_ BitC_Cast_(SOO,TXX)(_G_ SYPE_OO _PL_ IData,_G_ type_xx _PL_ OData,_P_ OCLCLIP IStart,_P_ OCLCLIP OStart,_P_ OCLCLIP Amount,_P_ OCLCLIP IShape,_P_ OCLCLIP OShape)
 #else
-_BITC_ general BitC_Cast_(SOO,TXX)(SYPE_OO *_R_ DataI,type_xx *_R_ DataO,ADDRESS Length)
+static general BitC_Cast_(SOO,TXX)(SYPE_OO *_R_ DataI,type_xx *_R_ DataO,ADDRESS Length)
 #endif
 {
 #if(T()==R())
 #define BitC_Gate_(Data,Min,Max) (Data)
 #else
 #if(S()==R())
-#define BitC_Gate_(Data,Min,Max) _BitC_Clamp_(Data,Min,Max)
+#define BitC_Gate_(Data,Min,Max) xBitC_Clamp_(Data,Min,Max)
 	SYPE_OO Min=(sype_oo)((type_xx)(((type_xx)T())<<(NXX-1)));
 	SYPE_OO Max=(sype_oo)((type_xx)(~(((type_xx)T())<<(NXX-1))));
 #else
 #if(T()==I())
 #if(S()==I())
 #if(NOO>NXX)
-#define BitC_Gate_(Data,Min,Max) _BitC_Clamp_(Data,Min,Max)
+#define BitC_Gate_(Data,Min,Max) xBitC_Clamp_(Data,Min,Max)
 	SYPE_OO Min=((sype_oo)T())<<((1-NXX)*T());
 	SYPE_OO Max=(((sype_oo)(+1))<<(NXX+T()))-1;
 #else
 #define BitC_Gate_(Data,Min,Max) (Data)
 #endif
 #else
-#define BitC_Gate_(Data,Min,Max) _BitC_Min_(Data,Max)
+#define BitC_Gate_(Data,Min,Max) xBitC_Min_(Data,Max)
 	SYPE_OO Max=(((sype_oo)(+1))<<(NXX+T()))-1;
 #endif
 #else
 #if(S()==I())
 #if(NOO>NXX)
-#define BitC_Gate_(Data,Min,Max) _BitC_Clamp_(Data,Min,Max)
+#define BitC_Gate_(Data,Min,Max) xBitC_Clamp_(Data,Min,Max)
 	SYPE_OO Min=((sype_oo)T())<<((1-NXX)*T());
 	SYPE_OO Max=(((sype_oo)(+1))<<(NXX+T()))-1;
 #else
-#define BitC_Gate_(Data,Min,Max) _BitC_Max_(Data,Min)
+#define BitC_Gate_(Data,Min,Max) xBitC_Max_(Data,Min)
 	SYPE_OO Min=((sype_oo)T())<<((1-NXX)*T());
 #endif
 #else
 #if(NOO>NXX)
-#define BitC_Gate_(Data,Min,Max) _BitC_Min_(Data,Max)
+#define BitC_Gate_(Data,Min,Max) xBitC_Min_(Data,Max)
 	SYPE_OO Max=(((sype_oo)(+1))<<(NXX+T()))-1;
 #else
 #define BitC_Gate_(Data,Min,Max) (Data)
@@ -112,7 +112,7 @@ _BITC_ general BitC_Cast_(SOO,TXX)(SYPE_OO *_R_ DataI,type_xx *_R_ DataO,ADDRESS
 #endif
 #endif
 
-#ifdef _BitC_BO_N_1_
+#ifdef xBitC_BO_N_1_
 #ifdef __OPENCL_VERSION__
 _K_ BitC_Oper_(BitC_Op_,1,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape)
 {
@@ -123,7 +123,7 @@ _K_ BitC_Oper_(BitC_Op_,1,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 	return;
 }
 #else
-_BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,ADDRESS Length)
+static general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,ADDRESS Length)
 {
 #if(NXX>8)
 	BitC_Oper_(BitC_Op_,1,D08)((data_08*)DataC,(data_08*)DataA,Length*(NXX>>3));
@@ -153,7 +153,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,
 #endif
 #endif
 
-#ifdef _BitC_BO_S_1_
+#ifdef xBitC_BO_S_1_
 #ifdef __OPENCL_VERSION__
 #if(T()==D())
 _K_ BitC_Oper_(BitC_Op_,L,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,INTEGER Shift)
@@ -174,7 +174,7 @@ _K_ BitC_Oper_(BitC_Op_,R,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_
 	return;
 }
 #else
-_BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx *DataC,TYPE_XX *DataA,integer Shift,ADDRESS Length)
+static general BitC_Oper_(BitC_Op_,1,TXX)(type_xx *DataC,TYPE_XX *DataA,integer Shift,ADDRESS Length)
 {
 	TYPE_XX *End=DataA+(Length&BitC.Const.Mask.Safe[3]);
 
@@ -231,7 +231,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx *DataC,TYPE_XX *DataA,integer 
 #endif
 #endif
 
-#ifdef _BitC_BO_Op_
+#ifdef xBitC_BO_Op_
 #ifdef __OPENCL_VERSION__
 _K_ BitC_Oper_(BitC_Op_,1,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,_P_ TYPE_XX Mask)
 {
@@ -250,9 +250,9 @@ _K_ BitC_Oper_(BitC_Op_,2,TXX)(_G_ type_xx _PL_ CData,_G_ TYPE_XX _PL_ AData,_G_
 	return;
 }
 #else
-_BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,TYPE_XX Mask,ADDRESS Length)
+static general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,TYPE_XX Mask,ADDRESS Length)
 {
-	DATA_64 Wide=BitC_Func_(_BitC_Wide_Mask_,TXX)(Mask);
+	DATA_64 Wide=BitC_Func_(xBitC_Wide_Mask_,TXX)(Mask);
 	bitclip End={.C.G=DataA};
 	bitclip PtrA={.C.G=DataA};
 	bitclip PtrC={.V.G=DataC};
@@ -275,7 +275,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,
 
 	return;
 }
-_BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,TYPE_XX _PL_ DataB,ADDRESS Length)
+static general BitC_Oper_(BitC_Op_,2,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,TYPE_XX _PL_ DataB,ADDRESS Length)
 {
 #if(NXX>8)
 	BitC_Oper_(BitC_Op_,2,D08)((data_08*)DataC,(data_08*)DataA,(data_08*)DataB,Length*(NXX>>3));
@@ -306,9 +306,9 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(type_xx _PL_ DataC,TYPE_XX _PL_ DataA,
 #endif
 #endif
 
-#ifdef _BitC_Expand_
+#ifdef xBitC_Expand_
 #ifndef __OPENCL_VERSION__
-_BITC_ general BitC_Func_(BitC_Expand_,TXX)(DATA_08 *_R_ DataI,type_xx *_R_ DataO,ADDRESS Length)
+static general BitC_Func_(BitC_Expand_,TXX)(DATA_08 *_R_ DataI,type_xx *_R_ DataO,ADDRESS Length)
 {
 	ADDRESS Safe=Length&BitC.Const.Mask.Safe[3];
 	ADDRESS Rest=Length&BitC.Const.Mask.Rest[3];
@@ -370,7 +370,7 @@ _BITC_ general BitC_Func_(BitC_Expand_,TXX)(DATA_08 *_R_ DataI,type_xx *_R_ Data
 #endif
 #endif
 
-#ifdef _BitC_RO_Op_
+#ifdef xBitC_RO_Op_
 #ifdef __OPENCL_VERSION__
 _K_ BitC_Oper_(BitC_Op_,1,TXX)(_G_ BitC_Type_(inte,XX) _PL_ CData,_G_ TYPE_XX _PL_ AData,_P_ OCLCLIP CStart,_P_ OCLCLIP AStart,_P_ OCLCLIP Amount,_P_ OCLCLIP CShape,_P_ OCLCLIP AShape,_P_ TYPE_XX Value)
 {
@@ -391,7 +391,7 @@ _K_ BitC_Oper_(BitC_Op_,2,TXX)(_G_ BitC_Type_(inte,XX) _PL_ CData,_G_ TYPE_XX _P
 	return;
 }
 #else
-_BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,TYPE_XX Value,ADDRESS Length)
+static general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,TYPE_XX Value,ADDRESS Length)
 {
 	ADDRESS Safe=Length&BitC.Const.Mask.Safe[3];
 	ADDRESS Rest=Length&BitC.Const.Mask.Rest[3];
@@ -408,7 +408,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 		Mask.V.D08[6]=(data_08)BitC_Op_(DataA[6],Value);
 		Mask.V.D08[7]=(data_08)BitC_Op_(DataA[7],Value);
 
-		DataC[0]=_BitC_RO_Loop_A_(Mask);
+		DataC[0]=xBitC_RO_Loop_A_(Mask);
 	}
 	if(Rest)
 	{
@@ -420,7 +420,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 			Mask.V.D08[Index]=(data_08)BitC_Op_(DataA[Index],Value);
 			Mask.V.D08[Index]<<=Index;
 		}
-		_BitC_RO_Loop_B_(Mask,Bound);
+		xBitC_RO_Loop_B_(Mask,Bound);
 
 		DataC[0]&=Mask.C.D08[1];
 		DataC[0]|=Mask.C.D08[0];
@@ -429,7 +429,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,1,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 
 	return;
 }
-_BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,TYPE_XX *_R_ DataB,ADDRESS Length)
+static general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,TYPE_XX *_R_ DataB,ADDRESS Length)
 {
 	ADDRESS Safe=Length&BitC.Const.Mask.Safe[3];
 	ADDRESS Rest=Length&BitC.Const.Mask.Rest[3];
@@ -446,7 +446,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 		Mask.V.D08[6]=(data_08)BitC_Op_(DataA[6],DataB[6]);
 		Mask.V.D08[7]=(data_08)BitC_Op_(DataA[7],DataB[7]);
 
-		DataC[0]=_BitC_RO_Loop_A_(Mask);
+		DataC[0]=xBitC_RO_Loop_A_(Mask);
 	}
 	if(Rest)
 	{
@@ -458,7 +458,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 			Mask.V.D08[Index]=(data_08)BitC_Op_(DataA[Index],DataB[Index]);
 			Mask.V.D08[Index]<<=Index;
 		}
-		_BitC_RO_Loop_B_(Mask,Bound);
+		xBitC_RO_Loop_B_(Mask,Bound);
 
 		DataC[0]&=Mask.C.D08[1];
 		DataC[0]|=Mask.C.D08[0];
@@ -477,22 +477,22 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 
 #else
 
-#if defined(_BitC_Caster_)&&!defined(_SRC_CASTING)
+#if defined(xBitC_Caster_)&&!defined(xBITCAST_SRC_)
 
 #define NOO BitC_XX_(OO)
 #define SOO BitC_TXX_(S,OO)
 #define SYPE_OO BitC_Type_(SYPE,OO)
 #define sype_oo BitC_Type_(sype,OO)
 
-#define _SRC_CASTING
+#define xBITCAST_SRC_
 
-#define _BitC_Min_(A,B) (((A)<(B))?(A):(B))
-#define _BitC_Max_(A,B) (((A)>(B))?(A):(B))
-#define _BitC_Clamp_(Data,Min,Max) (((Data)<(Min))?(Min):(((Data)>(Max))?(Max):(Data)))
+#define xBitC_Min_(A,B) (((A)<(B))?(A):(B))
+#define xBitC_Max_(A,B) (((A)>(B))?(A):(B))
+#define xBitC_Clamp_(Data,Min,Max) (((Data)<(Min))?(Min):(((Data)>(Max))?(Max):(Data)))
 
-#define _BitC_Data_
-#define _BitC_Inte_
-#define _BitC_Real_
+#define xBitC_Data_
+#define xBitC_Inte_
+#define xBitC_Real_
 
 #define S D
 #define OO 08
@@ -526,7 +526,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 
 #define S R
 #ifdef __OPENCL_VERSION__
-#if(_BitC_R16_)
+#if(uBitC_R16_)
 #define OO 16
 #include "bitcrux.c"
 #undef OO
@@ -534,7 +534,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #define OO 32
 #include "bitcrux.c"
 #undef OO
-#if(_BitC_R64_)
+#if(uBitC_R64_)
 #define OO 64
 #include "bitcrux.c"
 #undef OO
@@ -549,15 +549,15 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #endif
 #undef S
 
-#undef _BitC_Real_
-#undef _BitC_Inte_
-#undef _BitC_Data_
+#undef xBitC_Real_
+#undef xBitC_Inte_
+#undef xBitC_Data_
 
-#undef _BitC_Clamp_
-#undef _BitC_Max_
-#undef _BitC_Min_
+#undef xBitC_Clamp_
+#undef xBitC_Max_
+#undef xBitC_Min_
 
-#undef _SRC_CASTING
+#undef xBITCAST_SRC_
 
 #undef sype_oo
 #undef SYPE_OO
@@ -575,9 +575,9 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #define I() (-1)
 #define R() (+1)
 
-#define _SRC_BITCRUX
+#define xBITCRUX_SRC_
 
-#ifdef _BitC_Data_
+#ifdef xBitC_Data_
 #define T D
 #define XX 08
 #include "bitcrux.c"
@@ -594,7 +594,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #undef T
 #endif
 
-#ifdef _BitC_Inte_
+#ifdef xBitC_Inte_
 #define T I
 #define XX 08
 #include "bitcrux.c"
@@ -611,10 +611,10 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #undef T
 #endif
 
-#ifdef _BitC_Real_
+#ifdef xBitC_Real_
 #define T R
 #ifdef __OPENCL_VERSION__
-#if(_BitC_R16_)
+#if(uBitC_R16_)
 #define XX 16
 #include "bitcrux.c"
 #undef XX
@@ -622,7 +622,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #define XX 32
 #include "bitcrux.c"
 #undef XX
-#if(_BitC_R64_)
+#if(uBitC_R64_)
 #define XX 64
 #include "bitcrux.c"
 #undef XX
@@ -638,7 +638,7 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #undef T
 #endif
 
-#undef _SRC_BITCRUX
+#undef xBITCRUX_SRC_
 
 #undef R
 #undef I
@@ -651,9 +651,5 @@ _BITC_ general BitC_Oper_(BitC_Op_,2,TXX)(data_08 *_R_ DataC,TYPE_XX *_R_ DataA,
 #endif
 
 #else
-#ifdef __OPENCL_VERSION__
-#error This template cannot be built directly.
-#else
-static void _BitC_Void_(void) { (void)(_BitC_Void_);return; }
-#endif
+#error Do not build this template directly.
 #endif
