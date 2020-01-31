@@ -1,5 +1,17 @@
 ﻿# Clips Documentation
 
+## Dependency Graph
+
+* [msvclip.h](./Headers/msvclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/msvclip.h) - about MSVC workaround
+	* [memclip.h](./Headers/memclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/memclip.h) - about memory management
+		* [penclip.h](./Headers/penclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/penclip.h) - about string and file handling
+			* [oclclip.h](./Headers/oclclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/oclclip.h) - about OpenCL extension
+				* [bitclip.h](./Headers/bitclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/bitclip.h) - about bit operations
+					* [linclip.h](./Headers/linclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/linclip.h) - about arithmetic operations
+					* [boxclip.h](./Headers/boxclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/boxclip.h) - about collections
+					* [timclip.h](./Headers/timclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/timclip.h) - about time measurement and random generation
+					* [priclip.h](./Headers/priclip.h) [#](http://github.com/dlOuOlb/Clips/blob/master/Headers/priclip.h) - about prime generation and factorization
+
 ## Build Guide
 
 ### Make Build Directory
