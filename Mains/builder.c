@@ -1,8 +1,12 @@
-﻿#include <linclip.h>
+﻿#define __STDC_WANT_LIB_EXT1__ (1)
+#ifndef uOCLCLIP_USE_
+#define uOCLCLIP_USE_
+#endif
+#include <linclip.h>
 
-_MemC_Default_
+MemC_Default_
 
-integer main(general)
+extern integer main(general)
 {
 	PenC_SL_Auto_(StringLender,1024);
 	MemC_Unit_(oclc_ef,Error,.E=CLSuccess);
@@ -31,27 +35,27 @@ integer main(general)
 						penc_sc *TempContainer=NULL;
 
 						PenC_SL_Borrow_Format_T08_(StringLender,TempContainer,"../../Sources/%s.cl",NameList[IdxN]);
-						BitCL.Ready.T08_(EnvMan->Platform.List[IdxP].Context,"-I ../../Headers/ -I ../../Sources/ -D _BitC_R16_=0 -D _BitC_R64_=1",TempContainer->String.T08,(text_08**)BinaryPath,Stream,Error);
+						BitCL.Build.T08_(EnvMan->Platform.List[IdxP].Context,"-I ../../Headers/ -I ../../Sources/ -D uBitC_R16_=0 -D uBitC_R64_=1",TempContainer->String.T08,(text_08**)(BinaryPath),Stream,Error);
 					}
 					if(Error->E==CLSuccess)
 						PenC.SL.Reset_(StringLender);
 					else
 					{
-						PenC_Stream_Format_T08_(0,Stream,"Program Build Failure\r\n");
+						PenC_Stream_Format_T08_(O,Stream,"Program Build Failure\r\n");
 						break;
 					}
 				}
 			}
 			continue;
 ESCAPE:
-			PenC_Stream_Format_T08_(0,Stream,"String Array Allocation Failure\r\n");
+			PenC_Stream_Format_T08_(O,Stream,"String Array Allocation Failure\r\n");
 			Error->E=CLOutOfHostMemory;
 			break;
 		}
 		OCLCL.EM.Delete_(&EnvMan);
 	}
 	else
-		PenC_Stream_Format_T08_(0,Stream,"Environment Manager Creation Failure\r\n");
+		PenC_Stream_Format_T08_(O,Stream,"Environment Manager Creation Failure\r\n");
 
 	return Error->I;
 }
