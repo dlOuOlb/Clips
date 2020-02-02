@@ -47,7 +47,7 @@ set(DIR_INC ./Headers ${DIR_INC})
 set(CONFIG Release)
 set(DIR_SRC ./Sources)
 set(DIR_USE ./Mains)
-set(OPT_COMPILE /TC /WX /Wall /O2 /Ob2 /Oi /Ot /GL /fp:fast /fp:except-)
+set(OPT_COMPILE /TC /WX /Wall /O2 /Ob2 /Oi /Ot /GL /fp:fast /fp:except- /wd4574)
 set(OPT_LINK /LTCG)
 
 set(CMAKE_CONFIGURATION_TYPES ${CONFIG})
